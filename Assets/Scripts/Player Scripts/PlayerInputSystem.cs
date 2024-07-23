@@ -15,12 +15,31 @@ public class PlayerInputSystem : MonoBehaviour
     [Header("Serializeable Fields")]
     [SerializeField] Camera playerCam;
     [SerializeField] PlayerInput playerInput;
+    [SerializeField] Rigidbody rb;
     
-    private PlayerInputActions controls;
+    private PlayerInputActions playerInputActions;
     private PlayerInputActions.GroundMovementActions groundControls;
 
     private void Awake()
     {
-        controls = new PlayerInputActions();
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.GroundMovement.Enable();
+
+        playerInputActions.GroundMovement.Jump.started += Jump_Press;
+        //playerInputActions.GroundMovement.Run.performed += Run_performed;
     }
+
+    private void FixedUpdate()
+    {
+        Vector2 inputVector = playerInputActions.GroundMovement.Run.ReadValue<Vector2>();
+        rb.AddForce(new Vector3(inputVector.x, 0, inputVector.y) * moveSpeed, ForceMode.Force);
+    }
+
+    private void Jump_Press(InputAction.CallbackContext context)
+    {
+        Debug.Log(context);
+        rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+    }
+
+
 }
