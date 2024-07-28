@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputSystem : MonoBehaviour
+public class PlayerInputManager : MonoBehaviour
 {
     //Design friendly variables:
-    [Header("Player Stats")]
-    public int health = 100;
+    [Header("Movement Stats")]
     public float moveSpeed = 5.0f;
+    public float aimSens = 1.0f;
 
     //Component serialization
     [Space(10.0f)]
@@ -41,5 +41,8 @@ public class PlayerInputSystem : MonoBehaviour
         rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
     }
 
-
+    private void MouseLook(InputAction.CallbackContext context) 
+    {
+    
+    }
 }

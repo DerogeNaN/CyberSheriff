@@ -53,6 +53,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""c353bb88-7754-427c-b5f7-7fd41f5fbb93"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -143,6 +152,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_GroundMovement_Run = m_GroundMovement.FindAction("Run", throwIfNotFound: true);
         m_GroundMovement_Jump = m_GroundMovement.FindAction("Jump", throwIfNotFound: true);
         m_GroundMovement_Slide = m_GroundMovement.FindAction("Slide", throwIfNotFound: true);
+        m_GroundMovement_Look = m_GroundMovement.FindAction("Look", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -207,6 +217,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_GroundMovement_Run;
     private readonly InputAction m_GroundMovement_Jump;
     private readonly InputAction m_GroundMovement_Slide;
+    private readonly InputAction m_GroundMovement_Look;
     public struct GroundMovementActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -214,6 +225,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Run => m_Wrapper.m_GroundMovement_Run;
         public InputAction @Jump => m_Wrapper.m_GroundMovement_Jump;
         public InputAction @Slide => m_Wrapper.m_GroundMovement_Slide;
+        public InputAction @Look => m_Wrapper.m_GroundMovement_Look;
         public InputActionMap Get() { return m_Wrapper.m_GroundMovement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -232,6 +244,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Slide.started += instance.OnSlide;
             @Slide.performed += instance.OnSlide;
             @Slide.canceled += instance.OnSlide;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
         }
 
         private void UnregisterCallbacks(IGroundMovementActions instance)
@@ -245,6 +260,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Slide.started -= instance.OnSlide;
             @Slide.performed -= instance.OnSlide;
             @Slide.canceled -= instance.OnSlide;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
         }
 
         public void RemoveCallbacks(IGroundMovementActions instance)
@@ -267,5 +285,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnRun(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnSlide(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
     }
 }
