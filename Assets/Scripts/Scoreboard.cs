@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-
 public class Scoreboard : MonoBehaviour
 {
     public Text scoreText;
@@ -21,7 +20,6 @@ public class Scoreboard : MonoBehaviour
         comboMultiplier = 1;
         rank = "D";
         UpdateScoreboard();
-        
     }
 
     void UpdateScoreboard()
