@@ -792,7 +792,7 @@ GameObject:
   - component: {fileID: 1777377670}
   - component: {fileID: 1777377669}
   - component: {fileID: 1777377668}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -889,10 +889,11 @@ GameObject:
   - component: {fileID: 1956545640}
   - component: {fileID: 1956545639}
   - component: {fileID: 1956545638}
-  - component: {fileID: 1956545643}
   - component: {fileID: 1956545637}
-  - component: {fileID: 1956545641}
   - component: {fileID: 1956545642}
+  - component: {fileID: 1956545641}
+  - component: {fileID: 1956545644}
+  - component: {fileID: 1956545643}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -992,11 +993,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf74d37eba55e547b486d5bb3756d90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  aimSens: 1
-  playerCam: {fileID: 978590107}
-  playerInput: {fileID: 1956545642}
-  rb: {fileID: 1956545643}
+  movementScript: {fileID: 1956545643}
+  mouseLookScript: {fileID: 1956545644}
 --- !u!114 &1956545642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1025,22 +1023,44 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: GroundMovement
+  m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 978590107}
---- !u!54 &1956545643
-Rigidbody:
+--- !u!114 &1956545643
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1956545636}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 1
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 80
-  m_CollisionDetection: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 909aff851f3f9ca4bb12e805241750e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 4
+  maxSpeed: 0.01
+  airDrag: 2.5
+  groundDrag: 80
+  baseMomentum: 1
+  encouragedMomentum: 5
+  isGround:
+    serializedVersion: 2
+    m_Bits: 0
+  lowMomentumThreshold: 0.2
+--- !u!114 &1956545644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956545636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b920ec190e7264a92adfa1941eff14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseSens: 25
+  defaultFOV: 90
+  cam: {fileID: 978590107}
+  xClamp: 180
