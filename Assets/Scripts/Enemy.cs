@@ -46,4 +46,9 @@ public class Enemy : MonoBehaviour
         }
         else agent.enabled = false;
     }
+
+    public virtual void Hit(int damage)
+    {
+        health -= damage;
+    }
 }

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 enum State
@@ -8,18 +10,23 @@ enum State
     idle,
     chasing,
     lostSight,
-    attacking
+    attacking,
+    stunned
 }
 
 public class MeleeEnemy : Enemy
 {
+    public float attackRange;
     public float playerChaseTime;
     public float attackTime;
+    public float attackCooldown;
     [SerializeField] State state;
+    [SerializeField] float stun = 0;
     [SerializeField] TMP_Text debugStateText;
 
-    float remainingChaseTime;
-    float remainingAttackTime;
+    float remainingChaseTime = 0;
+    float remainingAttackTime = 0;
+    float remainingAttackCooldown = 0;
 
     private new void Start()
     {
@@ -54,7 +61,15 @@ public class MeleeEnemy : Enemy
                         state = State.lostSight;
                         remainingChaseTime = playerChaseTime;
                     }
-                    // if the player is withing range, start an attack
+                    // if the player is withing range and attack cooldown is up, start an attack
+                    if (Vector3.Distance(transform.position, target.position) <= attackRange && remainingAttackCooldown <= 0)
+                    {
+                        state = State.attacking;
+                        remainingAttackTime = attackTime;
+                        shouldPath = false;
+                        remainingAttackCooldown = attackCooldown;
+                    }
+                    remainingAttackCooldown -= Time.deltaTime;
                 }
                 break;
 
@@ -85,8 +100,24 @@ public class MeleeEnemy : Enemy
                     remainingAttackTime -= Time.deltaTime;
                 }
                 break;
-        }
 
-        // moves when it has clear line of sight to the target
+            case State.stunned:
+                {
+                    // if the stun timer is up, return to idling
+                    if (stun <= 0)
+                    {
+                        state = State.idle;
+                    }
+                    stun -= Time.deltaTime;
+                }
+                break;
+        }
+    }
+
+    public void Stun(int stunTime)
+    {
+        state = State.stunned;
+        stun = stunTime;
+        shouldPath = false;
     }
 }
