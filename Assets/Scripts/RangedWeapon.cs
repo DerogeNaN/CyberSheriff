@@ -7,7 +7,14 @@ using UnityEngine;
 
 public class RangedWeapon : MonoBehaviour
 {
-
+    /// <summary Things To do >
+    ///  shotGun behaviour 
+    ///  Bullet Spread
+    ///  PunchThrough
+    ///  multiple shots per fire 
+    ///  reload
+    ///  individual Bullets 
+    /// <summary>
 
     public enum GunType
     {
@@ -24,7 +31,33 @@ public class RangedWeapon : MonoBehaviour
         public Transform MuzzlePoint;
         public Transform SecondaryMuzzlePoint;
     }
+
     public GunDetails gunDetails;
+
+    [Serializable]
+    public struct GunBehaviour
+    {
+        public float spread;
+        public float punchThrough;
+        public int bulletsPerShot;
+        public int shotsPerClick;
+        public float reloadTime;
+    }
+
+    [Serializable]
+    public struct AltGunBehaviour
+    {
+        public float altSpread;
+        public float altPunchThrough;
+        public int altBulletsPerShot;
+        public int altShotsPerClick;
+        public float altReloadTime;
+    }
+
+   
+    public GunBehaviour gunBehaviour;
+
+    public AltGunBehaviour altGunBehaviour;
 
     [SerializeField]
     public GameObject CurrentlyHitting;
@@ -33,6 +66,10 @@ public class RangedWeapon : MonoBehaviour
     LineRenderer cameraLineRenderer;
 
     bool shouldDrawBulletTrail = false;
+
+    [SerializeField]
+    GameObject BulletTrail;
+
 
     [SerializeField]
     Camera camRef;
@@ -51,15 +88,12 @@ public class RangedWeapon : MonoBehaviour
         Ray ray = new Ray();
         Ray cameraRay = new Ray();
 
-
         //we get the start and direction for our "Bullet" from our Gun Here
         ray.direction = gunDetails.MuzzlePoint.transform.forward;
         ray.origin = gunDetails.MuzzlePoint.position;
 
         RaycastHit hit;
-
         RaycastHit cameraHit;
-
 
         //GUN camera Interactions here 
 
@@ -72,7 +106,7 @@ public class RangedWeapon : MonoBehaviour
         cameraLineRenderer.SetPosition(0, cameraRay.origin);
         cameraLineRenderer.SetPosition(1, cameraHit.point);
 
-        //Here im getting the directionof of a gun muzzle to reticle hit point 
+        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
         Vector3 barrelToLookPointDir = cameraHit.point - gunDetails.MuzzlePoint.transform.position;
         barrelToLookPointDir = math.normalize(barrelToLookPointDir);
 
@@ -84,28 +118,35 @@ public class RangedWeapon : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit, 20))
             {
-                lineRenderer.enabled = true;
+               // lineRenderer.enabled = true;
                 CurrentlyHitting = hit.transform.gameObject;
 
             }
             else
                 lineRenderer.enabled = false;
+
+            //Bullet Trail spawn
+            GameObject bullet = Instantiate(BulletTrail);
+
+
             lineRenderer.SetPosition(0, ray.origin);
+
             if (hit.point != null)
             {
                 lineRenderer.SetPosition(1, hit.point);
             }
+            else 
+            {
+                lineRenderer.SetPosition(1,barrelToLookPointDir);
+            }
 
             if (hit.rigidbody != null)
             {
-                hit.rigidbody.AddForce(barrelToLookPointDir, ForceMode.Impulse);
-
+                hit.rigidbody.AddForce(barrelToLookPointDir / 4, ForceMode.Impulse);
             }
         }
         else
             lineRenderer.enabled = false;
-
-
     }
 
     //active on beginning of Primary fire Action
