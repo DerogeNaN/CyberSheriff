@@ -5,16 +5,23 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     //Ground
+    [SerializeField]
     float groundSpeed = 4f;
+    [SerializeField]
     float runSpeed = 6f;
+    [SerializeField]
     float grAccel = 20f;
 
     //Air
+    [SerializeField]
     float airSpeed = 3f;
+    [SerializeField]
     float airAccel = 20f;
 
     //Jump
+    [SerializeField]
     float jumpUpSpeed = 9.2f;
+    [SerializeField]
     float dashSpeed = 6f;
 
     //Wall
