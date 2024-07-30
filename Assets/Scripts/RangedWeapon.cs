@@ -27,7 +27,7 @@ public class RangedWeapon : MonoBehaviour
     public GunDetails gunDetails;
 
     [SerializeField]
-    GameObject CurrentlyHitting;
+    public GameObject CurrentlyHitting;
 
     LineRenderer lineRenderer;
     LineRenderer cameraLineRenderer;
@@ -63,8 +63,6 @@ public class RangedWeapon : MonoBehaviour
 
         //GUN camera Interactions here 
 
-
-
         cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
         cameraRay.direction = camRef.transform.forward;
 
@@ -84,21 +82,30 @@ public class RangedWeapon : MonoBehaviour
         //Bullet visual Logic 
         if (shouldDrawBulletTrail)
         {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out hit, 20))
             {
                 lineRenderer.enabled = true;
                 CurrentlyHitting = hit.transform.gameObject;
+
             }
             else
                 lineRenderer.enabled = false;
-                lineRenderer.SetPosition(0, ray.origin);
+            lineRenderer.SetPosition(0, ray.origin);
             if (hit.point != null)
             {
                 lineRenderer.SetPosition(1, hit.point);
             }
+
+            if (hit.rigidbody != null)
+            {
+                hit.rigidbody.AddForce(barrelToLookPointDir, ForceMode.Impulse);
+
+            }
         }
         else
             lineRenderer.enabled = false;
+
+
     }
 
     //active on beginning of Primary fire Action
