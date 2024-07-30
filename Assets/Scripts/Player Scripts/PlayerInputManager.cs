@@ -7,19 +7,25 @@ public class PlayerInputManager : MonoBehaviour
 {
     //Component serialization
     [Header("Player Scripts")]
-    [SerializeField] Movement movementScript;
+    //[SerializeField] Movement movementScript;
     [SerializeField] MouseLook mouseLookScript;
+    [SerializeField] PlayerMovement movementScript;
     [SerializeField] PlayerInputActions playerInputActions;
 
     private void Awake()
     {
-        InitializePlayerInputManager();
+        //InitializePlayerInputManager();
+    }
+
+    private void FixedUpdate()
+    {
+        //movementScript.UpdateMovement();
     }
 
     private void Update()
     {
-        movementScript.UpdateMovement();
         mouseLookScript.UpdateMouse();
+        movementScript.UpdateMovement();
     }
 
     void InitializePlayerInputManager()

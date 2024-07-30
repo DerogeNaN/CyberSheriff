@@ -15,10 +15,13 @@ public class MouseLook : MonoBehaviour
     [Space(10.0f)]
     [Header("Serializeable Fields")]
     [SerializeField] Camera cam;
+    [SerializeField] Transform orientation;
     [SerializeField] PlayerInputActions playerInputActions;
     [SerializeField] float xClamp = 180.0f;
 
     //Local Variables:
+    float camRotationY;
+    float currRotationY;
     float camRotationX;
     float currRotationX;
     Vector2 mouseInput;
@@ -47,11 +50,13 @@ public class MouseLook : MonoBehaviour
         currRotationX = cam.transform.localEulerAngles.x;
         currRotationX += camRotationX;
 
+        camRotationY += mouseInput.x;
+
         if (currRotationX > xClamp) currRotationX -= 360.0f;                        //Stops player camera from looking more than "xClamp" degrees up or down.
         currRotationX = Mathf.Clamp(currRotationX, -89.0f, 89.0f);
 
-        cam.transform.localEulerAngles = new Vector3(currRotationX, 0.0f, 0.0f);    //Assign new mouse input value to camera transform
-
+        cam.transform.localEulerAngles = new Vector3(currRotationX, camRotationY, 0.0f);    //Assign new mouse input value to camera transform
+        orientation.Rotate(Vector3.up * mouseInput.x);
     }
 
     float GetMouseSense()
