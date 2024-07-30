@@ -15,6 +15,8 @@ public class CameraController : MonoBehaviour
 
     float wishTilt = 0;
     float curTilt = 0;
+    [SerializeField]
+    float tiltSpeed = 0.05f;
     Vector2 currentLook;
     Vector2 sway = Vector3.zero;
     float fov;
@@ -42,7 +44,7 @@ public class CameraController : MonoBehaviour
         weaponCamera.fieldOfView = fov;
 
         currentLook = Vector2.Lerp(currentLook, currentLook + sway, 0.8f);
-        curTilt = Mathf.LerpAngle(curTilt, wishTilt * wallRunTilt, 0.05f);
+        curTilt = Mathf.LerpAngle(curTilt, wishTilt * wallRunTilt, tiltSpeed);
 
         sway = Vector2.Lerp(sway, Vector2.zero, 0.2f);
     }
