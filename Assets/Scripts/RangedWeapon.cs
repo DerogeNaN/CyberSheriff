@@ -41,7 +41,7 @@ public class RangedWeapon : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         camRef = FindAnyObjectByType<Camera>();
-        cameraLineRenderer = camRef.GetComponent<LineRenderer>(); 
+        cameraLineRenderer = camRef.GetComponent<LineRenderer>();
     }
 
     // Update is called once per frame
@@ -64,13 +64,19 @@ public class RangedWeapon : MonoBehaviour
         cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
         cameraRay.direction = camRef.transform.forward;
 
-        if (Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity))
-        {
-        }
-        cameraLineRenderer.SetPosition(0,cameraRay.origin);
-        cameraLineRenderer.SetPosition(1,cameraHit.point);
+        Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
 
+        //This is just so i can see the players line of sight for now
+        cameraLineRenderer.SetPosition(0, cameraRay.origin);
+        cameraLineRenderer.SetPosition(1, cameraHit.point);
 
+        //Here im getting the direction
+        Vector3 barrelToLookPointDir = cameraHit.point - gunDetails.MuzzlePoint.transform.position;
+        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
+       
+        //set ray direction to where the players reticle currently is pointing 
+        ray.direction = barrelToLookPointDir;
+      
         //Bullet visual Logic 
         if (shouldDrawBulletTrail)
         {
@@ -87,7 +93,7 @@ public class RangedWeapon : MonoBehaviour
 
 
             lineRenderer.SetPosition(2, ray.origin);
-            lineRenderer.SetPosition(3, hit.point + new Vector3(10,10,10));
+            lineRenderer.SetPosition(3, hit.point + new Vector3(10, 10, 10));
         }
         else
             lineRenderer.enabled = false;
