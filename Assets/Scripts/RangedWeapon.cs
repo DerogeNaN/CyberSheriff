@@ -22,6 +22,7 @@ public class RangedWeapon : MonoBehaviour
     {
         public GunType gunType;
         public Transform MuzzlePoint;
+        public Transform SecondaryMuzzlePoint;
     }
     public GunDetails gunDetails;
 
@@ -59,7 +60,10 @@ public class RangedWeapon : MonoBehaviour
 
         RaycastHit cameraHit;
 
+
         //GUN camera Interactions here 
+
+
 
         cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
         cameraRay.direction = camRef.transform.forward;
@@ -70,13 +74,13 @@ public class RangedWeapon : MonoBehaviour
         cameraLineRenderer.SetPosition(0, cameraRay.origin);
         cameraLineRenderer.SetPosition(1, cameraHit.point);
 
-        //Here im getting the direction
+        //Here im getting the directionof of a gun muzzle to reticle hit point 
         Vector3 barrelToLookPointDir = cameraHit.point - gunDetails.MuzzlePoint.transform.position;
         barrelToLookPointDir = math.normalize(barrelToLookPointDir);
-       
+
         //set ray direction to where the players reticle currently is pointing 
         ray.direction = barrelToLookPointDir;
-      
+
         //Bullet visual Logic 
         if (shouldDrawBulletTrail)
         {
@@ -87,13 +91,11 @@ public class RangedWeapon : MonoBehaviour
             }
             else
                 lineRenderer.enabled = false;
-
-            lineRenderer.SetPosition(0, ray.origin);
-            lineRenderer.SetPosition(1, hit.point);
-
-
-            lineRenderer.SetPosition(2, ray.origin);
-            lineRenderer.SetPosition(3, hit.point + new Vector3(10, 10, 10));
+                lineRenderer.SetPosition(0, ray.origin);
+            if (hit.point != null)
+            {
+                lineRenderer.SetPosition(1, hit.point);
+            }
         }
         else
             lineRenderer.enabled = false;
