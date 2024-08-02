@@ -16,9 +16,12 @@ public class PH_Pull : MonoBehaviour
     private Rigidbody rb;
     private Rigidbody targetRb;
 
+    private ScoringSystem scoringSystem;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        scoringSystem = FindObjectOfType<ScoringSystem>();
     }
 
     void Update()
@@ -32,6 +35,7 @@ public class PH_Pull : MonoBehaviour
             else
             {
                 FireHook();
+                scoringSystem.AwardPoints(ActionType.Grapple);
             }
         }
 
@@ -46,10 +50,10 @@ public class PH_Pull : MonoBehaviour
                 HookPull();
                 
             }
-            if (Input.GetKeyDown(KeyCode.Space))
+           /* if (Input.GetKeyDown(KeyCode.Space))
             {
                 DetachHook();
-            }
+            }*/
         }
     }
 

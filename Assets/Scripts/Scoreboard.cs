@@ -88,6 +88,13 @@ public class Scoreboard : MonoBehaviour
         UpdateRank();
         UpdateScoreboard();
     }
+    public void AddRawScore(int amount)
+    {
+        score += amount;
+        decayTimer = decayInterval; // Reset the timer when score is added
+        UpdateRank();
+        UpdateScoreboard();
+    }
 
     public void IncrementCombo()
     {

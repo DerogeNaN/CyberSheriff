@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private ScoringSystem scoringSystem;
+
     //Ground
     [SerializeField]
     float groundSpeed = 4f;
@@ -22,16 +24,26 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     float jumpUpSpeed = 9.2f;
     [SerializeField]
+    float doubleJumpUpSpeed = 5f;
+    [SerializeField]
     float dashSpeed = 6f;
 
     //Wall
+    [SerializeField]
     float wallSpeed = 10f;
+    [SerializeField]
     float wallClimbSpeed = 4f;
+    [SerializeField]
     float wallAccel = 20f;
+    [SerializeField]
     float wallRunTime = 3f;
+    [SerializeField]
     float wallStickiness = 20f;
+    [SerializeField]
     float wallStickDistance = 1f;
+    [SerializeField]
     float wallFloorBarrier = 40f;
+    [SerializeField]
     float wallBanTime = 4f;
     Vector3 bannedGroundNormal;
 
@@ -71,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         camCon = GetComponentInChildren<CameraController>();
         col = GetComponent<CapsuleCollider>();
+        scoringSystem = FindObjectOfType<ScoringSystem>();
     }
 
     void OnGUI()
@@ -328,6 +341,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Wallrun(Vector3 wishDir, float maxSpeed, float climbSpeed, float acceleration)
     {
+        
         if (jump)
         {
             //Vertical
@@ -373,6 +387,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(antiGravityForce, ForceMode.Acceleration);
             if (distance.magnitude > wallStickDistance) distance = Vector3.zero;
             rb.AddForce(distance * wallStickiness, ForceMode.Acceleration);
+            scoringSystem.AwardPoints(ActionType.WallRunning);
         }
         if (!grounded)
         {
@@ -385,6 +400,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (mode == Mode.Walking && canJump)
         {
+            scoringSystem.AwardPoints(ActionType.Jump);
             float upForce = Mathf.Clamp(jumpUpSpeed - rb.velocity.y, 0, Mathf.Infinity);
             rb.AddForce(new Vector3(0, upForce, 0), ForceMode.VelocityChange);
             StartCoroutine(jumpCooldownCoroutine(0.2f));
@@ -394,10 +410,12 @@ public class PlayerMovement : MonoBehaviour
 
     void DoubleJump(Vector3 wishDir)
     {
+        
         if (canDJump)
         {
+            scoringSystem.AwardPoints(ActionType.DoubleJump);
             //Vertical
-            float upForce = Mathf.Clamp(jumpUpSpeed - rb.velocity.y, 0, Mathf.Infinity);
+            float upForce = Mathf.Clamp(doubleJumpUpSpeed - rb.velocity.y, 0, Mathf.Infinity);
 
             rb.AddForce(new Vector3(0, upForce, 0), ForceMode.VelocityChange);
 

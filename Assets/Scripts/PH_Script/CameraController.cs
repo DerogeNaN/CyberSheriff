@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     float sensY = 1f;
     float baseFov = 90f;
     float maxFov = 140f;
+    [SerializeField]
     float wallRunTilt = 15f;
 
     float wishTilt = 0;
