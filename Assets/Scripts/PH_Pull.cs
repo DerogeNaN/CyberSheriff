@@ -15,6 +15,8 @@ public class PH_Pull : MonoBehaviour
     private Vector3 hookTarget;
     private Rigidbody rb;
     private Rigidbody targetRb;
+    bool pointAwarded = false;
+    bool resetAwarded = true;
 
     private ScoringSystem scoringSystem;
 
@@ -35,7 +37,7 @@ public class PH_Pull : MonoBehaviour
             else
             {
                 FireHook();
-                scoringSystem.AwardPoints(ActionType.Grapple);
+                
             }
         }
 
@@ -47,8 +49,15 @@ public class PH_Pull : MonoBehaviour
             }
             else
             {
+                pointAwarded = true;
                 HookPull();
+                if (pointAwarded == true && resetAwarded == true )
+                {
+                    scoringSystem.AwardPoints(ActionType.Grapple);
+                    resetAwarded = false;
+                }
                 
+
             }
            /* if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -113,6 +122,7 @@ public class PH_Pull : MonoBehaviour
     void DetachHook()
     {
         isHooked = false;
+        resetAwarded = true;
         isPullingObject = false;
         targetRb = null;
         hookLine.enabled = false;
