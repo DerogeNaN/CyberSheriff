@@ -18,7 +18,7 @@ public class Movement : MonoBehaviour
     [SerializeField] float groundDrag = 120f;
     [SerializeField] float jumpStrength = 10f;
     [SerializeField] float jumpGraceLength = 0.1f; //Time allowed after being grounded for first jump
-
+    [SerializeField] private float wallRunSpeedThreshold = 0.25f;
 
     [Space(10.0f)]
     [Header("Serializeable Fields")]
@@ -30,16 +30,18 @@ public class Movement : MonoBehaviour
     private Vector3 moveDirection = Vector3.zero;
 
     public float currDrag;
-    private float baseMomentumRatio;
+    public float currEncouragment;
+    private float momentumRatio;
     private float actualGravity = 0;
     public int jumpCount = 0;
     public bool isGrounded = true;
     public float lastGroundedTime = 0;
     public float jumpCooldown = 0.01f;
     public float lastJumpTime;
-    [SerializeField] private int baseMomentum = 1;
-    [SerializeField] int encouragedMomentum = 3;
+
+    [SerializeField] int encouragedGroundMomentum = 3;
     [SerializeField] int encouragedAirMomentum = 35;
+    
 
     void Start()
     {
@@ -53,11 +55,12 @@ public class Movement : MonoBehaviour
 
         //Assign currDrag to either the ground drag ammount or air drag ammount
         currDrag = isGrounded ? groundDrag : airDrag;
+        currEncouragment = isGrounded ? encouragedGroundMomentum : encouragedAirMomentum;
         //currDrag = groundDrag;
         //encouragedMomentum = isGrounded ? 35 : 50;
         currDrag *= 0.01f;
 
-        baseMomentumRatio = (float)baseMomentum / (float)(baseMomentum + encouragedMomentum);
+        momentumRatio = 1 / currEncouragment;
 
         MovePlayer();
     }
@@ -78,8 +81,9 @@ public class Movement : MonoBehaviour
         {
             Vector3 playerWASDMomentum = Vector3.zero;
             //Implement momentum ratio where the higher "encouragedMomentum" is in "baseMomentumRatio", the more effort it takes to change the current momentum direction
-            playerWASDMomentum += moveDirection * moveSpeed * baseMomentumRatio;
-            float encouragedAmount = Vector3.Dot(moveDirection, momentum.normalized) * (1 - baseMomentumRatio);
+            playerWASDMomentum += moveDirection * moveSpeed * momentumRatio;
+            Vector3 momentumNoY = new Vector3(momentum.x, 0, momentum.z);
+            float encouragedAmount = Vector3.Dot(moveDirection, momentumNoY.normalized) * (1 - momentumRatio);
             playerWASDMomentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
             playerWASDMomentum += momentum;
             if (momentum.magnitude > maxPlayerInputSpeed)
@@ -92,7 +96,9 @@ public class Movement : MonoBehaviour
 
         //Multiply momentum by correct drag type
         currDrag = 1 - currDrag;
-        momentum *= currDrag;
+        momentum.x *= currDrag;
+        momentum.z *= currDrag;
+
 
 
         CheckForOncomingCollision();
@@ -154,25 +160,36 @@ public class Movement : MonoBehaviour
         if (Physics.CapsuleCast(
             transform.position + new Vector3(0, 0.5f, 0),
             transform.position - new Vector3(0, 0.5f, 0),
-            0.45f, momentum.normalized, out hit, momentum.magnitude, ~3
+            0.45f, momentum.normalized, out hit, momentum.magnitude, ~8
             ))
         {
             momentum = Vector3.ClampMagnitude(momentum, hit.distance);
-            Debug.Log(hit.collider);
         }
     }
 
+    //TODO: Add isWallRunning to mess with gravity
+    //TODO: Add dirtyflag check in jump to add Wall Run Boost
     private void OnCollisionEnter(Collision collision)
-    {
-        //TODO: WALL RUNNING
-        /*
-         * Check if wall
-         * check if normal is not pointing up
-         * check direction of relative velocity
-         */
+    { 
         Vector3 normal = collision.GetContact(0).normal;
         normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
+
+        //If the normal of the wall collision points not up or down
+        if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f)
+        {
+            Debug.Log(collision.gameObject);
+            Vector3 tangent = Vector3.Cross(Vector3.up, normal);
+            float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
+
+            if(Mathf.Abs(wallSpeed) > wallRunSpeedThreshold)
+            {
+                momentum = wallSpeed * tangent;
+                return;
+            }
+        }
+
         momentum -= Vector3.Dot(momentum, normal) * normal;
+
     }
 
     private void OnCollisionStay(Collision collision)
