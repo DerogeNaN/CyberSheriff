@@ -4,51 +4,61 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 public class Movement : MonoBehaviour
 {
+    public static Movement playerMovement;
+
     [Header("Movement Settings")]
     [SerializeField] public float moveSpeed = 4.0f;
-    [SerializeField] float maxSpeed = 0.015f;
-    [SerializeField] float jumpHeight = 500.0f;
-    [SerializeField] float gravityStrength = 9.8f;
+    [SerializeField] float maxSpeed = 0.035f;
+    [SerializeField] float maxPlayerInputSpeed = 0.015f;
+    [SerializeField] float gravityStrength = -1.0f;
     [SerializeField] float airDrag = 60f;
     [SerializeField] float groundDrag = 120f;
-    [SerializeField] LayerMask groundLayer;
-    [SerializeField] LayerMask player;
+    [SerializeField] float jumpStrength = 10f;
+    [SerializeField] float jumpGraceLength = 0.1f; //Time allowed after being grounded for first jump
+
 
     [Space(10.0f)]
     [Header("Serializeable Fields")]
-    [SerializeField] Transform rayCastPoint;
     [SerializeField] PlayerInputActions playerInputActions;
 
     [Space(10.0f)]
     [Header("Backend Variables (TEST)")]//Local Variables
     public Vector3 momentum = Vector3.zero;
     private Vector3 moveDirection = Vector3.zero;
-    public bool isGrounded = true;
-    private float currDrag;
+
+    public float currDrag;
     private float baseMomentumRatio;
+    private float actualGravity = 0;
+    public int jumpCount = 0;
+    public bool isGrounded = true;
+    public float lastGroundedTime = 0;
+    public float jumpCooldown = 0.01f;
+    public float lastJumpTime;
     [SerializeField] private int baseMomentum = 1;
-    [SerializeField] int encouragedMomentum = 35;
-    float currentGravity = 0.0f;
+    [SerializeField] int encouragedMomentum = 3;
+    [SerializeField] int encouragedAirMomentum = 35;
 
     void Start()
     {
-        InitializeMovement();
+        playerMovement = this;
+        InitialiseMovement();
     }
 
     public void UpdateMovement()
     {
+        actualGravity = 0.1f * gravityStrength;
+
         //Assign currDrag to either the ground drag ammount or air drag ammount
-        //currDrag = isGrounded ? groundDrag : airDrag;
+        currDrag = isGrounded ? groundDrag : airDrag;
         //currDrag = groundDrag;
         //encouragedMomentum = isGrounded ? 35 : 50;
-        currDrag *= 0.01f * Time.deltaTime;
+        currDrag *= 0.01f;
 
         baseMomentumRatio = (float)baseMomentum / (float)(baseMomentum + encouragedMomentum);
 
-        //ApplyGravity();
-        GroundCheck();
         MovePlayer();
     }
 
@@ -58,91 +68,115 @@ public class Movement : MonoBehaviour
         moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
 
         //When no key is pressed
-        if (moveInput.magnitude <= 0.001f)
-        {
-            //currDrag *= 10.0f;
-        }
+        //if (isGrounded && moveInput.magnitude <= 0.001f)
+        //{
+        //    currDrag = 0.01f;
+        //}
 
         //When Input and we have no momentum
-        else
+        //else
         {
+            Vector3 playerWASDMomentum = Vector3.zero;
             //Implement momentum ratio where the higher "encouragedMomentum" is in "baseMomentumRatio", the more effort it takes to change the current momentum direction
-            momentum += moveDirection * moveSpeed * baseMomentumRatio;
+            playerWASDMomentum += moveDirection * moveSpeed * baseMomentumRatio;
             float encouragedAmount = Vector3.Dot(moveDirection, momentum.normalized) * (1 - baseMomentumRatio);
-            momentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
-            momentum = Vector3.ClampMagnitude(momentum, maxSpeed);
+            playerWASDMomentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
+            playerWASDMomentum += momentum;
+            if (momentum.magnitude > maxPlayerInputSpeed)
+                momentum = Vector3.ClampMagnitude(playerWASDMomentum, momentum.magnitude);
+            else
+                momentum = playerWASDMomentum;
         }
+
+        Gravity();
 
         //Multiply momentum by correct drag type
         currDrag = 1 - currDrag;
         momentum *= currDrag;
 
-        //Finally assign momentum to player
+
+        CheckForOncomingCollision();
+
+
+        momentum = Vector3.ClampMagnitude(momentum, maxSpeed);
         transform.position += momentum;
     }
 
-    void InitializeMovement()
+
+
+    void Gravity()
+    {
+        if (!isGrounded)
+        {
+            momentum.y -= actualGravity * Time.deltaTime - actualGravity * Time.deltaTime * momentum.y;
+        }
+        else
+        {
+            momentum.y = 0.0f;
+        }
+        isGrounded = false;
+    }
+
+    void InitialiseMovement()
     {
         if (playerInputActions == null) playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
-        playerInputActions.Player.Jump.performed += Jump_Performed;
+        playerInputActions.Player.Jump.started += Jump_Started;
     }
 
-    private void Jump_Performed(InputAction.CallbackContext context)
+    private void Jump_Started(InputAction.CallbackContext context)
     {
-        if (isGrounded)
+
+        Debug.Log("Starting Jump");
+        if (jumpCount < 2)
         {
-            Debug.Log("Jump");
-            momentum += transform.up * jumpHeight * Time.deltaTime;
             isGrounded = false;
+            Debug.Log("Have enoough jump counts");
+            if (lastJumpTime + jumpCooldown < Time.time)
+            {
+                Debug.Log("Beginning Jump");
+                if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
+                {
+                    jumpCount++;
+                }
+                else
+                {
+                    jumpCount += 2;
+                }
+                momentum.y = jumpStrength;
+                lastJumpTime = Time.time;
+            }
+        }
+    }
+    void CheckForOncomingCollision()
+    {
+        RaycastHit hit;
+        if (Physics.CapsuleCast(
+            transform.position + new Vector3(0, 0.5f, 0),
+            transform.position - new Vector3(0, 0.5f, 0),
+            0.45f, momentum.normalized, out hit, momentum.magnitude, ~3
+            ))
+        {
+            momentum = Vector3.ClampMagnitude(momentum, hit.distance);
+            Debug.Log(hit.collider);
         }
     }
 
-    //void ApplyGravity()
-    //{
-    //    if (!isGrounded)
-    //    {
-    //        currentGravity += gravityStrength * Time.deltaTime;
-    //    }
-    //    else currentGravity = 0.0f;
-    //}
-
-
-    [SerializeField] float distanceToFloor = 0.2f;
-
-    private void GroundCheck()
+    private void OnCollisionEnter(Collision collision)
     {
-        int layerMask = 1 << groundLayer;
-        layerMask = ~layerMask;
+        //TODO: WALL RUNNING
+        /*
+         * Check if wall
+         * check if normal is not pointing up
+         * check direction of relative velocity
+         */
+        Vector3 normal = collision.GetContact(0).normal;
+        normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
+        momentum -= Vector3.Dot(momentum, normal) * normal;
+    }
 
-        RaycastHit hit;
-        if (Physics.Raycast(rayCastPoint.position, Vector3.down, out hit, 200.0f, layerMask))
-        {
-            if (hit.distance <= distanceToFloor)
-            {
-                isGrounded = true;
-                Debug.Log("There's Ground");
-            }
-
-            else
-            {
-                Debug.Log("No Ground");
-                isGrounded = false;
-                momentum.y += gravityStrength * Time.deltaTime;
-                momentum.y = Mathf.Min(momentum.y, 0, hit.distance, distanceToFloor);
-            }
-            //if (Physics.Raycast(rayCastPoint.position, Vector3.down, out RaycastHit rayHit, 50, groundLayer))
-            //{
-            //    isGrounded = rayHit.distance <= distanceToFloor;
-            //    
-            //    if (!isGrounded)
-            //    {
-            //        momentum.y += currentGravity * Time.deltaTime;
-            //        momentum.y = Mathf.Min(momentum.y, 0, rayHit.distance - distanceToFloor);
-            //    }
-            //}
-
-
-        }
+    private void OnCollisionStay(Collision collision)
+    {
+        OnCollisionEnter(collision);
     }
 }

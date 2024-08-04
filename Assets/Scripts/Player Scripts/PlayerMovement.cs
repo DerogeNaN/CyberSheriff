@@ -23,7 +23,8 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb.freezeRotation = true;
-        if (inputActions == null) inputActions = new PlayerInputActions();
+        //if (inputActions == null)
+        inputActions = gameObject.GetComponent<PlayerInputActions>();
         inputActions.Player.Enable();
     }
 

@@ -11,6 +11,6 @@ public class SpeedTracker : MonoBehaviour
     
     void Update()
     {
-        tmp.text = movementScript.momentum.magnitude.ToString();
+        tmp.text = movementScript.momentum.magnitude.ToString("F3");
     }
 }

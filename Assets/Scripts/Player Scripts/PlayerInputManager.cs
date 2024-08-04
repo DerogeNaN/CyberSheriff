@@ -9,7 +9,7 @@ public class PlayerInputManager : MonoBehaviour
     [Header("Player Scripts")]
     //[SerializeField] Movement movementScript;
     [SerializeField] MouseLook mouseLookScript;
-    [SerializeField] PlayerMovement movementScript;
+    [SerializeField] Movement movementScript;
     [SerializeField] PlayerInputActions playerInputActions;
 
     private void Awake()
@@ -17,14 +17,14 @@ public class PlayerInputManager : MonoBehaviour
         //InitializePlayerInputManager();
     }
 
-    private void FixedUpdate()
-    {
-        //movementScript.UpdateMovement();
-    }
-
     private void Update()
     {
+        //movementScript.UpdateMovement();
         mouseLookScript.UpdateMouse();
+    }
+
+    private void FixedUpdate()
+    {
         movementScript.UpdateMovement();
     }
 
