@@ -964,8 +964,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218249701}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2, y: 4.743, z: -4}
-  m_LocalScale: {x: 0.2, y: 3, z: 4}
+  m_LocalPosition: {x: -2, y: 5.09, z: -4}
+  m_LocalScale: {x: 0.2, y: 10, z: 15}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 916163078}
@@ -1368,6 +1368,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4800174732242690480, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: defaultFOV
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690484, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}
       propertyPath: m_RootOrder
@@ -1422,6 +1427,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: wallrunCooldown
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690488, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}

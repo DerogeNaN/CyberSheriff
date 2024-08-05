@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2260984658961213701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5944793766377842200}
+  m_Layer: 3
+  m_Name: Camera Slide Pos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5944793766377842200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2260984658961213701}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.442, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4800174732242690484}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4800174732034069333
 GameObject:
   m_ObjectHideFlags: 0
@@ -70,6 +101,7 @@ Transform:
   - {fileID: 4800174733094763584}
   - {fileID: 4800174732479552401}
   - {fileID: 4800174732034069334}
+  - {fileID: 5944793766377842200}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -235,13 +267,20 @@ MonoBehaviour:
   jumpStrength: 0.25
   jumpGraceLength: 0.05
   wallRunSpeedThreshold: 0.1
+  slideSpeedThreshold: 0.1
+  cameraSlidePos: {fileID: 0}
   momentum: {x: 0, y: 0, z: 0}
   currDrag: 0
   currEncouragment: 0
   jumpCount: 0
   isGrounded: 1
+  isWallrunning: 0
+  isSliding: 0
   lastGroundedTime: 0
   jumpCooldown: 0.02
+  wallrunCooldown: 0.5
+  leavingWallrunTime: 0
+  lastWallrunTime: 0
   lastJumpTime: 0
   encouragedGroundMomentum: 3
   encouragedAirMomentum: 6

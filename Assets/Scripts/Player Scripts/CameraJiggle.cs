@@ -14,13 +14,11 @@ public class CameraJiggle : MonoBehaviour
         tilt = Vector3.Dot(-transform.right, Vector3.ClampMagnitude(Movement.playerMovement.momentum, maxMomentumInfluence));
         tilt /= maxMomentumInfluence;
         tilt *= headTiltAtMax;
-
-
+        
         transform.localEulerAngles = new Vector3(
             transform.localEulerAngles.x,
             transform.localEulerAngles.y,
             tilt
             );
-
     }
 }
