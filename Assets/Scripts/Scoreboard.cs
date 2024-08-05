@@ -150,22 +150,27 @@ public class Scoreboard : MonoBehaviour
             case "S":
                 rank = "A";
                 ScoreDeduction();
+                scoreTextShakeEffect.StartScorePulsateAndShake();
                 break;
             case "A":
                 rank = "B";
                 ScoreDeduction();
+                scoreTextShakeEffect.StartScorePulsateAndShake();
                 break;
             case "B":
                 rank = "C";
                 ScoreDeduction();
+                scoreTextShakeEffect.StartScorePulsateAndShake();
                 break;
             case "C":
                 rank = "D";
                 ScoreDeduction();
+                scoreTextShakeEffect.StartScorePulsateAndShake();
                 break;
             case "D":
                 rank = "E";
                 ScoreDeduction();
+                scoreTextShakeEffect.StartScorePulsateAndShake();
                 break;
             case "E":
                 ResetScore();
@@ -174,7 +179,7 @@ public class Scoreboard : MonoBehaviour
         }
         ResetCombo();
         //ScoreDeduction();
-        scoreTextShakeEffect.StartScorePulsateAndShake();
+        //scoreTextShakeEffect.StartScorePulsateAndShake();
         UpdateScoreboard();
         
     }
