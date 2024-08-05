@@ -6,8 +6,6 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    public int health = 100;
-
     public Transform target;
 
     public float sightRange = 100.0f;
@@ -48,10 +46,5 @@ public class Enemy : MonoBehaviour
             agent.destination = target.position;
         }
         else agent.enabled = false;
-    }
-
-    public virtual void Hit(int damage)
-    {
-        health -= damage;
     }
 }
