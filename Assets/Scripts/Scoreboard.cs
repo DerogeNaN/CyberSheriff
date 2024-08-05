@@ -18,7 +18,7 @@ public class Scoreboard : MonoBehaviour
     private string rank;
 
     private float decayTimer;
-    private float decayInterval = 10f; // Time in seconds before rank decays
+    public float decayInterval = 10f; // Time in seconds before rank decays
     private float decayBarMaxWidth;
 
     // Rank Colors
@@ -30,6 +30,7 @@ public class Scoreboard : MonoBehaviour
     public Color eRankColor = Color.gray;
 
     private PulsateEffect rankTextPulsateEffect;
+    private ScoreShake scoreTextShakeEffect;
 
 
     void Start()
@@ -40,6 +41,7 @@ public class Scoreboard : MonoBehaviour
         decayTimer = decayInterval;
         decayBarMaxWidth = decayBar.rectTransform.sizeDelta.x;
         rankTextPulsateEffect = rankText.GetComponent<PulsateEffect>();
+        scoreTextShakeEffect = scoreText.GetComponent<ScoreShake>();
         UpdateScoreboard();
     }
 
@@ -107,6 +109,17 @@ public class Scoreboard : MonoBehaviour
         comboMultiplier = 1;
         UpdateScoreboard();
     }
+    public void ResetScore()
+    {
+        score = 0;
+        UpdateScoreboard();
+    }
+    public void ScoreDeduction()
+    {
+        score = score/2;
+    }
+
+
 
     void UpdateRank()
     {
@@ -136,21 +149,32 @@ public class Scoreboard : MonoBehaviour
         {
             case "S":
                 rank = "A";
+                ScoreDeduction();
                 break;
             case "A":
                 rank = "B";
+                ScoreDeduction();
                 break;
             case "B":
                 rank = "C";
+                ScoreDeduction();
                 break;
             case "C":
                 rank = "D";
+                ScoreDeduction();
                 break;
             case "D":
                 rank = "E";
+                ScoreDeduction();
                 break;
+            case "E":
+                ResetScore();
+                break;
+                
         }
         ResetCombo();
+        //ScoreDeduction();
+        scoreTextShakeEffect.StartScorePulsateAndShake();
         UpdateScoreboard();
         
     }
