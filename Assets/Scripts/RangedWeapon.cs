@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,18 +17,9 @@ public class RangedWeapon : MonoBehaviour
     ///  individual Bullets 
     /// <summary>
 
-    public enum GunType
-    {
-        sidearm,
-        revolver,
-        rifle,
-        shotgun,
-    }
-
     [Serializable]
     public class GunDetails
     {
-        public GunType gunType;
         public Transform MuzzlePoint;
         public Transform SecondaryMuzzlePoint;
     }
@@ -54,7 +46,7 @@ public class RangedWeapon : MonoBehaviour
         public float altReloadTime;
     }
 
-   
+
     public GunBehaviour gunBehaviour;
 
     public AltGunBehaviour altGunBehaviour;
@@ -66,10 +58,6 @@ public class RangedWeapon : MonoBehaviour
     LineRenderer cameraLineRenderer;
 
     bool shouldDrawBulletTrail = false;
-
-    [SerializeField]
-    GameObject BulletTrail;
-
 
     [SerializeField]
     Camera camRef;
@@ -92,7 +80,7 @@ public class RangedWeapon : MonoBehaviour
         ray.direction = gunDetails.MuzzlePoint.transform.forward;
         ray.origin = gunDetails.MuzzlePoint.position;
 
-        RaycastHit hit;
+        RaycastHit hit = new RaycastHit();
         RaycastHit cameraHit;
 
         //GUN camera Interactions here 
@@ -101,6 +89,7 @@ public class RangedWeapon : MonoBehaviour
         cameraRay.direction = camRef.transform.forward;
 
         Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
+
 
         //This is just so i can see the players line of sight for now
         cameraLineRenderer.SetPosition(0, cameraRay.origin);
@@ -116,18 +105,33 @@ public class RangedWeapon : MonoBehaviour
         //Bullet visual Logic 
         if (shouldDrawBulletTrail)
         {
-            if (Physics.Raycast(ray, out hit, 20))
+            if (gunBehaviour.bulletsPerShot > 1)
             {
-               // lineRenderer.enabled = true;
-                CurrentlyHitting = hit.transform.gameObject;
-
+                Debug.Log("shotGun Behaviour");
+                for (int i = 0; i < gunBehaviour.bulletsPerShot; i++)
+                {
+                    ray.direction += new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+                    if (Physics.Raycast(ray, out hit, 20))
+                    {
+                        lineRenderer.enabled = true;
+                        CurrentlyHitting = hit.transform.gameObject;
+                    }
+                    else
+                        lineRenderer.enabled = false;
+                }
             }
             else
-                lineRenderer.enabled = false;
+            {
 
-            //Bullet Trail spawn
-            GameObject bullet = Instantiate(BulletTrail);
+                if (Physics.Raycast(ray, out hit, 20))
+                {
+                    lineRenderer.enabled = true;
+                    CurrentlyHitting = hit.transform.gameObject;
 
+                }
+                else
+                    lineRenderer.enabled = false;
+            }
 
             lineRenderer.SetPosition(0, ray.origin);
 
@@ -135,9 +139,9 @@ public class RangedWeapon : MonoBehaviour
             {
                 lineRenderer.SetPosition(1, hit.point);
             }
-            else 
+            else
             {
-                lineRenderer.SetPosition(1,barrelToLookPointDir);
+                lineRenderer.SetPosition(1, barrelToLookPointDir);
             }
 
             if (hit.rigidbody != null)
@@ -147,6 +151,7 @@ public class RangedWeapon : MonoBehaviour
         }
         else
             lineRenderer.enabled = false;
+
     }
 
     //active on beginning of Primary fire Action
