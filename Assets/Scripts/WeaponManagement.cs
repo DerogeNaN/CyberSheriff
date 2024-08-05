@@ -6,7 +6,7 @@ using UnityEngine;
 public class WeaponManagement : MonoBehaviour
 {
     [SerializeField]
-    List<RangedWeapon> weaponList;
+    List<GameObject> weaponList;
 
     [SerializeField]
     int weaponIterator = 0;
@@ -17,7 +17,7 @@ public class WeaponManagement : MonoBehaviour
 
 
     [SerializeField]
-    RangedWeapon currentActiveWeapon;
+    GameObject currentActiveWeapon;
 
 
     // Start is called before the first frame update
@@ -59,13 +59,15 @@ public class WeaponManagement : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             PrimaryFireWeapon();
+            //currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
 
         }
 
         if (Input.GetMouseButtonUp(0))
         {
 
-            currentActiveWeapon.OnprimaryFireEnd();
+            currentActiveWeapon.GetComponent<Revolver>().OnprimaryFireEnd();
+            //currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireEnd();
 
 
         }
@@ -73,25 +75,29 @@ public class WeaponManagement : MonoBehaviour
         if (Input.GetMouseButton(1))
         {
             SecondaryFireWeapon();
+            //currentActiveWeapon.GetComponent<Shotgun>().OnAltFireBegin();
 
         }
 
         if (Input.GetMouseButtonUp(1))
         {
-            currentActiveWeapon.OnAltFireEnd();
+            currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
+            //currentActiveWeapon.GetComponent<Shotgun>().OnAltFireEnd();
         }
 
 
     }
     void PrimaryFireWeapon()
     {
-        currentActiveWeapon.OnPrimaryFireBegin();
+        currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireBegin();
+        //currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
+
     }
 
 
     void SecondaryFireWeapon()
     {
-        currentActiveWeapon.OnAltFireBegin();
+        currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();
     }
 
 

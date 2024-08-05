@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.XR.Oculus.Input;
 using UnityEditor.PackageManager;
 using UnityEngine;
 
@@ -26,6 +27,9 @@ public class RangedWeapon : MonoBehaviour
 
     public GunDetails gunDetails;
 
+    [SerializeField]
+    int DamageValue = 25;
+        
     [Serializable]
     public struct GunBehaviour
     {
@@ -107,18 +111,18 @@ public class RangedWeapon : MonoBehaviour
         {
             if (gunBehaviour.bulletsPerShot > 1)
             {
-                Debug.Log("shotGun Behaviour");
-                for (int i = 0; i < gunBehaviour.bulletsPerShot; i++)
-                {
-                    ray.direction += new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
-                    if (Physics.Raycast(ray, out hit, 20))
-                    {
-                        lineRenderer.enabled = true;
-                        CurrentlyHitting = hit.transform.gameObject;
-                    }
-                    else
-                        lineRenderer.enabled = false;
-                }
+                //Debug.Log("shotGun Behaviour");
+                //for (int i = 0; i < gunBehaviour.bulletsPerShot; i++)
+                //{
+                //    ray.direction += new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+                //    if (Physics.Raycast(ray, out hit, 20))
+                //    {
+                //        lineRenderer.enabled = true;
+                //        CurrentlyHitting = hit.transform.gameObject;
+                //    }
+                //    else
+                //        lineRenderer.enabled = false;
+                //}
             }
             else
             {
@@ -147,6 +151,11 @@ public class RangedWeapon : MonoBehaviour
             if (hit.rigidbody != null)
             {
                 hit.rigidbody.AddForce(barrelToLookPointDir / 4, ForceMode.Impulse);
+            }
+            if (hit.collider.gameObject.GetComponent<Health>()) 
+            {
+                Debug.Log("Die");
+                hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue,0);
             }
         }
         else
