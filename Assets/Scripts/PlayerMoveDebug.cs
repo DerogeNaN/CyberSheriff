@@ -27,6 +27,7 @@ public class PlayerMoveDebug : MonoBehaviour
     float rotAverageY = 0F;
     public float frameCounter = 20;
     Quaternion originalRotation;
+    [SerializeField]
     float playerSpeed = 3f;
 
     void Update()
