@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
-using static RangedWeapon;
 
 public class Revolver : MonoBehaviour
 {
@@ -26,10 +25,14 @@ public class Revolver : MonoBehaviour
     LineRenderer lineRenderer;
     LineRenderer cameraLineRenderer;
 
+    [SerializeField]
     bool shouldDrawBulletTrail = false;
 
     [SerializeField]
     float bulletForceMultiplier = 1;
+
+    [SerializeField]
+    GameObject bulletTrailPrefab;
 
     [SerializeField]
     float shotGapTime = 1f;
@@ -72,8 +75,12 @@ public class Revolver : MonoBehaviour
         Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
 
         //This is just so i can see the players line of sight for now
-        cameraLineRenderer.SetPosition(0, cameraRay.origin);
-        cameraLineRenderer.SetPosition(1, cameraHit.point);
+        if (cameraHit.point != null)
+        {
+            cameraLineRenderer.SetPosition(0, cameraRay.origin);
+            cameraLineRenderer.SetPosition(1, cameraHit.point);
+        }
+      
 
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
         Vector3 barrelToLookPointDir = cameraHit.point - MuzzlePoint.transform.position;
@@ -93,63 +100,59 @@ public class Revolver : MonoBehaviour
             canFire = true;
         }
 
+        lineRenderer.enabled = false;
+
         //Bullet visual Logic 
         if (shouldDrawBulletTrail && canFire)
         {
             if (Physics.Raycast(ray, out hit, 20))
             {
-                lineRenderer.enabled = true;
+                GameObject bulletfab = Instantiate(bulletTrailPrefab);
                 CurrentlyHitting = hit.transform.gameObject;
 
+                if (hit.point != null)
+                {
+                    bulletfab.GetComponent<LineRenderer>().SetPosition(0, ray.origin);
+                    bulletfab.GetComponent<LineRenderer>().SetPosition(1, hit.point);
+                }
+             
+                if (hit.rigidbody != null)
+                {
+                    hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
+                }
+                if (hit.collider.gameObject.GetComponent<Health>())
+                {
+                    Debug.Log("Die");
+                    hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
+                }
             }
-            else
-                lineRenderer.enabled = false;
-
-            lineRenderer.SetPosition(0, ray.origin);
-
-            if (hit.point != null)
-            {
-                lineRenderer.SetPosition(1, hit.point);
-            }
-            else
-            {
-                lineRenderer.enabled = false;
-                //lineRenderer.SetPosition(1, barrelToLookPointDir);
-            }
-
-            if (hit.rigidbody != null)
-            {
-                hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
-            }
-
-            if (hit.collider.gameObject.GetComponent<Health>())
-            {
-                Debug.Log("Die");
-                hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
-            }
-
             canFire = false;
         }
-        else
-            lineRenderer.enabled = false;
+        //else
 
     }
 
     //active on beginning of Primary fire Action
     public void OnPrimaryFireBegin()
     {
-        if (timeTillBullet >= 1f)
+        if (timeTillBullet > shotGapTime)
+        {
             timeTillBullet = 0;
+            shouldDrawBulletTrail = true;
+            Debug.Log("Beginning primary Fire");
+        }
 
-        shouldDrawBulletTrail = true;
-        Debug.Log("Beginning primary Fire");
     }
 
     //Active on Begining of alt-firing action
     public void OnAltFireBegin()
     {
-        shouldDrawBulletTrail = true;
-        Debug.Log("Beginnig alt Fire");
+        if (timeTillBullet > shotGapTime)
+        {
+            timeTillBullet = 0;
+            shouldDrawBulletTrail = true;
+            Debug.Log("Beginning Alt Fire");
+        }
     }
 
     //Active every interval of Primaryfire set in this script

@@ -58,46 +58,64 @@ public class WeaponManagement : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            PrimaryFireWeapon();
-            //currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
-
+            PrimaryFireWeaponBegin();
         }
 
         if (Input.GetMouseButtonUp(0))
         {
 
-            currentActiveWeapon.GetComponent<Revolver>().OnprimaryFireEnd();
-            //currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireEnd();
-
+            PrimaryFireWeaponEnd();
 
         }
 
         if (Input.GetMouseButton(1))
         {
-            SecondaryFireWeapon();
-            //currentActiveWeapon.GetComponent<Shotgun>().OnAltFireBegin();
-
+            SecondaryFireWeaponBegin();
         }
 
         if (Input.GetMouseButtonUp(1))
         {
-            currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
-            //currentActiveWeapon.GetComponent<Shotgun>().OnAltFireEnd();
+            SecondaryFireWeaponEnd();
         }
-
-
-    }
-    void PrimaryFireWeapon()
-    {
-        currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireBegin();
-        //currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
-
     }
 
-
-    void SecondaryFireWeapon()
+    void PrimaryFireWeaponBegin()
     {
-        currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireBegin();
+
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
+    }
+
+    void PrimaryFireWeaponEnd()
+    {
+
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnprimaryFireEnd();
+
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnprimaryFireEnd();
+
+    }
+
+    void SecondaryFireWeaponEnd()
+    {
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
+
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnAltFireEnd();
+    }
+
+
+    void SecondaryFireWeaponBegin()
+    {
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();
+
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnAltFireBegin();
     }
 
 
@@ -110,7 +128,6 @@ public class WeaponManagement : MonoBehaviour
 
     void SetWeapon(int weaponIndex)
     {
-
         //set previous to false
         if (currentActiveWeapon)
             currentActiveWeapon.gameObject.SetActive(false);
