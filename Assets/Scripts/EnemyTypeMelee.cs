@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class EnemyTypeMelee : EnemyBase
 {
-    void Start()
+    new void Start()
     {
-
+        base.Start();
     }
 
-    void Update()
+    new void Update()
     {
-
+        base.Update();
     }
 }

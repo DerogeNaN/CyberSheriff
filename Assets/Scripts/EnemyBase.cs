@@ -26,12 +26,12 @@ public class EnemyBase : MonoBehaviour
     [HideInInspector] public bool shouldPath;
     NavMeshAgent pathAgent;
 
-    void Start()
+    public void Start()
     {
         pathAgent = GetComponent<NavMeshAgent>();
     }
 
-    void Update()
+    public void Update()
     {
         // if the target is out of range, don't raycast
         if ((moveTarget.position - transform.position).magnitude <= sightRange)
