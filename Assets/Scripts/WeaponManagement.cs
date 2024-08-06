@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 public class WeaponManagement : MonoBehaviour
 {
     [SerializeField]
-    List<RangedWeapon> weaponList;
+    List<GameObject> weaponList;
 
     [SerializeField]
     int weaponIterator = 0;
 
-
     [SerializeField]
     Transform WeaponGripTransform;
 
+    [SerializeField]
+    GameObject currentActiveWeapon;
 
     [SerializeField]
-    RangedWeapon currentActiveWeapon;
-
+    PlayerInputActions playerInput;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,10 @@ public class WeaponManagement : MonoBehaviour
         }
         else
             Debug.Log("no weapons found");
-
+        playerInput = new PlayerInputActions();
+        playerInput.Player.Enable();
+        playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
+        playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
     }
 
     // Update is called once per frame
@@ -55,43 +59,45 @@ public class WeaponManagement : MonoBehaviour
             SetWeapon(weaponIterator);
             Debug.Log(weaponIterator);
         }
+    }
 
-        if (Input.GetMouseButton(0))
-        {
-            PrimaryFireWeapon();
+    void PrimaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireBegin();
 
-        }
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
+    }
 
-        if (Input.GetMouseButtonUp(0))
-        {
+    void PrimaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
 
-            currentActiveWeapon.OnprimaryFireEnd();
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnprimaryFireEnd();
 
-
-        }
-
-        if (Input.GetMouseButton(1))
-        {
-            SecondaryFireWeapon();
-
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            currentActiveWeapon.OnAltFireEnd();
-        }
-
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnprimaryFireEnd();
 
     }
-    void PrimaryFireWeapon()
+
+    void SecondaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        currentActiveWeapon.OnPrimaryFireBegin();
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
+
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnAltFireEnd();
     }
 
 
-    void SecondaryFireWeapon()
+    void SecondaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        currentActiveWeapon.OnAltFireBegin();
+        if (currentActiveWeapon.GetComponent<Revolver>())
+            currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();
+
+        if (currentActiveWeapon.GetComponent<Shotgun>())
+            currentActiveWeapon.GetComponent<Shotgun>().OnAltFireBegin();
     }
 
 
@@ -104,7 +110,6 @@ public class WeaponManagement : MonoBehaviour
 
     void SetWeapon(int weaponIndex)
     {
-
         //set previous to false
         if (currentActiveWeapon)
             currentActiveWeapon.gameObject.SetActive(false);
