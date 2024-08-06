@@ -17,19 +17,26 @@ public class Movement : MonoBehaviour
     [SerializeField] float airDrag = 60f;
     [SerializeField] float groundDrag = 120f;
     [SerializeField] float jumpStrength = 10f;
-    [SerializeField] float jumpGraceLength = 0.1f;                  //Time allowed once falling to still jump
-    [SerializeField] private float wallRunSpeedThreshold = 0.1f;   //how fast the player must be moving to enter a wallrun
-    [SerializeField] private float slideSpeedThreshold = 0.1f;      //how fast the player must be moving to slide
+    [SerializeField] float jumpGraceLength = 0.1f;                              //Time allowed once falling to still jump
+    [SerializeField] float wallrunGraceLength = 0.5f;                           //Time allowed once falling off a wallrun to still jump
+    [SerializeField] private float wallrunSpeedThreshold = 0.8f;                //How fast the player must be moving to enter a wallrun
+    [SerializeField] private float wallrunAngleThreshold = 25.0f;               //How much the player has to deviate from the wall to exit the wallrun
+    [SerializeField] private float slideSpeedThreshold = 0.1f;                  //How fast the player must be moving to slide
+    [SerializeField] private float slideDragDelay = 2.5f;                       //Time it takes to start adding drag back to the player
+    [SerializeField] private float cameraWallrunTilt = 8.0f;                    //How much the camera tilts during a wallrun
+    [SerializeField][Range(0,1)] private float cameraWallrunTiltTime = 0.1f;    //How quick to tilt during wallrun 0 - never, 1 - instant
 
     [Space(10.0f)]
     [Header("Serializeable Fields")]
-    [SerializeField] PlayerInputActions playerInputActions;
     [SerializeField] Transform cameraSlidePos;
+    [SerializeField] Transform cameraDefaultPos;
+    [SerializeField] PlayerInputActions playerInputActions;
 
     [Space(10.0f)]
     [Header("Backend Variables (TEST)")]//Local Variables
     public Vector3 momentum = Vector3.zero;
-    private Vector3 moveDirection = Vector3.zero;
+    public Vector3 moveDirection = Vector3.zero;
+    private Vector3 wallTangent = Vector3.zero;
 
     public float currDrag;
     public float currEncouragment;
@@ -45,7 +52,7 @@ public class Movement : MonoBehaviour
     public float leavingWallrunTime = 0;
     public float lastWallrunTime = 0;
     public float lastJumpTime = 0;
-    public float slideCameraTransitionTime = 0.75f;
+    public float cameraSlideTransitionTime = 0.75f;
 
     [SerializeField] int encouragedGroundMomentum = 3;
     [SerializeField] int encouragedAirMomentum = 35;
@@ -70,13 +77,28 @@ public class Movement : MonoBehaviour
 
         momentumRatio = 1 / currEncouragment;
 
+        UpdateCamera();
         MovePlayer();
     }
 
     void MovePlayer()
     { 
-        Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
-        moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        if (isSliding)
+        {
+            
+        }
+
+        else if (isWallrunning)
+        {
+            Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        }
+
+        else
+        {
+            Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        }
 
         //When no key is pressed
         //if (isGrounded && moveInput.magnitude <= 0.001f)
@@ -138,21 +160,30 @@ public class Movement : MonoBehaviour
 
     private void Slide_Performed(InputAction.CallbackContext context)
     {
-        if (isGrounded && momentum.magnitude > slideSpeedThreshold)
+        if (!isWallrunning && momentum.magnitude > slideSpeedThreshold)
         {
-            
-            
-            playerInputActions.Player.Move.Disable();
-            groundDrag = 5.0f;
-            airDrag = 5.0f;
+            isSliding = true;
+            Camera.main.transform.position = cameraSlidePos.position;
         }
-       
-
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
     {
-        playerInputActions.Player.Move.Enable();
+        isSliding = false;
+        Camera.main.transform.position = cameraDefaultPos.position;
+    }
+
+    private void SlideTransition()
+    {
+        
+    }
+
+    private void UpdateCamera()
+    {
+        if (lastWallrunTime < Time.time)
+        {
+            TiltCamera(0, 0.1f);
+        }
     }
 
     private void Jump_Started(InputAction.CallbackContext context)
@@ -169,19 +200,51 @@ public class Movement : MonoBehaviour
 
             if (lastJumpTime + jumpCooldown < Time.time)
             {
-                Debug.Log("Beginning Jump");
                 if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
                 {
                     jumpCount++;
                 }
+
+                else if (lastWallrunTime + wallrunGraceLength > Time.time)
+                {
+                    jumpCount++;
+                }
+
                 else
                 {
                     jumpCount += 2;
                 }
+
                 momentum.y = jumpStrength;
                 lastJumpTime = Time.time;
             }
         }
+    }
+
+    private void TiltCamera(float tiltAngle, float tiltSpeed)
+    {
+        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
+
+        Camera.main.transform.localEulerAngles = new Vector3(
+            Camera.main.transform.localEulerAngles.x,
+            Camera.main.transform.localEulerAngles.y,
+            newCameraAngle
+            );
+    }
+
+    private void TiltCamera(float tiltAngle, float tiltSpeed, Vector3 normal)
+    {
+        float tiltCorrectionSign = Mathf.Sign(Vector3.Dot(-Camera.main.transform.right, normal));
+        //float newCameraAngle *= tilt;
+
+        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle * tiltCorrectionSign, tiltSpeed);
+
+
+        Camera.main.transform.localEulerAngles = new Vector3(
+            Camera.main.transform.localEulerAngles.x,
+            Camera.main.transform.localEulerAngles.y,
+            newCameraAngle
+            );
     }
 
     void CheckForOncomingCollision()
@@ -204,27 +267,23 @@ public class Movement : MonoBehaviour
         Vector3 normal = collision.GetContact(0).normal;
         normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
 
-        float tilt = Vector3.Dot(-Camera.main.transform.right, normal);
-        tilt *= 10.0f;
-
-
-        Camera.main.transform.localEulerAngles = new Vector3(
-            Camera.main.transform.localEulerAngles.x,
-            Camera.main.transform.localEulerAngles.y,
-            tilt
-            );
+        TiltCamera(cameraWallrunTilt, cameraWallrunTiltTime, normal);
 
         //If the normal of the wall collision points not up or down
         if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
         {
             Vector3 tangent = Vector3.Cross(Vector3.up, normal);
+            wallTangent = tangent;
             float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
 
-            if(Mathf.Abs(wallSpeed) > wallRunSpeedThreshold)
+            Vector3 newMomentum = momentum.magnitude * wallTangent;
+
+            if(Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
             {
                 lastWallrunTime = Time.time;
                 isWallrunning = true;
-                momentum = wallSpeed * tangent;
+                momentum = newMomentum;
+                //momentum = wallSpeed * tangent;
                 jumpCount = 0;
                 return;
             }
@@ -240,6 +299,8 @@ public class Movement : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
+        Debug.Log("Leaving collision");
+        
         if (isWallrunning)
         {
             leavingWallrunTime = Time.time;
