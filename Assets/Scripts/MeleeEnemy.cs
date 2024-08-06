@@ -23,6 +23,7 @@ public class MeleeEnemy : Enemy
     [SerializeField] State state;
     [SerializeField] float stun = 0;
     [SerializeField] TMP_Text debugStateText;
+    [SerializeField] GameObject hitbox;
 
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
@@ -95,7 +96,7 @@ public class MeleeEnemy : Enemy
                     // if just entered this state
                     if (remainingAttackTime == attackTime)
                     {
-                        
+                        Instantiate(hitbox, transform);
                     }
 
                     // when the attack timer ends, go back to idling
