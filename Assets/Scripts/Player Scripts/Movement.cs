@@ -30,7 +30,7 @@ public class Movement : MonoBehaviour
     [Header("Serializeable Fields")]
     [SerializeField] Transform cameraSlidePos;
     [SerializeField] Transform cameraDefaultPos;
-    [SerializeField] PlayerInputActions playerInputActions;
+    [SerializeField] public PlayerInputActions playerInputActions;
 
     [Space(10.0f)]
     [Header("Backend Variables (TEST)")]//Local Variables
