@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5788482229808586439}
   - component: {fileID: 3322556585824560636}
   - component: {fileID: 151003735477591930}
-  - component: {fileID: 2488332862484352741}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -84,19 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2488332862484352741
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3906879935130926311}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4530331698740542915
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,7 +94,6 @@ GameObject:
   - component: {fileID: 169773599759054392}
   - component: {fileID: 5238299040828416201}
   - component: {fileID: 583594564347784807}
-  - component: {fileID: 6146939751116320234}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -181,19 +166,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6146939751116320234
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4530331698740542915}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2231238830810396441
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -306,7 +278,8 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.55
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2130563852130208002, guid: cc0c26561b19eb043aac431664bc6547, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: cc0c26561b19eb043aac431664bc6547, type: 3}
 --- !u!4 &6557983878154439502 stripped
 Transform:
@@ -314,6 +287,38 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2231238830810396441}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6789747936353941527 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4669375346369597198, guid: cc0c26561b19eb043aac431664bc6547,
+    type: 3}
+  m_PrefabInstance: {fileID: 2231238830810396441}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8319209818055368239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6789747936353941527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa2980a7d0870641aff585425f9f9f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MuzzlePoint: {fileID: 8142602907630782861}
+  SecondaryMuzzlePoint: {fileID: 8142602907630782861}
+  DamageValue: 25
+  CurrentlyHitting: {fileID: 0}
+  shouldDrawBulletTrail: 0
+  bulletForceMultiplier: 1
+  bulletTrailPrefab: {fileID: 7806430457410555219, guid: 3443df8f4746bf746af5214bdad02c63,
+    type: 3}
+  shotGapTime: 1
+  Spread: 0.2
+  BulletsPerShot: 8
+  timeTillBullet: 0
+  canFire: 0
+  camRef: {fileID: 0}
 --- !u!4 &8142602907630782861 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8067818100082851476, guid: cc0c26561b19eb043aac431664bc6547,

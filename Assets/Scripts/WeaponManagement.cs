@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,14 +12,14 @@ public class WeaponManagement : MonoBehaviour
     [SerializeField]
     int weaponIterator = 0;
 
-
     [SerializeField]
     Transform WeaponGripTransform;
-
 
     [SerializeField]
     GameObject currentActiveWeapon;
 
+    [SerializeField]
+    PlayerInputActions playerInput;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,10 @@ public class WeaponManagement : MonoBehaviour
         }
         else
             Debug.Log("no weapons found");
-
+        playerInput = new PlayerInputActions();
+        playerInput.Player.Enable();
+        playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
+        playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
     }
 
     // Update is called once per frame
@@ -55,31 +59,9 @@ public class WeaponManagement : MonoBehaviour
             SetWeapon(weaponIterator);
             Debug.Log(weaponIterator);
         }
-
-        if (Input.GetMouseButton(0))
-        {
-            PrimaryFireWeaponBegin();
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-
-            PrimaryFireWeaponEnd();
-
-        }
-
-        if (Input.GetMouseButton(1))
-        {
-            SecondaryFireWeaponBegin();
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            SecondaryFireWeaponEnd();
-        }
     }
 
-    void PrimaryFireWeaponBegin()
+    void PrimaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (currentActiveWeapon.GetComponent<Revolver>())
             currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireBegin();
@@ -88,7 +70,7 @@ public class WeaponManagement : MonoBehaviour
             currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
     }
 
-    void PrimaryFireWeaponEnd()
+    void PrimaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
 
         if (currentActiveWeapon.GetComponent<Revolver>())
@@ -99,7 +81,7 @@ public class WeaponManagement : MonoBehaviour
 
     }
 
-    void SecondaryFireWeaponEnd()
+    void SecondaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (currentActiveWeapon.GetComponent<Revolver>())
             currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
@@ -109,7 +91,7 @@ public class WeaponManagement : MonoBehaviour
     }
 
 
-    void SecondaryFireWeaponBegin()
+    void SecondaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (currentActiveWeapon.GetComponent<Revolver>())
             currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();

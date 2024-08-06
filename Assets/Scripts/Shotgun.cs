@@ -24,7 +24,6 @@ public class Shotgun : MonoBehaviour
     [SerializeField]
     public GameObject CurrentlyHitting;
 
-    LineRenderer lineRenderer;
     LineRenderer cameraLineRenderer;
 
     [SerializeField]
@@ -56,10 +55,11 @@ public class Shotgun : MonoBehaviour
     [SerializeField]
     Camera camRef;
 
+
+    
     // Start is called before the first frame update
     void Start()
     {
-        lineRenderer = GetComponent<LineRenderer>();
         camRef = FindAnyObjectByType<Camera>();
         cameraLineRenderer = camRef.GetComponent<LineRenderer>();
        
@@ -80,7 +80,7 @@ public class Shotgun : MonoBehaviour
         Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
 
         //This is just so i can see the players line of sight for now
-        if (cameraHit.point != null)
+        if (cameraHit.point != null  && cameraLineRenderer)
         {
             cameraLineRenderer.SetPosition(0, cameraRay.origin);
             cameraLineRenderer.SetPosition(1, cameraHit.point);
@@ -106,8 +106,6 @@ public class Shotgun : MonoBehaviour
             Debug.Log("CanFire!");
             canFire = true;
         }
-
-        lineRenderer.enabled = false;
 
         //Bullet visual Logic 
         if (shouldDrawBulletTrail && canFire)
