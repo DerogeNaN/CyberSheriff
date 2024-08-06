@@ -92,6 +92,12 @@ public class MeleeEnemy : Enemy
 
             case State.attacking:
                 {
+                    // if just entered this state
+                    if (remainingAttackTime == attackTime)
+                    {
+                        
+                    }
+
                     // when the attack timer ends, go back to idling
                     if (remainingAttackTime <= 0)
                     {

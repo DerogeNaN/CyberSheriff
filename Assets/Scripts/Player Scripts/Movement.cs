@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour
 
     [Space(10.0f)]
     [Header("Serializeable Fields")]
-    [SerializeField] PlayerInputActions playerInputActions;
+    public PlayerInputActions playerInputActions;
     [SerializeField] Transform cameraSlidePos;
 
     [Space(10.0f)]
