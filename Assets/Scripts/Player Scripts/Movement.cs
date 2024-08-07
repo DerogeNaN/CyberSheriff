@@ -8,55 +8,110 @@ using UnityEngine.InputSystem;
 public class Movement : MonoBehaviour
 {
     public static Movement playerMovement;
+    public PlayerInputActions playerInputActions;
 
+    #region Movement
     [Header("Movement Settings")]
-    [SerializeField] public float moveSpeed = 4.0f;
-    [SerializeField] float maxSpeed = 0.035f;
-    [SerializeField] float maxPlayerInputSpeed = 0.015f;
-    [SerializeField] float gravityStrength = -1.0f;
-    [SerializeField] float airDrag = 60f;
-    [SerializeField] float groundDrag = 120f;
-    [SerializeField] float jumpStrength = 10f;
-    [SerializeField] float jumpGraceLength = 0.1f;                              //Time allowed once falling to still jump
-    [SerializeField] float wallrunGraceLength = 0.5f;                           //Time allowed once falling off a wallrun to still jump
-    [SerializeField] private float wallrunSpeedThreshold = 0.8f;                //How fast the player must be moving to enter a wallrun
-    [SerializeField] private float wallrunAngleThreshold = 25.0f;               //How much the player has to deviate from the wall to exit the wallrun
-    [SerializeField] private float slideSpeedThreshold = 0.1f;                  //How fast the player must be moving to slide
-    [SerializeField] private float slideDragDelay = 2.5f;                       //Time it takes to start adding drag back to the player
-    [SerializeField] private float cameraWallrunTilt = 8.0f;                    //How much the camera tilts during a wallrun
-    [SerializeField][Range(0,1)] private float cameraWallrunTiltTime = 0.1f;    //How quick to tilt during wallrun 0 - never, 1 - instant
+    [SerializeField][Tooltip("How fast the player moves (Think of this as acceleration)")]
+    public float moveSpeed = 4.0f;
 
-    [Space(10.0f)]
-    [Header("Serializeable Fields")]
+    [SerializeField][Tooltip("The maximum speed the player can move with just WASD input")]
+    private float maxPlayerInputSpeed = 2.0f;
+
+    [SerializeField][Tooltip("The maximum speed the player can move through any means")]
+    private float maxSpeed = 100.0f;
+
+    //Backend Variables:
+
+    #endregion
+
+    #region Jumping
+    [Header("Jump Settings")]
+    [SerializeField][Tooltip("How powerful the jump is")]
+    private float jumpStrength = 0.25f;
+
+    [SerializeField][Tooltip("Time allowed once falling to still jump (This is meant to be small / unnoticeable)")]
+    private float jumpGraceLength = 0.05f;                                      //Time allowed once falling to still jump
+
+    [SerializeField][Tooltip("Same as Jump Grace Length but for wallruns")]
+    private float wallrunJumpGraceLength = 0.5f;                                //Time allowed once falling off a wallrun to still jump
+    #endregion
+
+    #region Physics
+    [Header("Physic Settings")]
+    [SerializeField]
+    private float gravityStrength = 5f;
+
+    [SerializeField][Tooltip("Drag is basically friction")] 
+    private float airDrag = 10f;
+
+    [SerializeField][Tooltip("Drag is basically friction")] 
+    private float groundDrag = 15f;
+    #endregion
+
+    #region Sliding
+    [Header("Slide Settings")][SerializeField][Tooltip("How fast the player must be moving to slide")]
+    private float slideSpeedThreshold = 0.1f;                                   //How fast the player must be moving to slide
+
+    [SerializeField]
+    [Tooltip("WIP - Not functional ATM!")]
+    private float slideDragDelay = 2.5f;                                        //Time it takes to start adding drag back to the player
+    #endregion
+
+    #region Wall Running
+    [Header("Wall Run Settings")]
+    [SerializeField][Tooltip("How fast the player must be moving to enter a wallrun")]
+    private float wallrunSpeedThreshold = 0.1f;                                 //How fast the player must be moving to enter a wallrun
+
+    [SerializeField][Tooltip("WIP - Not functional ATM!")] 
+    private float wallrunAngleThreshold = 25.0f;                                //How much the player has to deviate from the wall to exit the wallrun
+    #endregion
+
+    #region Camera
+    [Header("Camera Settings - TEMPORARY! WILL BE MOVED")]
     [SerializeField] Transform cameraSlidePos;
     [SerializeField] Transform cameraDefaultPos;
-    [SerializeField] public PlayerInputActions playerInputActions;
+    [SerializeField][Tooltip("How much the camera tilts during wallruns in degrees")]
+    private float cameraWallrunTilt = 8.0f;                                     //How much the camera tilts during a wallrun
+
+    [SerializeField][Range(0, 1)][Tooltip("How quick to tilt during wallrun (0 - never, 1 - instant)")]
+    private float cameraWallrunTiltTime = 0.2f;                                 //How quick to tilt during wallrun 0 - never, 1 - instant
+
+    [SerializeField][Tooltip("WIP - Not functional ATM!")]
+    public float cameraSlideTransitionTime = 0.75f;
+    #endregion
 
     [Space(10.0f)]
-    [Header("Backend Variables (TEST)")]//Local Variables
+    [Header("Backend Variables (TEST)")]    //Local Variables
     public Vector3 momentum = Vector3.zero;
     public Vector3 moveDirection = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
 
-    public float currDrag;
-    public float currEncouragment;
-    private float momentumRatio;
-    private float actualGravity = 0;
-    public int jumpCount = 0;
-    public bool isGrounded = true;
+    //----WALLRUNNING----
     public bool isWallrunning = false;
-    public bool isSliding = false;
-    public float lastGroundedTime = 0;
-    public float jumpCooldown = 0.01f;
     public float wallrunCooldown = 0.5f;
     public float leavingWallrunTime = 0;
     public float lastWallrunTime = 0;
-    public float lastJumpTime = 0;
-    public float cameraSlideTransitionTime = 0.75f;
 
-    [SerializeField] int encouragedGroundMomentum = 3;
-    [SerializeField] int encouragedAirMomentum = 35;
-    
+    //----SLIDING----
+    public bool isSliding = false;
+
+    //----PHYSICS----
+    public float currDrag;
+    public float currEncouragment;
+    public int encouragedGroundMomentum = 3;
+    public int encouragedAirMomentum = 35;
+    private float momentumRatio;
+    private float actualGravity = 0;
+
+    //----JUMPING----
+    public int jumpCount = 0;
+    public float jumpCooldown = 0.01f;
+    public float lastJumpTime = 0;
+
+    //----MOVEMENT----
+    public bool isGrounded = true;
+    public float lastGroundedTime = 0;
 
     void Start()
     {
@@ -205,7 +260,7 @@ public class Movement : MonoBehaviour
                     jumpCount++;
                 }
 
-                else if (lastWallrunTime + wallrunGraceLength > Time.time)
+                else if (lastWallrunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
                 }
