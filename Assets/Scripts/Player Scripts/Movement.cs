@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -78,7 +79,7 @@ public class Movement : MonoBehaviour
     private float cameraWallrunTiltTime = 0.2f;                                 //How quick to tilt during wallrun 0 - never, 1 - instant
 
     [SerializeField][Tooltip("WIP - Not functional ATM!")]
-    public float cameraSlideTransitionTime = 0.75f;
+    public float cameraSlideTransitionTime = 0.1f;
     #endregion
 
     [Space(10.0f)]
@@ -86,12 +87,14 @@ public class Movement : MonoBehaviour
     public Vector3 momentum = Vector3.zero;
     public Vector3 moveDirection = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
+    private Vector3 wallNormal = Vector3.zero;
 
     //----WALLRUNNING----
     public bool isWallrunning = false;
     public float wallrunCooldown = 0.5f;
     public float leavingWallrunTime = 0;
     public float lastWallrunTime = 0;
+    public float cameraLeaveWallrunTime = 0;
 
     //----SLIDING----
     public bool isSliding = false;
@@ -108,6 +111,7 @@ public class Movement : MonoBehaviour
     public int jumpCount = 0;
     public float jumpCooldown = 0.01f;
     public float lastJumpTime = 0;
+    public float bunnyHopGrace = 0.05f;
 
     //----MOVEMENT----
     public bool isGrounded = true;
@@ -140,17 +144,20 @@ public class Movement : MonoBehaviour
     { 
         if (isSliding)
         {
-            
+            SlideStartTransition();
         }
 
         else if (isWallrunning)
         {
+            TiltCamera(cameraWallrunTilt, cameraWallrunTiltTime, wallNormal);
             Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
         }
 
         else
         {
+            TiltCamera(0, cameraWallrunTiltTime);
+            SlideExitTransition();
             Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
         }
@@ -218,19 +225,30 @@ public class Movement : MonoBehaviour
         if (!isWallrunning && momentum.magnitude > slideSpeedThreshold)
         {
             isSliding = true;
-            Camera.main.transform.position = cameraSlidePos.position;
         }
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
     {
         isSliding = false;
-        Camera.main.transform.position = cameraDefaultPos.position;
+
+        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraDefaultPos.position.y, cameraSlideTransitionTime);
+
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
     }
 
-    private void SlideTransition()
+    private void SlideStartTransition()
     {
-        
+        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraSlidePos.position.y, cameraSlideTransitionTime);
+
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+    }
+
+    private void SlideExitTransition()
+    {
+        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraDefaultPos.position.y, cameraSlideTransitionTime);
+
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
     }
 
     private void UpdateCamera()
@@ -315,14 +333,14 @@ public class Movement : MonoBehaviour
         }
     }
 
-    //TODO: Add isWallRunning to mess with gravity
+    //TODO: Mess with gravity
     //TODO: Add dirtyflag check in jump to add Wall Run Boost
     private void OnCollisionEnter(Collision collision)
     { 
         Vector3 normal = collision.GetContact(0).normal;
         normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
 
-        TiltCamera(cameraWallrunTilt, cameraWallrunTiltTime, normal);
+        wallNormal = normal;
 
         //If the normal of the wall collision points not up or down
         if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
@@ -331,14 +349,15 @@ public class Movement : MonoBehaviour
             wallTangent = tangent;
             float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
 
-            Vector3 newMomentum = momentum.magnitude * wallTangent;
+            //Vector3 newMomentum = momentum.magnitude * wallTangent;
 
             if(Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
             {
                 lastWallrunTime = Time.time;
+                cameraLeaveWallrunTime = Time.time + 0.2f;
                 isWallrunning = true;
-                momentum = newMomentum;
-                //momentum = wallSpeed * tangent;
+                //momentum = newMomentum;
+                momentum = wallSpeed * tangent;
                 jumpCount = 0;
                 return;
             }

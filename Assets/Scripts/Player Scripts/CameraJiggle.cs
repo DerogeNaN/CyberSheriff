@@ -10,7 +10,7 @@ public class CameraJiggle : MonoBehaviour
 
     void Update()
     {
-        if (!Movement.playerMovement.isWallrunning && !Movement.playerMovement.isSliding)
+        if (!Movement.playerMovement.isWallrunning && !Movement.playerMovement.isSliding && Time.time > Movement.playerMovement.cameraLeaveWallrunTime)
         {
             tilt = Vector3.Dot(-transform.right, Vector3.ClampMagnitude(Movement.playerMovement.momentum, maxMomentumInfluence));
             tilt /= maxMomentumInfluence;
