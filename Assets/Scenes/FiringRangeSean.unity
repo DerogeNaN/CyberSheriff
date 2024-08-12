@@ -396,25 +396,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
---- !u!1 &683091473 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2361087235697087809, guid: 1009bba69472cd9448f86ce89df32e04,
-    type: 3}
-  m_PrefabInstance: {fileID: 1910930042}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &683091475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 683091473}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c5d96ba84043fb4cb16c9a84bafeccd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  camera: {fileID: 0}
 --- !u!1 &745977364
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,6 +639,12 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
+--- !u!4 &823915563 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1192995849706648257, guid: 1009bba69472cd9448f86ce89df32e04,
+    type: 3}
+  m_PrefabInstance: {fileID: 1910930042}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &859680146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1080,6 +1067,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+--- !u!4 &1406024638 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5944793766377842200, guid: 1009bba69472cd9448f86ce89df32e04,
+    type: 3}
+  m_PrefabInstance: {fileID: 1910930042}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1910930042
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1172,6 +1165,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 1009bba69472cd9448f86ce89df32e04,
+        type: 3}
+      propertyPath: cameraSlidePos
+      value: 
+      objectReference: {fileID: 1406024638}
+    - target: {fileID: 4800174732242690487, guid: 1009bba69472cd9448f86ce89df32e04,
+        type: 3}
+      propertyPath: cameraDefaultPos
+      value: 
+      objectReference: {fileID: 823915563}
     - target: {fileID: 4800174732242690488, guid: 1009bba69472cd9448f86ce89df32e04,
         type: 3}
       propertyPath: m_Name

@@ -56,13 +56,13 @@ public class Shotgun : MonoBehaviour
     Camera camRef;
 
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
         camRef = FindAnyObjectByType<Camera>();
         cameraLineRenderer = camRef.GetComponent<LineRenderer>();
-       
+
 
     }
 
@@ -80,12 +80,12 @@ public class Shotgun : MonoBehaviour
         Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
 
         //This is just so i can see the players line of sight for now
-        if (cameraHit.point != null  && cameraLineRenderer)
+        if (cameraHit.point != null && cameraLineRenderer)
         {
             cameraLineRenderer.SetPosition(0, cameraRay.origin);
             cameraLineRenderer.SetPosition(1, cameraHit.point);
         }
-        else 
+        else
         {
             Debug.Log("Not Looking at anything");
         }
@@ -128,10 +128,19 @@ public class Shotgun : MonoBehaviour
                         bulletfab.GetComponent<LineRenderer>().SetPosition(1, hit.point);
                     }
 
-                    if (hit.rigidbody != null)
+
+                    if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
                     {
+                        Debug.Log("Root" + hit.rigidbody.transform.root);
+                        Debug.Log("Impulse" + hit.rigidbody.name);
                         hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
                     }
+                    else
+                    {
+                        Debug.Log("part of The Player ");
+                    }
+
+
                     if (hit.collider.gameObject.GetComponent<Health>())
                     {
                         Debug.Log("Die");
