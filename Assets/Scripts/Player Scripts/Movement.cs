@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,40 +9,113 @@ using UnityEngine.InputSystem;
 public class Movement : MonoBehaviour
 {
     public static Movement playerMovement;
+    public PlayerInputActions playerInputActions;
 
+    #region Movement
     [Header("Movement Settings")]
-    [SerializeField] public float moveSpeed = 4.0f;
-    [SerializeField] float maxSpeed = 0.035f;
-    [SerializeField] float maxPlayerInputSpeed = 0.015f;
-    [SerializeField] float gravityStrength = -1.0f;
-    [SerializeField] float airDrag = 60f;
-    [SerializeField] float groundDrag = 120f;
-    [SerializeField] float jumpStrength = 10f;
-    [SerializeField] float jumpGraceLength = 0.1f; //Time allowed after being grounded for first jump
-    [SerializeField] private float wallRunSpeedThreshold = 0.25f;
+    [SerializeField][Tooltip("How fast the player moves (Think of this as acceleration)")]
+    public float moveSpeed = 4.0f;
+
+    [SerializeField][Tooltip("The maximum speed the player can move with just WASD input")]
+    private float maxPlayerInputSpeed = 2.0f;
+
+    [SerializeField][Tooltip("The maximum speed the player can move through any means")]
+    private float maxSpeed = 100.0f;
+
+    //Backend Variables:
+
+    #endregion
+
+    #region Jumping
+    [Header("Jump Settings")]
+    [SerializeField][Tooltip("How powerful the jump is")]
+    private float jumpStrength = 0.25f;
+
+    [SerializeField][Tooltip("Time allowed once falling to still jump (This is meant to be small / unnoticeable)")]
+    private float jumpGraceLength = 0.05f;                                      //Time allowed once falling to still jump
+
+    [SerializeField][Tooltip("Same as Jump Grace Length but for wallruns")]
+    private float wallrunJumpGraceLength = 0.5f;                                //Time allowed once falling off a wallrun to still jump
+    #endregion
+
+    #region Physics
+    [Header("Physic Settings")]
+    [SerializeField]
+    private float gravityStrength = 5f;
+
+    [SerializeField][Tooltip("Drag is basically friction")] 
+    private float airDrag = 10f;
+
+    [SerializeField][Tooltip("Drag is basically friction")] 
+    private float groundDrag = 15f;
+    #endregion
+
+    #region Sliding
+    [Header("Slide Settings")][SerializeField][Tooltip("How fast the player must be moving to slide")]
+    private float slideSpeedThreshold = 0.1f;                                   //How fast the player must be moving to slide
+
+    [SerializeField]
+    [Tooltip("WIP - Not functional ATM!")]
+    private float slideDragDelay = 2.5f;                                        //Time it takes to start adding drag back to the player
+    #endregion
+
+    #region Wall Running
+    [Header("Wall Run Settings")]
+    [SerializeField][Tooltip("How fast the player must be moving to enter a wallrun")]
+    private float wallrunSpeedThreshold = 0.1f;                                 //How fast the player must be moving to enter a wallrun
+
+    [SerializeField][Tooltip("WIP - Not functional ATM!")] 
+    private float wallrunAngleThreshold = 25.0f;                                //How much the player has to deviate from the wall to exit the wallrun
+    #endregion
+
+    #region Camera
+    [Header("Camera Settings - TEMPORARY! WILL BE MOVED")]
+    [SerializeField] Transform cameraSlidePos;
+    [SerializeField] Transform cameraDefaultPos;
+    [SerializeField][Tooltip("How much the camera tilts during wallruns in degrees")]
+    private float cameraWallrunTilt = 8.0f;                                     //How much the camera tilts during a wallrun
+
+    [SerializeField][Range(0, 1)][Tooltip("How quick to tilt during wallrun (0 - never, 1 - instant)")]
+    private float cameraWallrunTiltTime = 0.2f;                                 //How quick to tilt during wallrun 0 - never, 1 - instant
+
+    [SerializeField][Tooltip("WIP - Not functional ATM!")]
+    public float cameraSlideTransitionTime = 0.1f;
+    #endregion
 
     [Space(10.0f)]
-    [Header("Serializeable Fields")]
-    [SerializeField] PlayerInputActions playerInputActions;
-
-    [Space(10.0f)]
-    [Header("Backend Variables (TEST)")]//Local Variables
+    [Header("Backend Variables (TEST)")]    //Local Variables
     public Vector3 momentum = Vector3.zero;
-    private Vector3 moveDirection = Vector3.zero;
+    public Vector3 moveDirection = Vector3.zero;
+    private Vector3 wallTangent = Vector3.zero;
+    private Vector3 wallNormal = Vector3.zero;
 
+    //----WALLRUNNING----
+    public bool isWallrunning = false;
+    public float wallrunCooldown = 0.5f;
+    public float leavingWallrunTime = 0;
+    public float lastWallrunTime = 0;
+    public float cameraLeaveWallrunTime = 0;
+
+    //----SLIDING----
+    public bool isSliding = false;
+
+    //----PHYSICS----
     public float currDrag;
     public float currEncouragment;
+    public int encouragedGroundMomentum = 3;
+    public int encouragedAirMomentum = 35;
     private float momentumRatio;
     private float actualGravity = 0;
+
+    //----JUMPING----
     public int jumpCount = 0;
+    public float jumpCooldown = 0.01f;
+    public float lastJumpTime = 0;
+    public float bunnyHopGrace = 0.05f;
+
+    //----MOVEMENT----
     public bool isGrounded = true;
     public float lastGroundedTime = 0;
-    public float jumpCooldown = 0.01f;
-    public float lastJumpTime;
-
-    [SerializeField] int encouragedGroundMomentum = 3;
-    [SerializeField] int encouragedAirMomentum = 35;
-    
 
     void Start()
     {
@@ -62,13 +136,31 @@ public class Movement : MonoBehaviour
 
         momentumRatio = 1 / currEncouragment;
 
+        UpdateCamera();
         MovePlayer();
     }
 
     void MovePlayer()
     { 
-        Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
-        moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        if (isSliding)
+        {
+            SlideStartTransition();
+        }
+
+        else if (isWallrunning)
+        {
+            TiltCamera(cameraWallrunTilt, cameraWallrunTiltTime, wallNormal);
+            Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        }
+
+        else
+        {
+            TiltCamera(0, cameraWallrunTiltTime);
+            SlideExitTransition();
+            Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        }
 
         //When no key is pressed
         //if (isGrounded && moveInput.magnitude <= 0.001f)
@@ -80,16 +172,17 @@ public class Movement : MonoBehaviour
         //else
         {
             Vector3 playerWASDMomentum = Vector3.zero;
+
             //Implement momentum ratio where the higher "encouragedMomentum" is in "baseMomentumRatio", the more effort it takes to change the current momentum direction
             playerWASDMomentum += moveDirection * moveSpeed * momentumRatio;
             Vector3 momentumNoY = new Vector3(momentum.x, 0, momentum.z);
             float encouragedAmount = Vector3.Dot(moveDirection, momentumNoY.normalized) * (1 - momentumRatio);
             playerWASDMomentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
             playerWASDMomentum += momentum;
-            if (momentum.magnitude > maxPlayerInputSpeed)
-                momentum = Vector3.ClampMagnitude(playerWASDMomentum, momentum.magnitude);
-            else
-                momentum = playerWASDMomentum;
+
+            if (momentum.magnitude > maxPlayerInputSpeed) momentum = Vector3.ClampMagnitude(playerWASDMomentum, momentum.magnitude);
+
+            else momentum = playerWASDMomentum;
         }
 
         Gravity();
@@ -99,16 +192,11 @@ public class Movement : MonoBehaviour
         momentum.x *= currDrag;
         momentum.z *= currDrag;
 
-
-
         CheckForOncomingCollision();
-
 
         momentum = Vector3.ClampMagnitude(momentum, maxSpeed);
         transform.position += momentum;
     }
-
-
 
     void Gravity()
     {
@@ -128,32 +216,110 @@ public class Movement : MonoBehaviour
         if (playerInputActions == null) playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
         playerInputActions.Player.Jump.started += Jump_Started;
+        playerInputActions.Player.Slide.performed += Slide_Performed;
+        playerInputActions.Player.Slide.canceled += Slide_Cancelled;
+    }
+
+    private void Slide_Performed(InputAction.CallbackContext context)
+    {
+        if (!isWallrunning && momentum.magnitude > slideSpeedThreshold)
+        {
+            isSliding = true;
+        }
+    }
+
+    private void Slide_Cancelled(InputAction.CallbackContext context)
+    {
+        isSliding = false;
+
+        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraDefaultPos.position.y, cameraSlideTransitionTime);
+
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+    }
+
+    private void SlideStartTransition()
+    {
+        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraSlidePos.position.y, cameraSlideTransitionTime);
+
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+    }
+
+    private void SlideExitTransition()
+    {
+        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraDefaultPos.position.y, cameraSlideTransitionTime);
+
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+    }
+
+    private void UpdateCamera()
+    {
+        if (lastWallrunTime < Time.time)
+        {
+            TiltCamera(0, 0.1f);
+        }
     }
 
     private void Jump_Started(InputAction.CallbackContext context)
     {
-
-        Debug.Log("Starting Jump");
         if (jumpCount < 2)
         {
             isGrounded = false;
-            Debug.Log("Have enoough jump counts");
+
+            if (isWallrunning)
+            {
+                leavingWallrunTime = Time.time;
+                isWallrunning = false;
+            }
+
             if (lastJumpTime + jumpCooldown < Time.time)
             {
-                Debug.Log("Beginning Jump");
                 if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
                 {
                     jumpCount++;
                 }
+
+                else if (lastWallrunTime + wallrunJumpGraceLength > Time.time)
+                {
+                    jumpCount++;
+                }
+
                 else
                 {
                     jumpCount += 2;
                 }
+
                 momentum.y = jumpStrength;
                 lastJumpTime = Time.time;
             }
         }
     }
+
+    private void TiltCamera(float tiltAngle, float tiltSpeed)
+    {
+        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
+
+        Camera.main.transform.localEulerAngles = new Vector3(
+            Camera.main.transform.localEulerAngles.x,
+            Camera.main.transform.localEulerAngles.y,
+            newCameraAngle
+            );
+    }
+
+    private void TiltCamera(float tiltAngle, float tiltSpeed, Vector3 normal)
+    {
+        float tiltCorrectionSign = Mathf.Sign(Vector3.Dot(-Camera.main.transform.right, normal));
+        //float newCameraAngle *= tilt;
+
+        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle * tiltCorrectionSign, tiltSpeed);
+
+
+        Camera.main.transform.localEulerAngles = new Vector3(
+            Camera.main.transform.localEulerAngles.x,
+            Camera.main.transform.localEulerAngles.y,
+            newCameraAngle
+            );
+    }
+
     void CheckForOncomingCollision()
     {
         RaycastHit hit;
@@ -167,33 +333,52 @@ public class Movement : MonoBehaviour
         }
     }
 
-    //TODO: Add isWallRunning to mess with gravity
+    //TODO: Mess with gravity
     //TODO: Add dirtyflag check in jump to add Wall Run Boost
     private void OnCollisionEnter(Collision collision)
     { 
         Vector3 normal = collision.GetContact(0).normal;
         normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
 
+        wallNormal = normal;
+
         //If the normal of the wall collision points not up or down
-        if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f)
+        if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
         {
-            Debug.Log(collision.gameObject);
             Vector3 tangent = Vector3.Cross(Vector3.up, normal);
+            wallTangent = tangent;
             float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
 
-            if(Mathf.Abs(wallSpeed) > wallRunSpeedThreshold)
+            //Vector3 newMomentum = momentum.magnitude * wallTangent;
+
+            if(Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
             {
+                lastWallrunTime = Time.time;
+                cameraLeaveWallrunTime = Time.time + 0.2f;
+                isWallrunning = true;
+                //momentum = newMomentum;
                 momentum = wallSpeed * tangent;
+                jumpCount = 0;
                 return;
             }
         }
 
         momentum -= Vector3.Dot(momentum, normal) * normal;
-
     }
 
     private void OnCollisionStay(Collision collision)
     {
         OnCollisionEnter(collision);
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        Debug.Log("Leaving collision");
+        
+        if (isWallrunning)
+        {
+            leavingWallrunTime = Time.time;
+            isWallrunning = false;
+        }
     }
 }

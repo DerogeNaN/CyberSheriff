@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4012385076323613928}
   - component: {fileID: 3097558695087239297}
   - component: {fileID: 842705515418664828}
-  - component: {fileID: 3351203091885745584}
   m_Layer: 0
   m_Name: Grip Handle
   m_TagString: Untagged
@@ -86,19 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3351203091885745584
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3625444760467483552}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4491052517974547448
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,7 +96,6 @@ GameObject:
   - component: {fileID: 168559710312681812}
   - component: {fileID: 875333029607243018}
   - component: {fileID: 8418904302336567689}
-  - component: {fileID: 4695001013727075685}
   m_Layer: 0
   m_Name: Barrel
   m_TagString: Untagged
@@ -184,19 +169,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4695001013727075685
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4491052517974547448}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4669375346369597198
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,8 +178,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5040742335430835287}
-  - component: {fileID: 9185356164691267817}
-  - component: {fileID: 2866137302769575499}
+  - component: {fileID: 2130563852130208002}
   m_Layer: 0
   m_Name: Gun Proto
   m_TagString: Untagged
@@ -231,106 +202,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!120 &9185356164691267817
-LineRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4669375346369597198}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 7a355822addd59f468aea1a55019573a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
-  m_Parameters:
-    serializedVersion: 3
-    widthMultiplier: 1
-    widthCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.06918283
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    colorGradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
-    alignment: 0
-    textureMode: 0
-    shadowBias: 0.5
-    generateLightingData: 0
-  m_UseWorldSpace: 1
-  m_Loop: 0
---- !u!114 &2866137302769575499
+--- !u!114 &2130563852130208002
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -339,13 +211,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 4669375346369597198}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a482e753f74b82a42bb658a442044a32, type: 3}
+  m_Script: {fileID: 11500000, guid: b594bdaaab1054740afb717bfdab02df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunDetails:
-    gunType: 0
-    MuzzlePoint: {fileID: 8067818100082851476}
+  MuzzlePoint: {fileID: 8067818100082851476}
+  SecondaryMuzzlePoint: {fileID: 0}
+  DamageValue: 77
   CurrentlyHitting: {fileID: 0}
+  shouldDrawBulletTrail: 0
+  bulletForceMultiplier: 1
+  bulletTrailPrefab: {fileID: 7806430457410555219, guid: 3443df8f4746bf746af5214bdad02c63,
+    type: 3}
+  shotGapTime: 1
+  timeTillBullet: 0
+  canFire: 0
+  camRef: {fileID: 0}
 --- !u!1 &5090997257005479419
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,10 +7,11 @@ public class SpeedTracker : MonoBehaviour
 {
     [SerializeField] Movement movementScript;
     [SerializeField] TextMeshProUGUI tmp;
-
+    public bool showGravity;
     
     void Update()
     {
-        tmp.text = movementScript.momentum.magnitude.ToString("F3");
+        if (!showGravity) tmp.text = movementScript.momentum.magnitude.ToString("F3");
+        else tmp.text = movementScript.momentum.y.ToString("F3");
     }
 }
