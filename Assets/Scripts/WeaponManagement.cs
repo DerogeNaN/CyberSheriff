@@ -36,6 +36,7 @@ public class WeaponManagement : MonoBehaviour
         playerInput.Player.Enable();
         playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
         playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
+        playerInput.Player.AltFire.started += SecondaryFireWeaponBegin;
     }
 
     // Update is called once per frame

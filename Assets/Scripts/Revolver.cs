@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 public class Revolver : MonoBehaviour
 {
@@ -37,14 +38,17 @@ public class Revolver : MonoBehaviour
     float shotGapTime = 1f;
 
     [SerializeField]
-    float timeTillBullet = 0f;
-
-    [SerializeField]
     bool canFire;
 
     [SerializeField]
     Camera camRef;
 
+    [SerializeField]
+    GameObject BulletHitDecal;
+
+
+    [SerializeField]
+    bool coroutineRunning = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -87,15 +91,10 @@ public class Revolver : MonoBehaviour
         //set ray direction to where the players reticle currently is pointing 
         ray.direction = barrelToLookPointDir;
 
-        if (timeTillBullet < shotGapTime)
+        if (shouldDrawBulletTrail == true && coroutineRunning == false)
         {
-            timeTillBullet += Time.deltaTime;
-        }
-
-        if (timeTillBullet >= shotGapTime)
-        {
-            Debug.Log("CanFire!");
             canFire = true;
+
         }
 
         //Bullet visual Logic 
@@ -110,6 +109,8 @@ public class Revolver : MonoBehaviour
                 {
                     bulletfab.GetComponent<LineRenderer>().SetPosition(0, ray.origin);
                     bulletfab.GetComponent<LineRenderer>().SetPosition(1, hit.point);
+                    GameObject Decal = Instantiate(BulletHitDecal);
+                    Decal.transform.position = hit.point;
                 }
 
                 if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
@@ -118,7 +119,7 @@ public class Revolver : MonoBehaviour
                     Debug.Log("Impulse" + hit.rigidbody.name);
                     hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
                 }
-                else 
+                else
                 {
                     Debug.Log("part of The Player ");
                 }
@@ -129,34 +130,44 @@ public class Revolver : MonoBehaviour
                     Debug.Log("Die");
                     hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
                 }
+
+
             }
             canFire = false;
+            StartCoroutine(Wait());
         }
         //else
 
     }
 
+    IEnumerator Wait()
+    {
+        coroutineRunning = true;
+        yield return new WaitForSeconds(shotGapTime);
+        Debug.Log("Waiting...");
+        canFire = true;
+        coroutineRunning = false;
+
+    }
+
+
     //active on beginning of Primary fire Action
     public void OnPrimaryFireBegin()
     {
-        if (canFire)
-        {
-            timeTillBullet = 0;
-            shouldDrawBulletTrail = true;
-            Debug.Log("Beginning primary Fire");
-        }
-
+        shouldDrawBulletTrail = true;
+        Debug.Log("Beginning primary Fire");
     }
 
     //Active on Begining of alt-firing action
     public void OnAltFireBegin()
     {
-        if (timeTillBullet > shotGapTime)
-        {
-            timeTillBullet = 0;
-            shouldDrawBulletTrail = true;
-            Debug.Log("Beginning Alt Fire");
-        }
+        //if (timeTillBullet > shotGapTime)
+        //{
+        //    timeTillBullet = 0;
+        //    shouldDrawBulletTrail = true;
+        //    Debug.Log("Beginning Alt Fire");
+        //}
+
     }
 
     //Active every interval of Primaryfire set in this script
