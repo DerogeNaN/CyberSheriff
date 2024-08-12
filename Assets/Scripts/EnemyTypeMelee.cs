@@ -1,12 +1,21 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngineInternal;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyTypeMelee : EnemyBase
 {
     public float chaseTime = 2.0f;
+    public float attackTime = 2.0f;
+    public float attackCooldown = 2.0f;
+    public float attackRange = 2.0f;
+    public GameObject hitboxPrefab;
+
     float remainingChaseTime = 0;
+    float remainingAttackTime = 0;
+    float remainingAttackCooldown = 0;
 
     new void Start()
     {
@@ -50,12 +59,28 @@ public class EnemyTypeMelee : EnemyBase
                     remainingChaseTime = chaseTime;
                 }
                 break;
+
+            case EnemyState.attacking:
+                {
+                    shouldPath = false;
+                    remainingAttackTime = attackTime;
+
+                    if (hitboxPrefab != null)
+                    {
+                        GameObject hitbox = Instantiate(hitboxPrefab, transform);
+                        hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
+                    }
+                }
+                break;
         }
     }
 
     // frame by frame update for the current method
     void UpdateState()
     {
+        // do this regardless of state 
+        if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
+
         switch (state)
         {
             case EnemyState.idle:
@@ -69,6 +94,12 @@ public class EnemyTypeMelee : EnemyBase
                 {
                     // if lost sight of the player, switch to the lost sight state
                     if (!hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
+
+                    // if within range and not on cooldown, attack
+                    if (Vector3.Distance(transform.position, moveTarget.position) <= attackRange && remainingAttackCooldown <= 0)
+                    {
+                        SetState(EnemyState.attacking);
+                    }
                 }
                 break;
 
@@ -79,6 +110,17 @@ public class EnemyTypeMelee : EnemyBase
                     if (remainingChaseTime <= 0)
                     {
                         SetState(EnemyState.idle);
+                    }
+                }
+                break;
+
+            case EnemyState.attacking:
+                {
+                    // do attack stuff, then switch back to chasing
+                    remainingAttackTime -= Time.deltaTime;
+                    if (remainingAttackTime <= 0)
+                    {
+                        SetState(EnemyState.movingToTarget);
                     }
                 }
                 break;
@@ -105,6 +147,12 @@ public class EnemyTypeMelee : EnemyBase
             case EnemyState.lostSightOfTarget:
                 {
                     shouldPath = false;
+                }
+                break;
+
+            case EnemyState.attacking:
+                {
+                    remainingAttackCooldown = attackCooldown;
                 }
                 break;
         }

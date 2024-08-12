@@ -21,11 +21,11 @@ public class EnemyBase : MonoBehaviour
     public int health = 100;
     public Transform moveTarget;
     public float sightRange = 25.0f;
-    public EnemyState state;
 
-    [HideInInspector] public bool hasLineOfSight;
-    [HideInInspector] public bool shouldPath;
-    NavMeshAgent pathAgent;
+    [HideInInspector] public EnemyState state;
+    protected bool hasLineOfSight;
+    protected bool shouldPath;
+    protected NavMeshAgent pathAgent;
 
     [SerializeField] TMP_Text debugStateText;
 

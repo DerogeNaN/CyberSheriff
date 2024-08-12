@@ -303,10 +303,15 @@ MonoBehaviour:
   moveTarget: {fileID: 0}
   sightRange: 25
   state: 0
-  hasLineOfSight: 0
-  shouldPath: 0
   debugStateText: {fileID: 8781144055186671520}
+  chaseSpeed: 5
+  followSpeed: 2
   chaseTime: 2
+  attackTime: 2
+  attackCooldown: 2
+  attackRange: 2
+  hitboxPrefab: {fileID: 2145299806175634582, guid: 8cb93ddd117cb5d459232610c7c453bc,
+    type: 3}
 --- !u!33 &8781144055303266579
 MeshFilter:
   m_ObjectHideFlags: 0
