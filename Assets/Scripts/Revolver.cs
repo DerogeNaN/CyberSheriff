@@ -78,7 +78,7 @@ public class Revolver : MonoBehaviour
             cameraLineRenderer.SetPosition(0, cameraRay.origin);
             cameraLineRenderer.SetPosition(1, cameraHit.point);
         }
-      
+
 
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
         Vector3 barrelToLookPointDir = cameraHit.point - MuzzlePoint.transform.position;
@@ -101,7 +101,7 @@ public class Revolver : MonoBehaviour
         //Bullet visual Logic 
         if (shouldDrawBulletTrail && canFire)
         {
-            if (Physics.Raycast(ray, out hit, 20))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 GameObject bulletfab = Instantiate(bulletTrailPrefab);
                 CurrentlyHitting = hit.transform.gameObject;
@@ -111,11 +111,19 @@ public class Revolver : MonoBehaviour
                     bulletfab.GetComponent<LineRenderer>().SetPosition(0, ray.origin);
                     bulletfab.GetComponent<LineRenderer>().SetPosition(1, hit.point);
                 }
-             
-                if (hit.rigidbody != null)
+
+                if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
                 {
+                    Debug.Log("Root" + hit.rigidbody.transform.root);
+                    Debug.Log("Impulse" + hit.rigidbody.name);
                     hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
                 }
+                else 
+                {
+                    Debug.Log("part of The Player ");
+                }
+
+
                 if (hit.collider.gameObject.GetComponent<Health>())
                 {
                     Debug.Log("Die");
@@ -131,7 +139,7 @@ public class Revolver : MonoBehaviour
     //active on beginning of Primary fire Action
     public void OnPrimaryFireBegin()
     {
-        if (timeTillBullet > shotGapTime)
+        if (canFire)
         {
             timeTillBullet = 0;
             shouldDrawBulletTrail = true;
