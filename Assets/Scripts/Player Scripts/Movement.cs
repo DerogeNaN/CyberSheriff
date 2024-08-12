@@ -113,6 +113,15 @@ public class Movement : MonoBehaviour
     public float lastJumpTime = 0;
     public float bunnyHopGrace = 0.05f;
 
+    //----DASHING----
+    public float dashFOVChange = 95f; //Camera fov switch during dash
+    public bool isDashing = false;
+    public float dashDistance = 10.0f;
+    public float dashForce = 2.0f;
+    public float dashTime = 0.5f;
+    public float dashStartTime = 0;
+    public float dashCooldown = 1;
+
     //----MOVEMENT----
     public bool isGrounded = true;
     public float lastGroundedTime = 0;
@@ -136,7 +145,7 @@ public class Movement : MonoBehaviour
 
         momentumRatio = 1 / currEncouragment;
 
-        UpdateCamera();
+        //UpdateCamera();
         MovePlayer();
     }
 
@@ -218,6 +227,7 @@ public class Movement : MonoBehaviour
         playerInputActions.Player.Jump.started += Jump_Started;
         playerInputActions.Player.Slide.performed += Slide_Performed;
         playerInputActions.Player.Slide.canceled += Slide_Cancelled;
+        playerInputActions.Player.Dash.performed += Dash_Performed;
     }
 
     private void Slide_Performed(InputAction.CallbackContext context)
@@ -251,13 +261,51 @@ public class Movement : MonoBehaviour
         Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
     }
 
-    private void UpdateCamera()
+    private void Dash_Performed(InputAction.CallbackContext context)
     {
-        if (lastWallrunTime < Time.time)
-        {
-            TiltCamera(0, 0.1f);
-        }
+        isDashing = true;
+        dashStartTime = Time.time;
+        DashStartTransition();
     }
+
+    private void DashStartTransition()
+    {
+        if (isDashing)
+        {
+            RaycastHit hit;
+            if (!Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position - new Vector3(0, 0.5f, 0), 
+                0.45f, transform.forward, out hit, dashDistance, ~8))
+            {
+                Debug.Log("Dash");
+                momentum = transform.forward * dashDistance;
+            }
+
+            else
+            {
+                Debug.Log("Dashed into something");
+                momentum = new Vector3(0, 0, 0);
+            }
+
+            Invoke(nameof(DashReset), dashTime);
+        }
+        //float newCameraFOV = Mathf.Lerp(Camera.main.fieldOfView, )
+
+        //Camera.main.fieldOfView = 
+    }
+
+    private void DashReset()
+    {
+        isDashing = false;
+        
+    }
+
+    //private void UpdateCamera()
+    //{
+    //    if (lastWallrunTime < Time.time)
+    //    {
+    //        TiltCamera(0, 0.1f);
+    //    }
+    //}
 
     private void Jump_Started(InputAction.CallbackContext context)
     {
@@ -322,11 +370,10 @@ public class Movement : MonoBehaviour
 
     void CheckForOncomingCollision()
     {
-        RaycastHit hit;
         if (Physics.CapsuleCast(
             transform.position + new Vector3(0, 0.5f, 0),
             transform.position - new Vector3(0, 0.5f, 0),
-            0.45f, momentum.normalized, out hit, momentum.magnitude, ~8
+            0.45f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~8
             ))
         {
             momentum = Vector3.ClampMagnitude(momentum, hit.distance);
@@ -372,9 +419,7 @@ public class Movement : MonoBehaviour
     }
 
     private void OnCollisionExit(Collision collision)
-    {
-        Debug.Log("Leaving collision");
-        
+    {   
         if (isWallrunning)
         {
             leavingWallrunTime = Time.time;
