@@ -139,7 +139,7 @@ public class Revolver : MonoBehaviour
     //active on beginning of Primary fire Action
     public void OnPrimaryFireBegin()
     {
-        if (timeTillBullet > shotGapTime && canFire)
+        if (canFire)
         {
             timeTillBullet = 0;
             shouldDrawBulletTrail = true;
