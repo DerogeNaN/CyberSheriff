@@ -12,7 +12,9 @@ public class EnemyTypeMelee : EnemyBase
     public float attackCooldown = 2.0f;
     public float attackRange = 2.0f;
     public GameObject hitboxPrefab;
+    public Transform playerTransform;
 
+    Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
     float remainingAttackCooldown = 0;
@@ -29,7 +31,7 @@ public class EnemyTypeMelee : EnemyBase
         UpdateState();
     }
 
-    // use this tp change states in UpdateState
+    // use this to change states in UpdateState
     void SetState(EnemyState state)
     {
         ExitState();
@@ -56,6 +58,8 @@ public class EnemyTypeMelee : EnemyBase
 
             case EnemyState.lostSightOfTarget:
                 {
+                    lastSeenPosition = playerTransform.position;
+                    moveTarget = lastSeenPosition;
                     remainingChaseTime = chaseTime;
                 }
                 break;
@@ -79,6 +83,7 @@ public class EnemyTypeMelee : EnemyBase
     void UpdateState()
     {
         // do this regardless of state 
+        lookTarget = playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
 
         switch (state)
@@ -92,11 +97,13 @@ public class EnemyTypeMelee : EnemyBase
 
             case EnemyState.movingToTarget:
                 {
+                    moveTarget = playerTransform.position;
+
                     // if lost sight of the player, switch to the lost sight state
                     if (!hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
 
                     // if within range and not on cooldown, attack
-                    if (Vector3.Distance(transform.position, moveTarget.position) <= attackRange && remainingAttackCooldown <= 0)
+                    if (Vector3.Distance(transform.position, moveTarget) <= attackRange && remainingAttackCooldown <= 0)
                     {
                         SetState(EnemyState.attacking);
                     }

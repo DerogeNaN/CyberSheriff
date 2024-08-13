@@ -1033,6 +1033,7 @@ GameObject:
   - component: {fileID: 834602541}
   - component: {fileID: 834602543}
   - component: {fileID: 834602542}
+  - component: {fileID: 834602544}
   m_Layer: 0
   m_Name: TestTarget
   m_TagString: Untagged
@@ -1105,6 +1106,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &834602544
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834602540}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &921639910
 GameObject:
   m_ObjectHideFlags: 0
@@ -2032,6 +2047,11 @@ PrefabInstance:
       propertyPath: attackTime
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8781144055303266585, guid: fb23e7f955925624f82daf8fb7b8c734,
+        type: 3}
+      propertyPath: lookTarget
+      value: 
+      objectReference: {fileID: 834602541}
     - target: {fileID: 8781144055303266585, guid: fb23e7f955925624f82daf8fb7b8c734,
         type: 3}
       propertyPath: moveTarget
