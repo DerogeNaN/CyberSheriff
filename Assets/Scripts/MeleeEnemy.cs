@@ -5,6 +5,8 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
+// OUTDATED SCRIPT
+// EnemyTypeMelee is the new one
 enum State
 {
     idle,

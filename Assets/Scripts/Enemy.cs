@@ -4,6 +4,9 @@ using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+// OUTDATED SCRIPT
+// EnemyBase is the new one
+
 public class Enemy : MonoBehaviour
 {
     public Transform target;

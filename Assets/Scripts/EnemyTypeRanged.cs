@@ -1,23 +1,21 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngineInternal;
-using static UnityEngine.GraphicsBuffer;
+using UnityEngine.UIElements;
 
-public class EnemyTypeMelee : EnemyBase
+public class EnemyTypeRanged : EnemyBase
 {
-    public float chaseTime = 2.0f;
-    public float attackTime = 1.0f;
-    public float attackCooldown = 1.0f;
-    public float attackRange = 2.0f;
-    public GameObject hitboxPrefab;
-    public Transform playerTransform;
+    public float attackTime = 2.0f;
+    public float attackCooldown = 2.0f;
+    public float attackRange = 25.0f; // max shooting range
+    public float minRange = 10.0f; // what range it will try to shoot at
+    public float moveSpeed = 5.0f;
+    public float slowSpeed = 2.0f;
 
-    Vector3 lastSeenPosition;
-    float remainingChaseTime = 0;
-    float remainingAttackTime = 0;
-    float remainingAttackCooldown = 0;
+    [SerializeField] Transform playerTransform;
+    [SerializeField] GameObject bulletPrefab;
+    float remainingAttackTime;
+    float remainingAttackCooldown;
 
     new void Start()
     {
@@ -31,7 +29,6 @@ public class EnemyTypeMelee : EnemyBase
         UpdateState();
     }
 
-    // use this to change states in UpdateState
     void SetState(EnemyState state)
     {
         ExitState();
@@ -39,7 +36,6 @@ public class EnemyTypeMelee : EnemyBase
         EnterState();
     }
 
-    // runs once when the state is changed
     void EnterState()
     {
         switch (state)
@@ -52,15 +48,7 @@ public class EnemyTypeMelee : EnemyBase
 
             case EnemyState.movingToTarget:
                 {
-                    shouldPath = true;
-                }
-                break;
-
-            case EnemyState.lostSightOfTarget:
-                {
-                    lastSeenPosition = playerTransform.position;
-                    moveTarget = lastSeenPosition;
-                    remainingChaseTime = chaseTime;
+                    
                 }
                 break;
 
@@ -69,17 +57,14 @@ public class EnemyTypeMelee : EnemyBase
                     shouldPath = false;
                     remainingAttackTime = attackTime;
 
-                    if (hitboxPrefab != null)
-                    {
-                        GameObject hitbox = Instantiate(hitboxPrefab, transform);
-                        hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
-                    }
+                    // do attack here
+                    Projectile projectile = Instantiate(bulletPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
+                    projectile.direction = Vector3.Normalize(playerTransform.position - transform.position);
                 }
                 break;
         }
     }
 
-    // frame by frame update for the current method
     void UpdateState()
     {
         // do this regardless of state 
@@ -99,24 +84,28 @@ public class EnemyTypeMelee : EnemyBase
                 {
                     moveTarget = playerTransform.position;
 
-                    // if lost sight of the player, switch to the lost sight state
-                    if (!hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
+                    // if lost sight of the player, go back to idle
+                    if (!hasLineOfSight) SetState(EnemyState.idle);
 
-                    // if within range and not on cooldown, attack
-                    if (Vector3.Distance(transform.position, moveTarget) <= attackRange && remainingAttackCooldown <= 0)
+                    // i'll restructure this later
+                    if (Vector3.Distance(transform.position, moveTarget) >= attackRange)
                     {
-                        SetState(EnemyState.attacking);
+                        shouldPath = true;
+                        pathAgent.speed = moveSpeed;
                     }
-                }
-                break;
-
-            case EnemyState.lostSightOfTarget:
-                {
-                    // keep following the player until the timer runs out, then go back to idle
-                    remainingChaseTime -= Time.deltaTime;
-                    if (remainingChaseTime <= 0)
+                    else
                     {
-                        SetState(EnemyState.idle);
+                        shouldPath = false;
+
+                        if (remainingAttackCooldown <= 0)
+                        {
+                            SetState(EnemyState.attacking);
+                        }
+                        else if (Vector3.Distance(transform.position, moveTarget) >= minRange)
+                        {
+                            shouldPath = true;
+                            pathAgent.speed = slowSpeed;
+                        }
                     }
                 }
                 break;
@@ -134,7 +123,6 @@ public class EnemyTypeMelee : EnemyBase
         }
     }
 
-    // runs once when the state is changed
     void ExitState()
     {
         switch (state)
@@ -146,12 +134,6 @@ public class EnemyTypeMelee : EnemyBase
                 break;
 
             case EnemyState.movingToTarget:
-                {
-
-                }
-                break;
-
-            case EnemyState.lostSightOfTarget:
                 {
                     shouldPath = false;
                 }
