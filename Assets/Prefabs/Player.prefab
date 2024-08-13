@@ -103,6 +103,7 @@ Transform:
   - {fileID: 4800174732034069334}
   - {fileID: 5944793766377842200}
   - {fileID: 459333663254261477}
+  - {fileID: 5553725421375338485}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -260,38 +261,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 8
-  maxSpeed: 100
   maxPlayerInputSpeed: 2
+  maxSpeed: 100
+  jumpStrength: 0.25
+  jumpGraceLength: 0.05
+  wallrunJumpGraceLength: 0.5
   gravityStrength: 5
   airDrag: 10
   groundDrag: 15
-  jumpStrength: 0.25
-  jumpGraceLength: 0.05
-  wallrunGraceLength: 0.5
-  wallrunSpeedThreshold: 0.1
-  wallrunAngleThreshold: 25
   slideSpeedThreshold: 0.1
   slideDragDelay: 2.5
+  wallrunSpeedThreshold: 0.1
+  wallrunAngleThreshold: 25
+  cameraSlidePos: {fileID: 0}
+  cameraDefaultPos: {fileID: 0}
   cameraWallrunTilt: 8
   cameraWallrunTiltTime: 0.2
-  cameraSlidePos: {x: 0, y: 0, z: 0}
+  cameraSlideTransitionTime: 0.75
   momentum: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
-  currDrag: 0
-  currEncouragment: 0
-  jumpCount: 0
-  isGrounded: 1
   isWallrunning: 0
-  isSliding: 0
-  lastGroundedTime: 0
-  jumpCooldown: 0.02
   wallrunCooldown: 0.5
   leavingWallrunTime: 0
   lastWallrunTime: 0
-  lastJumpTime: 0
-  cameraSlideTransitionTime: 0.75
+  cameraLeaveWallrunTime: 0
+  wallrunJumpAngle: 45
+  wallrunMomentumBonus: 0.2
+  isSliding: 0
+  currDrag: 0
+  currEncouragment: 0
   encouragedGroundMomentum: 3
   encouragedAirMomentum: 6
+  jumpCount: 0
+  jumpCooldown: 0.02
+  lastJumpTime: 0
+  bunnyHopGrace: 0.05
+  dashFOVChange: 95
+  isDashing: 0
+  dashDistance: 10
+  dashForce: 2
+  dashTime: 0.5
+  dashStartTime: 0
+  dashCooldown: 1
+  isGrounded: 1
+  lastGroundedTime: 0
 --- !u!1 &4800174732479552400
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,6 +498,22 @@ MonoBehaviour:
   maxMomentumInfluence: 0.3
   headTiltAtMax: 5
   tilt: 0
+  maxFOV: 90
+  maxDashFOV: 110
+  defaultFOV: 80
+  currFOV: 0
+  dashFOVCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  defaultFOVCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &6178980263358420766
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,3 +545,49 @@ Transform:
   m_Father: {fileID: 4800174732242690484}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7230698052490715226
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5553725421375338485}
+  - component: {fileID: 35543608817844578}
+  m_Layer: 3
+  m_Name: Slide Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5553725421375338485
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7230698052490715226}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.569, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4800174732242690484}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &35543608817844578
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7230698052490715226}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.35
+  m_Height: 1
+  m_Direction: 0
+  m_Center: {x: 0, y: 0, z: 0}

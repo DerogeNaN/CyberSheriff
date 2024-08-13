@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Content;
 using UnityEditor.Rendering;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
@@ -10,6 +11,15 @@ public class Movement : MonoBehaviour
 {
     public static Movement playerMovement;
     public PlayerInputActions playerInputActions;
+
+    public enum MovementState
+    {
+        grounded,
+        wallrunning,
+        sliding,
+        dashing,
+        grappling
+    }
 
     #region Movement
     [Header("Movement Settings")]
@@ -47,7 +57,7 @@ public class Movement : MonoBehaviour
     private float airDrag = 10f;
 
     [SerializeField][Tooltip("Drag is basically friction")] 
-    private float groundDrag = 15f;
+    private float oldDrag = 15f;
     #endregion
 
     #region Sliding
@@ -85,9 +95,12 @@ public class Movement : MonoBehaviour
     [Space(10.0f)]
     [Header("Backend Variables (TEST)")]    //Local Variables
     public Vector3 momentum = Vector3.zero;
+    private Vector3 previousMomentum = Vector3.zero;
     public Vector3 moveDirection = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
+    public Collider slideCollider;
+    private Collider standingCollider;
 
     //----WALLRUNNING----
     public bool isWallrunning = false;
@@ -95,12 +108,14 @@ public class Movement : MonoBehaviour
     public float leavingWallrunTime = 0;
     public float lastWallrunTime = 0;
     public float cameraLeaveWallrunTime = 0;
+    public float wallrunJumpAngle = 45.0f;
+    public float wallrunMomentumBonus = 0.2f;
 
     //----SLIDING----
     public bool isSliding = false;
 
     //----PHYSICS----
-    public float currDrag;
+    [Range(0,1)]public float groundDrag = 15;
     public float currEncouragment;
     public int encouragedGroundMomentum = 3;
     public int encouragedAirMomentum = 35;
@@ -129,6 +144,7 @@ public class Movement : MonoBehaviour
     void Start()
     {
         playerMovement = this;
+        standingCollider = GetComponent<Collider>();
         InitialiseMovement();
     }
 
@@ -137,11 +153,7 @@ public class Movement : MonoBehaviour
         actualGravity = 0.1f * gravityStrength;
 
         //Assign currDrag to either the ground drag ammount or air drag ammount
-        currDrag = isGrounded ? groundDrag : airDrag;
         currEncouragment = isGrounded ? encouragedGroundMomentum : encouragedAirMomentum;
-        //currDrag = groundDrag;
-        //encouragedMomentum = isGrounded ? 35 : 50;
-        currDrag *= 0.01f;
 
         momentumRatio = 1 / currEncouragment;
 
@@ -150,7 +162,9 @@ public class Movement : MonoBehaviour
     }
 
     void MovePlayer()
-    { 
+    {
+        Vector2 moveInput = Vector2.zero;
+        
         if (isSliding)
         {
             SlideStartTransition();
@@ -159,7 +173,7 @@ public class Movement : MonoBehaviour
         else if (isWallrunning)
         {
             TiltCamera(cameraWallrunTilt, cameraWallrunTiltTime, wallNormal);
-            Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
         }
 
@@ -167,39 +181,41 @@ public class Movement : MonoBehaviour
         {
             TiltCamera(0, cameraWallrunTiltTime);
             SlideExitTransition();
-            Vector2 moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
         }
 
-        //When no key is pressed
-        //if (isGrounded && moveInput.magnitude <= 0.001f)
-        //{
-        //    currDrag = 0.01f;
-        //}
+        Vector3 playerWASDMomentum = Vector3.zero;
 
-        //When Input and we have no momentum
-        //else
+        playerWASDMomentum += moveDirection * moveSpeed * momentumRatio;
+        Vector3 momentumNoY = new Vector3(momentum.x, 0, momentum.z);
+        float encouragedAmount = Vector3.Dot(moveDirection, momentumNoY.normalized) * (1 - momentumRatio);
+        playerWASDMomentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
+
+        /*
+        if playerWASD + momentum 's momentum is bigger than the maxPlayerInputSpeed
+            momentum = Vector3.ClampMagnitude(momentum, momentum.magnitude - playerWASD.magnitude);
+        momentum += playerWASD;
+         */
+
+        if ((playerWASDMomentum + momentum).magnitude >= maxPlayerInputSpeed)
         {
-            Vector3 playerWASDMomentum = Vector3.zero;
-
-            //Implement momentum ratio where the higher "encouragedMomentum" is in "baseMomentumRatio", the more effort it takes to change the current momentum direction
-            playerWASDMomentum += moveDirection * moveSpeed * momentumRatio;
-            Vector3 momentumNoY = new Vector3(momentum.x, 0, momentum.z);
-            float encouragedAmount = Vector3.Dot(moveDirection, momentumNoY.normalized) * (1 - momentumRatio);
-            playerWASDMomentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
-            playerWASDMomentum += momentum;
-
-            if (momentum.magnitude > maxPlayerInputSpeed) momentum = Vector3.ClampMagnitude(playerWASDMomentum, momentum.magnitude);
-
-            else momentum = playerWASDMomentum;
+            momentum = Vector3.ClampMagnitude(momentum, momentum.magnitude - playerWASDMomentum.magnitude);
         }
 
-        Gravity();
+        momentum += playerWASDMomentum;
+
 
         //Multiply momentum by correct drag type
-        currDrag = 1 - currDrag;
-        momentum.x *= currDrag;
-        momentum.z *= currDrag;
+
+        if (moveInput == Vector2.zero && isGrounded && !isSliding)
+        {
+            Debug.Log("This is running");
+            momentum.x *= groundDrag;
+            momentum.z *= groundDrag;
+        }
+        
+        Gravity();
 
         CheckForOncomingCollision();
 
@@ -243,22 +259,25 @@ public class Movement : MonoBehaviour
         isSliding = false;
 
         float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraDefaultPos.position.y, cameraSlideTransitionTime);
-
         Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
     }
 
     private void SlideStartTransition()
     {
         float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraSlidePos.position.y, cameraSlideTransitionTime);
-
         Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+
+        standingCollider.enabled = false;
+        slideCollider.enabled = true;
     }
 
     private void SlideExitTransition()
     {
         float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, cameraDefaultPos.position.y, cameraSlideTransitionTime);
-
         Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+
+        slideCollider.enabled = false;
+        standingCollider.enabled = true;
     }
 
     private void Dash_Performed(InputAction.CallbackContext context)
@@ -272,6 +291,8 @@ public class Movement : MonoBehaviour
     {
         if (isDashing)
         {
+            previousMomentum = momentum;
+            
             RaycastHit hit;
             if (!Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position - new Vector3(0, 0.5f, 0), 
                 0.45f, transform.forward, out hit, dashDistance, ~8))
@@ -288,24 +309,14 @@ public class Movement : MonoBehaviour
 
             Invoke(nameof(DashReset), dashTime);
         }
-        //float newCameraFOV = Mathf.Lerp(Camera.main.fieldOfView, )
-
-        //Camera.main.fieldOfView = 
     }
 
     private void DashReset()
     {
         isDashing = false;
-        
+        momentum.x = previousMomentum.x;
+        momentum.z = previousMomentum.z;
     }
-
-    //private void UpdateCamera()
-    //{
-    //    if (lastWallrunTime < Time.time)
-    //    {
-    //        TiltCamera(0, 0.1f);
-    //    }
-    //}
 
     private void Jump_Started(InputAction.CallbackContext context)
     {
@@ -317,6 +328,10 @@ public class Movement : MonoBehaviour
             {
                 leavingWallrunTime = Time.time;
                 isWallrunning = false;
+
+                Vector3 targetDirection = Vector3.RotateTowards(wallTangent, wallNormal, wallrunJumpAngle, 0);
+                momentum = targetDirection;
+                momentum *= wallrunMomentumBonus;
             }
 
             if (lastJumpTime + jumpCooldown < Time.time)
@@ -370,13 +385,28 @@ public class Movement : MonoBehaviour
 
     void CheckForOncomingCollision()
     {
-        if (Physics.CapsuleCast(
-            transform.position + new Vector3(0, 0.5f, 0),
-            transform.position - new Vector3(0, 0.5f, 0),
-            0.45f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~8
-            ))
+        if (!isSliding)
         {
-            momentum = Vector3.ClampMagnitude(momentum, hit.distance);
+            if (Physics.CapsuleCast(
+                transform.position + new Vector3(0, 0.5f, 0),
+                transform.position - new Vector3(0, 0.5f, 0),
+                0.45f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~8
+                ))
+            {
+                momentum = Vector3.ClampMagnitude(momentum, hit.distance);
+            }
+        }
+        
+        else
+        {
+            if (Physics.CapsuleCast(
+                slideCollider.transform.position - new Vector3(0.5f, 0, 0),
+                slideCollider.transform.position + new Vector3(0.5f, 0, 0),
+                0.35f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~8
+                ))
+            {
+                momentum = Vector3.ClampMagnitude(momentum, hit.distance);
+            }
         }
     }
 
@@ -393,7 +423,8 @@ public class Movement : MonoBehaviour
         if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
         {
             Vector3 tangent = Vector3.Cross(Vector3.up, normal);
-            wallTangent = tangent;
+            wallTangent = tangent * Mathf.Sign(Vector3.Dot(momentum, tangent));
+            Debug.DrawRay(transform.position, wallTangent);
             float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
 
             //Vector3 newMomentum = momentum.magnitude * wallTangent;

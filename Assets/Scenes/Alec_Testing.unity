@@ -352,7 +352,7 @@ Transform:
   m_GameObject: {fileID: 216943353}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_LocalScale: {x: 531, y: 1, z: 182}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 916163078}
@@ -518,6 +518,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 245916209}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!136 &785571638 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 35543608817844578, guid: 70e373de8e782e749bc9a898e8af8cea,
+    type: 3}
+  m_PrefabInstance: {fileID: 4800174734064952796}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &916163077
 GameObject:
   m_ObjectHideFlags: 0
@@ -1115,7 +1121,7 @@ Transform:
   m_GameObject: {fileID: 1218249701}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -2, y: 11.83, z: -4}
-  m_LocalScale: {x: 0.2, y: 25, z: 15}
+  m_LocalScale: {x: 0.2, y: 25, z: 55.927498}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 916163078}
@@ -1579,14 +1585,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1775262467}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: 8.36, z: 2.66}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 4.26, y: 2.89, z: -3.36}
   m_LocalScale: {x: 0.2, y: 3, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 916163078}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!65 &1775262469
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1669,6 +1675,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 35543608817844578, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: m_Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 35543608817844578, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690480, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}
       propertyPath: mouseSens
@@ -1731,19 +1747,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}
+      propertyPath: airDrag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
       propertyPath: dashTime
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}
       propertyPath: dashForce
-      value: 1
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: groundDrag
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}
       propertyPath: dashDistance
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: jumpStrength
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: slideCollider
+      value: 
+      objectReference: {fileID: 785571638}
     - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}
       propertyPath: cameraSlidePos
@@ -1754,6 +1790,26 @@ PrefabInstance:
       propertyPath: cameraDefaultPos
       value: 
       objectReference: {fileID: 1071960027}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: wallrunJumpAngle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: maxPlayerInputSpeed
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: wallrunMomentumBonus
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
+        type: 3}
+      propertyPath: encouragedAirMomentum
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690487, guid: 70e373de8e782e749bc9a898e8af8cea,
         type: 3}
       propertyPath: cameraSlideTransitionTime
