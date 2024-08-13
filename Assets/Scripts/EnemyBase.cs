@@ -34,6 +34,7 @@ public class EnemyBase : MonoBehaviour
     public void Start()
     {
         pathAgent = GetComponent<NavMeshAgent>();
+        pathAgent.avoidancePriority = (int)Random.Range(0, 99.0f);
     }
 
     public void Update()
