@@ -14,6 +14,12 @@ public class GroundCheck : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.CompareTag("ResetBox"))
+        {
+            Movement.playerMovement.transform.position = Movement.playerMovement.respawnPos.position;
+            Movement.playerMovement.transform.rotation = Movement.playerMovement.respawnPos.rotation;
+            Movement.playerMovement.momentum = new Vector3(0, 0, 0);
+        }
         //TODO: ADD GROUND LAYER SO THAT THE PLAYER CANT JUMP OFF ENEMIES
         Movement.playerMovement.isGrounded = true;
         //Vector3 momentumDir = Vector3.Cross(other.transform.up, transform.right);

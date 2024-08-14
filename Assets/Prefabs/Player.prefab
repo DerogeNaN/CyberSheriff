@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78b920ec190e7264a92adfa1941eff14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSens: 15
+  mouseSens: 10
   defaultFOV: 80
   cam: {fileID: 4800174733094763591}
   xClamp: 180
@@ -261,50 +261,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 8
-  maxPlayerInputSpeed: 2
+  maxPlayerInputSpeed: 0.313
   maxSpeed: 100
   jumpStrength: 0.25
   jumpGraceLength: 0.05
   wallrunJumpGraceLength: 0.5
   gravityStrength: 5
-  airDrag: 10
-  groundDrag: 15
+  airDrag: 0
+  oldDrag: 15
   slideSpeedThreshold: 0.1
   slideDragDelay: 2.5
   wallrunSpeedThreshold: 0.1
   wallrunAngleThreshold: 25
-  cameraSlidePos: {fileID: 0}
-  cameraDefaultPos: {fileID: 0}
+  cameraSlidePos: {fileID: 5944793766377842200}
+  cameraDefaultPos: {fileID: 459333663254261477}
   cameraWallrunTilt: 8
   cameraWallrunTiltTime: 0.2
-  cameraSlideTransitionTime: 0.75
+  cameraSlideTransitionTime: 0.25
   momentum: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
+  respawnPos: {fileID: 0}
+  slideCollider: {fileID: 35543608817844578}
   isWallrunning: 0
   wallrunCooldown: 0.5
   leavingWallrunTime: 0
   lastWallrunTime: 0
   cameraLeaveWallrunTime: 0
-  wallrunJumpAngle: 45
-  wallrunMomentumBonus: 0.2
+  wallrunJumpAngle: 0.2
+  wallrunMomentumBonus: 0.5
   isSliding: 0
-  currDrag: 0
+  groundDrag: 0.699
   currEncouragment: 0
   encouragedGroundMomentum: 3
-  encouragedAirMomentum: 6
+  encouragedAirMomentum: 16
   jumpCount: 0
   jumpCooldown: 0.02
   lastJumpTime: 0
   bunnyHopGrace: 0.05
   dashFOVChange: 95
   isDashing: 0
-  dashDistance: 10
-  dashForce: 2
-  dashTime: 0.5
+  dashDistance: 1.5
+  dashForce: 0.2
+  dashTime: 0.2
   dashStartTime: 0
   dashCooldown: 1
   isGrounded: 1
   lastGroundedTime: 0
+  isGrappling: 0
+  grappleSpeed: 1
+  grappleTargetDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &4800174732479552400
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxMomentumInfluence: 0.3
-  headTiltAtMax: 5
+  headTiltAtMax: 3
   tilt: 0
   maxFOV: 90
   maxDashFOV: 110
@@ -504,13 +509,67 @@ MonoBehaviour:
   currFOV: 0
   dashFOVCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0
+      outSlope: -0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.57916665
+    - serializedVersion: 3
+      time: 0.26491034
+      value: 0.4992418
+      inSlope: 3.231016
+      outSlope: 3.231016
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.07944331
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.26664865
+      value: 0.52357745
+      inSlope: 3.3978608
+      outSlope: 3.3978608
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5499878
+      value: 0.9976425
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   defaultFOVCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.20832722
+      value: 0.9999982
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -586,7 +645,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 7230698052490715226}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.35
   m_Height: 1
   m_Direction: 0

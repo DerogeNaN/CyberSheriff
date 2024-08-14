@@ -31,7 +31,7 @@ public class WeaponManagement : MonoBehaviour
             Debug.Log(WeaponGripTransform.GetComponentInChildren<RangedWeapon>().gameObject.name);
         }
         else
-            Debug.Log("no weapons found");
+            //Debug.Log("no weapons found");
         playerInput = new PlayerInputActions();
         playerInput.Player.Enable();
         playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
@@ -49,11 +49,11 @@ public class WeaponManagement : MonoBehaviour
 
             if (weaponIterator < weaponList.Count)
             {
-                Debug.Log("theres still weapons in this list ");
+                //Debug.Log("theres still weapons in this list ");
             }
             else
             {
-                Debug.Log("at weapon List end");
+                //Debug.Log("at weapon List end");
                 weaponIterator %= weaponList.Count;
                 Debug.Log(weaponIterator);
             }
@@ -103,7 +103,7 @@ public class WeaponManagement : MonoBehaviour
     {
         if (inProgress)
         {
-            Debug.Log("Alt In Progress");
+            //Debug.Log("Alt In Progress");
             if (currentActiveWeapon.GetComponent<Revolver>())
                 currentActiveWeapon.GetComponent<Revolver>().OnAltFireStay();
 
@@ -151,7 +151,7 @@ public class WeaponManagement : MonoBehaviour
         currentActiveWeapon = weaponList[weaponIndex];
         if (currentActiveWeapon)
         {
-            Debug.Log("WeaponFound!!");
+            //Debug.Log("WeaponFound!!");
         }
 
         //set next to true 
@@ -159,6 +159,6 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        currentActiveWeapon.transform.parent = WeaponGripTransform;
+        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
 }

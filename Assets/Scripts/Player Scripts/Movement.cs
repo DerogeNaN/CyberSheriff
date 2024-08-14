@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Build.Content;
 using UnityEditor.Rendering;
 using UnityEditor.ShaderGraph;
+using UnityEditor.TextCore.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -99,6 +100,7 @@ public class Movement : MonoBehaviour
     public Vector3 moveDirection = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
+    public Transform respawnPos;
     public Collider slideCollider;
     private Collider standingCollider;
 
@@ -141,6 +143,11 @@ public class Movement : MonoBehaviour
     public bool isGrounded = true;
     public float lastGroundedTime = 0;
 
+    //----GRAPPLE----
+    public bool isGrappling = false;
+    public float grappleSpeed = 1f;
+    public Vector3 grappleTargetDirection = Vector3.zero;
+
     void Start()
     {
         playerMovement = this;
@@ -168,6 +175,11 @@ public class Movement : MonoBehaviour
         if (isSliding)
         {
             SlideStartTransition();
+        }
+
+        else if (isGrappling)
+        {
+
         }
 
         else if (isWallrunning)
@@ -210,7 +222,6 @@ public class Movement : MonoBehaviour
 
         if (moveInput == Vector2.zero && isGrounded && !isSliding)
         {
-            Debug.Log("This is running");
             momentum.x *= groundDrag;
             momentum.z *= groundDrag;
         }
@@ -218,6 +229,8 @@ public class Movement : MonoBehaviour
         Gravity();
 
         CheckForOncomingCollision();
+
+        Grappling();
 
         momentum = Vector3.ClampMagnitude(momentum, maxSpeed);
         transform.position += momentum;
@@ -244,6 +257,8 @@ public class Movement : MonoBehaviour
         playerInputActions.Player.Slide.performed += Slide_Performed;
         playerInputActions.Player.Slide.canceled += Slide_Cancelled;
         playerInputActions.Player.Dash.performed += Dash_Performed;
+        playerInputActions.Player.Grapple.performed += Grapple_Performed;
+        playerInputActions.Player.Grapple.canceled += Grapple_Canceled;
     }
 
     private void Slide_Performed(InputAction.CallbackContext context)
@@ -355,6 +370,30 @@ public class Movement : MonoBehaviour
                 lastJumpTime = Time.time;
             }
         }
+    }
+
+    private void Grapple_Performed(InputAction.CallbackContext context)
+    {
+        if (Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 50.0f, ~8) && 
+            hit.transform.CompareTag("GrappleableObject"))
+        {
+            Vector3 targetDirection = hit.transform.position - transform.position;
+            grappleTargetDirection = targetDirection.normalized;
+            isGrappling = true;
+        }
+    }
+
+    private void Grappling()
+    {
+        if (isGrappling)
+        {
+            momentum = grappleTargetDirection.normalized * grappleSpeed;
+        }
+    }
+
+    private void Grapple_Canceled(InputAction.CallbackContext context)
+    {
+        isGrappling = false;
     }
 
     private void TiltCamera(float tiltAngle, float tiltSpeed)
