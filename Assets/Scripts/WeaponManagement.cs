@@ -16,7 +16,7 @@ public class WeaponManagement : MonoBehaviour
     Transform WeaponGripTransform;
 
     [SerializeField]
-    GameObject currentActiveWeapon;
+    public GameObject currentActiveWeapon;
 
     [SerializeField]
     PlayerInputActions playerInput;
@@ -36,6 +36,8 @@ public class WeaponManagement : MonoBehaviour
         playerInput.Player.Enable();
         playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
         playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
+        playerInput.Player.AltFire.started += AltFireWeaponBegin;
+        playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
     }
 
     // Update is called once per frame
@@ -59,6 +61,10 @@ public class WeaponManagement : MonoBehaviour
             SetWeapon(weaponIterator);
             Debug.Log(weaponIterator);
         }
+
+        PrimaryFireStayCheck(playerInput.Player.PrimaryFire.inProgress);
+        AltFireStayCheck(playerInput.Player.AltFire.inProgress);
+
     }
 
     void PrimaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -81,7 +87,33 @@ public class WeaponManagement : MonoBehaviour
 
     }
 
-    void SecondaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    void PrimaryFireStayCheck(bool inProgress)
+    {
+        if (inProgress)
+        {
+            if (currentActiveWeapon.GetComponent<Revolver>())
+                currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireStay();
+
+            if (currentActiveWeapon.GetComponent<Shotgun>())
+                currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireStay();
+        }
+    }
+
+    void AltFireStayCheck(bool inProgress)
+    {
+        if (inProgress)
+        {
+            Debug.Log("Alt In Progress");
+            if (currentActiveWeapon.GetComponent<Revolver>())
+                currentActiveWeapon.GetComponent<Revolver>().OnAltFireStay();
+
+            if (currentActiveWeapon.GetComponent<Shotgun>())
+                currentActiveWeapon.GetComponent<Shotgun>().OnAltFireStay();
+        }
+    }
+
+
+    void AltFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (currentActiveWeapon.GetComponent<Revolver>())
             currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
@@ -91,7 +123,7 @@ public class WeaponManagement : MonoBehaviour
     }
 
 
-    void SecondaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    void AltFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (currentActiveWeapon.GetComponent<Revolver>())
             currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();
