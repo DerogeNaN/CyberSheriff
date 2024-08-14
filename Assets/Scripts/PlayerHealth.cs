@@ -10,6 +10,11 @@ public class PlayerHealth : MonoBehaviour
 
     [SerializeField] TMP_Text healthUI;
 
+    void Start()
+    {
+        UpdateHealthUI();   
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "EnemyHitbox")
