@@ -14,12 +14,14 @@ public class EnemyTypeRanged : EnemyBase
 
     [SerializeField] Transform playerTransform;
     [SerializeField] GameObject bulletPrefab;
+    Vector3 initialPosition;
     float remainingAttackTime;
     float remainingAttackCooldown;
 
     new void Start()
     {
         base.Start();
+        initialPosition = transform.position;
         SetState(EnemyState.idle);
     }
 
@@ -42,7 +44,8 @@ public class EnemyTypeRanged : EnemyBase
         {
             case EnemyState.idle:
                 {
-
+                    shouldPath = true;
+                    moveTarget = initialPosition;
                 }
                 break;
 
