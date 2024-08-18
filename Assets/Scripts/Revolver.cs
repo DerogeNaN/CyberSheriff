@@ -105,13 +105,13 @@ public class Revolver : MonoBehaviour
         //set ray direction to the barrel to look point direction 
         ray.direction = barrelToLookPointDir;
 
-        if (shouldShootPrimary == true && waiting == false)
+        if (shouldShootPrimary == true && waiting == false && reloading == false)
         {
             ray.origin = muzzlePoint.transform.position;
             canFire = true;
         }
 
-        if (shouldShootAlt == true && waiting == false)
+        if (shouldShootAlt == true && waiting == false && reloading == false)
         {
             ray.origin = altMuzzlePoint.transform.position;
             canFire = true;
@@ -120,6 +120,7 @@ public class Revolver : MonoBehaviour
         //Primary Fire Logic
         if (shouldShootPrimary && canFire && currentBullets > 0)
         {
+            //Debug.Log("Bullet Found");
             currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
@@ -142,19 +143,19 @@ public class Revolver : MonoBehaviour
 
                 if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
                 {
-                    Debug.Log("Root" + hit.rigidbody.transform.root);
-                    Debug.Log("Impulse" + hit.rigidbody.name);
+                    //    Debug.Log("Root" + hit.rigidbody.transform.root);
+                    //  Debug.Log("Impulse" + hit.rigidbody.name);
                     hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
                 }
                 else
                 {
-                    Debug.Log("part of The Player ");
+                    //  Debug.Log("part of The Player ");
                 }
 
 
                 if (hit.collider.gameObject.GetComponent<Health>())
                 {
-                    Debug.Log("Die");
+                    //Debug.Log("Die");
                     hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
                 }
 
@@ -163,15 +164,17 @@ public class Revolver : MonoBehaviour
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
-        else if (currentBullets <= 0)
+        else if (currentBullets <= 0 && reloading == false)
         {
             canFire = false;
             StartCoroutine(Reload());
         }
 
-        //altFire Logic
-        if (shouldShootAlt && canFire && currentBullets > 0)
-        {
+        ////altFire Logic
+        //if (shouldShootAlt && canFire && currentBullets > 0)
+        //{
+            //Debug.Log("Bullet Found");
+            //currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 GameObject bulletfab = Instantiate(bulletTrailPrefab);
@@ -193,27 +196,31 @@ public class Revolver : MonoBehaviour
 
                 if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
                 {
-                    Debug.Log("Root" + hit.rigidbody.transform.root);
-                    Debug.Log("Impulse" + hit.rigidbody.name);
+                    //Debug.Log("Root" + hit.rigidbody.transform.root);
+                    //Debug.Log("Impulse" + hit.rigidbody.name);
                     hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
                 }
                 else
                 {
-                    Debug.Log("part of The Player ");
+                    //Debug.Log("part of The Player ");
                 }
 
 
                 if (hit.collider.gameObject.GetComponent<Health>())
                 {
-                    Debug.Log("Die");
+                    //Debug.Log("Die");
                     hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
                 }
-
-
             }
             canFire = false;
             StartCoroutine(Wait(AltshotGapTime));
-        }
+        //}
+        //else if (currentBullets <= 0  && reloading == false)
+        //{
+        //    Debug.Log("out off Bullets");
+        //    canFire = false;
+        //    StartCoroutine(Reload());
+        //}
 
     }
 
@@ -234,9 +241,9 @@ public class Revolver : MonoBehaviour
         yield return new WaitForSeconds(reloadTime);
         Debug.Log("Reloading...");
         canFire = false;
-        if(currentBullets != BulletsPerClip)
+        if (currentBullets != BulletsPerClip)
         {
-            currentBullets = BulletsPerClip;
+          currentBullets = BulletsPerClip;
         }
         reloading = false;
 
