@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Jobs;
+using UnityEngine.VFX;
 
 
 public class Shotgun : MonoBehaviour
@@ -60,7 +60,7 @@ public class Shotgun : MonoBehaviour
     {
         camRef = FindAnyObjectByType<Camera>();
         cameraLineRenderer = camRef.GetComponent<LineRenderer>();
-
+        
 
     }
 

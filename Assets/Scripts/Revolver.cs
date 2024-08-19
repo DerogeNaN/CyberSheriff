@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine.AI;
+using UnityEngine.VFX;
 
 public class Revolver : MonoBehaviour
 {
@@ -71,6 +72,10 @@ public class Revolver : MonoBehaviour
     [SerializeField]
     bool reloading;
 
+    [SerializeField]
+    VisualEffect BulletFlash;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -120,7 +125,8 @@ public class Revolver : MonoBehaviour
         //Primary Fire Logic
         if (shouldShootPrimary && canFire && currentBullets > 0)
         {
-            //Debug.Log("Bullet Found");
+            BulletFlash.Play();
+
             currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
@@ -170,11 +176,12 @@ public class Revolver : MonoBehaviour
             StartCoroutine(Reload());
         }
 
-        ////altFire Logic
-        //if (shouldShootAlt && canFire && currentBullets > 0)
-        //{
-            //Debug.Log("Bullet Found");
-            //currentBullets--;
+        //altFire Logic
+        if (shouldShootAlt && canFire && currentBullets > 0)
+        {
+            BulletFlash.Play();
+
+            currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 GameObject bulletfab = Instantiate(bulletTrailPrefab);
@@ -214,13 +221,13 @@ public class Revolver : MonoBehaviour
             }
             canFire = false;
             StartCoroutine(Wait(AltshotGapTime));
-        //}
-        //else if (currentBullets <= 0  && reloading == false)
-        //{
-        //    Debug.Log("out off Bullets");
-        //    canFire = false;
-        //    StartCoroutine(Reload());
-        //}
+        }
+        else if (currentBullets <= 0 && reloading == false)
+        {
+            Debug.Log("out off Bullets");
+            canFire = false;
+            StartCoroutine(Reload());
+        }
 
     }
 
