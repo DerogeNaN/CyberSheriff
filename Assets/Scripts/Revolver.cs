@@ -26,11 +26,11 @@ public class Revolver : MonoBehaviour
     public GameObject CurrentlyHitting;
 
     [SerializeField]
-    [Tooltip("Just a bool for whether Primary Fire Should Happen")]
+    [Tooltip("Just a bool for whether Primary Fire should happen")]
     bool shouldShootPrimary = false;
 
     [SerializeField]
-    [Tooltip("Just a Bool for if the seondary fire shoud happen ")]
+    [Tooltip("Just a bool for if the secondary fire should happen ")]
     bool shouldShootAlt = false;
 
 
@@ -75,17 +75,24 @@ public class Revolver : MonoBehaviour
     [SerializeField]
     VisualEffect BulletFlash;
 
+    [SerializeField]
+    GameObject bulletEffect;
+
+    float BulletSpeed = 200;
+
 
     // Start is called before the first frame update
     void Start()
     {
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
+       
     }
 
     // Update is called once per frame
     void Update()
     {
+        bulletEffect.GetComponent<BulletVFX>().speed = BulletSpeed;
         Ray ray = new Ray();
         Ray cameraRay = new Ray();
 
@@ -95,7 +102,6 @@ public class Revolver : MonoBehaviour
 
         RaycastHit hit = new RaycastHit();
         RaycastHit cameraHit;
-
 
         //GUN camera Interactions here 
         cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
@@ -130,14 +136,14 @@ public class Revolver : MonoBehaviour
             currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                GameObject bulletfab = Instantiate(bulletTrailPrefab);
                 CurrentlyHitting = hit.transform.gameObject;
+
+                GameObject bullet = Instantiate(bulletEffect);
+                bullet.transform.position = muzzlePoint.position;
+                bullet.transform.LookAt(hit.point);
 
                 if (hit.point != null)
                 {
-                    bulletfab.GetComponent<LineRenderer>().SetPosition(0, ray.origin);
-                    bulletfab.GetComponent<LineRenderer>().SetPosition(1, hit.point);
-
                     // bullet Hole Decal Placement Logic 
                     if (!hit.transform.GetComponent<NavMeshAgent>())
                     {
@@ -149,23 +155,13 @@ public class Revolver : MonoBehaviour
 
                 if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
                 {
-                    //    Debug.Log("Root" + hit.rigidbody.transform.root);
-                    //  Debug.Log("Impulse" + hit.rigidbody.name);
                     hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
                 }
-                else
-                {
-                    //  Debug.Log("part of The Player ");
-                }
-
 
                 if (hit.collider.gameObject.GetComponent<Health>())
                 {
-                    //Debug.Log("Die");
                     hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
                 }
-
-
             }
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
@@ -181,17 +177,18 @@ public class Revolver : MonoBehaviour
         {
             BulletFlash.Play();
 
+
             currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                GameObject bulletfab = Instantiate(bulletTrailPrefab);
                 CurrentlyHitting = hit.transform.gameObject;
+
+                GameObject bullet = Instantiate(bulletEffect);
+                bullet.transform.position = muzzlePoint.position;
+                bullet.transform.LookAt(hit.point);
 
                 if (hit.point != null)
                 {
-                    bulletfab.GetComponent<LineRenderer>().SetPosition(0, ray.origin);
-                    bulletfab.GetComponent<LineRenderer>().SetPosition(1, hit.point);
-
                     // bullet Hole Decal Placement Logic 
                     if (!hit.transform.GetComponent<NavMeshAgent>())
                     {
@@ -203,19 +200,11 @@ public class Revolver : MonoBehaviour
 
                 if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
                 {
-                    //Debug.Log("Root" + hit.rigidbody.transform.root);
-                    //Debug.Log("Impulse" + hit.rigidbody.name);
                     hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
                 }
-                else
-                {
-                    //Debug.Log("part of The Player ");
-                }
-
 
                 if (hit.collider.gameObject.GetComponent<Health>())
                 {
-                    //Debug.Log("Die");
                     hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
                 }
             }
@@ -228,7 +217,6 @@ public class Revolver : MonoBehaviour
             canFire = false;
             StartCoroutine(Reload());
         }
-
     }
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
@@ -250,13 +238,10 @@ public class Revolver : MonoBehaviour
         canFire = false;
         if (currentBullets != BulletsPerClip)
         {
-          currentBullets = BulletsPerClip;
+            currentBullets = BulletsPerClip;
         }
         reloading = false;
-
     }
-
-
 
     //active on beginning of Primary fire Action
     public void OnPrimaryFireBegin()
