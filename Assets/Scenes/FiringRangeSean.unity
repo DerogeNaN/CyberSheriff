@@ -459,18 +459,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ce9a57c02b30444c9cd2b198671bdb0, type: 3}
---- !u!114 &592028872 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2953391819764187308, guid: ba02d8066109e104fb84cba5a8f996c3,
-    type: 3}
-  m_PrefabInstance: {fileID: 8174316524847512786}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &630819501 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1108933538, guid: 8fade19a7bad524499f540e5bbacba9e,
@@ -1711,26 +1699,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09828abd8ded024488972d5e092933af, type: 3}
---- !u!1 &1713818196 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8174316523889117954, guid: ba02d8066109e104fb84cba5a8f996c3,
-    type: 3}
-  m_PrefabInstance: {fileID: 8174316524847512786}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1713818198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1713818196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fab3984e90fe100408ba170c5c6ad637, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponManagmentScript: {fileID: 630819501}
-  ammoText: {fileID: 592028872}
 --- !u!1001 &1835499030
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1747,6 +1715,12 @@ PrefabInstance:
       propertyPath: BulletFlash
       value: 
       objectReference: {fileID: 874144142}
+    - target: {fileID: 4316420988155231359, guid: 8fade19a7bad524499f540e5bbacba9e,
+        type: 3}
+      propertyPath: bulletEffect
+      value: 
+      objectReference: {fileID: 7610885174257348678, guid: a49c2a9c29e480f4a9d9feef54d707c4,
+        type: 3}
     - target: {fileID: 4316420988155231359, guid: 8fade19a7bad524499f540e5bbacba9e,
         type: 3}
       propertyPath: AltshotGapTime
@@ -2381,6 +2355,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -29
       objectReference: {fileID: 0}
+    - target: {fileID: 5719843767586982560, guid: ba02d8066109e104fb84cba5a8f996c3,
+        type: 3}
+      propertyPath: weaponManagmentScript
+      value: 
+      objectReference: {fileID: 630819501}
     - target: {fileID: 6892951187734725917, guid: ba02d8066109e104fb84cba5a8f996c3,
         type: 3}
       propertyPath: m_AnchorMax.x
