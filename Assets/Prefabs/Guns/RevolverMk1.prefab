@@ -46,20 +46,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b594bdaaab1054740afb717bfdab02df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MuzzlePoint: {fileID: 6856021437047971369}
-  SecondaryMuzzlePoint: {fileID: 6856021437047971369}
+  muzzlePoint: {fileID: 0}
+  altMuzzlePoint: {fileID: 0}
   DamageValue: 25
   CurrentlyHitting: {fileID: 0}
-  shouldDrawBulletTrail: 0
+  shouldShootPrimary: 0
+  shouldShootAlt: 0
   bulletForceMultiplier: 1
   bulletTrailPrefab: {fileID: 7806430457410555219, guid: 3443df8f4746bf746af5214bdad02c63,
     type: 3}
   shotGapTime: 1
+  AltshotGapTime: 0.2
+  reloadTime: 2
   canFire: 0
   camRef: {fileID: 0}
   BulletHitDecal: {fileID: 4215241873354640552, guid: 09828abd8ded024488972d5e092933af,
     type: 3}
-  coroutineRunning: 0
+  BulletsPerClip: 6
+  currentBullets: 0
+  waiting: 0
+  reloading: 0
+  BulletFlash: {fileID: 0}
+  bulletEffect: {fileID: 7610885174257348678, guid: a49c2a9c29e480f4a9d9feef54d707c4,
+    type: 3}
 --- !u!1 &8232953838055993192
 GameObject:
   m_ObjectHideFlags: 0
