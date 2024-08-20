@@ -76,7 +76,7 @@ public class Revolver : MonoBehaviour
     VisualEffect BulletFlash;
 
     [SerializeField]
-    GameObject bulletEffect;
+    GameObject HitEffect;
 
     float BulletSpeed = 200;
 
@@ -86,13 +86,13 @@ public class Revolver : MonoBehaviour
     {
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
-       
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        bulletEffect.GetComponent<BulletVFX>().speed = BulletSpeed;
+        HitEffect.GetComponent<BulletVFX>().speed = BulletSpeed;
         Ray ray = new Ray();
         Ray cameraRay = new Ray();
 
@@ -138,18 +138,21 @@ public class Revolver : MonoBehaviour
             {
                 CurrentlyHitting = hit.transform.gameObject;
 
-                GameObject bullet = Instantiate(bulletEffect);
-                bullet.transform.position = muzzlePoint.position;
-                bullet.transform.LookAt(hit.point);
-
                 if (hit.point != null)
                 {
                     // bullet Hole Decal Placement Logic 
-                    if (!hit.transform.GetComponent<NavMeshAgent>())
+                    if (!hit.transform.GetComponent<NavMeshAgent>() && hit.transform.gameObject.layer != 3)
                     {
                         GameObject Decal = Instantiate(BulletHitDecal);
                         Decal.transform.parent = hit.transform;
                         Decal.transform.position = hit.point;
+                    }
+
+                    if (hit.transform.gameObject.layer != 3)
+                    {
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = hit.point;
+                        Destroy(hitFX, 5);
                     }
                 }
 
@@ -177,25 +180,26 @@ public class Revolver : MonoBehaviour
         {
             BulletFlash.Play();
 
-
             currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 CurrentlyHitting = hit.transform.gameObject;
 
-                GameObject bullet = Instantiate(bulletEffect);
-                bullet.transform.position = muzzlePoint.position;
-                bullet.transform.LookAt(hit.point);
-
                 if (hit.point != null)
                 {
                     // bullet Hole Decal Placement Logic 
-                    if (!hit.transform.GetComponent<NavMeshAgent>())
+                    if (!hit.transform.GetComponent<NavMeshAgent>() && hit.transform.gameObject.layer != 3)
                     {
                         GameObject Decal = Instantiate(BulletHitDecal);
                         Decal.transform.parent = hit.transform;
                         Decal.transform.position = hit.point;
+
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = hit.point;
+                        Destroy(hitFX, 5);
+
                     }
+
                 }
 
                 if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
@@ -210,6 +214,7 @@ public class Revolver : MonoBehaviour
             }
             canFire = false;
             StartCoroutine(Wait(AltshotGapTime));
+
         }
         else if (currentBullets <= 0 && reloading == false)
         {
@@ -217,6 +222,7 @@ public class Revolver : MonoBehaviour
             canFire = false;
             StartCoroutine(Reload());
         }
+            StartCoroutine(FanFire());
     }
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
@@ -241,6 +247,16 @@ public class Revolver : MonoBehaviour
             currentBullets = BulletsPerClip;
         }
         reloading = false;
+    }
+
+
+    IEnumerator FanFire() 
+    {
+
+        Debug.Log("Fire start");
+        yield return new WaitForSeconds(5);
+
+        Debug.Log("Fire");
     }
 
     //active on beginning of Primary fire Action
