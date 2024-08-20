@@ -24,7 +24,8 @@ public class WeaponManagement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetWeapon(weaponIterator);
+        //SetWeapon(weaponIterator);
+        //currentActiveWeapon =  GetComponentsInChildren<RangedWeapon>()[1].gameObject;
 
         if (WeaponGripTransform.GetComponentInChildren<RangedWeapon>())
         {
@@ -32,35 +33,36 @@ public class WeaponManagement : MonoBehaviour
         }
         else
             //Debug.Log("no weapons found");
-        playerInput = new PlayerInputActions();
+            playerInput = new PlayerInputActions();
         playerInput.Player.Enable();
         playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
         playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
         playerInput.Player.AltFire.started += AltFireWeaponBegin;
         playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
+        playerInput.Player.WeaponSwitch.started += SetWeapon;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            weaponIterator++;
+        //if (Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    weaponIterator++;
 
-            if (weaponIterator < weaponList.Count)
-            {
-                //Debug.Log("theres still weapons in this list ");
-            }
-            else
-            {
-                //Debug.Log("at weapon List end");
-                weaponIterator %= weaponList.Count;
-                Debug.Log(weaponIterator);
-            }
+        //    if (weaponIterator < weaponList.Count)
+        //    {
+        //        //Debug.Log("theres still weapons in this list ");
+        //    }
+        //    else
+        //    {
+        //        //Debug.Log("at weapon List end");
+        //        weaponIterator %= weaponList.Count;
+        //        Debug.Log(weaponIterator);
+        //    }
 
-            SetWeapon(weaponIterator);
-            Debug.Log(weaponIterator);
-        }
+        //    SetWeapon(weaponIterator);
+        //    Debug.Log(weaponIterator);
+        //}
 
         PrimaryFireStayCheck(playerInput.Player.PrimaryFire.inProgress);
         AltFireStayCheck(playerInput.Player.AltFire.inProgress);
@@ -132,7 +134,6 @@ public class WeaponManagement : MonoBehaviour
             currentActiveWeapon.GetComponent<Shotgun>().OnAltFireBegin();
     }
 
-
     //maybe
     void WeaponListSet()
     {
@@ -140,15 +141,15 @@ public class WeaponManagement : MonoBehaviour
 
     }
 
-    void SetWeapon(int weaponIndex)
+    void SetWeapon(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         //set previous to false
         if (currentActiveWeapon)
             currentActiveWeapon.gameObject.SetActive(false);
 
-        Debug.Log("weapon type " + weaponIndex);
+        Debug.Log("weapon type " + (int)Mathf.Floor(obj.ReadValue<float>()));
 
-        currentActiveWeapon = weaponList[weaponIndex];
+        currentActiveWeapon = weaponList[(int)Mathf.Floor(obj.ReadValue<float>())];
         if (currentActiveWeapon)
         {
             //Debug.Log("WeaponFound!!");
