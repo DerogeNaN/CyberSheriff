@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
 // NEW BASE ENEMY SCRIPT
@@ -27,14 +29,27 @@ public class EnemyBase : MonoBehaviour
     [HideInInspector] public EnemyState state;
     protected bool hasLineOfSight;
     protected bool shouldPath;
-    protected NavMeshAgent pathAgent;
 
     [SerializeField] TMP_Text debugStateText;
 
+    // navigation
+    [SerializeField] NavMeshSurface navMesh;
+    public float repathFrequency = 1.0f;
+    protected NavMeshPath path;
+    float untilRepath;
+    Vector3 lastPos;
+
+    // movement
+    public float speed = 5.0f;
+    float lerpAmount = 0.0f;
+    int nextCorner = 0;
+
     public void Start()
     {
-        pathAgent = GetComponent<NavMeshAgent>();
-        pathAgent.avoidancePriority = (int)Random.Range(0, 99.0f);
+        shouldPath = false;
+        untilRepath = repathFrequency;
+        path = new();
+        lastPos = transform.position;
     }
 
     public void Update()
@@ -63,10 +78,34 @@ public class EnemyBase : MonoBehaviour
         // enemy types that inherit from this decide when to set shouldPath to true or false
         if (shouldPath)
         {
-            pathAgent.enabled = true;
-            pathAgent.destination = moveTarget;
+            // recalculate path
+            untilRepath -= Time.deltaTime;
+            if (untilRepath <= 0)
+            {
+                //CalculatePath();
+            }
+
+            // move
+            if (path.corners.Length > 0)
+            {
+                if (lerpAmount < 1.0f)
+                {
+                    lerpAmount += Time.deltaTime * speed;
+                    transform.position = Vector3.Lerp(lastPos, path.corners[nextCorner], lerpAmount);
+                }
+                else if (nextCorner < path.corners.Length - 1)
+                {
+                    lerpAmount = 0;
+                    lastPos = transform.position;
+                    nextCorner++;
+                }
+            }
         }
-        else pathAgent.enabled = false;
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            CalculatePath();
+        }
     }
 
     public virtual void Hit(int damage)
@@ -76,4 +115,29 @@ public class EnemyBase : MonoBehaviour
 
         Debug.Log("hit " + name);
     }
+
+    void CalculatePath()
+    {
+        NavMesh.CalculatePath(transform.position, moveTarget, NavMesh.AllAreas, path);
+        untilRepath = repathFrequency;
+        lerpAmount = 0.0f;
+        nextCorner = 0;
+        lastPos = transform.position;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.red;
+
+            for (int i = 0; i < path.corners.Length; i++)
+            {
+                Gizmos.DrawWireSphere(path.corners[i], 0.5f);
+                if (i < path.corners.Length - 1) Gizmos.DrawLine(path.corners[i], path.corners[i + 1]);
+            }
+        }
+    }
+
+
 }

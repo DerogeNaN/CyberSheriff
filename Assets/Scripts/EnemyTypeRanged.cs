@@ -94,7 +94,7 @@ public class EnemyTypeRanged : EnemyBase
                     if (Vector3.Distance(transform.position, moveTarget) >= attackRange)
                     {
                         shouldPath = true;
-                        pathAgent.speed = moveSpeed;
+                        //pathAgent.speed = moveSpeed;
                     }
                     else
                     {
@@ -107,7 +107,7 @@ public class EnemyTypeRanged : EnemyBase
                         else if (Vector3.Distance(transform.position, moveTarget) >= minRange)
                         {
                             shouldPath = true;
-                            pathAgent.speed = slowSpeed;
+                            //pathAgent.speed = slowSpeed;
                         }
                     }
                 }

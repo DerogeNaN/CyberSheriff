@@ -210,7 +210,7 @@ public class Movement : MonoBehaviour
 
         if (moveInput == Vector2.zero && isGrounded && !isSliding)
         {
-            Debug.Log("This is running");
+            //Debug.Log("This is running");
             momentum.x *= groundDrag;
             momentum.z *= groundDrag;
         }
