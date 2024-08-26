@@ -14,6 +14,7 @@ public class EnemyTypeMelee : EnemyBase
     public GameObject hitboxPrefab;
     public Transform playerTransform;
 
+    Vector3 initialPosition;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
@@ -22,6 +23,7 @@ public class EnemyTypeMelee : EnemyBase
     new void Start()
     {
         base.Start();
+        initialPosition = transform.position;
         SetState(EnemyState.idle);
     }
 
@@ -46,7 +48,8 @@ public class EnemyTypeMelee : EnemyBase
         {
             case EnemyState.idle:
                 {
-
+                    shouldPath = true;
+                    moveTarget = initialPosition;
                 }
                 break;
 
