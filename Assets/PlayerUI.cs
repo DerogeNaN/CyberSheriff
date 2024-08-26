@@ -18,7 +18,7 @@ public class PlayerUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        weaponManagmentScript = FindObjectOfType<WeaponManagement>();
     }
 
     // Update is called once per frame
