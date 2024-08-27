@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine.AI;
 using UnityEngine.VFX;
 
@@ -116,16 +115,18 @@ public class Revolver : MonoBehaviour
         //set ray direction to the barrel to look point direction 
         ray.direction = barrelToLookPointDir;
 
-        if (shouldShootPrimary == true && waiting == false && reloading == false)
+        if (!waiting && !reloading)
         {
-            ray.origin = muzzlePoint.transform.position;
-            canFire = true;
-        }
-
-        if (shouldShootAlt == true && waiting == false && reloading == false)
-        {
-            ray.origin = altMuzzlePoint.transform.position;
-            canFire = true;
+            if (shouldShootPrimary)
+            {
+                ray.origin = muzzlePoint.transform.position;
+                canFire = true;
+            }
+            if (shouldShootAlt)
+            {
+                ray.origin = altMuzzlePoint.transform.position;
+                canFire = true;
+            }
         }
 
         //Primary Fire Logic
@@ -222,7 +223,7 @@ public class Revolver : MonoBehaviour
             canFire = false;
             StartCoroutine(Reload());
         }
-            StartCoroutine(FanFire());
+        StartCoroutine(FanFire());
     }
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
