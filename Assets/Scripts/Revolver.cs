@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine.AI;
 using UnityEngine.VFX;
 
@@ -51,6 +52,10 @@ public class Revolver : MonoBehaviour
 
     [SerializeField]
     bool canFire;
+
+    [SerializeField]
+    bool canPressAltFire = true;
+
 
     [SerializeField]
     Camera camRef;
@@ -115,18 +120,16 @@ public class Revolver : MonoBehaviour
         //set ray direction to the barrel to look point direction 
         ray.direction = barrelToLookPointDir;
 
-        if (!waiting && !reloading)
+        if (shouldShootPrimary == true && waiting == false && reloading == false)
         {
-            if (shouldShootPrimary)
-            {
-                ray.origin = muzzlePoint.transform.position;
-                canFire = true;
-            }
-            if (shouldShootAlt)
-            {
-                ray.origin = altMuzzlePoint.transform.position;
-                canFire = true;
-            }
+            ray.origin = muzzlePoint.transform.position;
+            canFire = true;
+        }
+
+        if (shouldShootAlt == true && waiting == false && reloading == false)
+        {
+            ray.origin = altMuzzlePoint.transform.position;
+            canFire = true;
         }
 
         //Primary Fire Logic
@@ -142,15 +145,22 @@ public class Revolver : MonoBehaviour
                 if (hit.point != null)
                 {
                     // bullet Hole Decal Placement Logic 
-                    if (!hit.transform.GetComponent<NavMeshAgent>() && hit.transform.gameObject.layer != 3)
-                    {
-                        GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.parent = hit.transform;
-                        Decal.transform.position = hit.point;
-                    }
+                   // if (!hit.transform.GetComponent<NavMeshAgent>() && hit.transform.gameObject.layer != 3) //Replace this with 'player' tag
+                   // {
+                   //     GameObject Decal = Instantiate(BulletHitDecal);
+                   //     Decal.transform.parent = hit.transform;
+                   //     Decal.transform.position = hit.point;
+                   // }
 
-                    if (hit.transform.gameObject.layer != 3)
+                    if (hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
+                        if (!hit.transform.GetComponent<NavMeshAgent>()) //AND it isn't an enemy
+                            {
+                            GameObject Decal = Instantiate(BulletHitDecal);
+                            Decal.transform.parent = hit.transform;
+                            Decal.transform.position = hit.point;
+                        }
+                        //..It isn't the player but it is an enemy...?
                         GameObject hitFX = Instantiate(HitEffect);
                         hitFX.transform.position = hit.point;
                         Destroy(hitFX, 5);
@@ -177,7 +187,55 @@ public class Revolver : MonoBehaviour
         }
 
         //altFire Logic
-        if (shouldShootAlt && canFire && currentBullets > 0)
+        if (shouldShootAlt && canFire && canPressAltFire && currentBullets > 0)
+            StartCoroutine(FanFire(ray, hit, barrelToLookPointDir));
+        else if (currentBullets <= 0 && reloading == false)
+        {
+            Debug.Log("out off Bullets");
+            canFire = false;
+            StartCoroutine(Reload());
+        }
+
+
+    }
+
+
+    //public bool AttemptFire(bool isPrimary)
+    //{
+
+    //}
+
+
+    //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
+
+    IEnumerator Wait(float shotGapTime)
+    {
+        waiting = true;
+        yield return new WaitForSeconds(shotGapTime);
+        Debug.Log("Waiting...");
+        canFire = true;
+        waiting = false;
+    }
+
+    IEnumerator Reload()
+    {
+        reloading = true;
+        yield return new WaitForSeconds(reloadTime);
+        Debug.Log("Reloading...");
+        canFire = false;
+        if (currentBullets != BulletsPerClip)
+        {
+            currentBullets = BulletsPerClip;
+        }
+        reloading = false;
+    }
+
+
+    IEnumerator FanFire(Ray ray, RaycastHit hit, Vector3 barrelToLookPointDir)
+    {
+        Debug.Log("Fire start");
+        canPressAltFire = false;
+        for (int i = 0; i < currentBullets; i++)
         {
             BulletFlash.Play();
 
@@ -214,50 +272,10 @@ public class Revolver : MonoBehaviour
                 }
             }
             canFire = false;
-            StartCoroutine(Wait(AltshotGapTime));
-
+            yield return new WaitForSeconds(AltshotGapTime);
+            //StartCoroutine(Wait(AltshotGapTime));
         }
-        else if (currentBullets <= 0 && reloading == false)
-        {
-            Debug.Log("out off Bullets");
-            canFire = false;
-            StartCoroutine(Reload());
-        }
-        StartCoroutine(FanFire());
-    }
-
-    //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
-
-    IEnumerator Wait(float shotGapTime)
-    {
-        waiting = true;
-        yield return new WaitForSeconds(shotGapTime);
-        Debug.Log("Waiting...");
-        canFire = true;
-        waiting = false;
-    }
-
-    IEnumerator Reload()
-    {
-        reloading = true;
-        yield return new WaitForSeconds(reloadTime);
-        Debug.Log("Reloading...");
-        canFire = false;
-        if (currentBullets != BulletsPerClip)
-        {
-            currentBullets = BulletsPerClip;
-        }
-        reloading = false;
-    }
-
-
-    IEnumerator FanFire() 
-    {
-
-        Debug.Log("Fire start");
-        yield return new WaitForSeconds(5);
-
-        Debug.Log("Fire");
+        canPressAltFire = true;
     }
 
     //active on beginning of Primary fire Action
@@ -272,7 +290,6 @@ public class Revolver : MonoBehaviour
     {
         shouldShootAlt = true;
         Debug.Log("Beginning primary Fire");
-
     }
 
     //Active every interval of Primaryfire set in this script
@@ -282,7 +299,6 @@ public class Revolver : MonoBehaviour
         {
             Debug.Log("Primary fire stay ");
         }
-
     }
 
     //Active every interval  of altfire set in this script
