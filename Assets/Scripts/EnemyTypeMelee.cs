@@ -15,13 +15,13 @@ public class EnemyTypeMelee : EnemyBase
     public float attackCooldown = 1.0f;
     public float attackRange = 2.0f;
     public GameObject hitboxPrefab;
-    public Transform playerTransform;
 
     Vector3 initialPosition;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
     float remainingAttackCooldown = 0;
+    float remainingStun = 0;
 
     new void Start()
     {
@@ -81,6 +81,18 @@ public class EnemyTypeMelee : EnemyBase
                         GameObject hitbox = Instantiate(hitboxPrefab, transform);
                         hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
                     }
+                }
+                break;
+
+            case EnemyState.stunned:
+                {
+                    shouldPath = false;
+                }
+                break;
+
+            case EnemyState.downed:
+                {
+                    shouldPath = false;
                 }
                 break;
         }
@@ -148,6 +160,21 @@ public class EnemyTypeMelee : EnemyBase
                     }
                 }
                 break;
+
+            case EnemyState.stunned:
+                {
+                    remainingStun -= Time.deltaTime;
+
+                    if (remainingStun <= 0)
+                        SetState(EnemyState.idle);
+                }
+                break;
+
+            case EnemyState.downed:
+                {
+
+                }
+                break;
         }
     }
 
@@ -178,6 +205,18 @@ public class EnemyTypeMelee : EnemyBase
             case EnemyState.attacking:
                 {
                     remainingAttackCooldown = attackCooldown;
+                }
+                break;
+
+            case EnemyState.stunned:
+                {
+
+                }
+                break;
+
+            case EnemyState.downed:
+                {
+
                 }
                 break;
         }

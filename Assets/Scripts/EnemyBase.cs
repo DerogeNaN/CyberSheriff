@@ -17,11 +17,14 @@ public enum EnemyState
     movingToTarget,
     lostSightOfTarget,
     attacking,
+    stunned,
+    downed,
 }
 
 public class EnemyBase : MonoBehaviour
 {
     public int health = 100;
+    public Transform playerTransform;
     public float sightRange = 25.0f;
     public float stopDistance = 1.0f;
     protected Vector3 moveTarget; // the object it follows
