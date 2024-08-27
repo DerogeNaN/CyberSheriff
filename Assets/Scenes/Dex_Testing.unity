@@ -960,7 +960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1902289988}
   enemy: {fileID: 8781144055303266582, guid: fb23e7f955925624f82daf8fb7b8c734, type: 3}
-  count: 4
+  count: 1
   radius: 5
   interval: 1
 --- !u!1 &756964035
@@ -2569,6 +2569,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5425296104912221999, guid: 06b14a840d3dad048bf1aaba573dee1b,
         type: 3}
+      propertyPath: m_TileSize
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425296104912221999, guid: 06b14a840d3dad048bf1aaba573dee1b,
+        type: 3}
       propertyPath: m_VoxelSize
       value: 0.23333333
       objectReference: {fileID: 0}
@@ -2578,6 +2583,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 23800000, guid: df8cafe3c5bf5014c8777d95cb1e89f8,
         type: 2}
+    - target: {fileID: 5425296104912221999, guid: 06b14a840d3dad048bf1aaba573dee1b,
+        type: 3}
+      propertyPath: m_OverrideTileSize
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425296104912221999, guid: 06b14a840d3dad048bf1aaba573dee1b,
+        type: 3}
+      propertyPath: m_OverrideVoxelSize
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06b14a840d3dad048bf1aaba573dee1b, type: 3}
 --- !u!114 &6997183427310040832
@@ -2780,6 +2795,8 @@ MonoBehaviour:
   sightRange: 30
   stopDistance: 5
   lineOfSightOffset: {x: 0, y: 1.5, z: 0}
+  floorRaycastPos: {x: 0, y: 0, z: 0}
+  floorRaycastLength: 0
   state: 0
   debugStateText: {fileID: 6997183427310040832}
   navMesh: {fileID: 0}

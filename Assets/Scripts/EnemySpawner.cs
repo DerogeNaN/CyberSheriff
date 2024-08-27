@@ -43,7 +43,7 @@ public class EnemySpawner : MonoBehaviour
         toSpawn--;
         untilNextSpawn = interval;
 
-        GameObject go = Instantiate(enemy, transform.position, transform.rotation);
+        GameObject go = Instantiate(enemy, transform.position, Quaternion.identity);
         go.GetComponent<EnemyBase>().playerTransform = playerTransform;
     }
 }
