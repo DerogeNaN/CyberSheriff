@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.VisualScripting;
@@ -17,16 +18,21 @@ public enum EnemyState
     movingToTarget,
     lostSightOfTarget,
     attacking,
+    stunned,
+    downed,
 }
 
 public class EnemyBase : MonoBehaviour
 {
     public int health = 100;
+    public Transform playerTransform;
     public float sightRange = 25.0f;
     public float stopDistance = 1.0f;
     protected Vector3 moveTarget; // the object it follows
     protected Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
     [SerializeField] protected Vector3 lineOfSightOffset;
+    [SerializeField] protected Vector3 floorRaycastPos;
+    [SerializeField] protected float floorRaycastLength;
 
     [HideInInspector] public EnemyState state;
     protected bool hasLineOfSight;
@@ -92,19 +98,11 @@ public class EnemyBase : MonoBehaviour
             // move
             if (path.corners.Length > 0 && nextCorner < path.corners.Length)
             {
-                if (lerpAmount < 1.0f)
-                {
-                    lerpAmount += Time.deltaTime * speed / Vector3.Distance(lastPos, path.corners[nextCorner]);
-                    transform.position = Vector3.Lerp(lastPos, path.corners[nextCorner], lerpAmount);
-                }
-                else if (nextCorner < path.corners.Length - 1)
-                {
-                    lerpAmount = 0;
-                    lastPos = transform.position;
-                    nextCorner++;
-                }
+                Move();
             }
         }
+
+        //StayAboveFloor();
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -127,6 +125,44 @@ public class EnemyBase : MonoBehaviour
         lerpAmount = 0.0f;
         nextCorner = 1;
         lastPos = transform.position;
+    }
+
+    void Move()
+    {
+        Vector3 next = path.corners[nextCorner];
+        Vector3 dirToNextCorner = (next - transform.position).normalized;
+
+        transform.position += dirToNextCorner * speed * Time.deltaTime;
+        if ((next - transform.position).magnitude <= 1.0f) // if less than 1 unit away from target corner
+        {
+            if (nextCorner < path.corners.Length - 1) nextCorner++;
+        }
+
+        //if (lerpAmount < 1.0f)
+        //{
+        //    lerpAmount += Time.deltaTime * speed / Vector3.Distance(lastPos, path.corners[nextCorner]);
+        //    transform.position = Vector3.Lerp(lastPos, path.corners[nextCorner], lerpAmount);
+        //}
+        //else if (nextCorner < path.corners.Length - 1)
+        //{
+        //    lerpAmount = 0;
+        //    lastPos = transform.position;
+        //    nextCorner++;
+        //}
+    }
+
+    void StayAboveFloor()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + floorRaycastPos, -transform.up, out hit, floorRaycastLength))
+        {
+            float distanceIntoFloor = hit.distance;
+            transform.position += new Vector3(0, distanceIntoFloor);
+
+            Debug.Log(distanceIntoFloor);
+        }
+
+        Debug.DrawRay(transform.position + floorRaycastPos, -transform.up, Color.green);
     }
 
     private void OnDrawGizmos()
