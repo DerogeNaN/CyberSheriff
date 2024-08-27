@@ -23,6 +23,7 @@ public class EnemyBase : MonoBehaviour
 {
     public int health = 100;
     public float sightRange = 25.0f;
+    public float stopDistance = 1.0f;
     protected Vector3 moveTarget; // the object it follows
     protected Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
     [SerializeField] protected Vector3 lineOfSightOffset;
@@ -41,7 +42,7 @@ public class EnemyBase : MonoBehaviour
     Vector3 lastPos;
 
     // movement
-    public float speed = 5.0f;
+    protected float speed = 5.0f;
     float lerpAmount = 0.0f;
     int nextCorner = 0;
 
@@ -79,7 +80,7 @@ public class EnemyBase : MonoBehaviour
         Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
 
         // enemy types that inherit from this decide when to set shouldPath to true or false
-        if (shouldPath)
+        if (shouldPath && Vector3.Distance(transform.position, moveTarget) > stopDistance)
         {
             // recalculate path
             untilRepath -= Time.deltaTime;

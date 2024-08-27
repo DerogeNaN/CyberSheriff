@@ -8,9 +8,8 @@ public class EnemyTypeRanged : EnemyBase
     public float attackTime = 2.0f;
     public float attackCooldown = 2.0f;
     public float attackRange = 25.0f; // max shooting range
-    public float minRange = 10.0f; // what range it will try to shoot at
-    public float moveSpeed = 5.0f;
-    public float slowSpeed = 2.0f;
+    public float runSpeed = 5.0f;
+    public float walkSpeed = 2.0f;
 
     [SerializeField] Transform playerTransform;
     [SerializeField] GameObject bulletPrefab;
@@ -22,6 +21,7 @@ public class EnemyTypeRanged : EnemyBase
     {
         base.Start();
         initialPosition = transform.position;
+        speed = runSpeed;
         SetState(EnemyState.idle);
     }
 
@@ -57,8 +57,8 @@ public class EnemyTypeRanged : EnemyBase
 
             case EnemyState.attacking:
                 {
-                    shouldPath = false;
                     remainingAttackTime = attackTime;
+                    speed = walkSpeed;
 
                     // do attack here
                     Projectile projectile = Instantiate(bulletPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
@@ -98,16 +98,9 @@ public class EnemyTypeRanged : EnemyBase
                     }
                     else
                     {
-                        shouldPath = false;
-
                         if (remainingAttackCooldown <= 0)
                         {
                             SetState(EnemyState.attacking);
-                        }
-                        else if (Vector3.Distance(transform.position, moveTarget) >= minRange)
-                        {
-                            shouldPath = true;
-                            //pathAgent.speed = slowSpeed;
                         }
                     }
                 }
@@ -138,13 +131,14 @@ public class EnemyTypeRanged : EnemyBase
 
             case EnemyState.movingToTarget:
                 {
-                    shouldPath = false;
+                    
                 }
                 break;
 
             case EnemyState.attacking:
                 {
                     remainingAttackCooldown = attackCooldown;
+                    speed = runSpeed;
                 }
                 break;
         }
