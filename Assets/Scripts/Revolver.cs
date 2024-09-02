@@ -144,18 +144,10 @@ public class Revolver : MonoBehaviour
 
                 if (hit.point != null)
                 {
-                    // bullet Hole Decal Placement Logic 
-                   // if (!hit.transform.GetComponent<NavMeshAgent>() && hit.transform.gameObject.layer != 3) //Replace this with 'player' tag
-                   // {
-                   //     GameObject Decal = Instantiate(BulletHitDecal);
-                   //     Decal.transform.parent = hit.transform;
-                   //     Decal.transform.position = hit.point;
-                   // }
-
                     if (hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
                         if (!hit.transform.GetComponent<NavMeshAgent>()) //AND it isn't an enemy
-                            {
+                        {
                             GameObject Decal = Instantiate(BulletHitDecal);
                             Decal.transform.parent = hit.transform;
                             Decal.transform.position = hit.point;
@@ -235,7 +227,8 @@ public class Revolver : MonoBehaviour
     {
         Debug.Log("Fire start");
         canPressAltFire = false;
-        for (int i = 0; i < currentBullets; i++)
+        int BulletsAtTimeOfFiring = currentBullets;
+        for (int i = 0; i < BulletsAtTimeOfFiring; i++)
         {
             BulletFlash.Play();
 
@@ -273,8 +266,8 @@ public class Revolver : MonoBehaviour
             }
             canFire = false;
             yield return new WaitForSeconds(AltshotGapTime);
-            //StartCoroutine(Wait(AltshotGapTime));
         }
+        Debug.Log("Fan Fire end");
         canPressAltFire = true;
     }
 

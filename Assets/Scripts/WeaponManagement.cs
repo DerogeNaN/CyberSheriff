@@ -160,7 +160,6 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -183,7 +182,6 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
 
 
@@ -207,7 +205,6 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
 
 }
