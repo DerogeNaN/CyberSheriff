@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Jobs;
+using UnityEngine.VFX;
 
 
 public class Shotgun : MonoBehaviour
@@ -47,22 +47,20 @@ public class Shotgun : MonoBehaviour
     int BulletsPerShot = 8;
 
     [SerializeField]
-    float timeTillBullet = 0f;
-
-    [SerializeField]
     bool canFire;
 
     [SerializeField]
     Camera camRef;
 
-
+    [SerializeField]
+    bool coroutineRunning = false;
 
     // Start is called before the first frame update
     void Start()
     {
         camRef = FindAnyObjectByType<Camera>();
         cameraLineRenderer = camRef.GetComponent<LineRenderer>();
-
+        
 
     }
 
@@ -96,15 +94,10 @@ public class Shotgun : MonoBehaviour
 
         //set ray direction to where the players reticle currently is pointing 
 
-        if (timeTillBullet < shotGapTime)
+        if (shouldDrawBulletTrail == true && coroutineRunning == false)
         {
-            timeTillBullet += Time.deltaTime;
-        }
-
-        if (timeTillBullet >= shotGapTime)
-        {
-            Debug.Log("CanFire!");
             canFire = true;
+
         }
 
         //Bullet visual Logic 
@@ -148,33 +141,41 @@ public class Shotgun : MonoBehaviour
                     }
                 }
                 canFire = false;
+                StartCoroutine(Wait());
             }
         }
         //else
 
     }
 
+
+    IEnumerator Wait()
+    {
+        coroutineRunning = true;
+        yield return new WaitForSeconds(shotGapTime);
+        Debug.Log("Waiting...");
+        canFire = true;
+        coroutineRunning = false;
+
+    }
+
+
     //active on beginning of Primary fire Action
     public void OnPrimaryFireBegin()
     {
-        if (timeTillBullet > shotGapTime)
-        {
-            timeTillBullet = 0;
-            shouldDrawBulletTrail = true;
-            Debug.Log("Beginning primary Fire");
-        }
-
+        shouldDrawBulletTrail = true;
+        Debug.Log("Beginning primary Fire");
     }
 
     //Active on Begining of alt-firing action
     public void OnAltFireBegin()
     {
-        if (timeTillBullet > shotGapTime)
-        {
-            timeTillBullet = 0;
-            shouldDrawBulletTrail = true;
-            Debug.Log("Beginning Alt Fire");
-        }
+        //if (timeTillBullet > shotGapTime)
+        //{
+        //    timeTillBullet = 0;
+        //    shouldDrawBulletTrail = true;
+        //    Debug.Log("Beginning Alt Fire");
+        //}
     }
 
     //Active every interval of Primaryfire set in this script

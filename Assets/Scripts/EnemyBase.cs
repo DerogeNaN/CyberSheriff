@@ -1,8 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Runtime.CompilerServices;
+using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
 // NEW BASE ENEMY SCRIPT
@@ -13,55 +18,96 @@ public enum EnemyState
     movingToTarget,
     lostSightOfTarget,
     attacking,
+    stunned,
+    downed,
 }
 
 public class EnemyBase : MonoBehaviour
 {
     public int health = 100;
-    public Transform moveTarget;
+    public Transform playerTransform;
     public float sightRange = 25.0f;
-    [SerializeField] EnemyState state;
+    public float stopDistance = 1.0f;
+    protected Vector3 moveTarget; // the object it follows
+    protected Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
+    [SerializeField] protected Vector3 lineOfSightOffset;
+    [SerializeField] protected Vector3 floorRaycastPos;
+    [SerializeField] protected float floorRaycastLength;
 
-    [HideInInspector] public bool hasLineOfSight;
-    [HideInInspector] public bool shouldPath;
-    NavMeshAgent pathAgent;
+    [HideInInspector] public EnemyState state;
+    protected bool hasLineOfSight;
+    protected bool shouldPath;
+
+    [SerializeField] TMP_Text debugStateText;
+
+    // navigation
+    [SerializeField] NavMeshSurface navMesh;
+    public float repathFrequency = 1.0f;
+    protected NavMeshPath path;
+    float untilRepath;
+    Vector3 lastPos;
+
+    // movement
+    protected float speed = 5.0f;
+    float lerpAmount = 0.0f;
+    int nextCorner = 0;
 
     public void Start()
     {
-        pathAgent = GetComponent<NavMeshAgent>();
+        shouldPath = false;
+        untilRepath = repathFrequency;
+        path = new();
+        lastPos = transform.position;
     }
 
     public void Update()
     {
+        if (debugStateText != null) debugStateText.text = state.ToString();
+
         // if the target is out of range, don't raycast
-        if ((moveTarget.position - transform.position).magnitude <= sightRange)
+        Vector3 raycastPos = transform.position + lineOfSightOffset;
+
+        if ((lookTarget - raycastPos).magnitude <= sightRange)
         {
             // check for line of sight with target
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, (moveTarget.position - transform.position).normalized, out hit, sightRange))
+            if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange))
             {
                 // colliders tagged as "Wall" will block the line of sight
-                hasLineOfSight = hit.transform.gameObject.tag != "Wall";
+                hasLineOfSight = !hit.transform.gameObject.CompareTag("Wall");
             }
             else hasLineOfSight = true;
         }
         else hasLineOfSight = false;
 
         // draw ray for debugging
-        if (hasLineOfSight) Debug.DrawRay(transform.position, (moveTarget.position - transform.position).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
-        else Debug.DrawRay(transform.position, (moveTarget.position - transform.position).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
+        if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
+        else Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
+
+        Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
 
         // enemy types that inherit from this decide when to set shouldPath to true or false
-        if (shouldPath)
+        if (shouldPath && Vector3.Distance(transform.position, moveTarget) > stopDistance)
         {
-            pathAgent.enabled = true;
-            pathAgent.destination = moveTarget.position;
-        }
-        else pathAgent.enabled = false;
+            // recalculate path
+            untilRepath -= Time.deltaTime;
+            if (untilRepath <= 0)
+            {
+                CalculatePath();
+            }
 
-        // call the method for whichever state we're in
-        // each state's mathod can be overriden by the inheriting class
-        UpdateState(state);
+            // move
+            if (path.corners.Length > 0 && nextCorner < path.corners.Length)
+            {
+                Move();
+            }
+        }
+
+        //StayAboveFloor();
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            CalculatePath();
+        }
     }
 
     public virtual void Hit(int damage)
@@ -72,17 +118,65 @@ public class EnemyBase : MonoBehaviour
         Debug.Log("hit " + name);
     }
 
-    public void SetState(EnemyState newState)
+    void CalculatePath()
     {
-        // change the current state
-        // this calles the method for entering whichever state we're changing to,
-        // which can be overriden by the inheriting class
+        NavMesh.CalculatePath(transform.position, moveTarget, NavMesh.AllAreas, path);
+        untilRepath = repathFrequency;
+        lerpAmount = 0.0f;
+        nextCorner = 1;
+        lastPos = transform.position;
     }
 
-    void UpdateState(EnemyState state)
+    void Move()
     {
-        // call the method for whichever state we're in
-        // each state's mathod can be overriden by the inheriting class
+        Vector3 next = path.corners[nextCorner];
+        Vector3 dirToNextCorner = (next - transform.position).normalized;
+
+        transform.position += dirToNextCorner * speed * Time.deltaTime;
+        if ((next - transform.position).magnitude <= 1.0f) // if less than 1 unit away from target corner
+        {
+            if (nextCorner < path.corners.Length - 1) nextCorner++;
+        }
+
+        //if (lerpAmount < 1.0f)
+        //{
+        //    lerpAmount += Time.deltaTime * speed / Vector3.Distance(lastPos, path.corners[nextCorner]);
+        //    transform.position = Vector3.Lerp(lastPos, path.corners[nextCorner], lerpAmount);
+        //}
+        //else if (nextCorner < path.corners.Length - 1)
+        //{
+        //    lerpAmount = 0;
+        //    lastPos = transform.position;
+        //    nextCorner++;
+        //}
+    }
+
+    void StayAboveFloor()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + floorRaycastPos, -transform.up, out hit, floorRaycastLength))
+        {
+            float distanceIntoFloor = hit.distance;
+            transform.position += new Vector3(0, distanceIntoFloor);
+
+            Debug.Log(distanceIntoFloor);
+        }
+
+        Debug.DrawRay(transform.position + floorRaycastPos, -transform.up, Color.green);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.red;
+
+            for (int i = 0; i < path.corners.Length; i++)
+            {
+                Gizmos.DrawWireSphere(path.corners[i], 0.5f);
+                if (i < path.corners.Length - 1) Gizmos.DrawLine(path.corners[i], path.corners[i + 1]);
+            }
+        }
     }
 
 

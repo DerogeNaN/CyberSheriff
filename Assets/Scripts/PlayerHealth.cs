@@ -10,6 +10,11 @@ public class PlayerHealth : MonoBehaviour
 
     [SerializeField] TMP_Text healthUI;
 
+    void Start()
+    {
+        UpdateHealthUI();   
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "EnemyHitbox")
@@ -26,20 +31,14 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage, int damageType)
     {
-        Debug.Log(health + " before");
-
         health -= damage;
 
         IsDestroyed();
         UpdateHealthUI();
-
-        Debug.Log(health + " after");
-
     }
 
     public void IsDestroyed()
     {
-        Debug.Log("checking hp");
         if (health <= 0)
         {
             Debug.Log("you died");

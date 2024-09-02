@@ -37,6 +37,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Look"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""c353bb88-7754-427c-b5f7-7fd41f5fbb93"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""5e6d9740-4d3f-4f73-98c4-80c85104cd89"",
@@ -55,10 +64,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Look"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""c353bb88-7754-427c-b5f7-7fd41f5fbb93"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""2dda313e-6c00-48cb-b237-31630f82aa82"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Grapple"",
+                    ""type"": ""Button"",
+                    ""id"": ""4225539d-cbd3-47fe-855f-81980c015505"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -76,6 +94,33 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""AltFire"",
                     ""type"": ""Button"",
                     ""id"": ""9b759ae3-a6bb-4a67-b467-7e6912207c43"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WeaponSwitch"",
+                    ""type"": ""Value"",
+                    ""id"": ""b54dce7c-49ec-4ae1-a638-fd19210b1633"",
+                    ""expectedControlType"": ""Delta"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""KeyWeaponSwitch1"",
+                    ""type"": ""Button"",
+                    ""id"": ""e984cd76-2e89-4412-bc37-6355328a0291"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""KeyWeaponSwitch2"",
+                    ""type"": ""Button"",
+                    ""id"": ""3fe54f5b-3028-4f24-bc7f-aeae80ab03eb"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -162,17 +207,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4de2ba83-6a28-4a40-af8e-cf6480f58454"",
-                    ""path"": ""<Pointer>/delta"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Look"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""95682864-5ec9-49c2-8115-27429d38ff70"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
@@ -192,6 +226,72 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""AltFire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""18342ddf-6507-4c2c-8b25-f7507fa442ae"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4de2ba83-6a28-4a40-af8e-cf6480f58454"",
+                    ""path"": ""<Pointer>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""817b975f-f635-43ad-a631-1e3b54315942"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grapple"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e89fd2cd-1102-4bdf-9723-a47b5558dfe6"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WeaponSwitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""66505819-e030-4e6b-a46a-f4e07db92da6"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""KeyWeaponSwitch1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4dfda687-ff82-4a0a-8189-11985ed45078"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""KeyWeaponSwitch2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -201,11 +301,16 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
+        m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Slide = m_Player.FindAction("Slide", throwIfNotFound: true);
-        m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
+        m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
+        m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
         m_Player_PrimaryFire = m_Player.FindAction("PrimaryFire", throwIfNotFound: true);
         m_Player_AltFire = m_Player.FindAction("AltFire", throwIfNotFound: true);
+        m_Player_WeaponSwitch = m_Player.FindAction("WeaponSwitch", throwIfNotFound: true);
+        m_Player_KeyWeaponSwitch1 = m_Player.FindAction("KeyWeaponSwitch1", throwIfNotFound: true);
+        m_Player_KeyWeaponSwitch2 = m_Player.FindAction("KeyWeaponSwitch2", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -268,21 +373,31 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
+    private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Slide;
-    private readonly InputAction m_Player_Look;
+    private readonly InputAction m_Player_Dash;
+    private readonly InputAction m_Player_Grapple;
     private readonly InputAction m_Player_PrimaryFire;
     private readonly InputAction m_Player_AltFire;
+    private readonly InputAction m_Player_WeaponSwitch;
+    private readonly InputAction m_Player_KeyWeaponSwitch1;
+    private readonly InputAction m_Player_KeyWeaponSwitch2;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Player_Move;
+        public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Slide => m_Wrapper.m_Player_Slide;
-        public InputAction @Look => m_Wrapper.m_Player_Look;
+        public InputAction @Dash => m_Wrapper.m_Player_Dash;
+        public InputAction @Grapple => m_Wrapper.m_Player_Grapple;
         public InputAction @PrimaryFire => m_Wrapper.m_Player_PrimaryFire;
         public InputAction @AltFire => m_Wrapper.m_Player_AltFire;
+        public InputAction @WeaponSwitch => m_Wrapper.m_Player_WeaponSwitch;
+        public InputAction @KeyWeaponSwitch1 => m_Wrapper.m_Player_KeyWeaponSwitch1;
+        public InputAction @KeyWeaponSwitch2 => m_Wrapper.m_Player_KeyWeaponSwitch2;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -295,21 +410,36 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
             @Slide.started += instance.OnSlide;
             @Slide.performed += instance.OnSlide;
             @Slide.canceled += instance.OnSlide;
-            @Look.started += instance.OnLook;
-            @Look.performed += instance.OnLook;
-            @Look.canceled += instance.OnLook;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
+            @Grapple.started += instance.OnGrapple;
+            @Grapple.performed += instance.OnGrapple;
+            @Grapple.canceled += instance.OnGrapple;
             @PrimaryFire.started += instance.OnPrimaryFire;
             @PrimaryFire.performed += instance.OnPrimaryFire;
             @PrimaryFire.canceled += instance.OnPrimaryFire;
             @AltFire.started += instance.OnAltFire;
             @AltFire.performed += instance.OnAltFire;
             @AltFire.canceled += instance.OnAltFire;
+            @WeaponSwitch.started += instance.OnWeaponSwitch;
+            @WeaponSwitch.performed += instance.OnWeaponSwitch;
+            @WeaponSwitch.canceled += instance.OnWeaponSwitch;
+            @KeyWeaponSwitch1.started += instance.OnKeyWeaponSwitch1;
+            @KeyWeaponSwitch1.performed += instance.OnKeyWeaponSwitch1;
+            @KeyWeaponSwitch1.canceled += instance.OnKeyWeaponSwitch1;
+            @KeyWeaponSwitch2.started += instance.OnKeyWeaponSwitch2;
+            @KeyWeaponSwitch2.performed += instance.OnKeyWeaponSwitch2;
+            @KeyWeaponSwitch2.canceled += instance.OnKeyWeaponSwitch2;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -317,21 +447,36 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
             @Slide.started -= instance.OnSlide;
             @Slide.performed -= instance.OnSlide;
             @Slide.canceled -= instance.OnSlide;
-            @Look.started -= instance.OnLook;
-            @Look.performed -= instance.OnLook;
-            @Look.canceled -= instance.OnLook;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
+            @Grapple.started -= instance.OnGrapple;
+            @Grapple.performed -= instance.OnGrapple;
+            @Grapple.canceled -= instance.OnGrapple;
             @PrimaryFire.started -= instance.OnPrimaryFire;
             @PrimaryFire.performed -= instance.OnPrimaryFire;
             @PrimaryFire.canceled -= instance.OnPrimaryFire;
             @AltFire.started -= instance.OnAltFire;
             @AltFire.performed -= instance.OnAltFire;
             @AltFire.canceled -= instance.OnAltFire;
+            @WeaponSwitch.started -= instance.OnWeaponSwitch;
+            @WeaponSwitch.performed -= instance.OnWeaponSwitch;
+            @WeaponSwitch.canceled -= instance.OnWeaponSwitch;
+            @KeyWeaponSwitch1.started -= instance.OnKeyWeaponSwitch1;
+            @KeyWeaponSwitch1.performed -= instance.OnKeyWeaponSwitch1;
+            @KeyWeaponSwitch1.canceled -= instance.OnKeyWeaponSwitch1;
+            @KeyWeaponSwitch2.started -= instance.OnKeyWeaponSwitch2;
+            @KeyWeaponSwitch2.performed -= instance.OnKeyWeaponSwitch2;
+            @KeyWeaponSwitch2.canceled -= instance.OnKeyWeaponSwitch2;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -352,10 +497,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnSlide(InputAction.CallbackContext context);
-        void OnLook(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
+        void OnGrapple(InputAction.CallbackContext context);
         void OnPrimaryFire(InputAction.CallbackContext context);
         void OnAltFire(InputAction.CallbackContext context);
+        void OnWeaponSwitch(InputAction.CallbackContext context);
+        void OnKeyWeaponSwitch1(InputAction.CallbackContext context);
+        void OnKeyWeaponSwitch2(InputAction.CallbackContext context);
     }
 }

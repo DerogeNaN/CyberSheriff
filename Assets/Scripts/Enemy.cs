@@ -4,6 +4,9 @@ using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+// OUTDATED SCRIPT
+// EnemyBase is the new one
+
 public class Enemy : MonoBehaviour
 {
     public Transform target;
@@ -26,10 +29,9 @@ public class Enemy : MonoBehaviour
         if ((target.position - transform.position).magnitude <= sightRange)
         {
             // if has line of sight
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, (target.position - transform.position).normalized, out hit, sightRange))
+            if (Physics.Raycast(transform.position, (target.position - transform.position).normalized, out RaycastHit hit, sightRange))
             {
-                targetLineOfSight = hit.transform.gameObject.tag != "Wall";
+                targetLineOfSight = !hit.transform.gameObject.CompareTag("Wall");
             }
             else targetLineOfSight = true;
         } else targetLineOfSight = false;

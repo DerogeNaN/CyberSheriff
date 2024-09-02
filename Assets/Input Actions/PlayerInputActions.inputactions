@@ -15,6 +15,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Look",
+                    "type": "PassThrough",
+                    "id": "c353bb88-7754-427c-b5f7-7fd41f5fbb93",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "5e6d9740-4d3f-4f73-98c4-80c85104cd89",
@@ -33,10 +42,19 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Look",
-                    "type": "PassThrough",
-                    "id": "c353bb88-7754-427c-b5f7-7fd41f5fbb93",
-                    "expectedControlType": "Vector2",
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "2dda313e-6c00-48cb-b237-31630f82aa82",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Grapple",
+                    "type": "Button",
+                    "id": "4225539d-cbd3-47fe-855f-81980c015505",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -54,6 +72,33 @@
                     "name": "AltFire",
                     "type": "Button",
                     "id": "9b759ae3-a6bb-4a67-b467-7e6912207c43",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "WeaponSwitch",
+                    "type": "Value",
+                    "id": "b54dce7c-49ec-4ae1-a638-fd19210b1633",
+                    "expectedControlType": "Delta",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "KeyWeaponSwitch1",
+                    "type": "Button",
+                    "id": "e984cd76-2e89-4412-bc37-6355328a0291",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "KeyWeaponSwitch2",
+                    "type": "Button",
+                    "id": "3fe54f5b-3028-4f24-bc7f-aeae80ab03eb",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -140,17 +185,6 @@
                 },
                 {
                     "name": "",
-                    "id": "4de2ba83-6a28-4a40-af8e-cf6480f58454",
-                    "path": "<Pointer>/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Look",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "95682864-5ec9-49c2-8115-27429d38ff70",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
@@ -168,6 +202,72 @@
                     "processors": "",
                     "groups": "",
                     "action": "AltFire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "18342ddf-6507-4c2c-8b25-f7507fa442ae",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4de2ba83-6a28-4a40-af8e-cf6480f58454",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "817b975f-f635-43ad-a631-1e3b54315942",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grapple",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e89fd2cd-1102-4bdf-9723-a47b5558dfe6",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WeaponSwitch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "66505819-e030-4e6b-a46a-f4e07db92da6",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyWeaponSwitch1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4dfda687-ff82-4a0a-8189-11985ed45078",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyWeaponSwitch2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

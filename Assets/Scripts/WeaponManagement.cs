@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class WeaponManagement : MonoBehaviour
 {
@@ -16,7 +18,7 @@ public class WeaponManagement : MonoBehaviour
     Transform WeaponGripTransform;
 
     [SerializeField]
-    GameObject currentActiveWeapon;
+    public GameObject currentActiveWeapon;
 
     [SerializeField]
     PlayerInputActions playerInput;
@@ -24,41 +26,34 @@ public class WeaponManagement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetWeapon(weaponIterator);
+        currentActiveWeapon = weaponList[0];
+        //currentActiveWeapon =  GetComponentsInChildren<RangedWeapon>()[1].gameObject;
 
         if (WeaponGripTransform.GetComponentInChildren<RangedWeapon>())
         {
             Debug.Log(WeaponGripTransform.GetComponentInChildren<RangedWeapon>().gameObject.name);
         }
         else
-            Debug.Log("no weapons found");
-        playerInput = new PlayerInputActions();
+            //Debug.Log("no weapons found");
+            playerInput = new PlayerInputActions();
         playerInput.Player.Enable();
         playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
         playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
+        playerInput.Player.AltFire.started += AltFireWeaponBegin;
+        playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
+        playerInput.Player.WeaponSwitch.started += ScrollSetWeapon;
+        playerInput.Player.KeyWeaponSwitch1.started += keySetWeapon1;
+        playerInput.Player.KeyWeaponSwitch2.started += keySetWeapon2;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            weaponIterator++;
 
-            if (weaponIterator < weaponList.Count)
-            {
-                Debug.Log("theres still weapons in this list ");
-            }
-            else
-            {
-                Debug.Log("at weapon List end");
-                weaponIterator %= weaponList.Count;
-                Debug.Log(weaponIterator);
-            }
+        PrimaryFireStayCheck(playerInput.Player.PrimaryFire.inProgress);
+        AltFireStayCheck(playerInput.Player.AltFire.inProgress);
 
-            SetWeapon(weaponIterator);
-            Debug.Log(weaponIterator);
-        }
     }
 
     void PrimaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -81,7 +76,33 @@ public class WeaponManagement : MonoBehaviour
 
     }
 
-    void SecondaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    void PrimaryFireStayCheck(bool inProgress)
+    {
+        if (inProgress)
+        {
+            if (currentActiveWeapon.GetComponent<Revolver>())
+                currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireStay();
+
+            if (currentActiveWeapon.GetComponent<Shotgun>())
+                currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireStay();
+        }
+    }
+
+    void AltFireStayCheck(bool inProgress)
+    {
+        if (inProgress)
+        {
+            //Debug.Log("Alt In Progress");
+            if (currentActiveWeapon.GetComponent<Revolver>())
+                currentActiveWeapon.GetComponent<Revolver>().OnAltFireStay();
+
+            if (currentActiveWeapon.GetComponent<Shotgun>())
+                currentActiveWeapon.GetComponent<Shotgun>().OnAltFireStay();
+        }
+    }
+
+
+    void AltFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (currentActiveWeapon.GetComponent<Revolver>())
             currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
@@ -91,7 +112,7 @@ public class WeaponManagement : MonoBehaviour
     }
 
 
-    void SecondaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    void AltFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         if (currentActiveWeapon.GetComponent<Revolver>())
             currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();
@@ -100,7 +121,6 @@ public class WeaponManagement : MonoBehaviour
             currentActiveWeapon.GetComponent<Shotgun>().OnAltFireBegin();
     }
 
-
     //maybe
     void WeaponListSet()
     {
@@ -108,15 +128,28 @@ public class WeaponManagement : MonoBehaviour
 
     }
 
-    void SetWeapon(int weaponIndex)
+    void ScrollSetWeapon(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+
+        float CurrentWeapon = obj.ReadValue<Vector2>().y ;
+
+        if (CurrentWeapon > 0)
+        {
+            CurrentWeapon = 1;
+        }
+        else
+            CurrentWeapon = 0;
+
+        Debug.Log("Changing Weapon");
+        Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
+
         //set previous to false
         if (currentActiveWeapon)
             currentActiveWeapon.gameObject.SetActive(false);
 
-        Debug.Log("weapon type " + weaponIndex);
+        Debug.Log("weapon type " + CurrentWeapon);
 
-        currentActiveWeapon = weaponList[weaponIndex];
+        currentActiveWeapon = weaponList[(int)CurrentWeapon];
         if (currentActiveWeapon)
         {
             Debug.Log("WeaponFound!!");
@@ -127,6 +160,54 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        currentActiveWeapon.transform.parent = WeaponGripTransform;
+        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
+
+    void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+
+        //set previous to false
+        if (currentActiveWeapon)
+            currentActiveWeapon.gameObject.SetActive(false);
+
+        Debug.Log("weapon type " + 0);
+
+        currentActiveWeapon = weaponList[0];
+        if (currentActiveWeapon)
+        {
+            Debug.Log("WeaponFound!!");
+        }
+
+        //set next to true 
+        currentActiveWeapon.gameObject.SetActive(true);
+
+        currentActiveWeapon.transform.position = WeaponGripTransform.position;
+        currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+        //currentActiveWeapon.transform.parent = WeaponGripTransform;
+    }
+
+
+    void keySetWeapon2(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+       
+        //set previous to false
+        if (currentActiveWeapon)
+            currentActiveWeapon.gameObject.SetActive(false);
+
+        Debug.Log("weapon type " + 1);
+
+        currentActiveWeapon = weaponList[1];
+        if (currentActiveWeapon)
+        {
+            Debug.Log("WeaponFound!!");
+        }
+
+        //set next to true 
+        currentActiveWeapon.gameObject.SetActive(true);
+
+        currentActiveWeapon.transform.position = WeaponGripTransform.position;
+        currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+        //currentActiveWeapon.transform.parent = WeaponGripTransform;
+    }
+
 }

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.XR.Oculus.Input;
-using UnityEditor.PackageManager;
+//using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class RangedWeapon : MonoBehaviour

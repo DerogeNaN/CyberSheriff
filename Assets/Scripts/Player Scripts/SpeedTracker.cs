@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class SpeedTracker : MonoBehaviour
 {
-    [SerializeField] Movement movementScript;
     [SerializeField] TextMeshProUGUI tmp;
     public bool showGravity;
     
     void Update()
     {
-        if (!showGravity) tmp.text = movementScript.momentum.magnitude.ToString("F3");
-        else tmp.text = movementScript.momentum.y.ToString("F3");
+        Vector2 speedXZ = new Vector2(Movement.playerMovement.momentum.x, Movement.playerMovement.momentum.z);
+        if (!showGravity) tmp.text = speedXZ.magnitude.ToString("F3");
+        else tmp.text = Movement.playerMovement.momentum.y.ToString("F3");
     }
 }
