@@ -54,6 +54,10 @@ public class Revolver : MonoBehaviour
     bool canFire;
 
     [SerializeField]
+    bool canPressAltFire = true;
+
+
+    [SerializeField]
     Camera camRef;
 
     [SerializeField]
@@ -76,7 +80,7 @@ public class Revolver : MonoBehaviour
     VisualEffect BulletFlash;
 
     [SerializeField]
-    GameObject bulletEffect;
+    GameObject HitEffect;
 
     float BulletSpeed = 200;
 
@@ -86,13 +90,13 @@ public class Revolver : MonoBehaviour
     {
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
-       
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        bulletEffect.GetComponent<BulletVFX>().speed = BulletSpeed;
+        HitEffect.GetComponent<BulletVFX>().speed = BulletSpeed;
         Ray ray = new Ray();
         Ray cameraRay = new Ray();
 
@@ -138,18 +142,28 @@ public class Revolver : MonoBehaviour
             {
                 CurrentlyHitting = hit.transform.gameObject;
 
-                GameObject bullet = Instantiate(bulletEffect);
-                bullet.transform.position = muzzlePoint.position;
-                bullet.transform.LookAt(hit.point);
-
                 if (hit.point != null)
                 {
                     // bullet Hole Decal Placement Logic 
-                    if (!hit.transform.GetComponent<NavMeshAgent>())
+                   // if (!hit.transform.GetComponent<NavMeshAgent>() && hit.transform.gameObject.layer != 3) //Replace this with 'player' tag
+                   // {
+                   //     GameObject Decal = Instantiate(BulletHitDecal);
+                   //     Decal.transform.parent = hit.transform;
+                   //     Decal.transform.position = hit.point;
+                   // }
+
+                    if (hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
-                        GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.parent = hit.transform;
-                        Decal.transform.position = hit.point;
+                        if (!hit.transform.GetComponent<NavMeshAgent>()) //AND it isn't an enemy
+                            {
+                            GameObject Decal = Instantiate(BulletHitDecal);
+                            Decal.transform.parent = hit.transform;
+                            Decal.transform.position = hit.point;
+                        }
+                        //..It isn't the player but it is an enemy...?
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = hit.point;
+                        Destroy(hitFX, 5);
                     }
                 }
 
@@ -173,51 +187,24 @@ public class Revolver : MonoBehaviour
         }
 
         //altFire Logic
-        if (shouldShootAlt && canFire && currentBullets > 0)
-        {
-            BulletFlash.Play();
-
-
-            currentBullets--;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                CurrentlyHitting = hit.transform.gameObject;
-
-                GameObject bullet = Instantiate(bulletEffect);
-                bullet.transform.position = muzzlePoint.position;
-                bullet.transform.LookAt(hit.point);
-
-                if (hit.point != null)
-                {
-                    // bullet Hole Decal Placement Logic 
-                    if (!hit.transform.GetComponent<NavMeshAgent>())
-                    {
-                        GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.parent = hit.transform;
-                        Decal.transform.position = hit.point;
-                    }
-                }
-
-                if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
-                {
-                    hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
-                }
-
-                if (hit.collider.gameObject.GetComponent<Health>())
-                {
-                    hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
-                }
-            }
-            canFire = false;
-            StartCoroutine(Wait(AltshotGapTime));
-        }
+        if (shouldShootAlt && canFire && canPressAltFire && currentBullets > 0)
+            StartCoroutine(FanFire(ray, hit, barrelToLookPointDir));
         else if (currentBullets <= 0 && reloading == false)
         {
             Debug.Log("out off Bullets");
             canFire = false;
             StartCoroutine(Reload());
         }
+
+
     }
+
+
+    //public bool AttemptFire(bool isPrimary)
+    //{
+
+    //}
+
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
 
@@ -243,6 +230,54 @@ public class Revolver : MonoBehaviour
         reloading = false;
     }
 
+
+    IEnumerator FanFire(Ray ray, RaycastHit hit, Vector3 barrelToLookPointDir)
+    {
+        Debug.Log("Fire start");
+        canPressAltFire = false;
+        for (int i = 0; i < currentBullets; i++)
+        {
+            BulletFlash.Play();
+
+            currentBullets--;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                CurrentlyHitting = hit.transform.gameObject;
+
+                if (hit.point != null)
+                {
+                    // bullet Hole Decal Placement Logic 
+                    if (!hit.transform.GetComponent<NavMeshAgent>() && hit.transform.gameObject.layer != 3)
+                    {
+                        GameObject Decal = Instantiate(BulletHitDecal);
+                        Decal.transform.parent = hit.transform;
+                        Decal.transform.position = hit.point;
+
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = hit.point;
+                        Destroy(hitFX, 5);
+
+                    }
+
+                }
+
+                if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
+                {
+                    hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
+                }
+
+                if (hit.collider.gameObject.GetComponent<Health>())
+                {
+                    hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
+                }
+            }
+            canFire = false;
+            yield return new WaitForSeconds(AltshotGapTime);
+            //StartCoroutine(Wait(AltshotGapTime));
+        }
+        canPressAltFire = true;
+    }
+
     //active on beginning of Primary fire Action
     public void OnPrimaryFireBegin()
     {
@@ -255,7 +290,6 @@ public class Revolver : MonoBehaviour
     {
         shouldShootAlt = true;
         Debug.Log("Beginning primary Fire");
-
     }
 
     //Active every interval of Primaryfire set in this script
@@ -265,7 +299,6 @@ public class Revolver : MonoBehaviour
         {
             Debug.Log("Primary fire stay ");
         }
-
     }
 
     //Active every interval  of altfire set in this script
