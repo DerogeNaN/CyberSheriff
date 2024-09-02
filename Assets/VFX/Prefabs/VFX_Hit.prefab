@@ -48,7 +48,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -4919,7 +4919,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -9789,7 +9789,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -14654,7 +14654,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4676225495919329034}
   - component: {fileID: 7387125757218017224}
-  - component: {fileID: 6727978808937734377}
   m_Layer: 3
   m_Name: VFX_Hit
   m_TagString: Untagged
@@ -14690,17 +14689,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a7c8ea47589e34783c5952432b9f53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 200
---- !u!65 &6727978808937734377
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7610885174257348678}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.42, y: 0.45, z: 1.75}
-  m_Center: {x: 0, y: 0, z: 0.1}
+  lifeTime: 5

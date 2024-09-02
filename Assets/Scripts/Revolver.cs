@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine.AI;
 using UnityEngine.VFX;
+using TMPro;
 
 public class Revolver : MonoBehaviour
 {
@@ -17,13 +18,39 @@ public class Revolver : MonoBehaviour
     [SerializeField]
     public Transform altMuzzlePoint;
 
-    [Header("Gun Behaviour")]
+    [Header("Gun Behaviour Values")]
 
     [SerializeField]
+    [Tooltip("Ain't it self-explanatory?")]
     int DamageValue = 25;
 
     [SerializeField]
-    public GameObject CurrentlyHitting;
+    [Tooltip("A multiplier for the amount of force applied to an object  by the bullets")]
+    float bulletForceMultiplier = 1;
+
+    [Tooltip("Essentialy how long it takes to fire the next Bullet after one has already been fired")]
+    [SerializeField]
+    float shotGapTime = 1f;
+
+    [Tooltip("Essentialy how long it takes to fire the next Bullet after one has already been fired")]
+    [SerializeField]
+    float AltshotGapTime = 0.01f;
+
+    [Tooltip("How Long it takes to Refill The Clip")]
+    [SerializeField]
+    float reloadTime = 2f;
+
+    [SerializeField]
+    [Tooltip("How many bullets you can launch before reloading")]
+    public int BulletsPerClip = 6;
+
+    [SerializeField]
+    [Tooltip("Current Number of Bullets")]
+    public int currentBullets;
+
+    float BulletSpeed = 200;//obsolete till further notice
+     
+    [Header("Gun Behaviour Bools (Do NOT mess With)")]
 
     [SerializeField]
     [Tooltip("Just a bool for whether Primary Fire should happen")]
@@ -33,42 +60,11 @@ public class Revolver : MonoBehaviour
     [Tooltip("Just a bool for if the secondary fire should happen ")]
     bool shouldShootAlt = false;
 
-
-    [SerializeField]
-    [Tooltip("a multiplier for the amount of force applied to an object  by the bullets")]
-    float bulletForceMultiplier = 1;
-
-    [SerializeField]
-    GameObject bulletTrailPrefab;
-
-    [SerializeField]
-    float shotGapTime = 1f;
-
-    [SerializeField]
-    float AltshotGapTime = 0.01f;
-
-    [SerializeField]
-    float reloadTime = 2f;
-
     [SerializeField]
     bool canFire;
 
     [SerializeField]
     bool canPressAltFire = true;
-
-
-    [SerializeField]
-    Camera camRef;
-
-    [SerializeField]
-    GameObject BulletHitDecal;
-
-    [SerializeField]
-    [Tooltip("How many bullets you can launch before reloading")]
-    public int BulletsPerClip = 6;
-
-    [SerializeField]
-    public int currentBullets;
 
     [SerializeField]
     bool waiting = false;
@@ -76,13 +72,22 @@ public class Revolver : MonoBehaviour
     [SerializeField]
     bool reloading;
 
+    [Header("Visual Effects")]
     [SerializeField]
     VisualEffect BulletFlash;
 
     [SerializeField]
     GameObject HitEffect;
 
-    float BulletSpeed = 200;
+    [SerializeField]
+    GameObject BulletHitDecal;
+
+    [Header("Scene Refrences")]
+    [SerializeField]
+    Camera camRef;
+
+    [SerializeField]
+    public GameObject CurrentlyHitting;
 
 
     // Start is called before the first frame update
@@ -96,7 +101,7 @@ public class Revolver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HitEffect.GetComponent<BulletVFX>().speed = BulletSpeed;
+
         Ray ray = new Ray();
         Ray cameraRay = new Ray();
 
@@ -136,7 +141,6 @@ public class Revolver : MonoBehaviour
         if (shouldShootPrimary && canFire && currentBullets > 0)
         {
             BulletFlash.Play();
-
             currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
@@ -231,7 +235,6 @@ public class Revolver : MonoBehaviour
         for (int i = 0; i < BulletsAtTimeOfFiring; i++)
         {
             BulletFlash.Play();
-
             currentBullets--;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
