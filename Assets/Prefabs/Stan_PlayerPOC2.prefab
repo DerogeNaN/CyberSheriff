@@ -450,7 +450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78b920ec190e7264a92adfa1941eff14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSens: 10
+  mouseSens: 20
   defaultFOV: 80
   cam: {fileID: 7334672827843020051}
   xClamp: 180
@@ -513,6 +513,7 @@ MonoBehaviour:
   dashCooldown: 1
   isGrounded: 1
   lastGroundedTime: 0
+  playerState: 0
   isGrappling: 0
   grappleSpeed: 0.8
   grappleTargetDirection: {x: 0, y: 0, z: 0}
@@ -838,7 +839,7 @@ PrefabInstance:
     - target: {fileID: 4316420987780491930, guid: e89f0a8e688ea1541887a48d2ec452b0,
         type: 3}
       propertyPath: AltshotGapTime
-      value: 0.2
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 4316420987780491930, guid: e89f0a8e688ea1541887a48d2ec452b0,
         type: 3}
