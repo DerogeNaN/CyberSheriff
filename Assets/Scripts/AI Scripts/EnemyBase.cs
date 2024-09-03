@@ -63,7 +63,6 @@ public class EnemyBase : MonoBehaviour
         shouldPath = false;
         untilRepath = repathFrequency;
         path = new();
-        lastPos = transform.position;
 
         // get components
         colliderr = GetComponentInChildren<Collider>();
@@ -140,7 +139,6 @@ public class EnemyBase : MonoBehaviour
         NavMesh.CalculatePath(transform.position, moveTarget, NavMesh.AllAreas, path);
         untilRepath = repathFrequency;
         nextCorner = 1;
-        lastPos = transform.position;
     }
 
     void Move()
