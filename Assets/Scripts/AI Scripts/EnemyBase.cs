@@ -1,14 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Runtime.CompilerServices;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
-using static UnityEngine.GraphicsBuffer;
 
 // NEW BASE ENEMY SCRIPT
 
@@ -24,6 +19,7 @@ public enum EnemyState
 
 public class EnemyBase : MonoBehaviour
 {
+    public bool active;
     public int health = 100;
     public Transform playerTransform;
     public float sightRange = 25.0f;
@@ -40,6 +36,9 @@ public class EnemyBase : MonoBehaviour
 
     [SerializeField] TMP_Text debugStateText;
 
+    Collider colliderr;
+    MeshRenderer meshRenderer;
+
     // navigation
     [SerializeField] NavMeshSurface navMesh;
     public float repathFrequency = 1.0f;
@@ -54,14 +53,25 @@ public class EnemyBase : MonoBehaviour
 
     public void Start()
     {
+        // initialise pathing values
         shouldPath = false;
         untilRepath = repathFrequency;
         path = new();
         lastPos = transform.position;
+
+        // get components
+        colliderr = GetComponentInChildren<Collider>();
+        meshRenderer = GetComponentInChildren<MeshRenderer>();
+
+        // start spawned or despawned
+        if (active) Spawn();
+        else Despawn();
     }
 
     public void Update()
     {
+        if (!active) return;
+
         if (debugStateText != null) debugStateText.text = state.ToString();
 
         // if the target is out of range, don't raycast
@@ -102,20 +112,22 @@ public class EnemyBase : MonoBehaviour
             }
         }
 
-        //StayAboveFloor();
-
         if (Input.GetKeyDown(KeyCode.R))
         {
             CalculatePath();
         }
     }
 
-    public virtual void Hit(int damage)
+    void Hit(int damage)
     {
         // probably add more parameters to this, like what type of hit
         health -= damage;
+        OnHit(damage);
+    }
 
-        Debug.Log("hit " + name);
+    public virtual void OnHit(int damage)
+    {
+
     }
 
     void CalculatePath()
@@ -137,18 +149,6 @@ public class EnemyBase : MonoBehaviour
         {
             if (nextCorner < path.corners.Length - 1) nextCorner++;
         }
-
-        //if (lerpAmount < 1.0f)
-        //{
-        //    lerpAmount += Time.deltaTime * speed / Vector3.Distance(lastPos, path.corners[nextCorner]);
-        //    transform.position = Vector3.Lerp(lastPos, path.corners[nextCorner], lerpAmount);
-        //}
-        //else if (nextCorner < path.corners.Length - 1)
-        //{
-        //    lerpAmount = 0;
-        //    lastPos = transform.position;
-        //    nextCorner++;
-        //}
     }
 
     void StayAboveFloor()
@@ -163,6 +163,20 @@ public class EnemyBase : MonoBehaviour
         }
 
         Debug.DrawRay(transform.position + floorRaycastPos, -transform.up, Color.green);
+    }
+
+    public void Spawn()
+    {
+        active = true;
+        meshRenderer.enabled = true;
+        colliderr.enabled = true;
+    }
+
+    public void Despawn()
+    {
+        active = false ;
+        meshRenderer.enabled = false;
+        colliderr.enabled = false;
     }
 
     private void OnDrawGizmos()

@@ -5,16 +5,17 @@ using UnityEngine;
 public class EnemySpawnArea : MonoBehaviour
 {
     public Transform playerTransform;
+    public bool auto;
+    public List<EnemyBase> enemies;
 
-    List<GameObject> enemies;
     bool triggered = false;
     BoxCollider colliderr;
 
     void Start()
     {
-        enemies = new();
+        //enemies = new();
         colliderr = GetComponent<BoxCollider>();
-        SetEnemiesInactive();
+       // SetEnemiesInactive();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -27,20 +28,26 @@ public class EnemySpawnArea : MonoBehaviour
 
     void Update()
     {
-        Collider[] colliders = Physics.OverlapBox(transform.position, colliderr.size / 2);
+        //if (!triggered)
+        //{
+        //    Collider[] colliders = Physics.OverlapBox(transform.position, colliderr.size / 2);
 
-        foreach (Collider c in colliders)
-        {
-            if (c.gameObject.CompareTag("Player")) SpawnEnemies();
-        }
+        //    foreach (Collider c in colliders)
+        //    {
+        //        if (c.gameObject.CompareTag("Player"))
+        //        {
+        //            SpawnEnemies();
+        //        }
+        //    }
+        //}
     }
 
     void SpawnEnemies()
     {
-        foreach (GameObject go in enemies)
+        foreach (EnemyBase e in enemies)
         {
-            go.SetActive(true);
-            go.GetComponent<EnemyBase>().playerTransform = playerTransform;
+            e.playerTransform = playerTransform;
+            e.Spawn();
             // ^ assuming the gameobject has EnemyBase, otherwise it shouldnt have been added to the list
         }
         triggered = true;
@@ -52,10 +59,11 @@ public class EnemySpawnArea : MonoBehaviour
         
         foreach (Collider c in colliders)
         {
-            if (c.gameObject.GetComponent<EnemyBase>())
+            EnemyBase e = c.gameObject.GetComponent<EnemyBase>();
+            if (e)
             {
-                enemies.Add(c.gameObject);
-                c.gameObject.SetActive(false);
+                enemies.Add(e);
+                e.Despawn();
             }
         }
     }

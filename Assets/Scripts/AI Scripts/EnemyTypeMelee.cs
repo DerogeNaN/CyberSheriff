@@ -1,10 +1,7 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngineInternal;
-using static UnityEngine.GraphicsBuffer;
 
 public class EnemyTypeMelee : EnemyBase
 {
@@ -26,15 +23,22 @@ public class EnemyTypeMelee : EnemyBase
     new void Start()
     {
         base.Start();
-        initialPosition = transform.position;
-        speed = runSpeed;
         SetState(EnemyState.idle);
+
+        initialPosition = transform.position;
+        speed = walkSpeed;
     }
 
     new void Update()
     {
         base.Update();
         UpdateState();
+    }
+
+    public override void OnHit(int damage)
+    {
+        SetState(EnemyState.stunned);
+        remainingStun = 0.5f;
     }
 
     // use this to change states in UpdateState
@@ -98,7 +102,7 @@ public class EnemyTypeMelee : EnemyBase
         }
     }
 
-    // frame by frame update for the current method
+    // frame by frame update for the current state
     void UpdateState()
     {
         // do this regardless of state 
