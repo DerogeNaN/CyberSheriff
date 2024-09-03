@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class EnemyTypeMelee : EnemyBase
 {
+    [Header("Melee Movement Settings")]
     public float runSpeed = 5.0f;
     public float walkSpeed = 2.0f;
     public float chaseTime = 2.0f;
+
+    [Header("Melee Attack Settings")]
+    public GameObject hitboxPrefab;
+    public float attackRange = 2.0f;
     public float attackTime = 1.0f;
     public float attackCooldown = 1.0f;
-    public float attackRange = 2.0f;
-    public GameObject hitboxPrefab;
 
     Vector3 initialPosition;
     Vector3 lastSeenPosition;

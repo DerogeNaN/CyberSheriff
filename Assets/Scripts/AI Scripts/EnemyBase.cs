@@ -17,39 +17,45 @@ public enum EnemyState
     downed,
 }
 
+// this should not be put on gameobjects, use one of the inheriting classes
+
 public class EnemyBase : MonoBehaviour
 {
+    [Header("Basic Settings")]
     public bool active;
     public int health = 100;
+
+    [Header("Detection Settings")]
     public Transform playerTransform;
     public float sightRange = 25.0f;
     public float stopDistance = 1.0f;
     protected Vector3 moveTarget; // the object it follows
     protected Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
-    [SerializeField] protected Vector3 lineOfSightOffset;
-    [SerializeField] protected Vector3 floorRaycastPos;
-    [SerializeField] protected float floorRaycastLength;
 
-    [HideInInspector] public EnemyState state;
-    protected bool hasLineOfSight;
-    protected bool shouldPath;
-
-    [SerializeField] TMP_Text debugStateText;
-
-    Collider colliderr;
-    MeshRenderer meshRenderer;
-
+    [Header("Pathing Settings")]
     // navigation
     [SerializeField] NavMeshSurface navMesh;
     public float repathFrequency = 1.0f;
     protected NavMeshPath path;
     float untilRepath;
-    Vector3 lastPos;
 
+    [HideInInspector] public EnemyState state;
+    protected bool hasLineOfSight;
+    protected bool shouldPath;
+
+    [Header("General Movement Settings")]
     // movement
     protected float speed = 5.0f;
-    float lerpAmount = 0.0f;
     int nextCorner = 0;
+
+    [Header("Advanced")]
+    [SerializeField] TMP_Text debugStateText;
+    Collider colliderr;
+    [SerializeField] GameObject mesh;
+    [SerializeField] protected Vector3 lineOfSightOffset;
+    [SerializeField] protected Vector3 floorRaycastPos;
+    [SerializeField] protected float floorRaycastLength;
+
 
     public void Start()
     {
@@ -61,7 +67,6 @@ public class EnemyBase : MonoBehaviour
 
         // get components
         colliderr = GetComponentInChildren<Collider>();
-        meshRenderer = GetComponentInChildren<MeshRenderer>();
 
         // start spawned or despawned
         if (active) Spawn();
@@ -134,7 +139,6 @@ public class EnemyBase : MonoBehaviour
     {
         NavMesh.CalculatePath(transform.position, moveTarget, NavMesh.AllAreas, path);
         untilRepath = repathFrequency;
-        lerpAmount = 0.0f;
         nextCorner = 1;
         lastPos = transform.position;
     }
@@ -168,14 +172,14 @@ public class EnemyBase : MonoBehaviour
     public void Spawn()
     {
         active = true;
-        meshRenderer.enabled = true;
+        mesh.SetActive(true);
         colliderr.enabled = true;
     }
 
     public void Despawn()
     {
         active = false ;
-        meshRenderer.enabled = false;
+        mesh.SetActive(false);
         colliderr.enabled = false;
     }
 

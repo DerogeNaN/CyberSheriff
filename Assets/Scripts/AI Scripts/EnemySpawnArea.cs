@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class EnemySpawnArea : MonoBehaviour
 {
+    [Tooltip("incase playerTransform isn't set for each enemy")]
     public Transform playerTransform;
+    [Tooltip("checking this will automatically despawn enemies in the trigger area, and spawn them when the trigger activates")]
     public bool auto;
     public List<EnemyBase> enemies;
 
