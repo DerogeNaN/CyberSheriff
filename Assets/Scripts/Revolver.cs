@@ -109,12 +109,19 @@ public class Revolver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (currentBullets <= 0 && reloading == false)
+        {
+            canFire = false;
+            StartCoroutine(Reload());
+        }
+
         if (shouldShootPrimary == true && waiting == false && reloading == false)
         {
             EngagePrimaryFire();
         }
 
-        if (shouldShootAlt == true && waiting == false && reloading == false)
+        if (shouldShootAlt == true && canPressAltFire== true && waiting == false && reloading == false)
         {
             EngageAltFire();
         }
@@ -143,7 +150,7 @@ public class Revolver : MonoBehaviour
                     //..It isn't the player but it is an enemy...?
                     GameObject hitFX = Instantiate(HitEffect);
                     hitFX.transform.position = rayData.hit.point;
-                    Destroy(hitFX, 5);
+                    //Destroy(hitFX, 5);
                 }
 
                 if (rayData.hit.rigidbody != null && rayData.hit.transform.root.GetComponent<Movement>() == false)
@@ -251,8 +258,10 @@ public class Revolver : MonoBehaviour
         Debug.Log("Fire start");
         canPressAltFire = false;
         int BulletsAtTimeOfFiring = currentBullets;
+        Debug.Log("Current Bullet Number:" + BulletsAtTimeOfFiring); 
         for (int i = 0; i < BulletsAtTimeOfFiring; i++)
         {
+            Debug.Log("FanFire Bullet Loosed");
             BulletFlash.Play();
             currentBullets--;
 
