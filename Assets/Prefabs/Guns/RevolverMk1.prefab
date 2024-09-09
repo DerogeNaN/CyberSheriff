@@ -50,25 +50,26 @@ MonoBehaviour:
   muzzlePoint: {fileID: 0}
   altMuzzlePoint: {fileID: 0}
   DamageValue: 25
-  bulletForceMultiplier: 1
-  shotGapTime: 1
-  AltshotGapTime: 0.1
-  reloadTime: 2
-  BulletsPerClip: 6
-  currentBullets: 0
+  CurrentlyHitting: {fileID: 0}
   shouldShootPrimary: 0
   shouldShootAlt: 0
-  canFire: 0
-  canPressAltFire: 1
-  waiting: 0
-  reloading: 0
-  BulletFlash: {fileID: 2564008911776293511}
-  HitEffect: {fileID: 7610885174257348678, guid: a49c2a9c29e480f4a9d9feef54d707c4,
+  bulletForceMultiplier: 1
+  bulletTrailPrefab: {fileID: 7806430457410555219, guid: 3443df8f4746bf746af5214bdad02c63,
     type: 3}
+  shotGapTime: 1
+  AltshotGapTime: 0.01
+  reloadTime: 2
+  canFire: 0
+  camRef: {fileID: 0}
   BulletHitDecal: {fileID: 4215241873354640552, guid: 09828abd8ded024488972d5e092933af,
     type: 3}
-  camRef: {fileID: 0}
-  CurrentlyHitting: {fileID: 0}
+  BulletsPerClip: 6
+  currentBullets: 0
+  waiting: 0
+  reloading: 0
+  BulletFlash: {fileID: 0}
+  bulletEffect: {fileID: 7610885174257348678, guid: a49c2a9c29e480f4a9d9feef54d707c4,
+    type: 3}
 --- !u!1 &8232953838055993192
 GameObject:
   m_ObjectHideFlags: 0
@@ -172,12 +173,6 @@ PrefabInstance:
 --- !u!4 &2564008911776293510 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8317736826892261484, guid: 2457b1f7803930b40bd8ae1d82d9a301,
-    type: 3}
-  m_PrefabInstance: {fileID: 5835461248028097258}
-  m_PrefabAsset: {fileID: 0}
---- !u!2083052967 &2564008911776293511 stripped
-VisualEffect:
-  m_CorrespondingSourceObject: {fileID: 8317736826892261485, guid: 2457b1f7803930b40bd8ae1d82d9a301,
     type: 3}
   m_PrefabInstance: {fileID: 5835461248028097258}
   m_PrefabAsset: {fileID: 0}
