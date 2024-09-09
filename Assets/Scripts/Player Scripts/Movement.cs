@@ -601,7 +601,7 @@ public class Movement : MonoBehaviour
     {
         if (Physics.SphereCast(transform.position, 0.35f, Vector3.down, out RaycastHit hitInfo, 100.0f, ~0b00001100))
         {
-            Debug.Log(hitInfo.collider.gameObject);
+           // Debug.Log(hitInfo.collider.gameObject);
             if (hitInfo.distance <= 0.66f)
             {
                 if (!hitInfo.collider.isTrigger)

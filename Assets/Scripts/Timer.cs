@@ -9,7 +9,17 @@ public class Timer : MonoBehaviour
     private bool isTiming;
 
     public TMP_Text timerText;  // Assign a UI Text element in the Inspector
+    public TMP_Text timerShadowText;
 
+    void Start()
+    {
+
+
+        timerText = GameObject.Find("Time").GetComponent<TextMeshProUGUI>();
+        //timerText = GetComponentInChildren<TextMeshProUGUI>();
+        //timerShadowText = GetComponentInChildren<TextMeshProUGUI>();
+        timerShadowText = GameObject.Find("Time_Shadow").GetComponent<TextMeshProUGUI>();
+    }
     void Update()
     {
         if (isTiming)
@@ -43,8 +53,10 @@ public class Timer : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(time / 60F);
         int seconds = Mathf.FloorToInt(time % 60F);
-        int milliseconds = Mathf.FloorToInt((time * 1000F) % 1000F);
+        int milliseconds = Mathf.FloorToInt((time * 100F) % 100F);
 
-        timerText.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+        timerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        timerShadowText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds); 
+        
     }
 }
