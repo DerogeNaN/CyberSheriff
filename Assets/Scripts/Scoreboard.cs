@@ -43,9 +43,14 @@ public class Scoreboard : MonoBehaviour
         rank = "E";
         decayTimer = decayInterval;
         decayBarMaxWidth = decayBar.rectTransform.sizeDelta.x;
-        rankTextPulsateEffect = rankText.GetComponent<PulsateEffect>();
-        scoreTextShakeEffect = scoreText.GetComponent<ScoreShake>();
+      
+
+        rankTextPulsateEffect = scoreboardPanel.GetComponentInChildren<PulsateEffect>();
+        scoreTextShakeEffect = scoreboardPanel.GetComponentInChildren<ScoreShake>();
+
+
         UpdateScoreboard();
+       
     }
 
     void Update()
@@ -67,7 +72,7 @@ public class Scoreboard : MonoBehaviour
         }
         else
         {
-           // HideScoreboard();
+           HideScoreboard();
         }
     }
     void UpdateScoreboard()
@@ -86,7 +91,7 @@ public class Scoreboard : MonoBehaviour
         }
         else
         {
-          // HideScoreboard();
+           HideScoreboard();
         }
     }
 
