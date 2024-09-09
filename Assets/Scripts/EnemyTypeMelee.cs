@@ -1,20 +1,20 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngineInternal;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyTypeMelee : EnemyBase
 {
-    [Header("Melee Movement Settings")]
     public float runSpeed = 5.0f;
     public float walkSpeed = 2.0f;
     public float chaseTime = 2.0f;
-
-    [Header("Melee Attack Settings")]
-    public GameObject hitboxPrefab;
-    public float attackRange = 2.0f;
     public float attackTime = 1.0f;
     public float attackCooldown = 1.0f;
+    public float attackRange = 2.0f;
+    public GameObject hitboxPrefab;
 
     Vector3 initialPosition;
     Vector3 lastSeenPosition;
@@ -26,22 +26,15 @@ public class EnemyTypeMelee : EnemyBase
     new void Start()
     {
         base.Start();
-        SetState(EnemyState.idle);
-
         initialPosition = transform.position;
-        speed = walkSpeed;
+        speed = runSpeed;
+        SetState(EnemyState.idle);
     }
 
     new void Update()
     {
         base.Update();
         UpdateState();
-    }
-
-    public override void OnHit(int damage)
-    {
-        SetState(EnemyState.stunned);
-        remainingStun = 0.5f;
     }
 
     // use this to change states in UpdateState
@@ -105,7 +98,7 @@ public class EnemyTypeMelee : EnemyBase
         }
     }
 
-    // frame by frame update for the current state
+    // frame by frame update for the current method
     void UpdateState()
     {
         // do this regardless of state 

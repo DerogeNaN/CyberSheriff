@@ -16,7 +16,6 @@ public class EnemySpawner : MonoBehaviour
     public float radius;
     public float interval;
 
-    bool shouldSpawn;
     float untilNextSpawn;
     int toSpawn;
 
