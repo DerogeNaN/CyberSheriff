@@ -147,8 +147,10 @@ public class RangedWeapon : MonoBehaviour
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
                     {
                         GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.parent = rayData.hit.transform;
                         Decal.transform.position = rayData.hit.point;
+                        Decal.transform.localEulerAngles = rayData.hit.normal;
+                        Decal.transform.parent = rayData.hit.transform;
+                       
                     }
 
                     if (rayData.hit.transform.parent)

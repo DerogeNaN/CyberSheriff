@@ -3,60 +3,6 @@ using UnityEngine;
 
 public class Revolver : RangedWeapon
 {
-    public override void EngagePrimaryFire()
-    {
-        //Primary Fire Logic
-        if (currentBullets > 0)
-        {
-            RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
-            BulletFlash.Play();
-            currentBullets--;
-            if (rayData.hit.point != null)
-            {
-                CurrentlyHitting = rayData.hit.transform.gameObject;
-
-                if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
-                {
-                    //..It isn't the player but it is an enemy...?
-                    GameObject hitFX = Instantiate(HitEffect);
-                    hitFX.transform.position = rayData.hit.point;
-                    if (rayData.hit.rigidbody)
-                    {
-                        rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
-                    }
-                    else
-                    {
-                        Debug.Log("Does Not have rigidbody");
-                    }
-
-
-                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
-                    {
-                        GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.parent = rayData.hit.transform;
-                        Decal.transform.position = rayData.hit.point;
-                    }
-
-                    if (rayData.hit.transform.parent)
-                    {
-                        if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
-                        {
-                            Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                            EnemyHealth.TakeDamage(DamageValue, 0);
-                        }
-                    }
-                }
-            }
-            canFire = false;
-            StartCoroutine(Wait(shotGapTime));
-        }
-        else if (currentBullets <= 0 && reloading == false)
-        {
-            canFire = false;
-            StartCoroutine(Reload());
-        }
-    }
-
 
     public override void EngageAltFire()
     {
