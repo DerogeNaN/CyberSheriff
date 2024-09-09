@@ -13,7 +13,7 @@ public class GroundCheck : MonoBehaviour
         Movement.playerMovement.jumpCount = 0;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other) 
     {
         if (other.gameObject.layer == 2) return;
         if (other.gameObject.CompareTag("ResetBox"))
