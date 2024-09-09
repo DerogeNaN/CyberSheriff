@@ -94,6 +94,7 @@ public class Movement : MonoBehaviour
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
     public Transform respawnPos;
+    public Rigidbody rb;
     public Collider slideCollider;
     private Collider standingCollider;
 
@@ -108,6 +109,7 @@ public class Movement : MonoBehaviour
 
     //----SLIDING----
     public bool isSliding = false;
+    public bool isTryingSlide = false;
     public float slideStartTime = 0;
     [Range(0, 1)]public float slideDrag = 10;
 
@@ -179,13 +181,15 @@ public class Movement : MonoBehaviour
 
         //UpdateCamera();
         MovePlayer();
+        GroundCheck();
+        Debug.DrawRay(transform.position, momentum * 5);
     }
 
     void MovePlayer()
     {
         Vector2 moveInput = Vector2.zero;
 
-        if (isSliding)
+        if (isTryingSlide && isGrounded)
         {
             SlideStartTransition();
             moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
@@ -220,19 +224,25 @@ public class Movement : MonoBehaviour
         float encouragedAmount = Vector3.Dot(moveDirection, momentumNoY.normalized) * (1 - momentumRatio);
         playerWASDMomentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
 
+        //NEW VARIABLE NEEDS TO BE INTRODUCED HERE, value that represents a desired velocity vector opposed to the actual velocity vector
+        //then figure out how much of the actual velocity is in desired velocity and reduces the x,z componenets of actual to be desired
+
         /*
         if playerWASD + momentum 's momentum is bigger than the maxPlayerInputSpeed
             momentum = Vector3.ClampMagnitude(momentum, momentum.magnitude - playerWASD.magnitude);
         momentum += playerWASD;
          */
 
-        if ((playerWASDMomentum + momentum).magnitude >= maxPlayerInputSpeed)
+        if ((playerWASDMomentum + momentumNoY).magnitude >= maxPlayerInputSpeed)
         {
-            momentum = Vector3.ClampMagnitude(momentum, momentum.magnitude - playerWASDMomentum.magnitude);
+            momentumNoY = Vector3.ClampMagnitude(momentumNoY, momentumNoY.magnitude - playerWASDMomentum.magnitude);
         }
 
-        momentum += playerWASDMomentum;
+        momentum.x = momentumNoY.x;
+        momentum.z = momentumNoY.z;
 
+        momentum.x += playerWASDMomentum.x;
+        momentum.z += playerWASDMomentum.z;
 
         //Multiply momentum by correct drag type
 
@@ -240,6 +250,11 @@ public class Movement : MonoBehaviour
         {
             momentum.x *= groundDrag;
             momentum.z *= groundDrag;
+            if (Mathf.Abs(momentum.x) < 0.015f && Mathf.Abs(momentum.z) < 0.015f)
+            {
+                momentum.x = 0;
+                momentum.z = 0;
+            }
         }
 
         if (isSliding && Time.time >= slideStartTime + slideDragDelay)
@@ -255,128 +270,10 @@ public class Movement : MonoBehaviour
 
         Grappling();
 
+        rb.velocity = Vector3.zero;
         momentum = Vector3.ClampMagnitude(momentum, maxSpeed);
         transform.position += momentum;
     }
-
-    //void MovePlayer()
-    //{
-    //    // assign player moveInput vector here to be used per case bellow
-    //    Vector2 moveInput = Vector2.zero;
-    //
-    //    moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
-    //
-    //    switch (playerState)
-    //    {
-    //        case MovementState.grounded:
-    //            /* do default movement code here
-    //             * TODO:
-    //             * if no input then currDrag is ground drag value
-    //            */
-    //            currEncouragment = encouragedGroundMomentum;
-    //
-    //            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
-    //
-    //            SlideExitTransition();
-    //
-    //            break;
-    //
-    //        case MovementState.air:
-    //            /*
-    //             * 
-    //            */
-    //            currEncouragment = encouragedAirMomentum;
-    //
-    //            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
-    //
-    //            break;
-    //
-    //        case MovementState.wallrunning:
-    //            /* do wallrunning movement here
-    //             * TODO:
-    //             * set moveDirection to be with wallrun tangent regardless of moveInput direction
-    //            */
-    //
-    //
-    //
-    //            break;
-    //
-    //        case MovementState.sliding:
-    //            /* do sliding movement
-    //             * TODO:
-    //             * Change currEncourangment to be higher than encouragedGroundMomentum
-    //             * 
-    //            */
-    //            currEncouragment = encouragedSlideMomentum;
-    //
-    //            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
-    //            SlideStartTransition();
-    //
-    //            if (momentum.magnitude < slideSpeedThreshold)
-    //            {
-    //                isSliding = false;
-    //                SlideExitTransition();
-    //            }
-    //
-    //            break;
-    //
-    //        case MovementState.dashing:
-    //            /* dashing logic
-    //             * TODO:
-    //             * check if moveInput vector is zero if so do nothing
-    //            */
-    //
-    //
-    //
-    //            break;
-    //
-    //        case MovementState.grappling:
-    //            /* Grapple logic here
-    //             * TODO:
-    //             * moveInput doesn't affect move direction instead applies controlled rotation around grapple point
-    //            */ 
-    //
-    //
-    //
-    //            break;
-    //    }
-    //
-    //    // After switch statement run all necessary functions like: Gravity() and CheckForOncomingCollision()
-    //    // Do momentum maths and assign momentum vector here
-    //
-    //    Vector3 playerWASDMomentum = Vector3.zero;
-    //
-    //
-    //    playerWASDMomentum += moveDirection * moveSpeed * momentumRatio;
-    //    Vector3 momentumNoY = new Vector3(momentum.x, 0, momentum.z);
-    //    float encouragedAmount = Vector3.Dot(moveDirection, momentumNoY.normalized) * (1 - momentumRatio);
-    //    playerWASDMomentum += Mathf.Clamp(encouragedAmount, 0, 1) * moveSpeed * moveDirection;
-    //
-    //    if ((playerWASDMomentum + momentum).magnitude >= maxPlayerInputSpeed)
-    //    {
-    //        momentum = Vector3.ClampMagnitude(momentum, momentum.magnitude - playerWASDMomentum.magnitude);
-    //    }
-    //
-    //    momentum += playerWASDMomentum;
-    //
-    //
-    //    //Multiply momentum by correct drag type
-    //
-    //    if (moveInput == Vector2.zero && isGrounded && !isSliding)
-    //    {
-    //        momentum.x *= groundDrag;
-    //        momentum.z *= groundDrag;
-    //    }
-    //    
-    //    Gravity();
-    //
-    //    CheckForOncomingCollision();
-    //
-    //    Grappling();
-    //
-    //    momentum = Vector3.ClampMagnitude(momentum, maxSpeed);
-    //    transform.position += momentum;
-    //}
 
     void SetState(MovementState desiredState)
     {
@@ -411,13 +308,8 @@ public class Movement : MonoBehaviour
     {
         if (!isGrounded)
         {
-            momentum.y -= actualGravity * Time.deltaTime - actualGravity * Time.deltaTime * momentum.y;
+            momentum.y -= actualGravity * Time.deltaTime;
         }
-        else
-        {
-            momentum.y = 0.0f;
-        }
-        isGrounded = false;
     }
 
     void InitialiseMovement()
@@ -434,7 +326,9 @@ public class Movement : MonoBehaviour
 
     private void Slide_Performed(InputAction.CallbackContext context)
     {
-        if (!isWallrunning && momentum.magnitude > slideSpeedThreshold)
+        isTryingSlide = true;
+
+        if (!isWallrunning && momentum.magnitude > slideSpeedThreshold && isGrounded)
         {
             SetState(MovementState.sliding);
         }
@@ -463,7 +357,7 @@ public class Movement : MonoBehaviour
         slideCollider.enabled = false;
         standingCollider.enabled = true;
 
-        SetState(MovementState.grounded);
+        //SetState(MovementState.grounded);
     }
 
     private void Dash_Performed(InputAction.CallbackContext context)
@@ -591,6 +485,30 @@ public class Movement : MonoBehaviour
             );
     }
 
+    void GroundCheck()
+    {
+        if (Physics.SphereCast(transform.position, 0.35f, Vector3.down, out RaycastHit hitInfo, 100.0f, ~0b00001100))
+        {
+            Debug.Log(hitInfo.collider.gameObject);
+            if (hitInfo.distance <= 0.66f)
+            {
+                if (!hitInfo.collider.isTrigger)
+                {
+                    isGrounded = true;
+                    lastGroundedTime = Time.time;
+                    jumpCount = 0;
+                }
+            }
+
+            else isGrounded = false;
+        }
+
+        else
+        {
+            isGrounded = false;
+        }
+    }
+
     void CheckForOncomingCollision()
     {
         if (!isSliding)
@@ -598,7 +516,7 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 transform.position + new Vector3(0, 0.5f, 0),
                 transform.position - new Vector3(0, 0.5f, 0),
-                0.45f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12
+                0.35f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
                 momentum = Vector3.ClampMagnitude(momentum, hit.distance);
@@ -610,7 +528,7 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 slideCollider.transform.position - new Vector3(0.5f, 0, 0),
                 slideCollider.transform.position + new Vector3(0.5f, 0, 0),
-                0.35f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12
+                0.35f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
                 momentum = Vector3.ClampMagnitude(momentum, hit.distance);
@@ -622,19 +540,18 @@ public class Movement : MonoBehaviour
     { 
         Vector3 normal = collision.GetContact(0).normal;
         normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
-
+        
         wallNormal = normal;
-
+        
         //If the normal of the wall collision points not up or down
         if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
         {
             Vector3 tangent = Vector3.Cross(Vector3.up, normal);
             wallTangent = tangent * Mathf.Sign(Vector3.Dot(momentum, tangent));
-            Debug.DrawRay(transform.position, wallTangent);
             float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
-
+        
             //Vector3 newMomentum = momentum.magnitude * wallTangent;
-
+        
             if(Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
             {
                 lastWallrunTime = Time.time;
