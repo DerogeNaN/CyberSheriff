@@ -9,6 +9,7 @@ using TMPro;
 using System.Linq.Expressions;
 using UnityEditor.Rendering;
 using UnityEngineInternal;
+using System.Diagnostics.CodeAnalysis;
 
 public class Revolver : MonoBehaviour
 {
@@ -121,7 +122,7 @@ public class Revolver : MonoBehaviour
             EngagePrimaryFire();
         }
 
-        if (shouldShootAlt == true && canPressAltFire== true && waiting == false && reloading == false)
+        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
         {
             EngageAltFire();
         }
@@ -141,7 +142,7 @@ public class Revolver : MonoBehaviour
 
                 if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                 {
-                    if (!rayData.hit.transform.GetComponent<NavMeshAgent>()) //AND it isn't an enemy
+                    if (!rayData.hit.transform.GetComponent<EnemyBase>()) //AND it isn't an enemy
                     {
                         GameObject Decal = Instantiate(BulletHitDecal);
                         Decal.transform.parent = rayData.hit.transform;
@@ -150,17 +151,24 @@ public class Revolver : MonoBehaviour
                     //..It isn't the player but it is an enemy...?
                     GameObject hitFX = Instantiate(HitEffect);
                     hitFX.transform.position = rayData.hit.point;
-                    //Destroy(hitFX, 5);
-                }
+                    if (rayData.hit.rigidbody)
+                    {
+                        rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
+                    }
+                    else
+                    {
+                        Debug.Log("Does Not have rigidbody");
+                    }
 
-                if (rayData.hit.rigidbody != null && rayData.hit.transform.root.GetComponent<Movement>() == false)
-                {
-                    rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
-                }
+                    if (rayData.hit.transform.GetComponent<EnemyBase>()) //AND it isn't an enemy
+                    {
+                        Debug.Log("collider:" + rayData.hit.collider);
+                        Debug.Log("parent:" + rayData.hit.collider.transform.parent);
+                        Debug.Log("health component:" + rayData.hit.collider.transform.parent.GetComponent<Health>());
 
-                if (rayData.hit.collider.gameObject.GetComponent<Health>())
-                {
-                    rayData.hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
+                        //    Debug.Log("taking away Health");
+                        //  //  rayData.hit.collider.transform.parent.GetComponent<Health>().TakeDamage(DamageValue, 0);
+                    }
                 }
             }
             canFire = false;
@@ -258,7 +266,7 @@ public class Revolver : MonoBehaviour
         Debug.Log("Fire start");
         canPressAltFire = false;
         int BulletsAtTimeOfFiring = currentBullets;
-        Debug.Log("Current Bullet Number:" + BulletsAtTimeOfFiring); 
+        Debug.Log("Current Bullet Number:" + BulletsAtTimeOfFiring);
         for (int i = 0; i < BulletsAtTimeOfFiring; i++)
         {
             Debug.Log("FanFire Bullet Loosed");
