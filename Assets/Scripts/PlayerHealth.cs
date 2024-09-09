@@ -21,7 +21,7 @@ public class PlayerHealth : MonoBehaviour
         {
             EnemyHitbox hitbox = other.GetComponent<EnemyHitbox>();
 
-            if (hitbox)
+            if (hitbox && hitbox.active)
             {
                 TakeDamage(hitbox.damage, 0);
                 Destroy(hitbox.gameObject);

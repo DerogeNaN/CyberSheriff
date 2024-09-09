@@ -38,8 +38,9 @@ public class EnemyTypeMelee : EnemyBase
         UpdateState();
     }
 
-    public override void OnHit(int damage)
+    public override void Hit(int damage)
     {
+        base.Hit(damage);
         SetState(EnemyState.stunned);
         remainingStun = 0.5f;
     }
@@ -85,7 +86,7 @@ public class EnemyTypeMelee : EnemyBase
 
                     if (hitboxPrefab != null)
                     {
-                        GameObject hitbox = Instantiate(hitboxPrefab, transform);
+                        GameObject hitbox = Instantiate(hitboxPrefab, mesh.transform);
                         hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
                     }
                 }

@@ -35,7 +35,6 @@ public class EnemyBase : MonoBehaviour
     [Header("Pathing Settings")]
     // navigation
     [SerializeField] NavMeshSurface navMesh;
-    public float repathFrequency = 1.0f;
     protected NavMeshPath path;
     float untilRepath;
 
@@ -47,14 +46,17 @@ public class EnemyBase : MonoBehaviour
     // movement
     protected float speed = 5.0f;
     int nextCorner = 0;
+    Vector3 direction;
 
     [Header("Advanced")]
     [SerializeField] TMP_Text debugStateText;
     Collider colliderr;
-    [SerializeField] GameObject mesh;
+    public float repathFrequency = 1.0f;
+    [SerializeField] protected GameObject mesh;
     [SerializeField] protected Vector3 lineOfSightOffset;
     [SerializeField] protected Vector3 floorRaycastPos;
     [SerializeField] protected float floorRaycastLength;
+    [SerializeField] float nearbyRadius;
 
 
     public void Start()
@@ -63,8 +65,6 @@ public class EnemyBase : MonoBehaviour
         shouldPath = false;
         untilRepath = repathFrequency;
         path = new();
-
-        // get components
         colliderr = GetComponentInChildren<Collider>();
 
         // start spawned or despawned
@@ -78,9 +78,9 @@ public class EnemyBase : MonoBehaviour
 
         if (debugStateText != null) debugStateText.text = state.ToString();
 
-        // if the target is out of range, don't raycast
         Vector3 raycastPos = transform.position + lineOfSightOffset;
 
+        // if the target is out of range, don't raycast
         if ((lookTarget - raycastPos).magnitude <= sightRange)
         {
             // check for line of sight with target
@@ -96,7 +96,6 @@ public class EnemyBase : MonoBehaviour
         // draw ray for debugging
         if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
         else Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
-
         Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
 
         // enemy types that inherit from this decide when to set shouldPath to true or false
@@ -116,22 +115,16 @@ public class EnemyBase : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            CalculatePath();
-        }
+        // crowd stuff
+        Collider[] nearby = Physics.OverlapSphere(transform.position, nearbyRadius);
+
+
     }
 
-    void Hit(int damage)
+    public virtual void Hit(int damage)
     {
         // probably add more parameters to this, like what type of hit
         health -= damage;
-        OnHit(damage);
-    }
-
-    public virtual void OnHit(int damage)
-    {
-
     }
 
     void CalculatePath()
@@ -143,8 +136,11 @@ public class EnemyBase : MonoBehaviour
 
     void Move()
     {
+        // the names of next and nextCorner should swap probably
         Vector3 next = path.corners[nextCorner];
         Vector3 dirToNextCorner = (next - transform.position).normalized;
+
+        mesh.transform.LookAt(next + lineOfSightOffset); // temporary
 
         transform.position += dirToNextCorner * speed * Time.deltaTime;
         if ((next - transform.position).magnitude <= 1.0f) // if less than 1 unit away from target corner
