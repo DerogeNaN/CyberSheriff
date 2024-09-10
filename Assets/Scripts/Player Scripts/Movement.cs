@@ -451,7 +451,11 @@ public class Movement : MonoBehaviour
             canGrapple = true;
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position;
-            if (!grappleUI.isPlaying && lastGrappleTime + grappleCooldown < Time.time) grappleUI.Play();
+            if (!grappleUI.isPlaying && lastGrappleTime + grappleCooldown < Time.time)
+            {
+                grappleUI.gameObject.SetActive(true);
+                grappleUI.Play();
+            }
             
         }
 
@@ -459,7 +463,11 @@ public class Movement : MonoBehaviour
         {
             canGrapple = false;
             grappleObject = null;
-            if (grappleUI.isPlaying) grappleUI.Stop();
+            if (grappleUI.isPlaying)
+            {
+                grappleUI.gameObject.SetActive(false);
+                grappleUI.Stop();
+            }
         }
     }
 
