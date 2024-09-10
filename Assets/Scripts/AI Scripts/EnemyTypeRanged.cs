@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 public class EnemyTypeRanged : EnemyBase
 {
     [Header("Ranged Movement Settings")]
+    public bool stationary = false;
     public float runSpeed = 5.0f;
     public float walkSpeed = 2.0f;
 
@@ -46,7 +47,7 @@ public class EnemyTypeRanged : EnemyBase
         {
             case EnemyState.idle:
                 {
-                    shouldPath = true;
+                    if (!stationary) shouldPath = true;
                     moveTarget = initialPosition;
                 }
                 break;
@@ -95,7 +96,7 @@ public class EnemyTypeRanged : EnemyBase
                     // i'll restructure this later
                     if (Vector3.Distance(transform.position, moveTarget) >= attackRange)
                     {
-                        shouldPath = true;
+                        if (!stationary) shouldPath = true;
                         //pathAgent.speed = moveSpeed;
                     }
                     else
