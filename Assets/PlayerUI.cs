@@ -24,8 +24,8 @@ public class PlayerUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ammoCount = weaponManagmentScript.currentActiveWeapon.GetComponent<Revolver>().currentBullets;
-        ammoMax = weaponManagmentScript.currentActiveWeapon.GetComponent<Revolver>().BulletsPerClip;
+        ammoCount = weaponManagmentScript.currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
+        ammoMax = weaponManagmentScript.currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
 
         ammoText.text = ammoCount.ToString() + "/" + ammoMax.ToString();
     }
