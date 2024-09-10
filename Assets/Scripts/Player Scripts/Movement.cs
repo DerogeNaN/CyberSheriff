@@ -217,7 +217,6 @@ public class Movement : MonoBehaviour
         else
         {
             TiltCamera(0, cameraWallrunTiltTime);
-            Debug.Log("Not sliding or anything");
             SlideExitTransition();
             moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
@@ -448,11 +447,11 @@ public class Movement : MonoBehaviour
         if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 150.0f, ~8) &&
             hit.transform.CompareTag("GrappleableObject")))
         {
-            canGrapple = true;
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position;
             if (!grappleUI.isPlaying && lastGrappleTime + grappleCooldown < Time.time)
             {
+                canGrapple = true;
                 grappleUI.gameObject.SetActive(true);
                 grappleUI.Play();
             }
@@ -483,16 +482,16 @@ public class Movement : MonoBehaviour
 
     private void Grappling()
     {
-        if (canGrapple && isGrappling && lastGrappleTime + grappleCooldown < Time.time)
+        if (canGrapple && isGrappling)
         {
             momentum = grappleTargetDirection.normalized * grappleSpeed;
-            lastGrappleTime = Time.time;
         }
     }
 
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
+        lastGrappleTime = Time.time;
     }
 
     private void TiltCamera(float tiltAngle, float tiltSpeed)
