@@ -301,18 +301,17 @@ MonoBehaviour:
   health: 100
   playerTransform: {fileID: 0}
   sightRange: 20
-  navMesh: {fileID: 0}
   state: 0
   debugStateText: {fileID: 1027626899264677973}
   mesh: {fileID: 8023198441291992271}
   lineOfSightOffset: {x: 0, y: 1.5, z: 0}
   floorRaycastPos: {x: 0, y: 0, z: 0}
   floorRaycastLength: 0
-  attackTime: 2
-  attackCooldown: 2
-  attackRange: 25
   runSpeed: 5
   walkSpeed: 2
+  attackRange: 25
+  attackTime: 2
+  attackCooldown: 2
   bulletPrefab: {fileID: 5628038258630485846, guid: 86f2cad0c4c9d7d4a9ae8d6e35af7284,
     type: 3}
 --- !u!195 &1027626899448499860
@@ -323,7 +322,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1027626899448499939}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 20

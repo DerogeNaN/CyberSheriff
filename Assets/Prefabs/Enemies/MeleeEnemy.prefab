@@ -483,16 +483,15 @@ MonoBehaviour:
   health: 100
   playerTransform: {fileID: 0}
   sightRange: 15
-  navMesh: {fileID: 0}
   state: 0
   debugStateText: {fileID: 8781144055186671520}
   mesh: {fileID: 119252391916814912}
   lineOfSightOffset: {x: 0, y: 1.5, z: 0}
   floorRaycastPos: {x: 0, y: 1, z: 0}
   floorRaycastLength: 0.5
-  runSpeed: 5
+  runSpeed: 7
   walkSpeed: 3
-  chaseTime: 3
+  chaseTime: 2
   hitboxPrefab: {fileID: 2145299806175634582, guid: 8cb93ddd117cb5d459232610c7c453bc,
     type: 3}
   attackRange: 3
@@ -506,7 +505,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8781144055303266582}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 20

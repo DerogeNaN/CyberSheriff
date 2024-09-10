@@ -29,6 +29,7 @@ public class EnemyTypeMelee : EnemyBase
         SetState(EnemyState.idle);
 
         initialPosition = transform.position;
+        moveTarget = initialPosition;
         speed = walkSpeed;
     }
 
