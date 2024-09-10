@@ -1,10 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Health : MonoBehaviour
 {
     public int health = 100;
+    public TMP_Text debugText;
+
+    private void Update()
+    {
+        if (debugText)
+        {
+            debugText.text = "HP: " + health.ToString();
+        }
+    }
 
     public void TakeDamage(int damage, int damageType)
     {
