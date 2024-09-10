@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering.VirtualTexturing;
 using UnityEngine.VFX;
 
 public class RangedWeapon : MonoBehaviour
@@ -112,7 +113,7 @@ public class RangedWeapon : MonoBehaviour
             EngagePrimaryFire();
         }
 
-        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false )
+        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
         {
             EngageAltFire();
         }
@@ -150,7 +151,7 @@ public class RangedWeapon : MonoBehaviour
                         Decal.transform.position = rayData.hit.point;
                         Decal.transform.localEulerAngles = rayData.hit.normal;
                         Decal.transform.parent = rayData.hit.transform;
-                       
+
                     }
 
                     if (rayData.hit.transform.parent)
@@ -180,6 +181,22 @@ public class RangedWeapon : MonoBehaviour
 
     }
 
+    public virtual void ManualReload()
+    {
+        if (reloading == false && canPressAltFire == true)//verifies that im not already altfiring for situations like fanFire 
+        {
+            canFire = false;
+            StartCoroutine(Reload());
+        }
+        else if (reloading == true)
+        {
+            Debug.Log(" Already Reloading ");
+        }
+        else
+        {
+            Debug.Log(" altfire active cannot reload");
+        }
+    }
 
     public RayData RayCastAndGenCameraRayData()
     {
@@ -237,7 +254,7 @@ public class RangedWeapon : MonoBehaviour
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
         Debug.Log("Reloading...");
-        canFire = false;
+        canFire = true;
         if (currentBullets != BulletsPerClip)
         {
             currentBullets = BulletsPerClip;

@@ -65,6 +65,7 @@ public class WeaponManagement : MonoBehaviour
             playerInput.Player.WeaponSwitch.started += ScrollSetWeapon;
             playerInput.Player.KeyWeaponSwitch1.started += keySetWeapon1;
             playerInput.Player.KeyWeaponSwitch2.started += keySetWeapon2;
+            playerInput.Player.Reload.started += ManualReload;
         }
 
         if (playerInput != null)
@@ -121,6 +122,20 @@ public class WeaponManagement : MonoBehaviour
     {
         if (currentActiveWeapon.GetComponent<RangedWeapon>())
             currentActiveWeapon.GetComponent<RangedWeapon>().OnAltFireBegin();
+    }
+
+    void ManualReload(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if (!playerInput.Player.PrimaryFire.inProgress && !playerInput.Player.AltFire.inProgress)
+        {
+            if (currentActiveWeapon.GetComponent<RangedWeapon>())
+                currentActiveWeapon.GetComponent<RangedWeapon>().ManualReload();
+        }
+        else 
+        {
+
+            Debug.Log("Cannot reload at This Time");
+        }
     }
 
     //maybe
