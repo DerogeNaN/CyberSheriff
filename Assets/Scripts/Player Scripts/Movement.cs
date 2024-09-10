@@ -144,7 +144,12 @@ public class Movement : MonoBehaviour
 
     //----GRAPPLE----
     public bool isGrappling = false;
+    public bool canGrapple = false;
+    public GameObject grappleObject;
+    public ParticleSystem grappleUI;
     public float grappleSpeed = 1f;
+    public float grappleCooldown = 5;
+    public float lastGrappleTime = 0;
     public Vector3 grappleTargetDirection = Vector3.zero;
 
     public enum MovementState
@@ -182,7 +187,7 @@ public class Movement : MonoBehaviour
         //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        Debug.DrawRay(transform.position, momentum * 5);
+        Debug.DrawRay(transform.position, momentum * 2);
     }
 
     void MovePlayer()
@@ -212,6 +217,7 @@ public class Movement : MonoBehaviour
         else
         {
             TiltCamera(0, cameraWallrunTiltTime);
+            Debug.Log("Not sliding or anything");
             SlideExitTransition();
             moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
@@ -268,6 +274,7 @@ public class Movement : MonoBehaviour
 
         CheckForOncomingCollision();
 
+        CheckForGrappleTarget();
         Grappling();
 
         rb.velocity = Vector3.zero;
@@ -337,6 +344,7 @@ public class Movement : MonoBehaviour
     private void Slide_Cancelled(InputAction.CallbackContext context)
     {
         isSliding = false;
+        isTryingSlide = false;
         SetState(MovementState.grounded);
     }
 
@@ -435,12 +443,31 @@ public class Movement : MonoBehaviour
         }
     }
 
+    private void CheckForGrappleTarget()
+    {
+        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 150.0f, ~8) &&
+            hit.transform.CompareTag("GrappleableObject")))
+        {
+            canGrapple = true;
+            grappleObject = hit.collider.gameObject;
+            grappleUI.transform.position = hit.collider.transform.position;
+            if (!grappleUI.isPlaying && lastGrappleTime + grappleCooldown < Time.time) grappleUI.Play();
+            
+        }
+
+        else
+        {
+            canGrapple = false;
+            grappleObject = null;
+            if (grappleUI.isPlaying) grappleUI.Stop();
+        }
+    }
+
     private void Grapple_Performed(InputAction.CallbackContext context)
     {
-        if (Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 50.0f, ~12) && 
-            hit.transform.CompareTag("GrappleableObject"))
+        if (canGrapple)
         {
-            Vector3 targetDirection = hit.transform.position - transform.position;
+            Vector3 targetDirection = grappleObject.transform.position - transform.position;
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
         }
@@ -448,9 +475,10 @@ public class Movement : MonoBehaviour
 
     private void Grappling()
     {
-        if (isGrappling)
+        if (canGrapple && isGrappling && lastGrappleTime + grappleCooldown < Time.time)
         {
             momentum = grappleTargetDirection.normalized * grappleSpeed;
+            lastGrappleTime = Time.time;
         }
     }
 
