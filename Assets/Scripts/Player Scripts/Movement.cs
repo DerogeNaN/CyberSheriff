@@ -135,6 +135,7 @@ public class Movement : MonoBehaviour
     public float dashForce = 2.0f;
     public float dashTime = 0.5f;
     public float dashStartTime = 0;
+    public float lastDashTime = 0;
     public float dashCooldown = 1;
 
     //----MOVEMENT----
@@ -204,7 +205,7 @@ public class Movement : MonoBehaviour
 
         else if (isGrappling)
         {
-
+            moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
         }
 
         else if (isWallrunning)
@@ -376,7 +377,7 @@ public class Movement : MonoBehaviour
 
     private void DashStartTransition()
     {
-        if (isDashing)
+        if (isDashing && lastDashTime + dashCooldown < Time.time)
         {
             previousMomentum = momentum;
             
@@ -385,6 +386,7 @@ public class Movement : MonoBehaviour
                 0.45f, transform.forward, out hit, dashDistance, ~12))
             {
                 momentum = transform.forward * dashDistance;
+                lastDashTime = Time.time;
             }
 
             else
