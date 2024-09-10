@@ -1,57 +1,59 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 
 public class Shotgun : RangedWeapon
 {
-  
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    [Header("I be riding shotgun underneath the hot sun..")]
+    [SerializeField]
+    int bulletsPerShot = 12;
+    [SerializeField]
+    float spreadMultiplier = 1;
     public override void EngagePrimaryFire()
     {
         //Primary Fire Logic
         if (currentBullets > 0)
         {
-            RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
-            BulletFlash.Play();
             currentBullets--;
-            if (rayData.hit.point != null)
+            BulletFlash.Play();
+
+            for (int i = 0; i < bulletsPerShot; i++)
             {
-                CurrentlyHitting = rayData.hit.transform.gameObject;
-
-                if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
+                rayData.hit.point += (Vector3)Random.insideUnitCircle * spreadMultiplier ;
+                if (rayData.hit.point != null)
                 {
-                    //..It isn't the player but it is an enemy...?
-                    GameObject hitFX = Instantiate(HitEffect);
-                    hitFX.transform.position = rayData.hit.point;
-                    if (rayData.hit.rigidbody)
-                    {
-                        rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
-                    }
-                    else
-                    {
-                        Debug.Log("Does Not have rigidbody");
-                    }
+                    CurrentlyHitting = rayData.hit.transform.gameObject;
 
-                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
+                    if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
-                        GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.position = rayData.hit.point;
-                        Decal.transform.localEulerAngles = rayData.hit.normal;
-                        Decal.transform.parent = rayData.hit.transform;
-
-                    }
-
-                    if (rayData.hit.transform.parent)
-                    {
-                        if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                        //..It isn't the player but it is an enemy...?
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = rayData.hit.point;
+                        if (rayData.hit.rigidbody)
                         {
-                            Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                            EnemyHealth.TakeDamage(DamageValue, 0);
+                            rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
+                        }
+                        else
+                        {
+                            Debug.Log("Does Not have rigidbody");
+                        }
+
+                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
+                        {
+                            GameObject Decal = Instantiate(BulletHitDecal);
+                            Decal.transform.position = rayData.hit.point;
+                            Decal.transform.localEulerAngles = rayData.hit.normal;
+                            Decal.transform.parent = rayData.hit.transform;
+
+                        }
+
+                        if (rayData.hit.transform.parent)
+                        {
+                            if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                            {
+                                Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
+                                EnemyHealth.TakeDamage(DamageValue, 0);
+                            }
                         }
                     }
                 }
@@ -69,7 +71,7 @@ public class Shotgun : RangedWeapon
 
     public override void EngageAltFire()
     {
-        ////altFire Logic
+        //altFire Logic
         //if (currentBullets > 0)
         //    StartCoroutine(FanFire());
         //else if (currentBullets <= 0 && reloading == false)
@@ -80,7 +82,7 @@ public class Shotgun : RangedWeapon
         //}
     }
 
-   
+
     //active on beginning of Primary fire Action
     public override void OnPrimaryFireBegin()
     {
@@ -105,7 +107,7 @@ public class Shotgun : RangedWeapon
     }
 
     //Active every interval  of altfire set in this script
-    public override  void OnAltFireStay()
+    public override void OnAltFireStay()
     {
         if (shouldShootAlt)
         {
@@ -122,7 +124,7 @@ public class Shotgun : RangedWeapon
     }
 
     //active on Alt-fire End
-    public override  void OnAltFireEnd()
+    public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
         Debug.Log("end alt fire");
