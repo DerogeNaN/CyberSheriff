@@ -5,21 +5,69 @@ public class Shotgun : RangedWeapon
 {
     [Header("I be riding shotgun underneath the hot sun..")]
     [SerializeField]
-    int bulletsPerShot = 12;
+    int bulletsPerShot = 5;
+
     [SerializeField]
     float spreadMultiplier = 1;
+
+    [SerializeField]
+    float ChargeTime = 2;
+
+
+    [SerializeField]
+    bool isCharged = false;
+
+    [SerializeField]
+    bool charging = false;
+
+
+    [SerializeField]
+    float TimeSinceInitialPress = 0;
+
+
+    // Update is called once per frame
+    public override void Update()
+    {
+        if (currentBullets <= 0 && reloading == false)
+        {
+            canFire = false;
+            StartCoroutine(Reload());
+        }
+
+        if (shouldShootPrimary == false && waiting == false && reloading == false && canPressAltFire == true)
+        {
+            EngagePrimaryFire();
+        }
+
+        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
+        {
+            EngageAltFire();
+        }
+    }
+
     public override void EngagePrimaryFire()
     {
         //Primary Fire Logic
+        int pellets = bulletsPerShot;
         if (currentBullets > 0)
         {
-            currentBullets--;
-            BulletFlash.Play();
+            if (isCharged)
+            {
+                currentBullets = 0;
+                pellets *= 2;
+                BulletFlash.Play();
+                BulletFlash.Play();
+            }
+            else
+            {
+                currentBullets--;
+                BulletFlash.Play();
+            }
 
-            for (int i = 0; i < bulletsPerShot; i++)
+            for (int i = 0; i < pellets; i++)
             {
                 RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
-                rayData.hit.point += (Vector3)Random.insideUnitCircle * spreadMultiplier ;
+                rayData.hit.point += (Vector3)Random.insideUnitCircle * spreadMultiplier;
                 if (rayData.hit.point != null)
                 {
                     CurrentlyHitting = rayData.hit.transform.gameObject;
@@ -87,6 +135,7 @@ public class Shotgun : RangedWeapon
     public override void OnPrimaryFireBegin()
     {
         shouldShootPrimary = true;
+        charging = true;
         Debug.Log("Beginning primary Fire");
     }
 
@@ -100,9 +149,11 @@ public class Shotgun : RangedWeapon
     //Active every interval of Primaryfire set in this script
     public override void OnPrimaryFireStay()
     {
-        if (shouldShootPrimary)
+            //Debug.Log("Primary fire stay ");
+        if (charging)
         {
-            Debug.Log("Primary fire stay ");
+            TimeSinceInitialPress += Time.deltaTime;
+            Debug.Log("Charge Time:" + TimeSinceInitialPress);
         }
     }
 
@@ -119,6 +170,13 @@ public class Shotgun : RangedWeapon
     //active on primary fire End
     public override void OnprimaryFireEnd()
     {
+        charging = false;
+        if (TimeSinceInitialPress >= ChargeTime)
+        {
+            Debug.Log("Charge Threshhold reached vready for discharge");
+            isCharged = true;
+        }
+        TimeSinceInitialPress = 0;
         shouldShootPrimary = false;
         Debug.Log("end Primary Fire");
     }
