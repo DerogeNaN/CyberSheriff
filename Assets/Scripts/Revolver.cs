@@ -27,6 +27,8 @@ public class Revolver : RangedWeapon
         {
             Debug.Log("FanFire Bullet Loosed");
             BulletFlash.Play();
+            ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
+            ps.Play();
             currentBullets--;
 
             RayData rayData = RayCastAndGenGunRayData(altMuzzlePoint);
@@ -48,8 +50,6 @@ public class Revolver : RangedWeapon
                     {
                         Debug.Log("Does Not have rigidbody");
                     }
-
-
 
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
                     {

@@ -124,6 +124,8 @@ public class RangedWeapon : MonoBehaviour
         {
             RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
             BulletFlash.Play();
+            ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
+            ps.Play();
             currentBullets--;
             if (rayData.hit.point != null)
             {
