@@ -92,6 +92,18 @@ public class EnemyBase : MonoBehaviour
         // enemy types that inherit from this decide when to set shouldPath to true or false
         if (shouldPath)
         {
+            // teleport back to navmesh
+            if (!navAgent.isOnNavMesh)
+            {
+                return;
+                NavMeshHit hit;
+                if (NavMesh.FindClosestEdge(transform.position, out hit, NavMesh.AllAreas))
+                {
+                    navAgent.Warp(hit.position);
+                }
+                else shouldPath = false;
+            }
+
             navAgent.destination = moveTarget;
             navAgent.enabled = true;
             navAgent.speed = speed;

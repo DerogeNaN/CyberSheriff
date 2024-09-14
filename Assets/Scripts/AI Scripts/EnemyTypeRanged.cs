@@ -64,8 +64,9 @@ public class EnemyTypeRanged : EnemyBase
                     speed = walkSpeed;
 
                     // do attack here
-                    Projectile projectile = Instantiate(bulletPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
-                    projectile.direction = Vector3.Normalize(playerTransform.position - transform.position);
+                    // change spawn pos to gun pos
+                    Projectile projectile = Instantiate(bulletPrefab, transform.position + lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
+                    projectile.direction = Vector3.Normalize(playerTransform.position - transform.position - lineOfSightOffset);
                 }
                 break;
         }

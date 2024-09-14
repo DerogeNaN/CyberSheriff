@@ -11,7 +11,7 @@ public class EnemyTypeMelee : EnemyBase
     public float chaseTime = 2.0f;
 
     [Header("Melee Attack Settings")]
-    public GameObject hitboxPrefab;
+    public GameObject attackPrefab;
     public float attackRange = 2.0f;
     public float attackTime = 1.0f;
     public float attackCooldown = 1.0f;
@@ -86,9 +86,9 @@ public class EnemyTypeMelee : EnemyBase
                     shouldPath = false;
                     remainingAttackTime = attackTime;
 
-                    if (hitboxPrefab != null)
+                    if (attackPrefab != null)
                     {
-                        GameObject hitbox = Instantiate(hitboxPrefab, mesh.transform);
+                        GameObject hitbox = Instantiate(attackPrefab, mesh.transform);
                         hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
                     }
                 }
