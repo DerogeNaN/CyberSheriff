@@ -14,6 +14,14 @@ public class PlayerHealth : MonoBehaviour
     {
         UpdateHealthUI();   
     }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            TakeDamage(10, 0);
+            Debug.Log("I took damage");
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -53,4 +61,5 @@ public class PlayerHealth : MonoBehaviour
         healthUI.text = "hp: " + health;
     }
 
+   
 }

@@ -77,6 +77,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1;
         pauseMenu.SetActive(false);
         pauseState = false;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked; // Hides the cursor and locks it to the center of the screen
     }
 
 
@@ -88,10 +90,12 @@ public class PauseMenu : MonoBehaviour
         pauseState = true;
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(firstPMBtn);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None; // Shows the cursor and unlocks it
     }
 
     //options button to open options
-    public void AudioOptions()
+    public void Options()
     {
         pauseMenu.SetActive(false);
         settingsMenu.SetActive(true);
@@ -111,7 +115,7 @@ public class PauseMenu : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene("GoldMainMenu");
+        SceneManager.LoadScene(0);
     }
 
     public void QuitGame()
