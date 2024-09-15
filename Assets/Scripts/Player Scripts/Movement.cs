@@ -135,6 +135,7 @@ public class Movement : MonoBehaviour
     public float dashForce = 2.0f;
     public float dashTime = 0.5f;
     public float dashStartTime = 0;
+    public float lastDashTime = 0;
     public float dashCooldown = 1;
 
     //----MOVEMENT----
@@ -204,7 +205,7 @@ public class Movement : MonoBehaviour
 
         else if (isGrappling)
         {
-
+            moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
         }
 
         else if (isWallrunning)
@@ -217,7 +218,6 @@ public class Movement : MonoBehaviour
         else
         {
             TiltCamera(0, cameraWallrunTiltTime);
-            Debug.Log("Not sliding or anything");
             SlideExitTransition();
             moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
@@ -377,7 +377,7 @@ public class Movement : MonoBehaviour
 
     private void DashStartTransition()
     {
-        if (isDashing)
+        if (isDashing && lastDashTime + dashCooldown < Time.time)
         {
             previousMomentum = momentum;
             
@@ -386,6 +386,7 @@ public class Movement : MonoBehaviour
                 0.45f, transform.forward, out hit, dashDistance, ~12))
             {
                 momentum = transform.forward * dashDistance;
+                lastDashTime = Time.time;
             }
 
             else
@@ -448,11 +449,11 @@ public class Movement : MonoBehaviour
         if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 150.0f, ~8) &&
             hit.transform.CompareTag("GrappleableObject")))
         {
-            canGrapple = true;
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position;
             if (!grappleUI.isPlaying && lastGrappleTime + grappleCooldown < Time.time)
             {
+                canGrapple = true;
                 grappleUI.gameObject.SetActive(true);
                 grappleUI.Play();
             }
@@ -483,16 +484,16 @@ public class Movement : MonoBehaviour
 
     private void Grappling()
     {
-        if (canGrapple && isGrappling && lastGrappleTime + grappleCooldown < Time.time)
+        if (canGrapple && isGrappling)
         {
             momentum = grappleTargetDirection.normalized * grappleSpeed;
-            lastGrappleTime = Time.time;
         }
     }
 
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
+        lastGrappleTime = Time.time;
     }
 
     private void TiltCamera(float tiltAngle, float tiltSpeed)
