@@ -6,6 +6,7 @@ public class Projectile : MonoBehaviour
 {
     public float speed;
     public Vector3 direction;
+    [SerializeField] EnemyHitbox hitbox;
 
     private void Start()
     {
@@ -16,6 +17,11 @@ public class Projectile : MonoBehaviour
     private void Update()
     {
         transform.position += direction * speed * Time.deltaTime;
+
+        if (!hitbox.active)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

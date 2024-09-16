@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.VFX;
+using static RangedWeapon;
 
 public class RangedWeapon : MonoBehaviour
 {
@@ -147,11 +148,7 @@ public class RangedWeapon : MonoBehaviour
 
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
                     {
-                        GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.position = rayData.hit.point;
-                        Decal.transform.localEulerAngles = rayData.hit.normal;
-                        Decal.transform.parent = rayData.hit.transform;
-
+                        SpawnBulletHoleDecal(rayData);
                     }
 
                     if (rayData.hit.transform.parent)
@@ -181,6 +178,17 @@ public class RangedWeapon : MonoBehaviour
 
     }
 
+    public void SpawnBulletHoleDecal(RayData rayData)
+    {
+        GameObject Decal = Instantiate(BulletHitDecal);
+        Decal.transform.position = rayData.hit.point;
+        Vector3 pos = Decal.transform.position;
+        Decal.transform.LookAt(pos + rayData.hit.normal,Vector3.up);
+        Decal.transform.position += -rayData.hit.normal;
+        Debug.Log("ray hit normal: "+ rayData.hit.normal);
+    }
+
+
     public virtual void ManualReload()
     {
         if (reloading == false && canPressAltFire == true)//verifies that im not already altfiring for situations like fanFire 
@@ -198,7 +206,7 @@ public class RangedWeapon : MonoBehaviour
         }
     }
 
-    public RayData RayCastAndGenCameraRayData()
+    virtual public RayData RayCastAndGenCameraRayData()
     {
         Ray cameraRay = new Ray();
 
@@ -213,7 +221,7 @@ public class RangedWeapon : MonoBehaviour
         return new RayData { ray = cameraRay, hit = cameraHit };
     }
 
-    public RayData RayCastAndGenGunRayData(Transform muzzle)
+    virtual public RayData RayCastAndGenGunRayData(Transform muzzle)
     {
         Ray gunRay = new Ray();
 

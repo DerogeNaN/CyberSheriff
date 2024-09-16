@@ -5,23 +5,21 @@ using UnityEngine;
 public class EnemyHitbox : MonoBehaviour
 {
     public int damage = 20;
-    public bool active = false;
-    [SerializeField] float startUp = 0.0f;
-    [SerializeField] float activeTime = 0.1f;
+    [HideInInspector] public bool active = true;
+    [SerializeField] float activeTime = 0.2f;
 
     float time;
 
     void Start()
     {
-        time = startUp + activeTime;
+        time = activeTime;
+        active = true;
     }
 
     void Update()
     {
         time -= Time.deltaTime;
 
-        if (time - activeTime <= 0) active = true;
-
-        if (time <= 0) Destroy(gameObject);
+        if (time <= 0) active = false;
     }
 }
