@@ -211,8 +211,8 @@ public class Movement : MonoBehaviour
         else if (isWallrunning)
         {
             TiltCamera(cameraWallrunTilt, cameraWallrunTiltTime, wallNormal);
-            moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
-            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+            //moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            //moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
         }
 
         else
@@ -532,6 +532,7 @@ public class Movement : MonoBehaviour
                 if (!hitInfo.collider.isTrigger)
                 {
                     isGrounded = true;
+                    isWallrunning = false;
                     lastGroundedTime = Time.time;
                     jumpCount = 0;
                 }
@@ -575,7 +576,7 @@ public class Movement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     { 
-        Vector3 normal = collision.GetContact(0).normal;
+        Vector3 normal = collision.GetContact(0).normal.normalized;
         normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
         
         wallNormal = normal;
@@ -585,23 +586,27 @@ public class Movement : MonoBehaviour
         {
             Vector3 tangent = Vector3.Cross(Vector3.up, normal);
             wallTangent = tangent * Mathf.Sign(Vector3.Dot(momentum, tangent));
-            float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
-        
-            //Vector3 newMomentum = momentum.magnitude * wallTangent;
+            float wallSpeed = Vector3.Dot(tangent, momentum); //* Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
         
             if(Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
             {
                 lastWallrunTime = Time.time;
                 cameraLeaveWallrunTime = Time.time + 0.2f;
                 isWallrunning = true;
-                //momentum = newMomentum;
                 momentum = wallSpeed * tangent;
                 jumpCount = 0;
                 return;
             }
         }
 
-        momentum -= Vector3.Dot(momentum, normal) * normal;
+        //Get velocity relative to the collision normal
+        float velocityInNormalDirection = Vector3.Dot(momentum, normal);
+
+        //Check if positive or negative, if negative the player is trying to move into a wall so run the below code
+        if (velocityInNormalDirection < 0)
+        {
+            momentum -= velocityInNormalDirection * normal;
+        }
     }
 
     private void OnCollisionStay(Collision collision)

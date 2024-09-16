@@ -429,7 +429,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8781144055303266578}
   - component: {fileID: 8781144055303266590}
-  - component: {fileID: 8781144055303266585}
+  - component: {fileID: 7825197320810437696}
   - component: {fileID: 9017003524051536654}
   m_Layer: 7
   m_Name: MeleeEnemy
@@ -469,7 +469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   debugText: {fileID: 3130728591011433805}
---- !u!114 &8781144055303266585
+--- !u!114 &7825197320810437696
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -478,27 +478,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 8781144055303266582}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8179b398ec8f01842b3702056e327984, type: 3}
+  m_Script: {fileID: 11500000, guid: 001162ed7c5bd1643a80fa3e697fc6da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
   health: 100
   playerTransform: {fileID: 0}
-  sightRange: 15
+  sightRange: 10
   state: 0
   debugStateText: {fileID: 8781144055186671520}
   mesh: {fileID: 119252391916814912}
-  lineOfSightOffset: {x: 0, y: 1.5, z: 0}
-  floorRaycastPos: {x: 0, y: 1, z: 0}
-  floorRaycastLength: 0.5
-  runSpeed: 7
-  walkSpeed: 3
+  lineOfSightOffset: {x: 0, y: 1, z: 0}
+  floorRaycastPos: {x: 0, y: 0, z: 0}
+  floorRaycastLength: 0
+  runSpeed: 5
+  walkSpeed: 2
   chaseTime: 2
-  hitboxPrefab: {fileID: 2145299806175634582, guid: 8cb93ddd117cb5d459232610c7c453bc,
+  attackPrefab: {fileID: 7013062483650891885, guid: 9a192dbc7a44c5f4f8c298a885066b5b,
     type: 3}
-  attackRange: 3
+  attackRange: 2
   attackTime: 0.5
-  attackCooldown: 1.5
+  attackCooldown: 1
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
