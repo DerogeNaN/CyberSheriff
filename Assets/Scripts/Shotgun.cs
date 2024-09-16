@@ -97,15 +97,7 @@ public class Shotgun : RangedWeapon
 
     public override void EngageAltFire()
     {
-        //altFire Logic
-        //if (currentBullets > 0)
-        //    StartCoroutine(FanFire());
-        //else if (currentBullets <= 0 && reloading == false)
-        //{
-        //    Debug.Log("out off Bullets");
-        //    canFire = false;
-        //    StartCoroutine(Reload());
-        //}
+     
     }
 
 
