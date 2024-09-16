@@ -135,6 +135,7 @@ public class Movement : MonoBehaviour
     public float dashForce = 2.0f;
     public float dashTime = 0.5f;
     public float dashStartTime = 0;
+    public float lastDashTime = 0;
     public float dashCooldown = 1;
 
     //----MOVEMENT----
@@ -144,7 +145,12 @@ public class Movement : MonoBehaviour
 
     //----GRAPPLE----
     public bool isGrappling = false;
+    public bool canGrapple = false;
+    public GameObject grappleObject;
+    public ParticleSystem grappleUI;
     public float grappleSpeed = 1f;
+    public float grappleCooldown = 5;
+    public float lastGrappleTime = 0;
     public Vector3 grappleTargetDirection = Vector3.zero;
 
     public enum MovementState
@@ -182,7 +188,7 @@ public class Movement : MonoBehaviour
         //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        Debug.DrawRay(transform.position, momentum * 5);
+        Debug.DrawRay(transform.position, momentum * 2);
     }
 
     void MovePlayer()
@@ -199,7 +205,7 @@ public class Movement : MonoBehaviour
 
         else if (isGrappling)
         {
-
+            moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
         }
 
         else if (isWallrunning)
@@ -268,6 +274,7 @@ public class Movement : MonoBehaviour
 
         CheckForOncomingCollision();
 
+        CheckForGrappleTarget();
         Grappling();
 
         rb.velocity = Vector3.zero;
@@ -337,6 +344,7 @@ public class Movement : MonoBehaviour
     private void Slide_Cancelled(InputAction.CallbackContext context)
     {
         isSliding = false;
+        isTryingSlide = false;
         SetState(MovementState.grounded);
     }
 
@@ -369,7 +377,7 @@ public class Movement : MonoBehaviour
 
     private void DashStartTransition()
     {
-        if (isDashing)
+        if (isDashing && lastDashTime + dashCooldown < Time.time)
         {
             previousMomentum = momentum;
             
@@ -378,6 +386,7 @@ public class Movement : MonoBehaviour
                 0.45f, transform.forward, out hit, dashDistance, ~12))
             {
                 momentum = transform.forward * dashDistance;
+                lastDashTime = Time.time;
             }
 
             else
@@ -435,12 +444,39 @@ public class Movement : MonoBehaviour
         }
     }
 
+    private void CheckForGrappleTarget()
+    {
+        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 150.0f, ~8) &&
+            hit.transform.CompareTag("GrappleableObject")))
+        {
+            grappleObject = hit.collider.gameObject;
+            grappleUI.transform.position = hit.collider.transform.position;
+            if (!grappleUI.isPlaying && lastGrappleTime + grappleCooldown < Time.time)
+            {
+                canGrapple = true;
+                grappleUI.gameObject.SetActive(true);
+                grappleUI.Play();
+            }
+            
+        }
+
+        else
+        {
+            canGrapple = false;
+            grappleObject = null;
+            if (grappleUI.isPlaying)
+            {
+                grappleUI.gameObject.SetActive(false);
+                grappleUI.Stop();
+            }
+        }
+    }
+
     private void Grapple_Performed(InputAction.CallbackContext context)
     {
-        if (Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 50.0f, ~12) && 
-            hit.transform.CompareTag("GrappleableObject"))
+        if (canGrapple)
         {
-            Vector3 targetDirection = hit.transform.position - transform.position;
+            Vector3 targetDirection = grappleObject.transform.position - transform.position;
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
         }
@@ -448,7 +484,7 @@ public class Movement : MonoBehaviour
 
     private void Grappling()
     {
-        if (isGrappling)
+        if (canGrapple && isGrappling)
         {
             momentum = grappleTargetDirection.normalized * grappleSpeed;
         }
@@ -457,6 +493,7 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
+        lastGrappleTime = Time.time;
     }
 
     private void TiltCamera(float tiltAngle, float tiltSpeed)
