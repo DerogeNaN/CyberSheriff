@@ -32,7 +32,7 @@ public class PlayerHealth : MonoBehaviour
             if (hitbox && hitbox.active)
             {
                 TakeDamage(hitbox.damage, 0);
-                Destroy(hitbox.gameObject);
+                hitbox.active = false;
             }
         }
     }
