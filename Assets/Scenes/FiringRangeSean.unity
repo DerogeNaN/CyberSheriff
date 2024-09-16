@@ -1556,7 +1556,7 @@ GameObject:
   - component: {fileID: 1215017802}
   m_Layer: 0
   m_Name: KillBox
-  m_TagString: Untagged
+  m_TagString: ResetBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2169,29 +2169,9 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 50
       objectReference: {fileID: 0}
-    - target: {fileID: 2564008912439653474, guid: 8fade19a7bad524499f540e5bbacba9e,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2564008912439653474, guid: 8fade19a7bad524499f540e5bbacba9e,
-        type: 3}
-      propertyPath: m_InitialEventName
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2564008912439653474, guid: 8fade19a7bad524499f540e5bbacba9e,
-        type: 3}
-      propertyPath: m_InitialEventNameOverriden
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2564008912439653532, guid: 8fade19a7bad524499f540e5bbacba9e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2564008912439653533, guid: 8fade19a7bad524499f540e5bbacba9e,
-        type: 3}
-      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4800174732242690484, guid: 8fade19a7bad524499f540e5bbacba9e,
@@ -2254,6 +2234,17 @@ PrefabInstance:
       propertyPath: rb
       value: 
       objectReference: {fileID: 1401237725}
+    - target: {fileID: 4800174732242690487, guid: 8fade19a7bad524499f540e5bbacba9e,
+        type: 3}
+      propertyPath: grappleUI
+      value: 
+      objectReference: {fileID: 2102463779687440773, guid: 83935daa25331154887d0f262068cc1d,
+        type: 3}
+    - target: {fileID: 4800174732242690487, guid: 8fade19a7bad524499f540e5bbacba9e,
+        type: 3}
+      propertyPath: respawnPos
+      value: 
+      objectReference: {fileID: 1143310130}
     - target: {fileID: 4800174732242690488, guid: 8fade19a7bad524499f540e5bbacba9e,
         type: 3}
       propertyPath: m_Name
