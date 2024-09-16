@@ -281,6 +281,7 @@ MonoBehaviour:
   momentum: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   respawnPos: {fileID: 0}
+  rb: {fileID: 4800174732242690481}
   slideCollider: {fileID: 35543608817844578}
   isWallrunning: 0
   wallrunCooldown: 0.5
@@ -290,10 +291,14 @@ MonoBehaviour:
   wallrunJumpAngle: 0.2
   wallrunMomentumBonus: 0.5
   isSliding: 0
+  isTryingSlide: 0
+  slideStartTime: 0
+  slideDrag: 10
   groundDrag: 0.699
   currEncouragment: 0
   encouragedGroundMomentum: 3
   encouragedAirMomentum: 16
+  encouragedSlideMomentum: 30
   jumpCount: 0
   jumpCooldown: 0.02
   lastJumpTime: 0
@@ -307,6 +312,7 @@ MonoBehaviour:
   dashCooldown: 1
   isGrounded: 1
   lastGroundedTime: 0
+  playerState: 0
   isGrappling: 0
   grappleSpeed: 1
   grappleTargetDirection: {x: 0, y: 0, z: 0}

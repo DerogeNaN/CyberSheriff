@@ -1,208 +1,190 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.VFX;
 
 
-public class Shotgun : MonoBehaviour
+public class Shotgun : RangedWeapon
 {
-
-    [Header("Gun Transforms")]
+    [Header("I be riding shotgun underneath the hot sun..")]
+    [SerializeField]
+    int bulletsPerShot = 5;
 
     [SerializeField]
-    public Transform MuzzlePoint;
+    float spreadMultiplier = 1;
 
     [SerializeField]
-    public Transform SecondaryMuzzlePoint;
+    float ChargeTime = 2;
 
-    [Header("Gun Behaviour")]
-
-    [SerializeField]
-    int DamageValue = 25;
 
     [SerializeField]
-    public GameObject CurrentlyHitting;
-
-    LineRenderer cameraLineRenderer;
+    bool isCharged = false;
 
     [SerializeField]
-    bool shouldDrawBulletTrail = false;
+    bool charging = false;
+
 
     [SerializeField]
-    float bulletForceMultiplier = 1;
+    float TimeSinceInitialPress = 0;
 
-    [SerializeField]
-    GameObject bulletTrailPrefab;
-
-    [SerializeField]
-    float shotGapTime = 1f;
-
-    //ShotGun Varaibles
-    [Header("ShotGun Variables")]
-    [SerializeField]
-    float Spread;
-
-    [SerializeField]
-    int BulletsPerShot = 8;
-
-    [SerializeField]
-    bool canFire;
-
-    [SerializeField]
-    Camera camRef;
-
-    [SerializeField]
-    bool coroutineRunning = false;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        camRef = FindAnyObjectByType<Camera>();
-        cameraLineRenderer = camRef.GetComponent<LineRenderer>();
-        
-
-    }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
-        Ray cameraRay = new Ray();
-        RaycastHit cameraHit;
-
-        //GUN camera Interactions here 
-
-        cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
-        cameraRay.direction = camRef.transform.forward;
-
-        Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
-
-        //This is just so i can see the players line of sight for now
-        if (cameraHit.point != null && cameraLineRenderer)
+        if (currentBullets <= 0 && reloading == false)
         {
-            cameraLineRenderer.SetPosition(0, cameraRay.origin);
-            cameraLineRenderer.SetPosition(1, cameraHit.point);
-        }
-        else
-        {
-            Debug.Log("Not Looking at anything");
+            canFire = false;
+            StartCoroutine(Reload());
         }
 
-        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
-        Vector3 barrelToLookPointDir = cameraHit.point - MuzzlePoint.transform.position;
-        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
-
-        //set ray direction to where the players reticle currently is pointing 
-
-        if (shouldDrawBulletTrail == true && coroutineRunning == false)
+        if (shouldShootPrimary == false && waiting == false && reloading == false && canPressAltFire == true)
         {
-            canFire = true;
-
+            EngagePrimaryFire();
         }
 
-        //Bullet visual Logic 
-        if (shouldDrawBulletTrail && canFire)
+        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
         {
-            for (int i = 0; i < BulletsPerShot; i++)
+            EngageAltFire();
+        }
+    }
+
+    public override void EngagePrimaryFire()
+    {
+        //Primary Fire Logic
+        int pellets = bulletsPerShot;
+        if (currentBullets > 0)
+        {
+            if (isCharged)
             {
-                Ray ray = new Ray();
-                RaycastHit hit;
-                ray.origin = MuzzlePoint.position;
-                ray.direction = barrelToLookPointDir;
-                ray.direction += (Vector3)UnityEngine.Random.insideUnitCircle * Spread;
-                if (Physics.Raycast(ray, out hit, 20))
+                currentBullets = 0;
+                pellets *= 2;
+                BulletFlash.Play();
+                BulletFlash.Play();
+            }
+            else
+            {
+                currentBullets--;
+                BulletFlash.Play();
+            }
+
+            for (int i = 0; i < pellets; i++)
+            {
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
+                rayData.hit.point += (Vector3)Random.insideUnitCircle * spreadMultiplier;
+                if (rayData.hit.point != null)
                 {
-                    GameObject bulletfab = Instantiate(bulletTrailPrefab);
-                    CurrentlyHitting = hit.transform.gameObject;
+                    CurrentlyHitting = rayData.hit.transform.gameObject;
 
-                    if (hit.point != null)
+                    if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
-                        bulletfab.GetComponent<LineRenderer>().SetPosition(0, ray.origin);
-                        bulletfab.GetComponent<LineRenderer>().SetPosition(1, hit.point);
-                    }
+                        //..It isn't the player but it is an enemy...?
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = rayData.hit.point;
+                        if (rayData.hit.rigidbody)
+                        {
+                            rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
+                        }
+                        else
+                        {
+                            Debug.Log("Does Not have rigidbody");
+                        }
 
+                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
+                        {
+                            GameObject Decal = Instantiate(BulletHitDecal);
+                            Decal.transform.position = rayData.hit.point;
+                            Decal.transform.localEulerAngles = rayData.hit.normal;
+                            Decal.transform.parent = rayData.hit.transform;
 
-                    if (hit.rigidbody != null && hit.transform.root.GetComponent<Movement>() == false)
-                    {
-                        Debug.Log("Root" + hit.rigidbody.transform.root);
-                        Debug.Log("Impulse" + hit.rigidbody.name);
-                        hit.rigidbody.AddForce(barrelToLookPointDir * bulletForceMultiplier, ForceMode.Impulse);
-                    }
-                    else
-                    {
-                        Debug.Log("part of The Player ");
-                    }
+                        }
 
-
-                    if (hit.collider.gameObject.GetComponent<Health>())
-                    {
-                        Debug.Log("Die");
-                        hit.collider.gameObject.GetComponent<Health>().TakeDamage(DamageValue, 0);
+                        if (rayData.hit.transform.parent)
+                        {
+                            if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                            {
+                                Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
+                                EnemyHealth.TakeDamage(DamageValue, 0);
+                            }
+                        }
                     }
                 }
-                canFire = false;
-                StartCoroutine(Wait());
             }
+            canFire = false;
+            StartCoroutine(Wait(shotGapTime));
         }
-        //else
-
+        else if (currentBullets <= 0 && reloading == false)
+        {
+            canFire = false;
+            StartCoroutine(Reload());
+        }
     }
 
 
-    IEnumerator Wait()
+    public override void EngageAltFire()
     {
-        coroutineRunning = true;
-        yield return new WaitForSeconds(shotGapTime);
-        Debug.Log("Waiting...");
-        canFire = true;
-        coroutineRunning = false;
-
+        //altFire Logic
+        //if (currentBullets > 0)
+        //    StartCoroutine(FanFire());
+        //else if (currentBullets <= 0 && reloading == false)
+        //{
+        //    Debug.Log("out off Bullets");
+        //    canFire = false;
+        //    StartCoroutine(Reload());
+        //}
     }
 
 
     //active on beginning of Primary fire Action
-    public void OnPrimaryFireBegin()
+    public override void OnPrimaryFireBegin()
     {
-        shouldDrawBulletTrail = true;
+        shouldShootPrimary = true;
+        charging = true;
         Debug.Log("Beginning primary Fire");
     }
 
     //Active on Begining of alt-firing action
-    public void OnAltFireBegin()
+    public override void OnAltFireBegin()
     {
-        //if (timeTillBullet > shotGapTime)
-        //{
-        //    timeTillBullet = 0;
-        //    shouldDrawBulletTrail = true;
-        //    Debug.Log("Beginning Alt Fire");
-        //}
+        shouldShootAlt = true;
+        Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
-    public void OnPrimaryFireStay()
+    public override void OnPrimaryFireStay()
     {
-
+            //Debug.Log("Primary fire stay ");
+        if (charging)
+        {
+            TimeSinceInitialPress += Time.deltaTime;
+            Debug.Log("Charge Time:" + TimeSinceInitialPress);
+        }
     }
 
     //Active every interval  of altfire set in this script
-    public void OnAltFireStay()
+    public override void OnAltFireStay()
     {
-
+        if (shouldShootAlt)
+        {
+            Debug.Log("alt fire stay ");
+        }
 
     }
 
     //active on primary fire End
-    public void OnprimaryFireEnd()
+    public override void OnprimaryFireEnd()
     {
-        shouldDrawBulletTrail = false;
+        charging = false;
+        if (TimeSinceInitialPress >= ChargeTime)
+        {
+            Debug.Log("Charge Threshhold reached vready for discharge");
+            isCharged = true;
+        }
+        TimeSinceInitialPress = 0;
+        shouldShootPrimary = false;
         Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
-    public void OnAltFireEnd()
+    public override void OnAltFireEnd()
     {
-        shouldDrawBulletTrail = false;
+        shouldShootAlt = false;
         Debug.Log("end alt fire");
     }
-
 }

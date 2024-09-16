@@ -36,55 +36,68 @@ public class WeaponManagement : MonoBehaviour
         else
             //Debug.Log("no weapons found");
             playerInput = new PlayerInputActions();
-        playerInput.Player.Enable();
-        playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
-        playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
-        playerInput.Player.AltFire.started += AltFireWeaponBegin;
-        playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
-        playerInput.Player.WeaponSwitch.started += ScrollSetWeapon;
-        playerInput.Player.KeyWeaponSwitch1.started += keySetWeapon1;
-        playerInput.Player.KeyWeaponSwitch2.started += keySetWeapon2;
+        if (playerInput != null)
+        {
+            playerInput.Player.Enable();
+            playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
+            playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
+            playerInput.Player.AltFire.started += AltFireWeaponBegin;
+            playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
+            playerInput.Player.WeaponSwitch.started += ScrollSetWeapon;
+            playerInput.Player.KeyWeaponSwitch1.started += keySetWeapon1;
+            playerInput.Player.KeyWeaponSwitch2.started += keySetWeapon2;
+        }
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (playerInput == null)
+        {
+            Debug.Log("PlayerInput is Null now setting...");
+            playerInput = new PlayerInputActions();
+            playerInput.Player.Enable();
+            playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
+            playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
+            playerInput.Player.AltFire.started += AltFireWeaponBegin;
+            playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
+            playerInput.Player.WeaponSwitch.started += ScrollSetWeapon;
+            playerInput.Player.KeyWeaponSwitch1.started += keySetWeapon1;
+            playerInput.Player.KeyWeaponSwitch2.started += keySetWeapon2;
+            playerInput.Player.Reload.started += ManualReload;
+        }
 
-        PrimaryFireStayCheck(playerInput.Player.PrimaryFire.inProgress);
-        AltFireStayCheck(playerInput.Player.AltFire.inProgress);
+        if (playerInput != null)
+        {
 
+            PrimaryFireStayCheck(playerInput.Player.PrimaryFire.inProgress);
+            AltFireStayCheck(playerInput.Player.AltFire.inProgress);
+        }
+        else
+        {
+            Debug.Log("PlayerInput is Null");
+        }
     }
 
     void PrimaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (currentActiveWeapon.GetComponent<Revolver>())
-            currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireBegin();
-
-        if (currentActiveWeapon.GetComponent<Shotgun>())
-            currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireBegin();
+        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+            currentActiveWeapon.GetComponent<RangedWeapon>().OnPrimaryFireBegin();
     }
 
     void PrimaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-
-        if (currentActiveWeapon.GetComponent<Revolver>())
-            currentActiveWeapon.GetComponent<Revolver>().OnprimaryFireEnd();
-
-        if (currentActiveWeapon.GetComponent<Shotgun>())
-            currentActiveWeapon.GetComponent<Shotgun>().OnprimaryFireEnd();
-
+        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+            currentActiveWeapon.GetComponent<RangedWeapon>().OnprimaryFireEnd();
     }
 
     void PrimaryFireStayCheck(bool inProgress)
     {
         if (inProgress)
         {
-            if (currentActiveWeapon.GetComponent<Revolver>())
-                currentActiveWeapon.GetComponent<Revolver>().OnPrimaryFireStay();
-
-            if (currentActiveWeapon.GetComponent<Shotgun>())
-                currentActiveWeapon.GetComponent<Shotgun>().OnPrimaryFireStay();
+            if (currentActiveWeapon.GetComponent<RangedWeapon>())
+                currentActiveWeapon.GetComponent<RangedWeapon>().OnPrimaryFireStay();
         }
     }
 
@@ -92,33 +105,37 @@ public class WeaponManagement : MonoBehaviour
     {
         if (inProgress)
         {
-            //Debug.Log("Alt In Progress");
-            if (currentActiveWeapon.GetComponent<Revolver>())
-                currentActiveWeapon.GetComponent<Revolver>().OnAltFireStay();
-
-            if (currentActiveWeapon.GetComponent<Shotgun>())
-                currentActiveWeapon.GetComponent<Shotgun>().OnAltFireStay();
+            if (currentActiveWeapon.GetComponent<RangedWeapon>())
+                currentActiveWeapon.GetComponent<RangedWeapon>().OnAltFireStay();
         }
     }
 
 
     void AltFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (currentActiveWeapon.GetComponent<Revolver>())
-            currentActiveWeapon.GetComponent<Revolver>().OnAltFireEnd();
-
-        if (currentActiveWeapon.GetComponent<Shotgun>())
-            currentActiveWeapon.GetComponent<Shotgun>().OnAltFireEnd();
+        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+            currentActiveWeapon.GetComponent<RangedWeapon>().OnAltFireEnd();
     }
 
 
     void AltFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (currentActiveWeapon.GetComponent<Revolver>())
-            currentActiveWeapon.GetComponent<Revolver>().OnAltFireBegin();
+        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+            currentActiveWeapon.GetComponent<RangedWeapon>().OnAltFireBegin();
+    }
 
-        if (currentActiveWeapon.GetComponent<Shotgun>())
-            currentActiveWeapon.GetComponent<Shotgun>().OnAltFireBegin();
+    void ManualReload(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if (!playerInput.Player.PrimaryFire.inProgress && !playerInput.Player.AltFire.inProgress)
+        {
+            if (currentActiveWeapon.GetComponent<RangedWeapon>())
+                currentActiveWeapon.GetComponent<RangedWeapon>().ManualReload();
+        }
+        else 
+        {
+
+            Debug.Log("Cannot reload at This Time");
+        }
     }
 
     //maybe
@@ -131,7 +148,7 @@ public class WeaponManagement : MonoBehaviour
     void ScrollSetWeapon(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
 
-        float CurrentWeapon = obj.ReadValue<Vector2>().y ;
+        float CurrentWeapon = obj.ReadValue<Vector2>().y;
 
         if (CurrentWeapon > 0)
         {
@@ -160,7 +177,6 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -183,13 +199,12 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
 
 
     void keySetWeapon2(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-       
+
         //set previous to false
         if (currentActiveWeapon)
             currentActiveWeapon.gameObject.SetActive(false);
@@ -207,7 +222,6 @@ public class WeaponManagement : MonoBehaviour
 
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        //currentActiveWeapon.transform.parent = WeaponGripTransform;
     }
 
 }

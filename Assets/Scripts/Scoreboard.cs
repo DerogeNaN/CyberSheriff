@@ -8,9 +8,12 @@ using TMPro;
 public class Scoreboard : MonoBehaviour
 {
     public TMP_Text scoreText;
+    public TMP_Text scoreShadowText;
     public TMP_Text rankText;
+    public TMP_Text rankShadowText;
     public TMP_Text comboText;
-    public Image decayBar;
+    public TMP_Text comboShadowText;
+    public RawImage decayBar;
     public GameObject scoreboardPanel; // Reference to the scoreboard panel to show/hide
 
     private int score;
@@ -40,9 +43,14 @@ public class Scoreboard : MonoBehaviour
         rank = "E";
         decayTimer = decayInterval;
         decayBarMaxWidth = decayBar.rectTransform.sizeDelta.x;
-        rankTextPulsateEffect = rankText.GetComponent<PulsateEffect>();
-        scoreTextShakeEffect = scoreText.GetComponent<ScoreShake>();
+      
+
+        rankTextPulsateEffect = scoreboardPanel.GetComponentInChildren<PulsateEffect>();
+        scoreTextShakeEffect = scoreboardPanel.GetComponentInChildren<ScoreShake>();
+
+
         UpdateScoreboard();
+       
     }
 
     void Update()
@@ -64,7 +72,7 @@ public class Scoreboard : MonoBehaviour
         }
         else
         {
-            HideScoreboard();
+           HideScoreboard();
         }
     }
     void UpdateScoreboard()
@@ -73,13 +81,17 @@ public class Scoreboard : MonoBehaviour
         {
             ShowScoreboard();
             scoreText.text = "" + score;
+            scoreShadowText.text = "" + score;
             rankText.text = rank;
+            rankShadowText.text = rank;
             rankText.color = GetRankColor(rank); // Set the rank text color
+
             comboText.text = comboMultiplier + "x";
+            comboShadowText.text = comboMultiplier + "x";
         }
         else
         {
-            HideScoreboard();
+           HideScoreboard();
         }
     }
 
@@ -151,29 +163,35 @@ public class Scoreboard : MonoBehaviour
                 rank = "A";
                 ScoreDeduction();
                 scoreTextShakeEffect.StartScorePulsateAndShake();
+                Debug.Log("S to A");
                 break;
             case "A":
                 rank = "B";
                 ScoreDeduction();
                 scoreTextShakeEffect.StartScorePulsateAndShake();
+                Debug.Log("A to B");
                 break;
             case "B":
                 rank = "C";
                 ScoreDeduction();
                 scoreTextShakeEffect.StartScorePulsateAndShake();
+                Debug.Log("B to C");
                 break;
             case "C":
                 rank = "D";
                 ScoreDeduction();
                 scoreTextShakeEffect.StartScorePulsateAndShake();
+                Debug.Log("C to D");
                 break;
             case "D":
                 rank = "E";
                 ScoreDeduction();
                 scoreTextShakeEffect.StartScorePulsateAndShake();
+                Debug.Log("D to E");
                 break;
             case "E":
                 ResetScore();
+                Debug.Log("Reset Score");
                 break;
                 
         }
@@ -206,6 +224,7 @@ public class Scoreboard : MonoBehaviour
     void ShowScoreboard()
     {
         scoreboardPanel.SetActive(true);
+        
     }
 
     void HideScoreboard()

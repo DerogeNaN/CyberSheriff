@@ -125,6 +125,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""44308f6d-e683-433f-8475-2a96736cd5c3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -292,6 +301,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""KeyWeaponSwitch2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ba653a17-7361-4c46-993a-7fe0f0fca2f4"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -311,6 +331,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_WeaponSwitch = m_Player.FindAction("WeaponSwitch", throwIfNotFound: true);
         m_Player_KeyWeaponSwitch1 = m_Player.FindAction("KeyWeaponSwitch1", throwIfNotFound: true);
         m_Player_KeyWeaponSwitch2 = m_Player.FindAction("KeyWeaponSwitch2", throwIfNotFound: true);
+        m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -383,6 +404,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_WeaponSwitch;
     private readonly InputAction m_Player_KeyWeaponSwitch1;
     private readonly InputAction m_Player_KeyWeaponSwitch2;
+    private readonly InputAction m_Player_Reload;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -398,6 +420,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @WeaponSwitch => m_Wrapper.m_Player_WeaponSwitch;
         public InputAction @KeyWeaponSwitch1 => m_Wrapper.m_Player_KeyWeaponSwitch1;
         public InputAction @KeyWeaponSwitch2 => m_Wrapper.m_Player_KeyWeaponSwitch2;
+        public InputAction @Reload => m_Wrapper.m_Player_Reload;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -440,6 +463,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @KeyWeaponSwitch2.started += instance.OnKeyWeaponSwitch2;
             @KeyWeaponSwitch2.performed += instance.OnKeyWeaponSwitch2;
             @KeyWeaponSwitch2.canceled += instance.OnKeyWeaponSwitch2;
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -477,6 +503,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @KeyWeaponSwitch2.started -= instance.OnKeyWeaponSwitch2;
             @KeyWeaponSwitch2.performed -= instance.OnKeyWeaponSwitch2;
             @KeyWeaponSwitch2.canceled -= instance.OnKeyWeaponSwitch2;
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -507,5 +536,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnWeaponSwitch(InputAction.CallbackContext context);
         void OnKeyWeaponSwitch1(InputAction.CallbackContext context);
         void OnKeyWeaponSwitch2(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
     }
 }
