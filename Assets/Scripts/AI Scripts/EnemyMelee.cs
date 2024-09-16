@@ -48,6 +48,7 @@ public class EnemyMelee : EnemyBase
     {
         speed = runSpeed;
         shouldPath = true;
+        moveTarget = playerTransform.position;
     }
     protected override void LostSightOfTargetEnter()
     {

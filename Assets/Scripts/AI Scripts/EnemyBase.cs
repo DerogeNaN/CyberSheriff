@@ -77,7 +77,6 @@ public class EnemyBase : MonoBehaviour
 
         if ((lookTarget - raycastPos).magnitude <= sightRange)
         {
-            Debug.Log("raycast");
             // check for line of sight with target
             if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange))
             {
@@ -101,16 +100,18 @@ public class EnemyBase : MonoBehaviour
             // teleport back to navmesh
             if (!navAgent.isOnNavMesh)
             {
-                NavMeshHit hit;
-                if (NavMesh.FindClosestEdge(transform.position, out hit, NavMesh.AllAreas))
-                {
-                    Debug.Log(hit.position);
-                    //navAgent.Warp(hit.position);
-                }
+                //Debug.Log("aaaaa");
+                Debug.Log(moveTarget);
+                //NavMeshHit hit;
+                //if (NavMesh.FindClosestEdge(transform.position, out hit, NavMesh.AllAreas))
+                //{
+                //    Debug.Log(hit.position);
+                //    //navAgent.Warp(hit.position);
+                //}
             }
 
-            navAgent.destination = moveTarget;
             navAgent.enabled = true;
+            navAgent.destination = moveTarget;
             navAgent.speed = speed;
         }
         else navAgent.enabled = false;
@@ -210,6 +211,8 @@ public class EnemyBase : MonoBehaviour
 
     public void Spawn()
     {
+        Debug.Log(colliderr);
+
         active = true;
         mesh.SetActive(true);
         colliderr.enabled = true;
