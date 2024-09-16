@@ -29,6 +29,7 @@ public class EnemyTypeMelee : EnemyBase
         SetState(EnemyState.idle);
 
         initialPosition = transform.position;
+        moveTarget = initialPosition;
         speed = walkSpeed;
     }
 
@@ -68,6 +69,7 @@ public class EnemyTypeMelee : EnemyBase
             case EnemyState.movingToTarget:
                 {
                     speed = runSpeed;
+                    shouldPath = true;
                 }
                 break;
 
@@ -81,7 +83,7 @@ public class EnemyTypeMelee : EnemyBase
 
             case EnemyState.attacking:
                 {
-                    speed = walkSpeed;
+                    shouldPath = false;
                     remainingAttackTime = attackTime;
 
                     if (hitboxPrefab != null)

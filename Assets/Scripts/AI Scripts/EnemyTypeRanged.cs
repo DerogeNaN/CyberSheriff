@@ -5,13 +5,17 @@ using UnityEngine.UIElements;
 
 public class EnemyTypeRanged : EnemyBase
 {
-    public float attackTime = 2.0f;
-    public float attackCooldown = 2.0f;
-    public float attackRange = 25.0f; // max shooting range
+    [Header("Ranged Movement Settings")]
+    public bool stationary = false;
     public float runSpeed = 5.0f;
     public float walkSpeed = 2.0f;
 
+    [Header("Ranged Attack Settings")]
+    public float attackRange = 25.0f;
+    public float attackTime = 2.0f;
+    public float attackCooldown = 2.0f;
     [SerializeField] GameObject bulletPrefab;
+
     Vector3 initialPosition;
     float remainingAttackTime;
     float remainingAttackCooldown;
@@ -43,7 +47,7 @@ public class EnemyTypeRanged : EnemyBase
         {
             case EnemyState.idle:
                 {
-                    shouldPath = true;
+                    if (!stationary) shouldPath = true;
                     moveTarget = initialPosition;
                 }
                 break;
@@ -92,7 +96,7 @@ public class EnemyTypeRanged : EnemyBase
                     // i'll restructure this later
                     if (Vector3.Distance(transform.position, moveTarget) >= attackRange)
                     {
-                        shouldPath = true;
+                        if (!stationary) shouldPath = true;
                         //pathAgent.speed = moveSpeed;
                     }
                     else

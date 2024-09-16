@@ -30,9 +30,6 @@ public class EnemyBase : MonoBehaviour
     public float sightRange = 25.0f;
     protected Vector3 moveTarget; // the object it follows
     protected Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
-
-    [Header("Pathing Settings")]
-    [SerializeField] NavMeshSurface navMesh;
     NavMeshAgent navAgent;
 
     [HideInInspector] public EnemyState state;
@@ -100,6 +97,15 @@ public class EnemyBase : MonoBehaviour
             navAgent.speed = speed;
         }
         else navAgent.enabled = false;
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (navAgent)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(moveTarget, 0.5f);
+        }
     }
 
     public virtual void Hit(int damage)
