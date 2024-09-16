@@ -413,7 +413,7 @@ MonoBehaviour:
   momentum: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   respawnPos: {fileID: 0}
-  rb: {fileID: 0}
+  rb: {fileID: 4800174732242690481}
   slideCollider: {fileID: 35543608817844578}
   isWallrunning: 0
   wallrunCooldown: 0.5
@@ -449,7 +449,8 @@ MonoBehaviour:
   isGrappling: 0
   canGrapple: 0
   grappleObject: {fileID: 0}
-  grappleUI: {fileID: 0}
+  grappleUI: {fileID: 2102463779687440773, guid: 83935daa25331154887d0f262068cc1d,
+    type: 3}
   grappleSpeed: 0.8
   grappleCooldown: 5
   lastGrappleTime: 0
@@ -835,11 +836,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2564008911776293496, guid: e89f0a8e688ea1541887a48d2ec452b0,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4316420987780491930, guid: e89f0a8e688ea1541887a48d2ec452b0,
         type: 3}
       propertyPath: muzzlePoint
@@ -948,12 +944,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 700061413}
   m_PrefabAsset: {fileID: 0}
---- !u!2083052967 &2564008912439653474 stripped
-VisualEffect:
-  m_CorrespondingSourceObject: {fileID: 2564008911776293511, guid: e89f0a8e688ea1541887a48d2ec452b0,
-    type: 3}
-  m_PrefabInstance: {fileID: 700061413}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5079567489146135723 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5079567488465220174, guid: e89f0a8e688ea1541887a48d2ec452b0,
@@ -1038,11 +1028,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8467460545785720087, guid: baebeae3a8b00684b9c6de2c6d324dc0,
-        type: 3}
-      propertyPath: BulletFlash
-      value: 
-      objectReference: {fileID: 2564008912439653474}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: baebeae3a8b00684b9c6de2c6d324dc0, type: 3}
 --- !u!4 &3195739648886811881 stripped
