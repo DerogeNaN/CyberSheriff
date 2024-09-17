@@ -53,9 +53,7 @@ public class Revolver : RangedWeapon
 
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
                     {
-                        GameObject Decal = Instantiate(BulletHitDecal);
-                        Decal.transform.parent = rayData.hit.transform;
-                        Decal.transform.position = rayData.hit.point;
+                        SpawnBulletHoleDecal(rayData);
                     }
 
                     if (rayData.hit.transform.parent)
