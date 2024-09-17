@@ -20,15 +20,15 @@ public class AccessRendererFeature : MonoBehaviour
         // Press the "B" key to change the Blit material
         if (Input.GetKeyDown(KeyCode.B))
         {
-            ChangeMaterial(rendererData, featureIndex, bloodMaterial);
+            //ChangeMaterial(rendererData, featureIndex, bloodMaterial);
         }
         if (Input.GetKeyDown(KeyCode.N))
         {
-            ChangeMaterial(rendererData, featureIndex, dashMaterial);
+            //ChangeMaterial(rendererData, featureIndex, dashMaterial);
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
-            ChangeMaterial(rendererData, featureIndex, emptyMaterial);
+            //ChangeMaterial(rendererData, featureIndex, emptyMaterial);
         }
 
     }
