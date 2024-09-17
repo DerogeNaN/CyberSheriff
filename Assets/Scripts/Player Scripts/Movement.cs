@@ -150,6 +150,7 @@ public class Movement : MonoBehaviour
     public ParticleSystem grappleUI;
     public float grappleSpeed = 1f;
     public float grappleCooldown = 5;
+    public float maxGrappleDistance = 100f;
     public float lastGrappleTime = 0;
     public Vector3 grappleTargetDirection = Vector3.zero;
 
@@ -446,7 +447,7 @@ public class Movement : MonoBehaviour
 
     private void CheckForGrappleTarget()
     {
-        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 150.0f, ~8) &&
+        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
             hit.transform.CompareTag("GrappleableObject")))
         {
             grappleObject = hit.collider.gameObject;
