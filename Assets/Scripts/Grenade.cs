@@ -42,7 +42,7 @@ public class Grenade : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("exploding");
-        Explosion();   
+        Explosion();
     }
     void Explosion()
     {
@@ -50,8 +50,13 @@ public class Grenade : MonoBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
-            Debug.Log("Slay all ");
-            hitCollider.GetComponent<Health>().TakeDamage(damage, 0);
+            Debug.Log("Slay all: " + hitCollider.name);
+            if (hitCollider.TryGetComponent<Health>(out Health hp))
+            {
+                hp.TakeDamage(damage, 0);
+            }
+            else
+                Debug.Log("Not allowed to take Damage");
         }
     }
 }
