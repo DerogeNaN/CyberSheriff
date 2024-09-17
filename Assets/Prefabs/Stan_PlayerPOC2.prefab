@@ -714,7 +714,7 @@ MonoBehaviour:
   moveSpeed: 8
   maxPlayerInputSpeed: 0.313
   maxSpeed: 100
-  jumpStrength: 0.45
+  jumpStrength: 0.35
   jumpGraceLength: 0.05
   wallrunJumpGraceLength: 0.5
   gravityStrength: 5
@@ -770,7 +770,8 @@ MonoBehaviour:
   grappleObject: {fileID: 0}
   grappleUI: {fileID: 6732620103617023742}
   grappleSpeed: 0.8
-  grappleCooldown: 5
+  grappleCooldown: 3
+  maxGrappleDistance: 300
   lastGrappleTime: 0
   grappleTargetDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &2833990602062349046
@@ -1112,6 +1113,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8317736826892261485, guid: 2457b1f7803930b40bd8ae1d82d9a301,
         type: 3}
+    - target: {fileID: 4316420987780491930, guid: e89f0a8e688ea1541887a48d2ec452b0,
+        type: 3}
+      propertyPath: DamageValue
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 4316420987780491930, guid: e89f0a8e688ea1541887a48d2ec452b0,
         type: 3}
       propertyPath: muzzlePoint
