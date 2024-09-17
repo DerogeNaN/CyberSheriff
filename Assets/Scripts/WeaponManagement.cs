@@ -1,11 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Animations;
-
+using TMPro;
 public class WeaponManagement : MonoBehaviour
 {
     [SerializeField]
@@ -22,6 +17,18 @@ public class WeaponManagement : MonoBehaviour
 
     [SerializeField]
     PlayerInputActions playerInput;
+
+    [Header("Current Active Weapon Attributes")]
+    [SerializeField]
+    public int CAWMaxAmmo;
+
+    [SerializeField]
+    public int CAWCurrentAmmo;
+
+    [SerializeField]
+    public string ammoText;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -50,9 +57,21 @@ public class WeaponManagement : MonoBehaviour
 
     }
 
+    private void OnDrawGizmos()
+    {
+        CAWMaxAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
+        CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
+        ammoText = CAWMaxAmmo + " / " + CAWCurrentAmmo;
+    }
+
     // Update is called once per frame
     void Update()
     {
+
+        //CAWMaxAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
+        //CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
+        //ammoText.text =  CAWMaxAmmo + " / " + CAWCurrentAmmo;
+
         if (playerInput == null)
         {
             Debug.Log("PlayerInput is Null now setting...");
@@ -131,7 +150,7 @@ public class WeaponManagement : MonoBehaviour
             if (currentActiveWeapon.GetComponent<RangedWeapon>())
                 currentActiveWeapon.GetComponent<RangedWeapon>().ManualReload();
         }
-        else 
+        else
         {
 
             Debug.Log("Cannot reload at This Time");

@@ -186,7 +186,7 @@ public class RangedWeapon : MonoBehaviour
         Vector3 pos = Decal.transform.position;
         Decal.transform.LookAt(pos + rayData.hit.normal,Vector3.up);
         Decal.transform.position += -rayData.hit.normal;
-        Debug.Log("ray hit normal: "+ rayData.hit.normal);
+        //Debug.Log("ray hit normal: "+ rayData.hit.normal);
     }
 
 

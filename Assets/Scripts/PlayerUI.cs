@@ -14,6 +14,8 @@ public class PlayerUI : MonoBehaviour
 
     [SerializeField]
     TextMeshProUGUI ammoText;
+    [SerializeField]
+    TextMeshProUGUI shadowAmmoText;
 
     // Start is called before the first frame update
     void Start()
@@ -28,5 +30,6 @@ public class PlayerUI : MonoBehaviour
         ammoMax = weaponManagmentScript.currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
 
         ammoText.text = ammoCount.ToString() + "/" + ammoMax.ToString();
+        shadowAmmoText.text = ammoText.text;
     }
 }
