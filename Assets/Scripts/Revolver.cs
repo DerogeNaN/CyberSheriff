@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class Revolver : RangedWeapon

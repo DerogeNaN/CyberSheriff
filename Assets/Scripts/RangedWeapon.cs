@@ -1,6 +1,5 @@
 using System.Collections;
 using Unity.Mathematics;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.VFX;
 using static RangedWeapon;

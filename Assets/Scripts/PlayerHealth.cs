@@ -50,9 +50,11 @@ public class PlayerHealth : MonoBehaviour
         if (health <= 0)
         {
             Debug.Log("you died");
-            health = 0;
+            // THIS NEEDS TO BE CHANGED BACK TO 0 HEALTH
+            health = 100;
+            Movement.playerMovement.transform.position = Movement.playerMovement.respawnPos.position;
 
-            Movement.playerMovement.playerInputActions.Disable();
+            //Movement.playerMovement.playerInputActions.Disable();
         }
     }
 
