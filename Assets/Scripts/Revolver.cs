@@ -1,14 +1,48 @@
 using System.Collections;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class Revolver : RangedWeapon
 {
+    public Animator animator;
+
+    public override void EngagePrimaryFire()
+    {
+        animator.SetBool("ShootBool", true);
+        base.EngagePrimaryFire();
+    }
+
+    public override IEnumerator Reload()
+    {
+        animator.SetBool("ShootBool", false);
+        animator.SetBool("ReloadBool", true);
+
+        //float animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+        //float reloadAnimationSpeed = animationLength / reloadTime;
+        //
+        //animator.GetCurrentAnimatorClipInfo(0).S = reloadAnimationSpeed;
+
+        reloading = true;
+        yield return new WaitForSeconds(reloadTime);
+        Debug.Log("Reloading...");
+        canFire = true;
+        if (currentBullets != BulletsPerClip)
+        {
+            currentBullets = BulletsPerClip;
+        }
+        reloading = false;
+        animator.SetBool("ReloadBool", false);
+    }
 
     public override void EngageAltFire()
     {
         //altFire Logic
         if (currentBullets > 0)
+        {
             StartCoroutine(FanFire());
+
+        }
+
         else if (currentBullets <= 0 && reloading == false)
         {
             Debug.Log("out off Bullets");
@@ -111,6 +145,7 @@ public class Revolver : RangedWeapon
     public override void OnprimaryFireEnd()
     {
         shouldShootPrimary = false;
+        animator.SetBool("ShootBool", false);
         Debug.Log("end Primary Fire");
     }
 

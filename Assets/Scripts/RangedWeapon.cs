@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.Mathematics;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.VFX;
 using static RangedWeapon;
@@ -257,7 +258,7 @@ public class RangedWeapon : MonoBehaviour
         waiting = false;
     }
 
-    public IEnumerator Reload()
+    public virtual IEnumerator Reload()
     {
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
