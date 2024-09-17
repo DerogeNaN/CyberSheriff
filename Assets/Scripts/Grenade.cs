@@ -23,7 +23,7 @@ public class Grenade : MonoBehaviour
     {
         collider = GetComponent<Collider>();
         colliderRadius = ((SphereCollider)collider).radius;
-        blastRadius = colliderRadius;
+        //blastRadius = colliderRadius;
     }
 
     private void OnDrawGizmosSelected()
@@ -36,27 +36,56 @@ public class Grenade : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ((SphereCollider)collider).radius = colliderRadius;
+        //((SphereCollider)collider).radius = colliderRadius;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("exploding");
         Explosion();
     }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    Debug.Log("exploding");
+    //    Explosion();
+    //}
+
     void Explosion()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, blastRadius);
 
         foreach (var hitCollider in hitColliders)
         {
-            Debug.Log("Slay all: " + hitCollider.name);
-            if (hitCollider.TryGetComponent<Health>(out Health hp))
+            Health hpscript = null;
+
+            if (hitCollider.transform.parent)
             {
-                hp.TakeDamage(damage, 0);
+                if (hitCollider.transform.parent.GetComponentInChildren<Health>())
+                {
+                    hpscript = hitCollider.transform.parent.GetComponentInChildren<Health>();
+                    Debug.Log(hpscript);
+                    Debug.Log(hitCollider.name + "Was Caught in Blast");
+                    hpscript.TakeDamage(damage, 0);
+                    continue;
+                }
+                else if (hitCollider.transform.parent.TryGetComponent<Health>(out hpscript))
+                {
+                    Debug.Log(hpscript);
+                    Debug.Log(hitCollider.name + "Was Caught in Blast");
+                    hpscript.TakeDamage(damage, 0);
+                    continue;
+                }
+                else
+                    Debug.Log("Not allowed to take Damage");
             }
-            else
-                Debug.Log("Not allowed to take Damage");
+            else if (hitCollider.TryGetComponent<Health>(out hpscript))
+            {
+                Debug.Log(hpscript);
+                Debug.Log(hitCollider.name + "Was Caught in Blast");
+                hpscript.TakeDamage(damage, 0);
+            }
         }
+
+        Destroy(gameObject);
     }
 }
