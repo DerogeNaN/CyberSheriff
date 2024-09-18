@@ -8,6 +8,8 @@ using UnityEngine.Rendering;
 
 // BASE ENEMY SCRIPT
 
+// TODO: DISABLE COLLIDERS WHEN NOT SPAWNED
+
 public enum EnemyState
 {
     idle,
@@ -42,7 +44,6 @@ public class EnemyBase : MonoBehaviour
 
     [Header("Advanced")]
     [SerializeField] TMP_Text debugStateText;
-    Collider colliderr;
     [SerializeField] protected GameObject mesh;
     [SerializeField] protected Vector3 lineOfSightOffset;
     [SerializeField] protected Vector3 floorRaycastPos;
@@ -51,17 +52,18 @@ public class EnemyBase : MonoBehaviour
     virtual protected void OnStart() { }
     virtual protected void OnUpdate() { }
 
+
     public void Start()
     {
         // initialise pathing values
         shouldPath = false;
-        colliderr = GetComponentInChildren<Collider>();
         navAgent = GetComponent<NavMeshAgent>();
 
         // start spawned or despawned
         if (active) Spawn();
         else Despawn();
 
+        SetPlayerTransform();
         OnStart();
     }
 
@@ -211,17 +213,19 @@ public class EnemyBase : MonoBehaviour
 
     public void Spawn()
     {
-        Debug.Log(colliderr);
-
         active = true;
         mesh.SetActive(true);
-        colliderr.enabled = true;
     }
 
     public void Despawn()
     {
         active = false;
         mesh.SetActive(false);
-        colliderr.enabled = false;
+    }
+
+    void SetPlayerTransform()
+    {
+        // get the transform of whatever has the main camera
+        playerTransform = Camera.main.transform.parent;
     }
 }
