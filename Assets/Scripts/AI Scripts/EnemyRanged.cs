@@ -13,8 +13,9 @@ public class EnemyRanged : EnemyBase
 
     [Header("Ranged Attack Settings")]
     public float attackRange = 25.0f;
-    public float attackTime = 2.0f;
-    public float attackCooldown = 2.0f;
+    public float attackTime = 1.0f;
+    public float attackCooldownMin = 1.0f;
+    public float attackCooldownMax = 3.0f; 
     [SerializeField] GameObject bulletPrefab;
 
     Vector3 initialPosition;
@@ -43,7 +44,7 @@ public class EnemyRanged : EnemyBase
     }
     protected override void MovingToTargetEnter()
     {
-        shouldPath = true;
+        if (!stationary) shouldPath = true;
     }
     protected override void AttackingEnter()
     {
@@ -80,10 +81,12 @@ public class EnemyRanged : EnemyBase
         else
         {
             shouldPath = false;
-            if (remainingAttackCooldown <= 0)
-            {
-                SetState(EnemyState.attacking);
-            }
+        }
+
+        // can attack even before reached stopping distance
+        if (remainingAttackCooldown <= 0)
+        {
+            SetState(EnemyState.attacking);
         }
     }
     protected override void AttackingUpdate()
@@ -109,7 +112,7 @@ public class EnemyRanged : EnemyBase
     }
     protected override void AttackingExit()
     {
-        remainingAttackCooldown = attackCooldown;
+        remainingAttackCooldown = Random.Range(attackCooldownMin, attackCooldownMax);
         speed = runSpeed;
     }
     #endregion
