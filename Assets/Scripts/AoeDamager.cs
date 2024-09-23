@@ -4,26 +4,27 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 //[ExecuteInEditMode]
-public class Grenade : MonoBehaviour
+public class AoeDamager : MonoBehaviour
 {
+    [Tooltip("Damage on initial Blast")]
     [SerializeField]
     int damage = 50;
 
+    [Tooltip("This will be pulled automatically from the object hierchy")]
     [SerializeField]
     Collider collider;
 
-    [SerializeField]
-    float colliderRadius;
-
+    [Tooltip("area of effect range")]
     [SerializeField]
     float blastRadius;
+
+    [SerializeField]
+    GameObject explosionVFX;
 
     // Start is called before the first frame update
     void Start()
     {
         collider = GetComponent<Collider>();
-        colliderRadius = ((SphereCollider)collider).radius;
-        //blastRadius = colliderRadius;
     }
 
     private void OnDrawGizmosSelected()
@@ -36,23 +37,30 @@ public class Grenade : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //((SphereCollider)collider).radius = colliderRadius;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("exploding");
-        Explosion();
+        if (collision.gameObject.transform.parent)
+        {
+            if (collision.gameObject.transform.parent.gameObject.layer != 3)
+            {
+                Debug.Log("exploding");
+                Explosion();
+            }
+        }
+        else if (collision.gameObject.transform.gameObject.layer != 3)
+        {
+            Debug.Log("exploding");
+            Explosion();
+        }
     }
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    Debug.Log("exploding");
-    //    Explosion();
-    //}
 
     void Explosion()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, blastRadius);
+        GameObject vfx = Instantiate(explosionVFX);
+        vfx.transform.position = transform.position;
 
         foreach (var hitCollider in hitColliders)
         {
@@ -85,7 +93,6 @@ public class Grenade : MonoBehaviour
                 hpscript.TakeDamage(damage, 0);
             }
         }
-
         Destroy(gameObject);
     }
 }

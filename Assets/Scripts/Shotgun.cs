@@ -12,6 +12,79 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     float spreadMultiplier = 1;
 
+    [Header("I'd Catch a grenade for ya(yeah,yeah,yeah...)")]
+    [SerializeField]
+    GameObject Grenade;
+
+  //  [Tooltip("Seconds it takes for the grenade launcher to recharge")]
+   // [SerializeField]
+    float grenadeLauncherCooldown;
+
+
+    [Tooltip("Seconds it takes for the grenade launcher to  completely Reload")]
+    [SerializeField]
+    float grenadeReloadTime;
+
+
+    [Tooltip("Seconds it takes for the grenade launcher to Load the Next grenade")]
+    [SerializeField]
+    float grenadeLoadTime;
+
+    [Tooltip("Time since last shot")]
+    [SerializeField]
+    float grenadeLauncherTimer;
+
+    [Tooltip("Amount of force to be applied to the grenade rigidbody")]
+    [SerializeField]
+    float grenadeLaucherForceMultiplier;
+
+    [Tooltip("Please dont mess with This(Grenade will be ready once grenade timer reach grenade cooldown  just reduce th cooldown if its to slow)")]
+    [SerializeField]
+    bool grenadeReady = false;
+
+    [SerializeField]
+    int grenadeAmmo = 3;
+
+    [SerializeField]
+    int grenadeAmmoMax = 3;
+
+    public override void Start()
+    {
+        base.Start();
+        grenadeLauncherCooldown = grenadeLoadTime;
+
+    }
+
+    public override void Update()
+    {
+        base.Update();
+
+        if (grenadeAmmo <= 0)
+        {
+            grenadeLauncherCooldown = grenadeReloadTime;
+        }
+
+        if (!grenadeReady)
+        {
+            grenadeLauncherTimer += Time.deltaTime;
+        }
+
+        if (grenadeLauncherTimer >= grenadeLauncherCooldown && grenadeAmmo > 0)
+        {
+            grenadeReady = true;
+            grenadeLauncherTimer = 0;
+        }
+        else if (grenadeLauncherTimer >= grenadeLauncherCooldown)
+        {
+            grenadeReady = true;
+            grenadeLauncherTimer = 0;
+            grenadeLauncherCooldown = grenadeLoadTime;
+            grenadeAmmo = grenadeAmmoMax;
+        }
+
+    }
+
+
     public override void EngagePrimaryFire()
     {
         //Primary Fire Logic
@@ -97,9 +170,16 @@ public class Shotgun : RangedWeapon
 
     public override void EngageAltFire()
     {
-     
+        if (grenadeReady)
+        {
+            Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
+            RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
+            grenadeRB.gameObject.transform.position = muzzlePoint.position;
+            grenadeRB.AddForce(ray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
+            grenadeReady = false;
+            grenadeAmmo--;
+        }
     }
-
 
     //active on beginning of Primary fire Action
     public override void OnPrimaryFireBegin()
