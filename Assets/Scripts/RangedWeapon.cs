@@ -92,7 +92,7 @@ public class RangedWeapon : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    public virtual void Start()
     {
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
@@ -101,6 +101,7 @@ public class RangedWeapon : MonoBehaviour
     // Update is called once per frame
     public virtual void Update()
     {
+
         if (currentBullets <= 0 && reloading == false)
         {
             canFire = false;
@@ -183,7 +184,7 @@ public class RangedWeapon : MonoBehaviour
         GameObject Decal = Instantiate(BulletHitDecal);
         Decal.transform.position = rayData.hit.point;
         Vector3 pos = Decal.transform.position;
-        Decal.transform.LookAt(pos + rayData.hit.normal,Vector3.up);
+        Decal.transform.LookAt(pos + rayData.hit.normal, Vector3.up);
         Decal.transform.position += -rayData.hit.normal;
         //Debug.Log("ray hit normal: "+ rayData.hit.normal);
     }

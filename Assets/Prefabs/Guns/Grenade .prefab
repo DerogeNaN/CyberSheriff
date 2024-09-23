@@ -9,8 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2685786962208842429}
-  - component: {fileID: 7085666216236901871}
-  m_Layer: 0
+  - component: {fileID: 8363777944695008360}
+  - component: {fileID: 6774316867623241971}
+  - component: {fileID: 158062853246228141}
+  m_Layer: 3
   m_Name: 'Grenade '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26,14 +28,44 @@ Transform:
   m_GameObject: {fileID: 911812781045158418}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.36, y: 0.36, z: 0.36}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4994010966963738684}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &7085666216236901871
+--- !u!135 &8363777944695008360
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911812781045158418}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6774316867623241971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911812781045158418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9947c570511cdcc44b356447f7882b18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 100
+  collider: {fileID: 8363777944695008360}
+  blastRadius: 7.14
+  explosionVFX: {fileID: 8987205761856645385, guid: be015995fffcaa2419a49fd46533ff99,
+    type: 3}
+--- !u!54 &158062853246228141
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -48,7 +80,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!1 &6442224989978855035
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,8 +92,6 @@ GameObject:
   - component: {fileID: 4994010966963738684}
   - component: {fileID: 4092011311225438631}
   - component: {fileID: 6472874126765875463}
-  - component: {fileID: 5546813841371331021}
-  - component: {fileID: 7821092691090494879}
   m_Layer: 0
   m_Name: Grenade mesh
   m_TagString: Untagged
@@ -134,32 +164,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &5546813841371331021
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6442224989978855035}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.8
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7821092691090494879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6442224989978855035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9947c570511cdcc44b356447f7882b18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 50
-  collider: {fileID: 5546813841371331021}
-  colliderRadius: 0.8
-  blastRadius: 3.26

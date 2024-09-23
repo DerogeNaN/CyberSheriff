@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletVFX : MonoBehaviour
+public class TimedVFX : MonoBehaviour
 {
     [SerializeField]
     float lifeTime = 30;
