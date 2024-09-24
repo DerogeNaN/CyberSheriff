@@ -58,7 +58,7 @@ public class Revolver : RangedWeapon
         Debug.Log("Current Bullet Number:" + BulletsAtTimeOfFiring);
         for (int i = 0; i < BulletsAtTimeOfFiring; i++)
         {
-            Debug.Log("FanFire Bullet Loosed");
+            //Debug.Log("FanFire Bullet Loosed");
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
