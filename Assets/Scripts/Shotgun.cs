@@ -16,8 +16,8 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     GameObject Grenade;
 
-  //  [Tooltip("Seconds it takes for the grenade launcher to recharge")]
-   // [SerializeField]
+    //  [Tooltip("Seconds it takes for the grenade launcher to recharge")]
+    // [SerializeField]
     float grenadeLauncherCooldown;
 
 
@@ -81,6 +81,13 @@ public class Shotgun : RangedWeapon
             grenadeLauncherCooldown = grenadeLoadTime;
             grenadeAmmo = grenadeAmmoMax;
         }
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        //RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
+        //Gizmos.DrawLine(altMuzzlePoint.position, ray.ray.direction * grenadeLaucherForceMultiplier);
 
     }
 
@@ -176,6 +183,7 @@ public class Shotgun : RangedWeapon
             RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
             grenadeRB.AddForce(ray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
+            grenadeRB.AddForce(Movement.playerMovement.momentum, ForceMode.Impulse);
             grenadeReady = false;
             grenadeAmmo--;
         }
