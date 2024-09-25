@@ -11,6 +11,8 @@ public class WeaponManagement : MonoBehaviour
 
     [SerializeField]
     Transform WeaponGripTransform;
+    [SerializeField]
+    Transform BoomstickTransform;
 
     [SerializeField]
     public GameObject currentActiveWeapon;
@@ -194,8 +196,17 @@ public class WeaponManagement : MonoBehaviour
         //set next to true 
         currentActiveWeapon.gameObject.SetActive(true);
 
-        currentActiveWeapon.transform.position = WeaponGripTransform.position;
-        currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+        if (CurrentWeapon == 0)
+        {
+            currentActiveWeapon.transform.position = WeaponGripTransform.position;
+            currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+        }
+
+        else
+        {
+            currentActiveWeapon.transform.position = BoomstickTransform.position;
+            currentActiveWeapon.transform.rotation = BoomstickTransform.rotation;
+        }
     }
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -239,8 +250,8 @@ public class WeaponManagement : MonoBehaviour
         //set next to true 
         currentActiveWeapon.gameObject.SetActive(true);
 
-        currentActiveWeapon.transform.position = WeaponGripTransform.position;
-        currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+        currentActiveWeapon.transform.position = BoomstickTransform.position;
+        currentActiveWeapon.transform.rotation = BoomstickTransform.rotation;
     }
 
 }

@@ -160,7 +160,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4800174732242690484}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4169927640723637985
 GameObject:
@@ -195,7 +195,7 @@ RectTransform:
   m_Children:
   - {fileID: 3337548488484423450}
   m_Father: {fileID: 4800174732242690484}
-  m_RootOrder: 6
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -292,7 +292,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4800174732242690484}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4800174732242690488
 GameObject:
@@ -332,12 +332,12 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4800174733094763584}
+  - {fileID: 920737543246107039}
   - {fileID: 4800174732479552401}
   - {fileID: 4800174732034069334}
   - {fileID: 5944793766377842200}
   - {fileID: 459333663254261477}
   - {fileID: 5553725421375338485}
-  - {fileID: 920737543246107039}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -518,6 +518,7 @@ MonoBehaviour:
   rb: {fileID: 4800174732242690481}
   slideCollider: {fileID: 35543608817844578}
   isWallrunning: 0
+  canWallrun: 0
   wallrunCooldown: 0.5
   leavingWallrunTime: 0
   lastWallrunTime: 0
@@ -555,6 +556,7 @@ MonoBehaviour:
     type: 3}
   grappleSpeed: 0.8
   grappleCooldown: 5
+  maxGrappleDistance: 100
   lastGrappleTime: 0
   grappleTargetDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &1108933538
@@ -609,7 +611,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4800174732242690484}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &4800174732479552403
 CapsuleCollider:
@@ -871,7 +873,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4800174732242690484}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7230698052490715226
 GameObject:
@@ -903,7 +905,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4800174732242690484}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &35543608817844578
 CapsuleCollider:
