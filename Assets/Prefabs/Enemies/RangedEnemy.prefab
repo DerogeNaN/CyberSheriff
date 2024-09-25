@@ -497,7 +497,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7340179883665751189}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 14.88, y: 0, z: -14.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -536,7 +536,7 @@ MonoBehaviour:
   active: 1
   health: 100
   playerTransform: {fileID: 0}
-  sightRange: 25
+  sightRange: 30
   state: 0
   debugStateText: {fileID: 7340179883547449891}
   mesh: {fileID: 2136612929450958787}
@@ -544,12 +544,12 @@ MonoBehaviour:
   floorRaycastPos: {x: 0, y: 0, z: 0}
   floorRaycastLength: 0
   stationary: 0
-  runSpeed: 5
-  walkSpeed: 2
-  stopDistance: 10
-  attackRange: 25
-  attackTime: 1
-  attackCooldown: 2
+  runSpeed: 10
+  walkSpeed: 4
+  stopDistance: 15
+  attackRange: 30
+  attackTime: 0.5
+  attackCooldown: 0.5
   bulletPrefab: {fileID: 946708688116722392, guid: 48f74cd19883f2041b00f84575f4de80,
     type: 3}
 --- !u!195 &6999642372325152397
@@ -560,12 +560,12 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7340179883665751189}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_Radius: 1
-  m_Speed: 3.5
-  m_Acceleration: 20
+  m_Speed: 10
+  m_Acceleration: 30
   avoidancePriority: 50
-  m_AngularSpeed: 180
+  m_AngularSpeed: 250
   m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
