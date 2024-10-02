@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Dissolve_Mat
-  m_Shader: {fileID: -6465566751694194690, guid: 3123ec292133629478de70f8fe14ad1a,
+  m_Shader: {fileID: -6465566751694194690, guid: 69ddcc9c9c4883c4f9f8450dc3033235,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -34,19 +34,23 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _Base_Colour:
+    - _Base_Colour_Tex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Metallic:
+    - _Emissive_Tex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Normal:
+    - _Metallic_Tex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Roughness:
+    - _Normal_Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Roughness_Tex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -64,11 +68,25 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Dissolve_Slider: 1
-    - _Edge_Thickness: 0.05
-    - _Noise_Scale: 30
+    - _Dissolve_Amount: 1.24
+    - _Dissolve_Scale: 711.9
+    - _Edge_Dissolve_Offset: -0.26
+    - _Edge_Pixelation: 49
+    - _Edge_Scale: 173.5
+    - _Edge_Scale_Offset: 70
+    - _Edge_Thickness: 0
+    - _Hit_x: -0.04
+    - _Hit_y: 0.29
+    - _Hit_z: 0
+    - _Pixelation: 100
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _test: 0.5
     m_Colors:
-    - _Edge_Colour: {r: 0, g: 0.9971727, b: 3.09434, a: 0}
+    - _Base_Moving: {r: 0, g: 0, b: 0, a: 0}
+    - _Base_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Edge_Colour: {r: 0, g: 2.0314236, b: 4.131187, a: 0}
+    - _Edge_Moving: {r: 0, g: 0, b: 0, a: 0}
+    - _Hit_Position: {r: 0, g: 0, b: 0, a: 0}
+    - _Test_Colour: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
