@@ -37,7 +37,6 @@ public class PauseMenu : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
         Movement.playerMovement.playerInputActions.Player.Disable();
-        weaponScript.playerInput.Player.Disable();
         Movement.playerMovement.playerInputActions.UI.Enable();
 
         //Render pause UI
@@ -55,7 +54,6 @@ public class PauseMenu : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         Movement.playerMovement.playerInputActions.Player.Enable();
-        weaponScript.playerInput.Player.Enable();
         Movement.playerMovement.playerInputActions.UI.Disable();
 
         //Render pause UI
