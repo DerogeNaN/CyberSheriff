@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
-
 //using UnityEditor.Build.Content;
 using UnityEditor.Rendering;
 //using UnityEditor.ShaderGraph;
@@ -98,6 +97,7 @@ public class Movement : MonoBehaviour
     public Rigidbody rb;
     public Collider slideCollider;
     private Collider standingCollider;
+    private PauseMenu pauseMenu;
 
     //----WALLRUNNING----
     public bool isWallrunning = false;
@@ -171,6 +171,7 @@ public class Movement : MonoBehaviour
     {
         playerMovement = this;
         standingCollider = GetComponent<Collider>();
+        pauseMenu = GetComponent<PauseMenu>();
         InitialiseMovement();
         playerState = MovementState.grounded;
     }
@@ -334,6 +335,7 @@ public class Movement : MonoBehaviour
         playerInputActions.Player.Dash.performed += Dash_Performed;
         playerInputActions.Player.Grapple.performed += Grapple_Performed;
         playerInputActions.Player.Grapple.canceled += Grapple_Canceled;
+        playerInputActions.Player.Pause.performed += pauseMenu.PauseMenuToggle;
     }
 
     private void Slide_Performed(InputAction.CallbackContext context)

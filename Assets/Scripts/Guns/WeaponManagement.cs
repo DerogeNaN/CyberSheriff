@@ -17,8 +17,7 @@ public class WeaponManagement : MonoBehaviour
     [SerializeField]
     public GameObject currentActiveWeapon;
 
-    [SerializeField]
-    PlayerInputActions playerInput;
+    public PlayerInputActions playerInput;
 
     [Header("Current Active Weapon Attributes")]
     [SerializeField]
@@ -40,11 +39,11 @@ public class WeaponManagement : MonoBehaviour
 
         if (WeaponGripTransform.GetComponentInChildren<RangedWeapon>())
         {
-            Debug.Log(WeaponGripTransform.GetComponentInChildren<RangedWeapon>().gameObject.name);
+            //Debug.Log(WeaponGripTransform.GetComponentInChildren<RangedWeapon>().gameObject.name);
         }
         else
             //Debug.Log("no weapons found");
-            playerInput = new PlayerInputActions();
+            playerInput = Movement.playerMovement.playerInputActions;
         if (playerInput != null)
         {
             playerInput.Player.Enable();
