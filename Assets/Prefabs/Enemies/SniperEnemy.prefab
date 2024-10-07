@@ -362,7 +362,7 @@ GameObject:
   - component: {fileID: 7868308199360839163}
   - component: {fileID: 9017003524051536654}
   m_Layer: 7
-  m_Name: RangedEnemy
+  m_Name: SniperEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -416,21 +416,22 @@ MonoBehaviour:
   active: 1
   health: 100
   playerTransform: {fileID: 0}
-  sightRange: 40
+  sightRange: 50
   state: 0
   debugStateText: {fileID: 8781144055186671520}
   mesh: {fileID: 8508684111999068476}
   lineOfSightOffset: {x: 0, y: 1, z: 0}
   floorRaycastPos: {x: 0, y: 0, z: 0}
   floorRaycastLength: 0
-  stationary: 0
+  stationary: 1
   runSpeed: 8
   walkSpeed: 2
   stopDistance: 10
-  attackRange: 30
+  attackRange: 50
   attackTime: 1
-  attackCooldown: 2
-  bulletPrefab: {fileID: 946708688116722392, guid: 48f74cd19883f2041b00f84575f4de80,
+  attackCooldownMin: 3
+  attackCooldownMax: 3
+  bulletPrefab: {fileID: 946708688116722392, guid: 6e81436d39747b04e9d80b2964ade7f0,
     type: 3}
 --- !u!195 &9017003524051536654
 NavMeshAgent:

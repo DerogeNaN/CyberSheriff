@@ -15,9 +15,7 @@ public class EnemySpawnArea : MonoBehaviour
 
     void Start()
     {
-        //enemies = new();
         colliderr = GetComponent<BoxCollider>();
-       // SetEnemiesInactive();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -28,45 +26,14 @@ public class EnemySpawnArea : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        //if (!triggered)
-        //{
-        //    Collider[] colliders = Physics.OverlapBox(transform.position, colliderr.size / 2);
-
-        //    foreach (Collider c in colliders)
-        //    {
-        //        if (c.gameObject.CompareTag("Player"))
-        //        {
-        //            SpawnEnemies();
-        //        }
-        //    }
-        //}
-    }
-
     void SpawnEnemies()
     {
         foreach (EnemyBase e in enemies)
         {
             e.playerTransform = playerTransform;
-            e.Spawn();
+            if (!e.active) e.Spawn();
             // ^ assuming the gameobject has EnemyBase, otherwise it shouldnt have been added to the list
         }
         triggered = true;
-    }
-
-    void SetEnemiesInactive()
-    {
-        Collider[] colliders = Physics.OverlapBox(transform.position, colliderr.size / 2);
-        
-        foreach (Collider c in colliders)
-        {
-            EnemyBase e = c.gameObject.GetComponent<EnemyBase>();
-            if (e)
-            {
-                enemies.Add(e);
-                e.Despawn();
-            }
-        }
     }
 }

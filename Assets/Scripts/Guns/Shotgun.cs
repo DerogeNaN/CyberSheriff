@@ -59,6 +59,9 @@ public class Shotgun : RangedWeapon
     {
         base.Update();
 
+
+        if(shouldShootPrimary)
+
         if (grenadeAmmo <= 0)
         {
             grenadeLauncherCooldown = grenadeReloadTime;

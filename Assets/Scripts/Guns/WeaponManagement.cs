@@ -17,8 +17,6 @@ public class WeaponManagement : MonoBehaviour
     [SerializeField]
     public GameObject currentActiveWeapon;
 
-    public PlayerInputActions playerInput;
-
     [Header("Current Active Weapon Attributes")]
     [SerializeField]
     public int CAWMaxAmmo;
@@ -29,32 +27,12 @@ public class WeaponManagement : MonoBehaviour
     [SerializeField]
     public string ammoText;
 
-
+    bool start = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        currentActiveWeapon = weaponList[0];
-        //currentActiveWeapon =  GetComponentsInChildren<RangedWeapon>()[1].gameObject;
 
-        if (WeaponGripTransform.GetComponentInChildren<RangedWeapon>())
-        {
-            //Debug.Log(WeaponGripTransform.GetComponentInChildren<RangedWeapon>().gameObject.name);
-        }
-        else
-            //Debug.Log("no weapons found");
-            playerInput = Movement.playerMovement.playerInputActions;
-        if (playerInput != null)
-        {
-            playerInput.Player.Enable();
-            playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
-            playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
-            playerInput.Player.AltFire.started += AltFireWeaponBegin;
-            playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
-            playerInput.Player.WeaponSwitch.started += ScrollSetWeapon;
-            playerInput.Player.KeyWeaponSwitch1.started += keySetWeapon1;
-            playerInput.Player.KeyWeaponSwitch2.started += keySetWeapon2;
-        }
 
     }
 
@@ -69,35 +47,23 @@ public class WeaponManagement : MonoBehaviour
     void Update()
     {
 
-        //CAWMaxAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
-        //CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
-        //ammoText.text =  CAWMaxAmmo + " / " + CAWCurrentAmmo;
-
-        if (playerInput == null)
+        if (start == false)
         {
-            Debug.Log("PlayerInput is Null now setting...");
-            playerInput = new PlayerInputActions();
-            playerInput.Player.Enable();
-            playerInput.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
-            playerInput.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
-            playerInput.Player.AltFire.started += AltFireWeaponBegin;
-            playerInput.Player.AltFire.canceled += AltFireWeaponEnd;
-            playerInput.Player.WeaponSwitch.started += ScrollSetWeapon;
-            playerInput.Player.KeyWeaponSwitch1.started += keySetWeapon1;
-            playerInput.Player.KeyWeaponSwitch2.started += keySetWeapon2;
-            playerInput.Player.Reload.started += ManualReload;
+            Movement.playerMovement.playerInputActions.Player.Enable();
+            Movement.playerMovement.playerInputActions.Player.PrimaryFire.started += PrimaryFireWeaponBegin;
+            Movement.playerMovement.playerInputActions.Player.PrimaryFire.canceled += PrimaryFireWeaponEnd;
+            Movement.playerMovement.playerInputActions.Player.AltFire.started += AltFireWeaponBegin;
+            Movement.playerMovement.playerInputActions.Player.AltFire.canceled += AltFireWeaponEnd;
+            Movement.playerMovement.playerInputActions.Player.WeaponSwitch.started += ScrollSetWeapon;
+            Movement.playerMovement.playerInputActions.Player.KeyWeaponSwitch1.started += keySetWeapon1;
+            Movement.playerMovement.playerInputActions.Player.KeyWeaponSwitch2.started += keySetWeapon2;
+            Movement.playerMovement.playerInputActions.Player.Reload.started += ManualReload;
+            start = true;
         }
 
-        if (playerInput != null)
-        {
+        PrimaryFireStayCheck(Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress);
+        AltFireStayCheck(Movement.playerMovement.playerInputActions.Player.AltFire.inProgress);
 
-            PrimaryFireStayCheck(playerInput.Player.PrimaryFire.inProgress);
-            AltFireStayCheck(playerInput.Player.AltFire.inProgress);
-        }
-        else
-        {
-            Debug.Log("PlayerInput is Null");
-        }
     }
 
     void PrimaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -146,7 +112,7 @@ public class WeaponManagement : MonoBehaviour
 
     void ManualReload(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (!playerInput.Player.PrimaryFire.inProgress && !playerInput.Player.AltFire.inProgress)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
         {
             if (currentActiveWeapon.GetComponent<RangedWeapon>())
                 currentActiveWeapon.GetComponent<RangedWeapon>().ManualReload();
@@ -156,13 +122,6 @@ public class WeaponManagement : MonoBehaviour
 
             Debug.Log("Cannot reload at This Time");
         }
-    }
-
-    //maybe
-    void WeaponListSet()
-    {
-
-
     }
 
     void ScrollSetWeapon(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -195,17 +154,6 @@ public class WeaponManagement : MonoBehaviour
         //set next to true 
         currentActiveWeapon.gameObject.SetActive(true);
 
-        if (CurrentWeapon == 0)
-        {
-            currentActiveWeapon.transform.position = WeaponGripTransform.position;
-            currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
-        }
-
-        else
-        {
-            currentActiveWeapon.transform.position = BoomstickTransform.position;
-            currentActiveWeapon.transform.rotation = BoomstickTransform.rotation;
-        }
     }
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)

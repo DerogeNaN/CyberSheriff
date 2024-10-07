@@ -19,7 +19,7 @@ public class Health : MonoBehaviour
     public void TakeDamage(int damage, int damageType)
     {
         health -= damage;
-        Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
+        //Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
 
         // destroys this gameobject if health <= 0
         IsDestroyed();
@@ -30,7 +30,7 @@ public class Health : MonoBehaviour
         if (health <= 0)
         {
             health = 0;
-            Debug.Log(gameObject.name + " was destroyed");
+            //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);
         }
     }
