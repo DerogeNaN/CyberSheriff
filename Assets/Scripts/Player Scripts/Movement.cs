@@ -8,6 +8,7 @@ using UnityEditor.Rendering;
 //using UnityEditor.TextCore.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder;
 
 
 public class Movement : MonoBehaviour
@@ -100,6 +101,7 @@ public class Movement : MonoBehaviour
 
     //----WALLRUNNING----
     public bool isWallrunning = false;
+    public bool canWallrun = false;
     public float wallrunCooldown = 0.5f;
     public float leavingWallrunTime = 0;
     public float lastWallrunTime = 0;
@@ -150,6 +152,7 @@ public class Movement : MonoBehaviour
     public ParticleSystem grappleUI;
     public float grappleSpeed = 1f;
     public float grappleCooldown = 5;
+    public float maxGrappleDistance = 100f;
     public float lastGrappleTime = 0;
     public Vector3 grappleTargetDirection = Vector3.zero;
 
@@ -188,15 +191,16 @@ public class Movement : MonoBehaviour
         //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        Debug.DrawRay(transform.position, momentum * 2);
+        Debug.DrawRay(transform.position, momentum * 5, Color.red);
     }
 
     void MovePlayer()
     {
         Vector2 moveInput = Vector2.zero;
 
-        if (isTryingSlide && isGrounded)
+        if (isTryingSlide && isGrounded && !isWallrunning && momentum.magnitude > slideSpeedThreshold)
         {
+            SetState(MovementState.sliding);
             SlideStartTransition();
             moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
@@ -211,8 +215,8 @@ public class Movement : MonoBehaviour
         else if (isWallrunning)
         {
             TiltCamera(cameraWallrunTilt, cameraWallrunTiltTime, wallNormal);
-            moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
-            moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+            //moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
+            //moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
         }
 
         else
@@ -265,7 +269,6 @@ public class Movement : MonoBehaviour
 
         if (isSliding && Time.time >= slideStartTime + slideDragDelay)
         {
-        
             momentum.x *= slideDrag;
             momentum.z *= slideDrag;
         }
@@ -273,6 +276,8 @@ public class Movement : MonoBehaviour
         Gravity();
 
         CheckForOncomingCollision();
+
+        //CheckForWallrun();
 
         CheckForGrappleTarget();
         Grappling();
@@ -446,7 +451,7 @@ public class Movement : MonoBehaviour
 
     private void CheckForGrappleTarget()
     {
-        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, 150.0f, ~8) &&
+        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
             hit.transform.CompareTag("GrappleableObject")))
         {
             grappleObject = hit.collider.gameObject;
@@ -527,11 +532,12 @@ public class Movement : MonoBehaviour
         if (Physics.SphereCast(transform.position, 0.35f, Vector3.down, out RaycastHit hitInfo, 100.0f, ~0b00001100))
         {
            // Debug.Log(hitInfo.collider.gameObject);
-            if (hitInfo.distance <= 0.66f)
+            if (hitInfo.distance <= 0.75f)
             {
                 if (!hitInfo.collider.isTrigger)
                 {
                     isGrounded = true;
+                    isWallrunning = false;
                     lastGroundedTime = Time.time;
                     jumpCount = 0;
                 }
@@ -553,10 +559,17 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 transform.position + new Vector3(0, 0.5f, 0),
                 transform.position - new Vector3(0, 0.5f, 0),
-                0.35f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12, QueryTriggerInteraction.Ignore
+                0.5f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
                 momentum = Vector3.ClampMagnitude(momentum, hit.distance);
+
+                //float velocityInNormalDirection = Vector3.Dot(momentum, hit.normal);
+                //
+                //if (velocityInNormalDirection < 0)
+                //{
+                //    momentum -= velocityInNormalDirection * hit.normal;
+                //}
             }
         }
         
@@ -565,17 +578,62 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 slideCollider.transform.position - new Vector3(0.5f, 0, 0),
                 slideCollider.transform.position + new Vector3(0.5f, 0, 0),
-                0.35f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12, QueryTriggerInteraction.Ignore
+                0.5f, momentum.normalized, out RaycastHit hit, momentum.magnitude, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
                 momentum = Vector3.ClampMagnitude(momentum, hit.distance);
+
+                //float velocityInNormalDirection = Vector3.Dot(momentum, hit.normal);
+                //
+                //if (velocityInNormalDirection < 0)
+                //{
+                //    momentum -= velocityInNormalDirection * hit.normal;
+                //}
             }
+        }
+    }
+
+    //private Vector3 GetCollisionNormal()
+    //{
+    //    return Vector3.zero;
+    //}
+
+    private void CheckForWallrun()
+    {
+        RaycastHit wallHit;
+
+        //---check RIGHT for wall----
+        if (Physics.CapsuleCast(
+            transform.position + new Vector3(0, 0.5f, 0), 
+            transform.position - new Vector3(0, 0.5f, 0), 0.35f, transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+            Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
+        {
+            Debug.Log("There's a wall on my RIGHT");
+            canWallrun = true;
+        }
+
+
+        //---check LEFT for wall----
+        if (Physics.CapsuleCast(
+            transform.position + new Vector3(0, 0.5f, 0),
+            transform.position - new Vector3(0, 0.5f, 0), 0.35f, -transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+            Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
+        {
+            Debug.Log("There's a wall on my LEFT");
+            canWallrun = true;
+        }
+
+
+        else if (isWallrunning)
+        {
+            isWallrunning = false;
+            leavingWallrunTime = Time.time;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     { 
-        Vector3 normal = collision.GetContact(0).normal;
+        Vector3 normal = collision.GetContact(0).normal.normalized;
         normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
         
         wallNormal = normal;
@@ -585,30 +643,34 @@ public class Movement : MonoBehaviour
         {
             Vector3 tangent = Vector3.Cross(Vector3.up, normal);
             wallTangent = tangent * Mathf.Sign(Vector3.Dot(momentum, tangent));
-            float wallSpeed = Vector3.Dot(tangent, momentum) * Mathf.Abs(Vector3.Dot(Camera.main.transform.forward, momentum.normalized));
-        
-            //Vector3 newMomentum = momentum.magnitude * wallTangent;
+            float wallSpeed = Vector3.Dot(tangent, momentum);
         
             if(Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
             {
                 lastWallrunTime = Time.time;
                 cameraLeaveWallrunTime = Time.time + 0.2f;
                 isWallrunning = true;
-                //momentum = newMomentum;
                 momentum = wallSpeed * tangent;
                 jumpCount = 0;
                 return;
             }
         }
-
-        momentum -= Vector3.Dot(momentum, normal) * normal;
+    
+        //Get velocity relative to the collision normal
+        float velocityInNormalDirection = Vector3.Dot(momentum, normal);
+    
+        //Check if positive or negative, if negative the player is trying to move into a wall so run the below code
+        if (velocityInNormalDirection < 0)
+        {
+            momentum -= velocityInNormalDirection * normal;
+        }
     }
-
+    
     private void OnCollisionStay(Collision collision)
     {
         OnCollisionEnter(collision);
     }
-
+    
     private void OnCollisionExit(Collision collision)
     {   
         if (isWallrunning)
