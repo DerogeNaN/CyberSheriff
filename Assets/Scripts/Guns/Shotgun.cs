@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Mathematics;
 using static RangedWeapon;
+using JetBrains.Annotations;
 
 
 public class Shotgun : RangedWeapon
@@ -8,6 +9,9 @@ public class Shotgun : RangedWeapon
     [Header("I be riding shotgun underneath the hot sun...")]
     [SerializeField]
     int bulletsPerShot = 5;
+
+    [SerializeField]
+    bool chargeExited = false;
 
     [SerializeField]
     float spreadMultiplier = 1;
@@ -59,8 +63,7 @@ public class Shotgun : RangedWeapon
 
     public override void Start()
     {
-      
-
+        base.Start();
         grenadeLauncherCooldown = grenadeLoadTime;
 
     }
@@ -75,21 +78,22 @@ public class Shotgun : RangedWeapon
 
         if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
         {
-            if (inputTime < chargeTime)
+            if (inputTime < chargeTime && charged == false)
             {
                 inputTime += Time.deltaTime;
             }
-        }
 
-        if (shouldShootPrimary == false && waiting == false && reloading == false && canPressAltFire == true)
-        {
             if (inputTime >= chargeTime)
             {
                 charged = true;
                 inputTime = 0;
 
             }
-            EngagePrimaryFire();
+        }
+
+        if (shouldShootPrimary == false && chargeExited == true && waiting == false && reloading == false && canPressAltFire == true)
+        {
+            EngagePrimaryFire(charged);
         }
 
         if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
@@ -129,14 +133,17 @@ public class Shotgun : RangedWeapon
     }
 
 
-    public override void EngagePrimaryFire()
+
+
+    public void EngagePrimaryFire(bool charged)
     {
+        chargeExited = false;
+        inputTime = 0;
         int pellets;
         //Primary Fire Logic
         if (charged)
         {
             pellets = bulletsPerShot * 2;
-
         }
         else
         {
@@ -145,15 +152,18 @@ public class Shotgun : RangedWeapon
 
         if (currentBullets > 0)
         {
-            currentBullets--;
-
             if (charged)
             {
+                currentBullets -= 2;
                 BulletFlash.Play();
                 BulletFlash.Play();
+                this.charged = false;
+
+
             }
             else
             {
+                currentBullets--;
                 BulletFlash.Play();
             }
 
@@ -204,6 +214,7 @@ public class Shotgun : RangedWeapon
             StartCoroutine(Reload());
         }
     }
+
 
 
 
@@ -279,6 +290,7 @@ public class Shotgun : RangedWeapon
     public override void OnprimaryFireEnd()
     {
         shouldShootPrimary = false;
+        chargeExited = true;
         Debug.Log("end Primary Fire");
     }
 
