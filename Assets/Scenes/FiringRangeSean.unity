@@ -1149,12 +1149,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1200413876 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3195739648886811881, guid: 9e5aab4728372384db3add6b545a8568,
-    type: 3}
-  m_PrefabInstance: {fileID: 1493848709}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1215017801
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,12 +1343,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1292268772 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3650890944056214547, guid: 9e5aab4728372384db3add6b545a8568,
-    type: 3}
-  m_PrefabInstance: {fileID: 1493848709}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1356137855
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1623,21 +1611,9 @@ PrefabInstance:
       value: 67.21
       objectReference: {fileID: 0}
     - target: {fileID: 1108933538, guid: 9e5aab4728372384db3add6b545a8568, type: 3}
-      propertyPath: ammoText
-      value: 6 / 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1108933538, guid: 9e5aab4728372384db3add6b545a8568, type: 3}
       propertyPath: CAWCurrentAmmo
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1108933538, guid: 9e5aab4728372384db3add6b545a8568, type: 3}
-      propertyPath: BoomstickTransform
-      value: 
-      objectReference: {fileID: 1200413876}
-    - target: {fileID: 1108933538, guid: 9e5aab4728372384db3add6b545a8568, type: 3}
-      propertyPath: currentActiveWeapon
-      value: 
-      objectReference: {fileID: 1292268772}
     - target: {fileID: 1385871706831791830, guid: 9e5aab4728372384db3add6b545a8568,
         type: 3}
       propertyPath: AltshotGapTime
@@ -1763,6 +1739,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4800174732242690487, guid: 9e5aab4728372384db3add6b545a8568,
+        type: 3}
+      propertyPath: respawnPos
+      value: 
+      objectReference: {fileID: 1143310130}
     - target: {fileID: 4800174732242690488, guid: 9e5aab4728372384db3add6b545a8568,
         type: 3}
       propertyPath: m_Name
@@ -2223,27 +2204,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1790354268 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4800174732242690488, guid: 9e5aab4728372384db3add6b545a8568,
-    type: 3}
-  m_PrefabInstance: {fileID: 1493848709}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1790354278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1790354268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33d381752c5b6814eb9df79ac1f1143c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 0
-  health: 0
-  healthUI: {fileID: 0}
 --- !u!1001 &1805005112
 PrefabInstance:
   m_ObjectHideFlags: 0

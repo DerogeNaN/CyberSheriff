@@ -12,6 +12,15 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     float spreadMultiplier = 1;
 
+    [SerializeField]
+    float chargeTime = 2.0f;
+
+    [SerializeField]
+    float inputTime = 0;
+
+    [SerializeField]
+    bool charged = false;
+
     [Header("I'd Catch a grenade for ya(yeah,yeah,yeah...)")]
     [SerializeField]
     GameObject Grenade;
@@ -50,17 +59,43 @@ public class Shotgun : RangedWeapon
 
     public override void Start()
     {
-        base.Start();
+      
+
         grenadeLauncherCooldown = grenadeLoadTime;
 
     }
 
     public override void Update()
     {
-        base.Update();
+        if (currentBullets <= 0 && reloading == false)
+        {
+            canFire = false;
+            StartCoroutine(Reload());
+        }
 
+        if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
+        {
+            if (inputTime < chargeTime)
+            {
+                inputTime += Time.deltaTime;
+            }
+        }
 
-        if(shouldShootPrimary)
+        if (shouldShootPrimary == false && waiting == false && reloading == false && canPressAltFire == true)
+        {
+            if (inputTime >= chargeTime)
+            {
+                charged = true;
+                inputTime = 0;
+
+            }
+            EngagePrimaryFire();
+        }
+
+        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
+        {
+            EngageAltFire();
+        }
 
         if (grenadeAmmo <= 0)
         {
@@ -91,18 +126,37 @@ public class Shotgun : RangedWeapon
     {
         //RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
         //Gizmos.DrawLine(altMuzzlePoint.position, ray.ray.direction * grenadeLaucherForceMultiplier);
-
     }
 
 
     public override void EngagePrimaryFire()
     {
+        int pellets;
         //Primary Fire Logic
-        int pellets = bulletsPerShot;
+        if (charged)
+        {
+            pellets = bulletsPerShot * 2;
+
+        }
+        else
+        {
+            pellets = bulletsPerShot;
+        }
+
         if (currentBullets > 0)
         {
             currentBullets--;
-            BulletFlash.Play();
+
+            if (charged)
+            {
+                BulletFlash.Play();
+                BulletFlash.Play();
+            }
+            else
+            {
+                BulletFlash.Play();
+            }
+
 
             for (int i = 0; i < pellets; i++)
             {
@@ -195,8 +249,7 @@ public class Shotgun : RangedWeapon
     //active on beginning of Primary fire Action
     public override void OnPrimaryFireBegin()
     {
-        shouldShootPrimary = true;
-        Debug.Log("Beginning primary Fire");
+
     }
 
     //Active on Begining of alt-firing action
@@ -209,7 +262,7 @@ public class Shotgun : RangedWeapon
     //Active every interval of Primaryfire set in this script
     public override void OnPrimaryFireStay()
     {
-        //Debug.Log("Primary fire stay ");
+        shouldShootPrimary = true;
     }
 
     //Active every interval  of altfire set in this script
