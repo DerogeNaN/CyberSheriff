@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Dissolve_Mat
-  m_Shader: {fileID: -6465566751694194690, guid: 69ddcc9c9c4883c4f9f8450dc3033235,
+  m_Name: Dissolve_Spherical_Mat
+  m_Shader: {fileID: -6465566751694194690, guid: 62b8a41c19665d24c9b28da1729b71e8,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -35,7 +35,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Base_Colour_Tex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: acbd1e5ccc9321341ba779dde5576e80, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Emissive_Tex:
@@ -68,16 +68,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Dissolve_Amount: -0
-    - _Dissolve_Scale: 711.9
-    - _Edge_Dissolve_Offset: -0.26
-    - _Edge_Pixelation: 49
+    - _Dissolve_Amount: 0.3
+    - _Dissolve_Scale: 661.39
+    - _Edge_Dissolve: -0.291
+    - _Edge_Dissolve_Offset: -0.619
+    - _Edge_Pixelation: 73.2
     - _Edge_Scale: 173.5
-    - _Edge_Scale_Offset: 70
+    - _Edge_Scale_Offset: 7.2
     - _Edge_Thickness: 0
-    - _Hit_x: 0
-    - _Hit_y: 0
-    - _Hit_z: 0
+    - _Hit_x: 0.019
+    - _Hit_y: 0.161
+    - _Hit_z: 0.237
     - _Pixelation: 100
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -85,8 +86,8 @@ Material:
     m_Colors:
     - _Base_Moving: {r: 0, g: 0, b: 0, a: 0}
     - _Base_Offset: {r: 0, g: 0, b: 0, a: 0}
-    - _Edge_Colour: {r: 0, g: 2.0314236, b: 4.131187, a: 0}
+    - _Edge_Colour: {r: 0, g: 2.2104673, b: 10.554981, a: 0}
     - _Edge_Moving: {r: 0, g: 0, b: 0, a: 0}
     - _Hit_Position: {r: 0, g: 0, b: 0, a: 0}
-    - _Test_Colour: {r: 1, g: 1, b: 1, a: 0}
+    - _Test_Colour: {r: 0.8113208, g: 0.501335, b: 0.501335, a: 0}
   m_BuildTextureStacks: []
