@@ -1450,11 +1450,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   muzzlePoint: {fileID: 6106579689615445286}
   altMuzzlePoint: {fileID: 5417552234440080051}
+  shotgun: {fileID: 0}
   DamageValue: 5
   headShotMultiplier: 2
   bulletForceMultiplier: 1
   shotGapTime: 1
-  AltshotGapTime: 0.01
+  AltshotGapTime: 2
   reloadTime: 2
   BulletsPerClip: 2
   currentBullets: 0
@@ -1478,11 +1479,10 @@ MonoBehaviour:
   inputTime: 0
   charged: 0
   Grenade: {fileID: 911812781045158418, guid: 9fb5ac429395f914a98b1146e2ebab00, type: 3}
-  grenadeReloadTime: 5
-  grenadeLoadTime: 1
-  grenadeLauncherTimer: 0
   grenadeLaucherForceMultiplier: 30
   grenadeReady: 0
+  RequiredKillsToRecharge: 5
+  currentKillstoRecharge: 0
   grenadeAmmo: 3
   grenadeAmmoMax: 3
 --- !u!1 &4523091791687891413
