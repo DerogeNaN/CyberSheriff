@@ -4,12 +4,26 @@ using UnityEngine;
 
 public class EnemyMeleeAttack : MonoBehaviour
 {
-    [SerializeField] EnemyHitbox hitbox;
+    public int damage;
+    public float activeTime;
+
+    private float time;
 
     private void Update()
     {
-        if (!hitbox.active)
+        time += Time.deltaTime;
+
+        if (time >= activeTime)
         {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage, 0);
             Destroy(gameObject);
         }
     }
