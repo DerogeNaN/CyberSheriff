@@ -32,7 +32,7 @@ public class Health : MonoBehaviour
             health = 0;
             //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);
-            WaveManager.waveManagerInstance.enemiesRemaining--;
+            if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
         }
     }
 }

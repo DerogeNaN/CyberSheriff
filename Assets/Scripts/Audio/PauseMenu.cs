@@ -1,21 +1,21 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
     //[SerializeField] private PlayerManager playerManager;
     [SerializeField] private GameObject pauseMenu;
-    [SerializeField] private GameObject defaultSelect;
-    [SerializeField] private WeaponManagement weaponScript;
+    [SerializeField] private GameObject optionsMenu;
 
-    public bool pauseState = false;
+    public bool isPaused = false;
 
     //Called everytime the escape key is pressed in-game
     public void PauseMenuToggle(InputAction.CallbackContext context)
     {
-        if (!pauseState)
+        if (!isPaused)
         {
             PauseGame();
         }
@@ -31,7 +31,7 @@ public class PauseMenu : MonoBehaviour
         Debug.Log("Pausing -------------------------------------"); 
         //Pausing gameplay
         Time.timeScale = 0;
-        pauseState = true;
+        isPaused = true;
 
         //Activating player menu input
         Cursor.visible = true;
@@ -48,7 +48,7 @@ public class PauseMenu : MonoBehaviour
         Debug.Log("Resuming -------------------------------------");
         //Resuming gameplay
         Time.timeScale = 1;
-        pauseState = false;
+        isPaused = false;
 
         //Activating player menu input
         Cursor.visible = false;
@@ -60,11 +60,23 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(false);
     }
 
+    public void OptionsButton()
+    {
+        pauseMenu.SetActive(false);
+        optionsMenu.SetActive(true);
+    }
+
+    public void ReturnToMenuButton()
+    {
+        pauseMenu.SetActive(true);
+        optionsMenu.SetActive(false);
+    }
+
     public void QuitButton()
     {
-#if UNITY_EDITOR
-        EditorApplication.isPlaying = false;
-#endif
-        Application.Quit();
+        optionsMenu.SetActive(false);
+        pauseMenu.SetActive(false);
+
+        SceneManager.LoadScene("Alec_Main_Menu");
     }
 }
