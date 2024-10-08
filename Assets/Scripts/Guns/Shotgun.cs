@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using static RangedWeapon;
 using JetBrains.Annotations;
+using Unity.VisualScripting;
 
 
 public class Shotgun : RangedWeapon
@@ -76,18 +77,22 @@ public class Shotgun : RangedWeapon
             StartCoroutine(Reload());
         }
 
-        if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
+        if (currentBullets == BulletsPerClip)
         {
-            if (inputTime < chargeTime && charged == false)
-            {
-                inputTime += Time.deltaTime;
-            }
 
-            if (inputTime >= chargeTime)
+            if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
             {
-                charged = true;
-                inputTime = 0;
+                if (inputTime < chargeTime && charged == false)
+                {
+                    inputTime += Time.deltaTime;
+                }
 
+                if (inputTime >= chargeTime)
+                {
+                    charged = true;
+                    inputTime = 0;
+
+                }
             }
         }
 
@@ -199,7 +204,17 @@ public class Shotgun : RangedWeapon
                             if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                             {
                                 Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                                EnemyHealth.TakeDamage(DamageValue, 0);
+                                int damage = DamageValue;
+                                if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                                {
+                                    if (eh.isHeadshot == true)
+                                    {
+                                        Debug.Log("HeadShot");
+                                        damage *= headShotMultiplier;
+                                    }
+
+                                }
+                                EnemyHealth.TakeDamage(damage, 0);
                             }
                         }
                     }
