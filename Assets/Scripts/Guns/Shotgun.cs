@@ -1,6 +1,8 @@
 using UnityEngine;
 using Unity.Mathematics;
 using static RangedWeapon;
+using JetBrains.Annotations;
+using Unity.VisualScripting;
 
 
 public class Shotgun : RangedWeapon
@@ -10,7 +12,19 @@ public class Shotgun : RangedWeapon
     int bulletsPerShot = 5;
 
     [SerializeField]
+    bool chargeExited = false;
+
+    [SerializeField]
     float spreadMultiplier = 1;
+
+    [SerializeField]
+    float chargeTime = 2.0f;
+
+    [SerializeField]
+    float inputTime = 0;
+
+    [SerializeField]
+    bool charged = false;
 
     [Header("I'd Catch a grenade for ya(yeah,yeah,yeah...)")]
     [SerializeField]
@@ -57,10 +71,40 @@ public class Shotgun : RangedWeapon
 
     public override void Update()
     {
-        base.Update();
+        if (currentBullets <= 0 && reloading == false)
+        {
+            canFire = false;
+            StartCoroutine(Reload());
+        }
 
+        if (currentBullets == BulletsPerClip)
+        {
 
-        if(shouldShootPrimary)
+            if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
+            {
+                if (inputTime < chargeTime && charged == false)
+                {
+                    inputTime += Time.deltaTime;
+                }
+
+                if (inputTime >= chargeTime)
+                {
+                    charged = true;
+                    inputTime = 0;
+
+                }
+            }
+        }
+
+        if (shouldShootPrimary == false && chargeExited == true && waiting == false && reloading == false && canPressAltFire == true)
+        {
+            EngagePrimaryFire(charged);
+        }
+
+        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
+        {
+            EngageAltFire();
+        }
 
         if (grenadeAmmo <= 0)
         {
@@ -91,18 +135,43 @@ public class Shotgun : RangedWeapon
     {
         //RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
         //Gizmos.DrawLine(altMuzzlePoint.position, ray.ray.direction * grenadeLaucherForceMultiplier);
-
     }
 
 
-    public override void EngagePrimaryFire()
+
+
+    public void EngagePrimaryFire(bool charged)
     {
+        chargeExited = false;
+        inputTime = 0;
+        int pellets;
         //Primary Fire Logic
-        int pellets = bulletsPerShot;
+        if (charged)
+        {
+            pellets = bulletsPerShot * 2;
+        }
+        else
+        {
+            pellets = bulletsPerShot;
+        }
+
         if (currentBullets > 0)
         {
-            currentBullets--;
-            BulletFlash.Play();
+            if (charged)
+            {
+                currentBullets -= 2;
+                BulletFlash.Play();
+                BulletFlash.Play();
+                this.charged = false;
+
+
+            }
+            else
+            {
+                currentBullets--;
+                BulletFlash.Play();
+            }
+
 
             for (int i = 0; i < pellets; i++)
             {
@@ -135,7 +204,17 @@ public class Shotgun : RangedWeapon
                             if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                             {
                                 Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                                EnemyHealth.TakeDamage(DamageValue, 0);
+                                int damage = DamageValue;
+                                if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                                {
+                                    if (eh.isHeadshot == true)
+                                    {
+                                        Debug.Log("HeadShot");
+                                        damage *= headShotMultiplier;
+                                    }
+
+                                }
+                                EnemyHealth.TakeDamage(damage, 0);
                             }
                         }
                     }
@@ -150,6 +229,7 @@ public class Shotgun : RangedWeapon
             StartCoroutine(Reload());
         }
     }
+
 
 
 
@@ -195,8 +275,7 @@ public class Shotgun : RangedWeapon
     //active on beginning of Primary fire Action
     public override void OnPrimaryFireBegin()
     {
-        shouldShootPrimary = true;
-        Debug.Log("Beginning primary Fire");
+
     }
 
     //Active on Begining of alt-firing action
@@ -209,7 +288,7 @@ public class Shotgun : RangedWeapon
     //Active every interval of Primaryfire set in this script
     public override void OnPrimaryFireStay()
     {
-        //Debug.Log("Primary fire stay ");
+        shouldShootPrimary = true;
     }
 
     //Active every interval  of altfire set in this script
@@ -226,6 +305,7 @@ public class Shotgun : RangedWeapon
     public override void OnprimaryFireEnd()
     {
         shouldShootPrimary = false;
+        chargeExited = true;
         Debug.Log("end Primary Fire");
     }
 
