@@ -22,6 +22,9 @@ public class RangedWeapon : MonoBehaviour
     public int DamageValue = 25;
 
     [SerializeField]
+    public int headShotMultiplier = 2;
+
+    [SerializeField]
     [Tooltip("A multiplier for the amount of force applied to an object  by the bullets")]
     public float bulletForceMultiplier = 1;
 
@@ -152,12 +155,23 @@ public class RangedWeapon : MonoBehaviour
                         SpawnBulletHoleDecal(rayData);
                     }
 
+                  //  Debug.Log(" ray hit : " + rayData.hit.collider);
+
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                            EnemyHealth.TakeDamage(DamageValue, 0);
+                            int damage = DamageValue;
+                            if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                            {
+                                if (eh.isHeadshot == true)
+                                {
+                                    damage *= headShotMultiplier;
+                                }
+
+                            }
+                            EnemyHealth.TakeDamage(damage, 0);
                         }
                     }
                 }

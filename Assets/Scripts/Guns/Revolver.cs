@@ -69,12 +69,22 @@ public class Revolver : RangedWeapon
                         SpawnBulletHoleDecal(rayData);
                     }
 
+                  //  Debug.Log(" ray hit : " + rayData.hit.collider);
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
+                            int damage = DamageValue;
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                            EnemyHealth.TakeDamage(DamageValue, 0);
+                            if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                            {
+                                if (eh.isHeadshot == true)
+                                {
+                                    damage *= headShotMultiplier;
+                                }
+
+                            }
+                            EnemyHealth.TakeDamage(damage, 0);
                         }
                     }
                 }
