@@ -20,7 +20,6 @@ public enum EnemyState
 
 // this should not be put on gameobjects, use one of the inheriting classes
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyBase : MonoBehaviour
 {
     [Header("Basic Settings")]
@@ -56,7 +55,7 @@ public class EnemyBase : MonoBehaviour
     {
         // initialise pathing values
         shouldPath = false;
-        navAgent = GetComponent<NavMeshAgent>();
+        TryGetComponent<NavMeshAgent>(out navAgent);
 
         // start spawned or despawned
         if (active) Spawn();
@@ -72,7 +71,23 @@ public class EnemyBase : MonoBehaviour
 
         if (debugStateText != null) debugStateText.text = state.ToString();
 
+        UpdateRaycast();
+        UpdateNavAgent();
+        UpdateState();
+        OnUpdate();
+    }
 
+    public void OnDrawGizmos()
+    {
+        if (navAgent)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(moveTarget, 0.5f);
+        }
+    }
+
+    private void UpdateRaycast()
+    {
         // raycasting
         Vector3 raycastPos = transform.position + lineOfSightOffset;
 
@@ -93,19 +108,39 @@ public class EnemyBase : MonoBehaviour
         if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
         else Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
         Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
+    }
 
-
-        // enemy types that inherit from this decide when to set shouldPath to true or false
-        if (shouldPath)
+    private void UpdateNavAgent()
+    {
+        if (navAgent != null)
         {
-            navAgent.enabled = true;
-            navAgent.speed = speed;
-            navAgent.SetDestination(moveTarget);
+            // enemy types that inherit from this decide when to set shouldPath to true or false
+            if (shouldPath)
+            {
+                navAgent.enabled = true;
+                navAgent.speed = speed;
+                navAgent.SetDestination(moveTarget);
+            }
+            else navAgent.enabled = false;
         }
-        else navAgent.enabled = false;
+    }
 
-        UpdateState();
-        OnUpdate();
+    public void Spawn()
+    {
+        active = true;
+        mesh.SetActive(true);
+    }
+
+    public void Despawn()
+    {
+        active = false;
+        mesh.SetActive(false);
+    }
+
+    void SetPlayerTransform()
+    {
+        // get the transform of whatever has the main camera
+        playerTransform = Camera.main.transform.parent;
     }
 
     public void SetState(EnemyState state)
@@ -187,31 +222,4 @@ public class EnemyBase : MonoBehaviour
     virtual protected void AttackingEnter() { }
     virtual protected void AttackingUpdate() { }
     virtual protected void AttackingExit() { }
-
-    public void OnDrawGizmos()
-    {
-        if (navAgent)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(moveTarget, 0.5f);
-        }
-    }
-
-    public void Spawn()
-    {
-        active = true;
-        mesh.SetActive(true);
-    }
-
-    public void Despawn()
-    {
-        active = false;
-        mesh.SetActive(false);
-    }
-
-    void SetPlayerTransform()
-    {
-        // get the transform of whatever has the main camera
-        playerTransform = Camera.main.transform.parent;
-    }
 }
