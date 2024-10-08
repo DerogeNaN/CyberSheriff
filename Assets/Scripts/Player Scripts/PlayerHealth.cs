@@ -23,19 +23,19 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "EnemyHitbox")
-        {
-            EnemyHitbox hitbox = other.GetComponent<EnemyHitbox>();
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.tag == "EnemyHitbox")
+    //    {
+    //        EnemyHitbox hitbox = other.GetComponent<EnemyHitbox>();
 
-            if (hitbox && hitbox.active)
-            {
-                TakeDamage(hitbox.damage, 0);
-                hitbox.active = false;
-            }
-        }
-    }
+    //        if (hitbox && hitbox.active)
+    //        {
+    //            TakeDamage(hitbox.damage, 0);
+    //            hitbox.active = false;
+    //        }
+    //    }
+    //}
 
     public void TakeDamage(int damage, int damageType)
     {

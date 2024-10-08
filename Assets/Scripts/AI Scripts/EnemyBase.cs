@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering;
 
 // BASE ENEMY SCRIPT
 
@@ -22,6 +20,7 @@ public enum EnemyState
 
 // this should not be put on gameobjects, use one of the inheriting classes
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyBase : MonoBehaviour
 {
     [Header("Basic Settings")]
@@ -99,22 +98,9 @@ public class EnemyBase : MonoBehaviour
         // enemy types that inherit from this decide when to set shouldPath to true or false
         if (shouldPath)
         {
-            // teleport back to navmesh
-            if (!navAgent.isOnNavMesh)
-            {
-                //Debug.Log("aaaaa");
-                Debug.Log(moveTarget);
-                //NavMeshHit hit;
-                //if (NavMesh.FindClosestEdge(transform.position, out hit, NavMesh.AllAreas))
-                //{
-                //    Debug.Log(hit.position);
-                //    //navAgent.Warp(hit.position);
-                //}
-            }
-
             navAgent.enabled = true;
-            navAgent.destination = moveTarget;
             navAgent.speed = speed;
+            navAgent.SetDestination(moveTarget);
         }
         else navAgent.enabled = false;
 

@@ -4,31 +4,34 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    public int damage;
     public float speed;
-    public Vector3 direction;
-    [SerializeField] EnemyHitbox hitbox;
 
-    private void Start()
-    {
-        // should already be normalised but just in case
-        Vector3.Normalize(direction);
-    }
+    [SerializeField] private Rigidbody rb;
+    private Vector3 direction;
 
     private void Update()
     {
         transform.position += direction * speed * Time.deltaTime;
+    }
 
-        if (!hitbox.active)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage, 0);
+            Destroy(gameObject);
+        }
+        else if (other.gameObject.CompareTag("Wall"))
         {
             Destroy(gameObject);
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void Shoot(Vector3 target)
     {
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            Destroy(gameObject);
-        }
+        direction = Vector3.Normalize(target - transform.position);
+
+        //rb.velocity = direction * speed;
     }
 }
