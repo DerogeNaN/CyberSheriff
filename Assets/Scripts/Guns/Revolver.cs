@@ -1,10 +1,13 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Mathematics;
 
 public class Revolver : RangedWeapon
 {
     public Animator animator;
 
+    [Header("Other Values")]
+    [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
     {
         animator.SetBool("ShootBool", true);
@@ -35,44 +38,21 @@ public class Revolver : RangedWeapon
 
     public override void EngageAltFire()
     {
-        //altFire Logic
+        //alt Fire Logic
         if (currentBullets > 0)
         {
-            StartCoroutine(FanFire());
-
-        }
-
-        else if (currentBullets <= 0 && reloading == false)
-        {
-            Debug.Log("out off Bullets");
-            canFire = false;
-            StartCoroutine(Reload());
-        }
-    }
-
-    IEnumerator FanFire()
-    {
-        Debug.Log("Fire start");
-        canPressAltFire = false;
-        int BulletsAtTimeOfFiring = currentBullets;
-        Debug.Log("Current Bullet Number:" + BulletsAtTimeOfFiring);
-        for (int i = 0; i < BulletsAtTimeOfFiring; i++)
-        {
-            //Debug.Log("FanFire Bullet Loosed");
+            RayData rayData = AltRayCastAndGenGunRayData(muzzlePoint);
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
             currentBullets--;
-
-            RayData rayData = RayCastAndGenGunRayData(altMuzzlePoint);
             if (rayData.hit.point != null)
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;
 
-                // bullet Hole Decal Placement Logic 
                 if (rayData.hit.transform.gameObject.layer != 3)
                 {
-                    //..It isn't the player but it is an enemy...?
+
                     GameObject hitFX = Instantiate(HitEffect);
                     hitFX.transform.position = rayData.hit.point;
                     if (rayData.hit.rigidbody)
@@ -84,27 +64,66 @@ public class Revolver : RangedWeapon
                         Debug.Log("Does Not have rigidbody");
                     }
 
-                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
+                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
                     {
                         SpawnBulletHoleDecal(rayData);
                     }
 
+                  //  Debug.Log(" ray hit : " + rayData.hit.collider);
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
+                            int damage = DamageValue;
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                            EnemyHealth.TakeDamage(DamageValue, 0);
+                            if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                            {
+                                if (eh.isHeadshot == true)
+                                {
+                                    damage *= headShotMultiplier;
+                                }
+
+                            }
+                            EnemyHealth.TakeDamage(damage, 0);
                         }
                     }
                 }
             }
-
             canFire = false;
-            yield return new WaitForSeconds(AltshotGapTime);
+            StartCoroutine(Wait(AltshotGapTime));
         }
-        Debug.Log("Fan Fire end");
-        canPressAltFire = true;
+        else if (currentBullets <= 0 && reloading == false)
+        {
+            canFire = false;
+            StartCoroutine(base.Reload());
+        }
+
+    }
+
+
+    public RayData AltRayCastAndGenGunRayData(Transform muzzle)
+    {
+        Ray gunRay = new Ray();
+
+        //we get the start and direction for our "Bullet" from our Gun Here
+        gunRay.direction = muzzlePoint.transform.forward;
+        gunRay.origin = muzzlePoint.position;
+
+        RaycastHit gunHit;
+        RayData camRayData = RayCastAndGenCameraRayData();
+        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
+
+        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+
+        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
+
+        //set ray direction to the barrel to look point direction 
+        gunRay.direction = barrelToLookPointDir;
+        gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
+
+        Physics.Raycast(gunRay, out gunHit, Mathf.Infinity);
+
+        return new RayData { ray = gunRay, hit = gunHit };
     }
 
     //active on beginning of Primary fire Action
