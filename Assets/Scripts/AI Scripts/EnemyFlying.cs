@@ -17,12 +17,12 @@ public class EnemyFlying : EnemyBase
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
-        shouldPath = false;
+        enemy.shouldPath = false;
     }
 
     protected override void OnUpdate()
     {
-        lookTarget = playerTransform.position;
+        enemy.lookTarget = enemy.playerTransform.position;
 
         transform.position += velcoity * Time.deltaTime;
 
@@ -31,7 +31,7 @@ public class EnemyFlying : EnemyBase
 
     protected override void IdleUpdate()
     {
-        if (hasLineOfSight)
+        if (enemy.hasLineOfSight)
         {
             SetState(EnemyState.movingToTarget);
         }
@@ -43,9 +43,9 @@ public class EnemyFlying : EnemyBase
 
     protected override void MovingToTargetUpdate()
     {
-        if (!hasLineOfSight) SetState(EnemyState.idle);
+        if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
 
-        Vector3 toPlayer = playerTransform.position - transform.position;
+        Vector3 toPlayer = enemy.playerTransform.position - transform.position;
         float distanceToPlayer = toPlayer.magnitude;
         
         if (distanceToPlayer >= targetDistance && velcoity.magnitude <= maxSpeed)

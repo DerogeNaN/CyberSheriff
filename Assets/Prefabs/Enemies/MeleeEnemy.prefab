@@ -50,7 +50,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7989121754168259081}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -360,6 +360,7 @@ GameObject:
   - component: {fileID: 8781144055303266578}
   - component: {fileID: 8781144055303266590}
   - component: {fileID: 7825197320810437696}
+  - component: {fileID: 6835624540115931486}
   - component: {fileID: 9017003524051536654}
   - component: {fileID: -6065578235034996897}
   m_Layer: 7
@@ -414,17 +415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 001162ed7c5bd1643a80fa3e697fc6da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 1
-  health: 100
-  playerTransform: {fileID: 0}
-  sightRange: 30
   state: 0
-  useNavAgent: 1
-  debugStateText: {fileID: 8781144055186671520}
-  mesh: {fileID: 8508684111999068476}
-  lineOfSightOffset: {x: 0, y: 2, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
   runSpeed: 10
   walkSpeed: 3
   chaseTime: 2
@@ -433,6 +424,30 @@ MonoBehaviour:
   attackRange: 2
   attackTime: 0.5
   attackCooldown: 1
+--- !u!114 &6835624540115931486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8781144055303266582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 1
+  sightRange: 30
+  speed: 5
+  mesh: {fileID: 8508684111999068476}
+  lineOfSightOffset: {x: 0, y: 2, z: 0}
+  floorRaycastPos: {x: 0, y: 0, z: 0}
+  floorRaycastLength: 0
+  playerTransform: {fileID: 0}
+  moveTarget: {x: 0, y: 0, z: 0}
+  lookTarget: {x: 0, y: 0, z: 0}
+  hasLineOfSight: 0
+  shouldPath: 0
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -551,7 +566,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9088834753660796872}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

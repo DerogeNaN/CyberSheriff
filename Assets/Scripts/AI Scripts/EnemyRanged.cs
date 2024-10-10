@@ -25,40 +25,40 @@ public class EnemyRanged : EnemyBase
     protected override void OnStart()
     {
         initialPosition = transform.position;
-        speed = runSpeed;
+        enemy.speed = runSpeed;
         SetState(EnemyState.idle);
     }
 
     protected override void OnUpdate()
     {
         // do this regardless of state 
-        lookTarget = playerTransform.position;
+        enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
     }
 
     #region enter state
     protected override void IdleEnter()
     {
-        if (!stationary) shouldPath = true;
-        moveTarget = initialPosition;
+        if (!stationary) enemy.shouldPath = true;
+        enemy.moveTarget = initialPosition;
     }
     protected override void MovingToTargetEnter()
     {
-        if (!stationary) shouldPath = true;
+        if (!stationary) enemy.shouldPath = true;
     }
     protected override void AttackingEnter()
     {
-        shouldPath = false;
+        enemy.shouldPath = false;
         remainingAttackTime = attackTime;
-        speed = walkSpeed;
+        enemy.speed = walkSpeed;
 
         // do attack here
         // change spawn pos to gun pos
-        Projectile projectile = Instantiate(bulletPrefab, transform.position + lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
-        projectile.Shoot(playerTransform.position);
+        Projectile projectile = Instantiate(bulletPrefab, transform.position + enemy.lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
+        projectile.Shoot(enemy.playerTransform.position);
 
         // snap to point at player when firing
-        transform.LookAt(playerTransform);
+        transform.LookAt(enemy.playerTransform);
 
         Vector3 rot = transform.rotation.eulerAngles;
         rot.x = 0;
@@ -70,24 +70,24 @@ public class EnemyRanged : EnemyBase
     protected override void IdleUpdate()
     {
         // if the player gets withing range and line of sight, switch to chasing them
-        if (hasLineOfSight) SetState(EnemyState.movingToTarget);
+        if (enemy.hasLineOfSight) SetState(EnemyState.movingToTarget);
     }
     protected override void MovingToTargetUpdate()
     {
 
-        moveTarget = playerTransform.position;
+        enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
-        if (!hasLineOfSight) SetState(EnemyState.idle);
+        if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
 
-        float distance = Vector3.Distance(transform.position, moveTarget);
+        float distance = Vector3.Distance(transform.position, enemy.moveTarget);
         if (distance >= stopDistance)
         {
-            if (!stationary) shouldPath = true;
+            if (!stationary) enemy.shouldPath = true;
         }
         else
         {
-            shouldPath = false;
+            enemy.shouldPath = false;
         }
 
         // can attack even before reached stopping distance
@@ -120,7 +120,7 @@ public class EnemyRanged : EnemyBase
     protected override void AttackingExit()
     {
         remainingAttackCooldown = Random.Range(attackCooldownMin, attackCooldownMax);
-        speed = runSpeed;
+        enemy.speed = runSpeed;
     }
     #endregion
 }

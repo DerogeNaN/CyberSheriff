@@ -193,7 +193,7 @@ PrefabInstance:
     - target: {fileID: 8781144055303266582, guid: 7aa11795745a51643833236f727b50cd,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aa11795745a51643833236f727b50cd, type: 3}
@@ -2471,7 +2471,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &1933425881
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2514,16 +2514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c63e58f320a3a844ebbf9f804657af69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 1
-  health: 100
-  playerTransform: {fileID: 0}
-  sightRange: 25
   state: 0
-  debugStateText: {fileID: 0}
-  mesh: {fileID: 1339156585}
-  lineOfSightOffset: {x: 0, y: 0, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
   targetHeight: 1
   targetDistance: 3
   maxSpeed: 100

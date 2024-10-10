@@ -30,8 +30,8 @@ public class EnemySpawnArea : MonoBehaviour
     {
         foreach (EnemyBase e in enemies)
         {
-            e.playerTransform = playerTransform;
-            if (!e.active) e.Spawn();
+            //e.playerTransform = playerTransform;
+            //if (!e.active) e.Spawn();
             // ^ assuming the gameobject has EnemyBase, otherwise it shouldnt have been added to the list
         }
         triggered = true;
