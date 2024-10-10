@@ -171,7 +171,7 @@ public class Movement : MonoBehaviour
     {
         playerMovement = this;
         standingCollider = GetComponent<Collider>();
-        pauseMenu = GetComponent<PauseMenu>();
+        pauseMenu = GetComponentInChildren<PauseMenu>();
         InitialiseMovement();
         playerState = MovementState.grounded;
     }
