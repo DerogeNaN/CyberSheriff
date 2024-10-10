@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
@@ -112,6 +113,7 @@ public class Movement : MonoBehaviour
     //----SLIDING----
     public bool isSliding = false;
     public bool isTryingSlide = false;
+    public bool shouldSlide = false;
     public float slideStartTime = 0;
     [Range(0, 1)]public float slideDrag = 10;
 
@@ -203,9 +205,11 @@ public class Movement : MonoBehaviour
     {
         Vector2 moveInput = Vector2.zero;
 
-        if (isTryingSlide && isGrounded && !isWallrunning && momentum.magnitude > slideSpeedThreshold)
+        if (isTryingSlide) SlideCheck();
+
+        if (isSliding)
         {
-            SetState(MovementState.sliding);
+            //SetState(MovementState.sliding);
             SlideStartTransition();
             moveInput = playerInputActions.Player.Move.ReadValue<Vector2>() * Time.deltaTime;
             moveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
@@ -339,6 +343,7 @@ public class Movement : MonoBehaviour
         playerInputActions.Player.Slide.performed += Slide_Performed;
         playerInputActions.Player.Slide.canceled += Slide_Cancelled;
         playerInputActions.Player.Dash.performed += Dash_Performed;
+        playerInputActions.Player.Dash.canceled += Dash_Canceled;
         playerInputActions.Player.Grapple.performed += Grapple_Performed;
         playerInputActions.Player.Grapple.canceled += Grapple_Canceled;
         playerInputActions.Player.Pause.performed += pauseMenu.PauseMenuToggle;
@@ -347,18 +352,28 @@ public class Movement : MonoBehaviour
     private void Slide_Performed(InputAction.CallbackContext context)
     {
         isTryingSlide = true;
-
-        if (!isWallrunning && momentum.magnitude > slideSpeedThreshold && isGrounded)
-        {
-            SetState(MovementState.sliding);
-        }
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
     {
-        isSliding = false;
         isTryingSlide = false;
-        SetState(MovementState.grounded);
+        shouldSlide = false;
+        //SetState(MovementState.grounded);
+    }
+
+    private void SlideCheck()
+    {
+        if (momentum.magnitude > slideSpeedThreshold && isGrounded && !isWallrunning)
+        {
+            shouldSlide = true;
+            if (shouldSlide) SlideStart();
+        }
+    }
+
+    private void SlideStart()
+    {
+        isSliding = true;
+        slideStartTime = Time.time;
     }
 
     private void SlideStartTransition()
@@ -387,10 +402,14 @@ public class Movement : MonoBehaviour
         DashStartTransition();
     }
 
+    private void Dash_Canceled(InputAction.CallbackContext context)
+    {
+        isTryingDashing = false;
+    }
+
     private void DashStartTransition()
     {
         dashDirection = moveDirection.normalized;
-        isWallrunning = false;
 
         if (dashDirection == Vector3.zero) dashDirection = transform.forward.normalized;
 
@@ -403,6 +422,7 @@ public class Movement : MonoBehaviour
             if (!Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position - new Vector3(0, 0.5f, 0), 
                 0.45f, dashDirection, out hit, dashDistance, ~12))
             {
+                isWallrunning = false;
                 momentum = dashDirection * dashDistance;
             }
 
@@ -434,6 +454,7 @@ public class Movement : MonoBehaviour
         if (jumpCount < 2)
         {
             isGrounded = false;
+            isSliding = false;
 
             if (isWallrunning)
             {
