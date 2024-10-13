@@ -6651,17 +6651,17 @@ PrefabInstance:
     - target: {fileID: 8317736826892261484, guid: 2457b1f7803930b40bd8ae1d82d9a301,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8317736826892261484, guid: 2457b1f7803930b40bd8ae1d82d9a301,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8317736826892261484, guid: 2457b1f7803930b40bd8ae1d82d9a301,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8317736826892261484, guid: 2457b1f7803930b40bd8ae1d82d9a301,
         type: 3}
@@ -6712,6 +6712,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8317736826892261485, guid: 2457b1f7803930b40bd8ae1d82d9a301,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Vector4f.m_Array.Array.data[2].m_Value.x
+      value: 6.3941526
+      objectReference: {fileID: 0}
+    - target: {fileID: 8317736826892261485, guid: 2457b1f7803930b40bd8ae1d82d9a301,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Vector4f.m_Array.Array.data[2].m_Value.y
+      value: 1.7408164
+      objectReference: {fileID: 0}
+    - target: {fileID: 8317736826892261485, guid: 2457b1f7803930b40bd8ae1d82d9a301,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Vector4f.m_Array.Array.data[2].m_Value.z
+      value: 0.6360675
       objectReference: {fileID: 0}
     - target: {fileID: 8317736826892261523, guid: 2457b1f7803930b40bd8ae1d82d9a301,
         type: 3}
@@ -41731,6 +41746,7 @@ MonoBehaviour:
   muzzlePoint: {fileID: 5532885850221548956}
   altMuzzlePoint: {fileID: 4044875227300707126}
   DamageValue: 25
+  headShotMultiplier: 2
   bulletForceMultiplier: 1
   shotGapTime: 1
   AltshotGapTime: 0.01
@@ -41752,7 +41768,11 @@ MonoBehaviour:
   camRef: {fileID: 0}
   CurrentlyHitting: {fileID: 0}
   bulletsPerShot: 5
+  chargeExited: 0
   spreadMultiplier: 1
+  chargeTime: 2
+  inputTime: 0
+  charged: 0
   Grenade: {fileID: 0}
   grenadeReloadTime: 0
   grenadeLoadTime: 0
@@ -42866,6 +42886,7 @@ MonoBehaviour:
   muzzlePoint: {fileID: 6481185320153906740}
   altMuzzlePoint: {fileID: 6481185320153906740}
   DamageValue: 25
+  headShotMultiplier: 2
   bulletForceMultiplier: 1
   shotGapTime: 1
   AltshotGapTime: 0.12
@@ -42887,6 +42908,7 @@ MonoBehaviour:
   camRef: {fileID: 0}
   CurrentlyHitting: {fileID: 0}
   animator: {fileID: 0}
+  spreadMultiplier: 0.5
 --- !u!224 &4410568041478065656
 RectTransform:
   m_ObjectHideFlags: 0
