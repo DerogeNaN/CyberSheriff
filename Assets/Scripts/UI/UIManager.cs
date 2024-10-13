@@ -1,117 +1,89 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    public GameManager gm;
-    public UniversalRendererData rendererData;
-    public int HealthEffectBlitIndex;
-    public int DashEffectBlitIndex;
+    [Header("Menu's")]
+    [SerializeField] GameObject mainMenu;
+    [SerializeField] GameObject leaderboardMenu;
+    [SerializeField] GameObject optionsMenu;
+    [SerializeField] GameObject creditsMenu;
+    //[SerializeField] GameObject iutMenu;
+    //[SerializeField] GameObject gameMenu;
+    //[SerializeField] GameObject graphicsMenu;
+    //[SerializeField] GameObject MiscMenu;
 
-    enum PlayerHealthState
+    private GameObject currentMenu = null;
+    private GameObject previousMenu = null;
+
+    private void Awake()
     {
-        High,
-        Med,
-        Low
+        Time.timeScale = 1;
+        ReturnToMenuButton();
     }
 
-    [SerializeField]
-    PlayerHealthState playerHealthstate;
-
-    private void Start()
+    public void ReturnToMenuButton()
     {
-        playerHealthstate = PlayerHealthState.High;
-        gm = GetComponent<GameManager>();
+        mainMenu.SetActive(true);
+        leaderboardMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        creditsMenu.SetActive(false);
+
+        previousMenu = currentMenu;
+        currentMenu = mainMenu;
     }
 
-    void Update()
+    public void PlayButton()
     {
-        if (gm.playerHealth.health > 50)
-            playerHealthstate = PlayerHealthState.High;
-        else if (gm.playerHealth.health < 50 && gm.playerHealth.health > 30)
-            playerHealthstate = PlayerHealthState.Med;
-        else if (gm.playerHealth.health < 30)
-            playerHealthstate = PlayerHealthState.Low;
+        mainMenu.SetActive(false);
+        leaderboardMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        creditsMenu.SetActive(false);
 
-        // Press the "B" key to change the Blit material
-        if (playerHealthstate == PlayerHealthState.Low)
-        {
-            ActivateBlitz(rendererData, HealthEffectBlitIndex, true);
-        }
-        else 
-        {
-            ActivateBlitz(rendererData, HealthEffectBlitIndex, false);
-
-        }
-
-        if (gm.playerMovement.isDashing)
-        {
-            ActivateBlitz(rendererData, DashEffectBlitIndex, true);
-        }
-        else
-        {
-            ActivateBlitz(rendererData, DashEffectBlitIndex, false);
-        }
+        SceneManager.LoadScene("Stan Lvl 2");
     }
 
-
-    public void ActivateBlitz(UniversalRendererData rendererData, int index, bool active)
+    public void LeaderboardButton()
     {
-        if (rendererData == null || index < 0 || index >= rendererData.rendererFeatures.Count)
-        {
-            Debug.LogError("Invalid Renderer Data or Feature Index.");
-            return;
-        }
+        mainMenu.SetActive(false);
+        leaderboardMenu.SetActive(true);
+        optionsMenu.SetActive(false);
+        creditsMenu.SetActive(false);
 
-        ScriptableRendererFeature feature = rendererData.rendererFeatures[index];
-        // Cast it to your custom Blit renderer feature
-        if (feature is Cyan.Blit blitFeature)
-        {
-            blitFeature.SetActive(active);
-        }
-        else
-        {
-            Debug.LogError("The feature at this index is not of type Blit.");
-        }
+        previousMenu = currentMenu;
+        currentMenu = leaderboardMenu;
     }
 
-    private void OnApplicationQuit()
+    public void OptionsButton()
     {
-        if (rendererData == null || HealthEffectBlitIndex < 0 || HealthEffectBlitIndex >= rendererData.rendererFeatures.Count)
-        {
-            Debug.LogError("Invalid Renderer Data or Feature Index.");
-            return;
-        }
-        ScriptableRendererFeature feature = rendererData.rendererFeatures[HealthEffectBlitIndex];
-        // Cast it to your custom Blit renderer feature
-        if (feature is Cyan.Blit blitFeature)
-        {
-            blitFeature.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("The feature at this index is not of type Blit.");
-        }
+        mainMenu.SetActive(false);
+        leaderboardMenu.SetActive(false);
+        optionsMenu.SetActive(true);
+        creditsMenu.SetActive(false);
 
-
-        if (rendererData == null || HealthEffectBlitIndex < 0 || HealthEffectBlitIndex >= rendererData.rendererFeatures.Count)
-        {
-            Debug.LogError("Invalid Renderer Data or Feature Index.");
-            return;
-        }
-        ScriptableRendererFeature feature1 = rendererData.rendererFeatures[HealthEffectBlitIndex];
-        // Cast it to your custom Blit renderer feature
-        if (feature1 is Cyan.Blit blitFeature1)
-        {
-            blitFeature1.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("The feature at this index is not of type Blit.");
-        }
+        previousMenu = currentMenu;
+        currentMenu = optionsMenu;
     }
 
+    public void CreditsButton()
+    {
+        mainMenu.SetActive(false);
+        leaderboardMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        creditsMenu.SetActive(true);
+
+        previousMenu = currentMenu;
+        currentMenu = creditsMenu;
+    }
+
+    public void QuitButton()
+    {
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
+    }
 }

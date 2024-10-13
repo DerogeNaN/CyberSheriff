@@ -55,7 +55,7 @@ public class EnemyRanged : EnemyBase
         // do attack here
         // change spawn pos to gun pos
         Projectile projectile = Instantiate(bulletPrefab, transform.position + lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
-        projectile.direction = Vector3.Normalize(playerTransform.position - transform.position - lineOfSightOffset);
+        projectile.Shoot(playerTransform.position);
     }
     #endregion
 

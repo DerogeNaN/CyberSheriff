@@ -7,10 +7,9 @@ public class PlayerInputManager : MonoBehaviour
 {
     //Component serialization
     [Header("Player Scripts")]
-    //[SerializeField] Movement movementScript;
-    [SerializeField] MouseLook mouseLookScript;
-    [SerializeField] Movement movementScript;
-    [SerializeField] PlayerInputActions playerInputActions;
+    [SerializeField] private MouseLook mouseLookScript;
+    [SerializeField] private Movement movementScript;
+    private PlayerInputActions playerInputActions;
 
     private void Awake()
     {
