@@ -50,8 +50,8 @@ public class Revolver : RangedWeapon
                 if (rayData.hit.transform.gameObject.layer != 3)
                 {
 
-                    GameObject hitFX = Instantiate(HitEffect);
-                    hitFX.transform.position = rayData.hit.point;
+                    //GameObject hitFX = Instantiate(HitEffect);
+                    //hitFX.transform.position = rayData.hit.point;
                     if (rayData.hit.rigidbody)
                     {
                         rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
