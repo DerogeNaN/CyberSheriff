@@ -11,7 +11,7 @@ public class Revolver : RangedWeapon
     public override void EngagePrimaryFire()
     {
         //make sure on  Kill isnt all ready an event;
-       
+
         animator.SetBool("ShootBool", true);
         base.EngagePrimaryFire();
     }
@@ -50,8 +50,6 @@ public class Revolver : RangedWeapon
                 if (rayData.hit.transform.gameObject.layer != 3)
                 {
 
-                    //GameObject hitFX = Instantiate(HitEffect);
-                    //hitFX.transform.position = rayData.hit.point;
                     if (rayData.hit.rigidbody)
                     {
                         rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -65,12 +63,17 @@ public class Revolver : RangedWeapon
                     {
                         SpawnBulletHoleDecal(rayData);
                     }
-
-                    //  Debug.Log(" ray hit : " + rayData.hit.collider);
+                    if (!rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase nonExistant))
+                    {
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = rayData.hit.point;
+                    }
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
+                            GameObject hitFX = Instantiate(HitEffect);
+                            hitFX.transform.position = rayData.hit.point;
                             int damage = DamageValue;
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                             EnemyHealth.TakeDamage(damage, 0);

@@ -51,13 +51,6 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     public int grenadeAmmoMax = 3;
 
-
-    //public override void Start()
-    //{
-    //    base.Start();
-    //    //make sure on  Kill isnt all ready an event;
-    //}
-
     public override void Update()
     {
         if (currentBullets <= 0 && reloading == false)
@@ -151,8 +144,8 @@ public class Shotgun : RangedWeapon
                     if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
                         //..It isn't the player but it is an enemy...?
-                        //GameObject hitFX = Instantiate(HitEffect);
-                        //hitFX.transform.position = rayData.hit.point;
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = rayData.hit.point;
                         if (rayData.hit.rigidbody)
                         {
                             rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);

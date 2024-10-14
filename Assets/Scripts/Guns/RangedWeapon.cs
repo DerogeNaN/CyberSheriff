@@ -147,8 +147,6 @@ public class RangedWeapon : MonoBehaviour
                 if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                 {
                     //..It isn't the player but it is an enemy...?
-                    GameObject hitFX = Instantiate(HitEffect);
-                    hitFX.transform.position = rayData.hit.point;
                     if (rayData.hit.rigidbody)
                     {
                         rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -165,6 +163,11 @@ public class RangedWeapon : MonoBehaviour
 
                     //  Debug.Log(" ray hit : " + rayData.hit.collider);
 
+                    if(!rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase nonExistant))
+                    {
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = rayData.hit.point;
+                    }
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
