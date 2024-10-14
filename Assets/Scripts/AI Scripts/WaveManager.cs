@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour
@@ -15,6 +16,7 @@ public class WaveManager : MonoBehaviour
     public int waveNumber = 0;
     public float timeLeftInWave;
     public int enemiesRemaining;
+    [SerializeField] private TextMeshProUGUI enemiesRemainingText;
 
     public delegate void NewWaveEvent();
     public static event NewWaveEvent StartNewWave;
