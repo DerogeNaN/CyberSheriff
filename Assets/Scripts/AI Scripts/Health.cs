@@ -8,6 +8,9 @@ public class Health : MonoBehaviour
     public int health = 100;
     public TMP_Text debugText;
 
+    public delegate void EnemyKillEvent();
+    public static event EnemyKillEvent enemyKill;
+
     private void Update()
     {
         if (debugText)
@@ -32,6 +35,12 @@ public class Health : MonoBehaviour
             health = 0;
             //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);
+            if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
         }
+    }
+
+    private void OnDestroy()
+    {
+        enemyKill();
     }
 }

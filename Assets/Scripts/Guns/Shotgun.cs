@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using static RangedWeapon;
 using JetBrains.Annotations;
 using Unity.VisualScripting;
+using UnityEngine.Rendering.Universal.Internal;
 
 
 public class Shotgun : RangedWeapon
@@ -30,44 +31,32 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     GameObject Grenade;
 
-    //  [Tooltip("Seconds it takes for the grenade launcher to recharge")]
-    // [SerializeField]
-    float grenadeLauncherCooldown;
-
-
-    [Tooltip("Seconds it takes for the grenade launcher to  completely Reload")]
-    [SerializeField]
-    float grenadeReloadTime;
-
-
-    [Tooltip("Seconds it takes for the grenade launcher to Load the Next grenade")]
-    [SerializeField]
-    float grenadeLoadTime;
-
-    [Tooltip("Time since last shot")]
-    [SerializeField]
-    float grenadeLauncherTimer;
-
     [Tooltip("Amount of force to be applied to the grenade rigidbody")]
     [SerializeField]
     float grenadeLaucherForceMultiplier;
 
     [Tooltip("Please dont mess with This(Grenade will be ready once grenade timer reach grenade cooldown  just reduce th cooldown if its to slow)")]
     [SerializeField]
-    bool grenadeReady = false;
+    public bool grenadeReady = false;
 
     [SerializeField]
-    int grenadeAmmo = 3;
+    public int RequiredKillsToRecharge = 5;
 
     [SerializeField]
-    int grenadeAmmoMax = 3;
+    public int currentKillstoRecharge = 0;
 
-    public override void Start()
-    {
-        base.Start();
-        grenadeLauncherCooldown = grenadeLoadTime;
+    [SerializeField]
+    public int grenadeAmmo = 3;
 
-    }
+    [SerializeField]
+    public int grenadeAmmoMax = 3;
+
+
+    //public override void Start()
+    //{
+    //    base.Start();
+    //    //make sure on  Kill isnt all ready an event;
+    //}
 
     public override void Update()
     {
@@ -96,6 +85,12 @@ public class Shotgun : RangedWeapon
             }
         }
 
+        if (grenadeAmmo > 0)
+        {
+            grenadeReady = true;
+
+        }
+
         if (shouldShootPrimary == false && chargeExited == true && waiting == false && reloading == false && canPressAltFire == true)
         {
             EngagePrimaryFire(charged);
@@ -105,30 +100,6 @@ public class Shotgun : RangedWeapon
         {
             EngageAltFire();
         }
-
-        if (grenadeAmmo <= 0)
-        {
-            grenadeLauncherCooldown = grenadeReloadTime;
-        }
-
-        if (!grenadeReady)
-        {
-            grenadeLauncherTimer += Time.deltaTime;
-        }
-
-        if (grenadeLauncherTimer >= grenadeLauncherCooldown && grenadeAmmo > 0)
-        {
-            grenadeReady = true;
-            grenadeLauncherTimer = 0;
-        }
-        else if (grenadeLauncherTimer >= grenadeLauncherCooldown)
-        {
-            grenadeReady = true;
-            grenadeLauncherTimer = 0;
-            grenadeLauncherCooldown = grenadeLoadTime;
-            grenadeAmmo = grenadeAmmoMax;
-        }
-
     }
 
     private void OnDrawGizmos()
@@ -163,15 +134,12 @@ public class Shotgun : RangedWeapon
                 BulletFlash.Play();
                 BulletFlash.Play();
                 this.charged = false;
-
-
             }
             else
             {
                 currentBullets--;
                 BulletFlash.Play();
             }
-
 
             for (int i = 0; i < pellets; i++)
             {
@@ -183,8 +151,8 @@ public class Shotgun : RangedWeapon
                     if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
                         //..It isn't the player but it is an enemy...?
-                        GameObject hitFX = Instantiate(HitEffect);
-                        hitFX.transform.position = rayData.hit.point;
+                        //GameObject hitFX = Instantiate(HitEffect);
+                        //hitFX.transform.position = rayData.hit.point;
                         if (rayData.hit.rigidbody)
                         {
                             rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -194,7 +162,7 @@ public class Shotgun : RangedWeapon
                             Debug.Log("Does Not have rigidbody");
                         }
 
-                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
+                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb)) //AND it isn't an enemy
                         {
                             SpawnBulletHoleDecal(rayData);
                         }
@@ -205,6 +173,8 @@ public class Shotgun : RangedWeapon
                             {
                                 Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                                 int damage = DamageValue;
+
+
                                 if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
                                 {
                                     if (eh.isHeadshot == true)
@@ -229,7 +199,6 @@ public class Shotgun : RangedWeapon
             StartCoroutine(Reload());
         }
     }
-
 
 
 
@@ -269,6 +238,7 @@ public class Shotgun : RangedWeapon
             grenadeRB.AddForce(Movement.playerMovement.momentum, ForceMode.Impulse);
             grenadeReady = false;
             grenadeAmmo--;
+            StartCoroutine(Wait(AltshotGapTime));
         }
     }
 

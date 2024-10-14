@@ -18,6 +18,9 @@ public class RangedWeapon : MonoBehaviour
     [Header("Gun Behaviour Values")]
 
     [SerializeField]
+    public Shotgun shotgun;
+
+    [SerializeField]
     [Tooltip("Ain't it self-explanatory?")]
     public int DamageValue = 25;
 
@@ -94,9 +97,14 @@ public class RangedWeapon : MonoBehaviour
         public RaycastHit hit;
     }
 
+
     // Start is called before the first frame update
-    public virtual void Start()
+    public virtual void Awake()
     {
+
+        Debug.Log("SETTING");
+        //make sure on  Kill isnt all ready an event;
+
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
     }
@@ -155,7 +163,7 @@ public class RangedWeapon : MonoBehaviour
                         SpawnBulletHoleDecal(rayData);
                     }
 
-                  //  Debug.Log(" ray hit : " + rayData.hit.collider);
+                    //  Debug.Log(" ray hit : " + rayData.hit.collider);
 
                     if (rayData.hit.transform.parent)
                     {
@@ -163,6 +171,8 @@ public class RangedWeapon : MonoBehaviour
                         {
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                             int damage = DamageValue;
+
+
                             if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
                             {
                                 if (eh.isHeadshot == true)
@@ -187,6 +197,24 @@ public class RangedWeapon : MonoBehaviour
     }
 
 
+    public void OnKill()
+    {
+        Debug.Log(" Enemy was Killed.");
+        if (shotgun.currentKillstoRecharge < shotgun.RequiredKillsToRecharge)
+        {
+            shotgun.currentKillstoRecharge++;
+        }
+
+        if (shotgun.currentKillstoRecharge >= shotgun.RequiredKillsToRecharge)
+        {
+            if (shotgun.grenadeAmmo < shotgun.grenadeAmmoMax)
+                shotgun.grenadeAmmo++;
+            shotgun.currentKillstoRecharge = 0;
+            Debug.Log("grenade Gained");
+        }
+
+    }
+
     public virtual void EngageAltFire()
     {
         //altFire Logic
@@ -200,7 +228,7 @@ public class RangedWeapon : MonoBehaviour
         Vector3 pos = Decal.transform.position;
         Decal.transform.LookAt(pos + rayData.hit.normal, Vector3.up);
         Decal.transform.position += -rayData.hit.normal;
-        Debug.Log("ray hit normal: "+ rayData.hit.normal);
+        Debug.Log("ray hit normal: " + rayData.hit.normal);
     }
 
 
