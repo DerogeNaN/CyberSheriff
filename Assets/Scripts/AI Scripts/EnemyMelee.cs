@@ -27,43 +27,43 @@ public class EnemyMelee : EnemyBase
         SetState(EnemyState.idle);
 
         initialPosition = transform.position;
-        moveTarget = initialPosition;
-        speed = walkSpeed;
+        enemy.moveTarget = initialPosition;
+        enemy.speed = walkSpeed;
     }
 
     protected override void OnUpdate()
     {
         // do this regardless of state 
-        lookTarget = playerTransform.position;
+        enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
     }
 
     #region enter state
     protected override void IdleEnter()
     {
-        speed = walkSpeed;
-        moveTarget = initialPosition;
+        enemy.speed = walkSpeed;
+        enemy.moveTarget = initialPosition;
     }
     protected override void MovingToTargetEnter()
     {
-        speed = runSpeed;
-        shouldPath = true;
-        moveTarget = playerTransform.position;
+        enemy.speed = runSpeed;
+        enemy.shouldPath = true;
+        enemy.moveTarget = enemy.playerTransform.position;
     }
     protected override void LostSightOfTargetEnter()
     {
         remainingChaseTime = chaseTime;
-        shouldPath = true;
-        moveTarget = lastSeenPosition;
+        enemy.shouldPath = true;
+        enemy.moveTarget = lastSeenPosition;
     }
     protected override void AttackingEnter()
     {
-        shouldPath = false;
+        enemy.shouldPath = false;
         remainingAttackTime = attackTime;
 
         if (attackPrefab != null)
         {
-            GameObject hitbox = Instantiate(attackPrefab, mesh.transform);
+            GameObject hitbox = Instantiate(attackPrefab, enemy.mesh.transform);
             hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
         }
     }
@@ -73,21 +73,21 @@ public class EnemyMelee : EnemyBase
     protected override void IdleUpdate()
     {
         // if has line of sight, chase player
-        if (hasLineOfSight)
+        if (enemy.hasLineOfSight)
         {
             SetState(EnemyState.movingToTarget);
         }
     }
     protected override void MovingToTargetUpdate()
     {
-        moveTarget = playerTransform.position;
+        enemy.moveTarget = enemy.playerTransform.position;
 
         // if line of sight is lost, change to lost sight state
-        if (!hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
-        else lastSeenPosition = playerTransform.position; // only update last seen pos if we didnt lose sight this frame
+        if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
+        else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
 
         // if has line of sight and within attack range, switch to attack state
-        if (hasLineOfSight && remainingAttackCooldown <= 0 && Vector3.Distance(transform.position, playerTransform.position) <= attackRange)
+        if (enemy.hasLineOfSight && remainingAttackCooldown <= 0 && Vector3.Distance(transform.position, enemy.playerTransform.position) <= attackRange)
         {
             SetState(EnemyState.attacking);
         }
@@ -102,7 +102,7 @@ public class EnemyMelee : EnemyBase
         }
 
         // chase player
-        if (hasLineOfSight)
+        if (enemy.hasLineOfSight)
         {
             SetState(EnemyState.movingToTarget);
         }

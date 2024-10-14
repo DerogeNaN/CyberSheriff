@@ -359,12 +359,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8781144055303266578}
   - component: {fileID: 8781144055303266590}
-  - component: {fileID: 7868308199360839163}
-  - component: {fileID: 456546549912402000}
+  - component: {fileID: 7825197320810437696}
+  - component: {fileID: 6835624540115931486}
   - component: {fileID: 9017003524051536654}
-  - component: {fileID: 8235846997500683284}
+  - component: {fileID: -6065578235034996897}
   m_Layer: 7
-  m_Name: SniperEnemy
+  m_Name: MeleeEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -403,7 +403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   debugText: {fileID: 3130728591011433805}
---- !u!114 &7868308199360839163
+--- !u!114 &7825197320810437696
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -412,21 +412,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 8781144055303266582}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31d93ca2c493c264da38c7a43260bf8e, type: 3}
+  m_Script: {fileID: 11500000, guid: 001162ed7c5bd1643a80fa3e697fc6da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  stationary: 1
-  runSpeed: 8
-  walkSpeed: 2
-  stopDistance: 10
-  attackRange: 50
-  attackTime: 1
-  attackCooldownMin: 3
-  attackCooldownMax: 3
-  bulletPrefab: {fileID: 946708688116722392, guid: 7e50d3a41778a404e940c95df4e10ae8,
+  runSpeed: 10
+  walkSpeed: 3
+  chaseTime: 2
+  attackPrefab: {fileID: 2145299806175634582, guid: c184ff413ccf685469543a500061ea73,
     type: 3}
---- !u!114 &456546549912402000
+  attackRange: 2
+  attackTime: 0.5
+  attackCooldown: 1
+--- !u!114 &6835624540115931486
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -462,7 +460,7 @@ NavMeshAgent:
   m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 20
-  avoidancePriority: 50
+  avoidancePriority: 10
   m_AngularSpeed: 300
   m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
@@ -472,7 +470,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &8235846997500683284
+--- !u!114 &-6065578235034996897
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

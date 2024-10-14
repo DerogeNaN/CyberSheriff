@@ -360,11 +360,11 @@ GameObject:
   - component: {fileID: 8781144055303266578}
   - component: {fileID: 8781144055303266590}
   - component: {fileID: 7868308199360839163}
-  - component: {fileID: 456546549912402000}
+  - component: {fileID: 1847348131357109332}
   - component: {fileID: 9017003524051536654}
-  - component: {fileID: 8235846997500683284}
+  - component: {fileID: -5185462951309712607}
   m_Layer: 7
-  m_Name: SniperEnemy
+  m_Name: RangedEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -416,17 +416,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  stationary: 1
+  stationary: 0
   runSpeed: 8
   walkSpeed: 2
   stopDistance: 10
-  attackRange: 50
+  attackRange: 30
   attackTime: 1
-  attackCooldownMin: 3
+  attackCooldownMin: 1
   attackCooldownMax: 3
-  bulletPrefab: {fileID: 946708688116722392, guid: 7e50d3a41778a404e940c95df4e10ae8,
+  bulletPrefab: {fileID: 946708688116722392, guid: 48f74cd19883f2041b00f84575f4de80,
     type: 3}
---- !u!114 &456546549912402000
+--- !u!114 &1847348131357109332
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -472,7 +472,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &8235846997500683284
+--- !u!114 &-5185462951309712607
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

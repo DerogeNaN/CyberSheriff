@@ -45,6 +45,6 @@ public class EnemySpawner : MonoBehaviour
         untilNextSpawn = interval;
 
         GameObject go = Instantiate(enemy, transform.position, Quaternion.identity);
-        go.GetComponent<EnemyBase>().playerTransform = playerTransform;
+        //go.GetComponent<EnemyBase>().enemy.playerTransform = playerTransform;
     }
 }
