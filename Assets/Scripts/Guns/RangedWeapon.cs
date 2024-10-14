@@ -81,6 +81,9 @@ public class RangedWeapon : MonoBehaviour
     public GameObject HitEffect;
 
     [SerializeField]
+    public GameObject enemyHitEffect;
+
+    [SerializeField]
     public GameObject BulletHitDecal;
 
     [Header("Scene Refrences")]
@@ -101,10 +104,6 @@ public class RangedWeapon : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Awake()
     {
-
-        Debug.Log("SETTING");
-        //make sure on  Kill isnt all ready an event;
-
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
     }
@@ -144,9 +143,9 @@ public class RangedWeapon : MonoBehaviour
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;
 
-                if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
+                if (rayData.hit.transform.gameObject.layer != 3)
                 {
-                    //..It isn't the player but it is an enemy...?
+
                     if (rayData.hit.rigidbody)
                     {
                         rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -156,22 +155,20 @@ public class RangedWeapon : MonoBehaviour
                         Debug.Log("Does Not have rigidbody");
                     }
 
-                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
+                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
                     {
                         SpawnBulletHoleDecal(rayData);
-                    }
-
-                    //  Debug.Log(" ray hit : " + rayData.hit.collider);
-
-                    if(!rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase nonExistant))
-                    {
                         GameObject hitFX = Instantiate(HitEffect);
                         hitFX.transform.position = rayData.hit.point;
                     }
+
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
+                            GameObject hitFX = Instantiate(enemyHitEffect);
+                            hitFX.transform.position = rayData.hit.point;
+
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                             int damage = DamageValue;
 

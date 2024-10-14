@@ -62,17 +62,16 @@ public class Revolver : RangedWeapon
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
                     {
                         SpawnBulletHoleDecal(rayData);
-                    }
-                    if (!rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase nonExistant))
-                    {
                         GameObject hitFX = Instantiate(HitEffect);
                         hitFX.transform.position = rayData.hit.point;
                     }
+                  
+
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
-                            GameObject hitFX = Instantiate(HitEffect);
+                            GameObject hitFX = Instantiate(enemyHitEffect);
                             hitFX.transform.position = rayData.hit.point;
                             int damage = DamageValue;
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();

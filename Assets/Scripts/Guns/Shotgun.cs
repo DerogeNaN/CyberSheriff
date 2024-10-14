@@ -144,8 +144,7 @@ public class Shotgun : RangedWeapon
                     if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
                         //..It isn't the player but it is an enemy...?
-                        GameObject hitFX = Instantiate(HitEffect);
-                        hitFX.transform.position = rayData.hit.point;
+                       
                         if (rayData.hit.rigidbody)
                         {
                             rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -158,16 +157,20 @@ public class Shotgun : RangedWeapon
                         if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb)) //AND it isn't an enemy
                         {
                             SpawnBulletHoleDecal(rayData);
+                            GameObject hitFX = Instantiate(HitEffect);
+                            hitFX.transform.position = rayData.hit.point;
                         }
 
                         if (rayData.hit.transform.parent)
                         {
                             if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                             {
+
+                                GameObject hitFX = Instantiate(enemyHitEffect);
+                                hitFX.transform.position = rayData.hit.point;
+
                                 Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                                 int damage = DamageValue;
-
-
                                 if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
                                 {
                                     if (eh.isHeadshot == true)
