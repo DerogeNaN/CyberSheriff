@@ -73,6 +73,10 @@ public class Revolver : RangedWeapon
                         {
                             GameObject hitFX = Instantiate(enemyHitEffect);
                             hitFX.transform.position = rayData.hit.point;
+
+                            GameObject hitFX2 = Instantiate(HitEffect);
+                            hitFX2.transform.position = rayData.hit.point;
+
                             int damage = DamageValue;
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                             EnemyHealth.TakeDamage(damage, 0,gameObject);

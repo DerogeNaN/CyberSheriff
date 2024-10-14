@@ -167,8 +167,11 @@ public class RangedWeapon : MonoBehaviour
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
-                            GameObject hitFX = Instantiate(enemyHitEffect);
-                            hitFX.transform.position = rayData.hit.point;
+                            GameObject hitFX = Instantiate(HitEffect);
+                            hitFX.transform.position = rayData.hit.point; 
+
+                            GameObject hitFX2 = Instantiate(enemyHitEffect);
+                            hitFX2.transform.position = rayData.hit.point;
 
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                             int damage = DamageValue;

@@ -169,6 +169,9 @@ public class Shotgun : RangedWeapon
                                 GameObject hitFX = Instantiate(enemyHitEffect);
                                 hitFX.transform.position = rayData.hit.point;
 
+                                GameObject hitFX2 = Instantiate(HitEffect);
+                                hitFX2.transform.position = rayData.hit.point;
+
                                 Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                                 int damage = DamageValue;
                                 if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
