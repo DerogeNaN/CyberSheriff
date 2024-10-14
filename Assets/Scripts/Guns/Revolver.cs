@@ -75,7 +75,7 @@ public class Revolver : RangedWeapon
                             hitFX.transform.position = rayData.hit.point;
                             int damage = DamageValue;
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                            EnemyHealth.TakeDamage(damage, 0);
+                            EnemyHealth.TakeDamage(damage, 0,gameObject);
                         }
                     }
                 }

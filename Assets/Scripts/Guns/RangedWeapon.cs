@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.VFX;
 using static RangedWeapon;
@@ -181,7 +182,7 @@ public class RangedWeapon : MonoBehaviour
                                 }
 
                             }
-                            EnemyHealth.TakeDamage(damage, 0);
+                            EnemyHealth.TakeDamage(damage, 0,gameObject);
                         }
                     }
                 }
@@ -199,6 +200,7 @@ public class RangedWeapon : MonoBehaviour
 
     public void OnKill()
     {
+        
         Debug.Log(" Enemy was Killed.");
         if (shotgun.currentKillstoRecharge < shotgun.RequiredKillsToRecharge)
         {

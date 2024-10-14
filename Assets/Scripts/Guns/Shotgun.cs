@@ -180,7 +180,7 @@ public class Shotgun : RangedWeapon
                                     }
 
                                 }
-                                EnemyHealth.TakeDamage(damage, 0);
+                                EnemyHealth.TakeDamage(damage, 0,gameObject);
                             }
                         }
                     }
