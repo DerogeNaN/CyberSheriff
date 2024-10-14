@@ -8,7 +8,7 @@ public class Health : MonoBehaviour
 {
     public int health = 100;
     public TMP_Text debugText;
-    public GameObject lastHitBy;
+    public GameObject lastHitBy = null;
 
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;

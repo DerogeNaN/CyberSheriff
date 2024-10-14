@@ -25,6 +25,9 @@ public class Shotgun : RangedWeapon
     float inputTime = 0;
 
     [SerializeField]
+    Animator animator;
+
+    [SerializeField]
     bool charged = false;
 
     [Header("I'd Catch a grenade for ya(yeah,yeah,yeah...)")]
