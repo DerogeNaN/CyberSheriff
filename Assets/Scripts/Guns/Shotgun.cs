@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Mathematics;
+using System.Collections;
 using static RangedWeapon;
 using JetBrains.Annotations;
 using Unity.VisualScripting;
@@ -8,6 +9,8 @@ using UnityEngine.Rendering.Universal.Internal;
 
 public class Shotgun : RangedWeapon
 {
+
+
     [Header("I be riding shotgun underneath the hot sun...")]
     [SerializeField]
     int bulletsPerShot = 5;
@@ -24,8 +27,6 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     float inputTime = 0;
 
-    [SerializeField]
-    Animator animator;
 
     [SerializeField]
     bool charged = false;
@@ -87,6 +88,12 @@ public class Shotgun : RangedWeapon
 
         }
 
+        if (shouldShootPrimary == false && waiting == false && reloading == false && canPressAltFire == true)
+        {
+            animator.SetTrigger("ShootCTrig");
+        }
+
+
         if (shouldShootPrimary == false && chargeExited == true && waiting == false && reloading == false && canPressAltFire == true)
         {
             EngagePrimaryFire(charged);
@@ -107,18 +114,38 @@ public class Shotgun : RangedWeapon
 
 
 
+    public override IEnumerator Reload()
+    {
+        animator.SetBool("ReloadBool", true);
+
+        reloading = true;
+        yield return new WaitForSeconds(reloadTime);
+        Debug.Log("Reloading...");
+        canFire = true;
+        if (currentBullets != BulletsPerClip)
+        {
+            currentBullets = BulletsPerClip;
+        }
+        reloading = false;
+        animator.SetBool("ReloadBool", false);
+    }
+
     public void EngagePrimaryFire(bool charged)
     {
+
         chargeExited = false;
         inputTime = 0;
         int pellets;
         //Primary Fire Logic
         if (charged)
         {
+
             pellets = bulletsPerShot * 2;
         }
         else
         {
+            animator.ResetTrigger("ShootCTrig");
+            animator.SetTrigger("ShootTrig");
             pellets = bulletsPerShot;
         }
 
@@ -147,7 +174,7 @@ public class Shotgun : RangedWeapon
                     if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
                     {
                         //..It isn't the player but it is an enemy...?
-                       
+
                         if (rayData.hit.rigidbody)
                         {
                             rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -186,7 +213,7 @@ public class Shotgun : RangedWeapon
                                     }
 
                                 }
-                                EnemyHealth.TakeDamage(damage, 0,gameObject);
+                                EnemyHealth.TakeDamage(damage, 0, gameObject);
                             }
                         }
                     }
@@ -233,6 +260,8 @@ public class Shotgun : RangedWeapon
     {
         if (grenadeReady)
         {
+
+            animator.ResetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
             RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
             grenadeRB.gameObject.transform.position = muzzlePoint.position;

@@ -87,6 +87,9 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public GameObject BulletHitDecal;
 
+    [SerializeField]
+    public Animator animator;
+
     [Header("Scene Refrences")]
     [SerializeField]
     public Camera camRef;
@@ -139,6 +142,7 @@ public class RangedWeapon : MonoBehaviour
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
+           
             currentBullets--;
             if (rayData.hit.point != null)
             {

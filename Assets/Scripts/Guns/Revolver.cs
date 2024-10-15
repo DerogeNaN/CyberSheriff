@@ -4,21 +4,19 @@ using Unity.Mathematics;
 
 public class Revolver : RangedWeapon
 {
-    public Animator animator;
+    
 
     [Header("Other Values")]
     [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
     {
         //make sure on  Kill isnt all ready an event;
-
-        animator.SetBool("ShootBool", true);
+        animator.SetTrigger("ShootTrig");
         base.EngagePrimaryFire();
     }
 
     public override IEnumerator Reload()
     {
-        animator.SetBool("ShootBool", false);
         animator.SetBool("ReloadBool", true);
 
         reloading = true;
@@ -43,6 +41,7 @@ public class Revolver : RangedWeapon
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
             currentBullets--;
+            animator.SetTrigger("ShootAltTrig");
             if (rayData.hit.point != null)
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;

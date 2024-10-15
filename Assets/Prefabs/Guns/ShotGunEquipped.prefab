@@ -54,7 +54,7 @@ MonoBehaviour:
   shotGapTime: 1
   AltshotGapTime: 0.01
   reloadTime: 2
-  BulletsPerClip: 6
+  BulletsPerClip: 2
   currentBullets: 0
   shouldShootPrimary: 0
   shouldShootAlt: 0
@@ -69,14 +69,14 @@ MonoBehaviour:
     type: 3}
   BulletHitDecal: {fileID: 1200606425068812548, guid: 5b263b1b0e8f39141b9fc3541f53b638,
     type: 3}
+  animator: {fileID: 2056443296438645499}
   camRef: {fileID: 0}
   CurrentlyHitting: {fileID: 0}
   bulletsPerShot: 5
   chargeExited: 0
-  spreadMultiplier: 1
+  spreadMultiplier: 0.28
   chargeTime: 2
   inputTime: 0
-  animator: {fileID: 2056443296438645499}
   charged: 0
   Grenade: {fileID: 911812781045158418, guid: 9fb5ac429395f914a98b1146e2ebab00, type: 3}
   grenadeLaucherForceMultiplier: 0
@@ -151,6 +151,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Shotgun_Animated_Mesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 9095630369490628685, guid: ef21f6f2a579ec44fb657fa27f5e0e94,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9095630369490628685, guid: ef21f6f2a579ec44fb657fa27f5e0e94,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9095630369490628685, guid: ef21f6f2a579ec44fb657fa27f5e0e94,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef21f6f2a579ec44fb657fa27f5e0e94, type: 3}

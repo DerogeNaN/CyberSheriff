@@ -43,9 +43,12 @@ public class Health : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw))
-            enemyKill();
-        else
-            Debug.Log("Seems Like a grenade");
+        if (lastHitBy)
+        {
+            if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw))
+                enemyKill();
+            else
+                Debug.Log("Seems Like a grenade");
+        }
     }
 }
