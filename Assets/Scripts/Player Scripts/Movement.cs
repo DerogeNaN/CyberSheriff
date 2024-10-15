@@ -37,7 +37,7 @@ public class Movement : MonoBehaviour
     #region Physics
     [Header("Physic Settings")]
     [SerializeField]
-    private float gravityMultiplier = 5f;
+    private float gravityStrength = 5f;
 
     #endregion
 
@@ -73,7 +73,6 @@ public class Movement : MonoBehaviour
     [Space(10.0f)]
     [Header("Backend Variables (TEST)")]    //Local Variables
     public Vector3 velocity = Vector3.zero;
-    //private Vector3 previousMomentum = Vector3.zero;
     public Vector3 movementInputWorld = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
@@ -100,12 +99,11 @@ public class Movement : MonoBehaviour
     [Range(0, 1)]public float slideDrag = 10;
 
     //----PHYSICS----
-    [Range(0,1)]public float groundDrag = 15;
     public float currEncouragment;
     public int encouragedGroundMomentum = 3;
     public int encouragedAirMomentum = 35;
     public int encouragedSlideMomentum = 30;
-    [Range(0, 100)] public int slowDownPercentage = 30;
+    public int slowDownPercentage = 30;
     private float momentumRatio;
     private float actualGravity = 0;
 
@@ -121,7 +119,6 @@ public class Movement : MonoBehaviour
     public bool isDashing = false;
     public bool isTryingDashing = false;
     public float dashDistance = 10.0f;
-    public float dashForce = 2.0f;
     public float dashTime = 0.5f;
     public float dashStartTime = 0;
     public float lastDashTime = 0;
@@ -165,8 +162,6 @@ public class Movement : MonoBehaviour
 
     public void UpdateMovement()
     {
-        actualGravity = 0.1f * gravityMultiplier;
-
         //TODO: change the currEncourangment check to account for a new "encouragedSlideMomentum"
         if (isSliding && isGrounded) currEncouragment = encouragedSlideMomentum;
         else if (!isGrounded) currEncouragment = encouragedAirMomentum;
@@ -188,6 +183,7 @@ public class Movement : MonoBehaviour
         movementInputWorld = transform.forward * movementInputLocal.y + transform.right * movementInputLocal.x;
 
         if (isTryingSlide) SlideCheck();
+        else isSliding = false;
 
 
         MoveCameraTowardsTransformHeight(isSliding ? cameraSlidePos : cameraDefaultPos);
@@ -198,7 +194,7 @@ public class Movement : MonoBehaviour
             standingCollider.enabled = false;
             slideCollider.enabled = true;
 
-            if (velocity.magnitude <= 0.01f) isSliding = false;
+            if (velocity.magnitude <= 1) isSliding = false;
         }
         else
         {
@@ -210,6 +206,7 @@ public class Movement : MonoBehaviour
                 if (isWallRunning)
                 {
                     TiltCameraFromWall(cameraWallrunTilt, cameraWallRunTiltTime, wallNormal);
+                    movementInputWorld = Vector3.zero;
                 }
                 else
                 {
@@ -224,15 +221,13 @@ public class Movement : MonoBehaviour
         Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         float encouragedAmount = Vector3.Dot(movementInputWorld, horizontalVelocity.normalized) * (1 - momentumRatio);
 
-        Vector3 targetVelocity = (movementInputWorld * moveSpeed) * (momentumRatio + Mathf.Clamp(encouragedAmount, 0, 1));
+        Vector3 targetVelocity = (movementInputWorld * moveSpeed) * (momentumRatio);
 
-
-        #region VELOCITY_DOESNT_MEAN_VELOCITY_HERE
-        if ((targetVelocity + horizontalVelocity).magnitude >= maxPlayerInputSpeed)
+        if ((targetVelocity + horizontalVelocity).magnitude >= maxPlayerInputSpeed && !isDashing)
         {
             float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, targetVelocity.magnitude);
             resultantMagnitude -= targetVelocity.magnitude;
-            horizontalVelocity =  horizontalVelocity.normalized * resultantMagnitude;
+            if (!isSliding) horizontalVelocity =  horizontalVelocity.normalized * resultantMagnitude;
 
             velocity.x = horizontalVelocity.x;
             velocity.z = horizontalVelocity.z;
@@ -240,7 +235,6 @@ public class Movement : MonoBehaviour
 
         velocity.x += targetVelocity.x;
         velocity.z += targetVelocity.z;
-        #endregion
 
         if (movementInputLocal == Vector2.zero && isGrounded && !isSliding && !isDashing)
         {
@@ -272,7 +266,7 @@ public class Movement : MonoBehaviour
         Grappling();
 
         rb.velocity = Vector3.zero;
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        //velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         transform.position += velocity * Time.deltaTime;
     }
 
@@ -309,7 +303,7 @@ public class Movement : MonoBehaviour
     {
         if (!isGrounded)
         {
-            velocity.y -= actualGravity;
+            velocity.y -= gravityStrength * Time.deltaTime;
         }
     }
 
@@ -374,9 +368,8 @@ public class Movement : MonoBehaviour
             isDashing = true;
             dashStartTime = Time.time;
 
-            RaycastHit hit;
             if (!Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position - new Vector3(0, 0.5f, 0), 
-                0.45f, dashDirection, out hit, dashDistance, ~12))
+                0.45f, dashDirection, dashDistance * Time.deltaTime, ~12))
             {
                 isWallRunning = false;
                 velocity = dashDirection * dashDistance;
@@ -524,7 +517,7 @@ public class Movement : MonoBehaviour
 
     void GroundCheck()
     {
-        if (Physics.SphereCast(transform.position, 0.35f, Vector3.down, out RaycastHit hitInfo, 100.0f, ~0b00001100))
+        if (Physics.SphereCast(transform.position, 0.45f, Vector3.down, out RaycastHit hitInfo, 100.0f, ~0b00001100))
         {
            // Debug.Log(hitInfo.collider.gameObject);
             if (hitInfo.distance <= 0.75f)
@@ -555,7 +548,7 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 transform.position + new Vector3(0, 0.5f, 0),
                 transform.position - new Vector3(0, 0.5f, 0),
-                0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude, ~12, QueryTriggerInteraction.Ignore
+                0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
                 velocity = Vector3.ClampMagnitude(velocity, hit.distance);
@@ -574,7 +567,7 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 slideCollider.transform.position - new Vector3(0.5f, 0, 0),
                 slideCollider.transform.position + new Vector3(0.5f, 0, 0),
-                0.35f, velocity.normalized, out RaycastHit hit, velocity.magnitude, ~12, QueryTriggerInteraction.Ignore
+                0.35f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
                 velocity = Vector3.ClampMagnitude(velocity, hit.distance);
