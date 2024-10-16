@@ -43,7 +43,7 @@ public class UIManager : MonoBehaviour
         optionsMenu.SetActive(false);
         creditsMenu.SetActive(false);
 
-        SceneManager.LoadScene("Stan Lvl 2");
+        SceneManager.LoadScene("Alec_Stan Lvl 2");
     }
 
     public void LeaderboardButton()

@@ -9,6 +9,8 @@ public class PauseMenu : MonoBehaviour
     //[SerializeField] private PlayerManager playerManager;
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject optionsMenu;
+    [SerializeField] public GameObject winScreen;
+    [SerializeField] public GameObject loseScreen;
 
     public bool isPaused = false;
 
@@ -28,7 +30,6 @@ public class PauseMenu : MonoBehaviour
     
     public void PauseGame()
     {
-        Debug.Log("Pausing -------------------------------------"); 
         //Pausing gameplay
         Time.timeScale = 0;
         isPaused = true;
@@ -45,7 +46,6 @@ public class PauseMenu : MonoBehaviour
 
     public void ResumeGame()
     {
-        Debug.Log("Resuming -------------------------------------");
         //Resuming gameplay
         Time.timeScale = 1;
         isPaused = false;
@@ -77,6 +77,16 @@ public class PauseMenu : MonoBehaviour
         optionsMenu.SetActive(false);
         pauseMenu.SetActive(false);
 
+
         SceneManager.LoadScene("Alec_Main_Menu");
+    }
+
+    public void QuitGame()
+    {   
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
+        
     }
 }

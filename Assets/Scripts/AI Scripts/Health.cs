@@ -1,6 +1,3 @@
-using Autodesk.Fbx;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -37,15 +34,23 @@ public class Health : MonoBehaviour
             health = 0;
             //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);
-            if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
         }
     }
 
     private void OnDestroy()
     {
-        if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw))
-            enemyKill();
+        if (lastHitBy != null) 
+        { 
+            if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw)) enemyKill();
+        }
+        
         else
             Debug.Log("Seems Like a grenade");
+
+        if (WaveManager.waveManagerInstance != null)
+        {
+            WaveManager.waveManagerInstance.enemiesRemaining--;
+            if (WaveManager.waveManagerInstance.enemiesRemaining <= 0) WaveManager.waveManagerInstance.timerScript.StartBreakTimer();
+        }
     }
 }

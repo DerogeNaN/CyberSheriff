@@ -5,15 +5,16 @@ using TMPro;
 
 public class Timer : MonoBehaviour
 {
-    private float elapsedTime;
-    private bool isTiming;
+    public float timeLeft;
+    public bool isTiming = false;
+    private bool isTimingBreak = false;
 
     public TMP_Text timerText;  // Assign a UI Text element in the Inspector
     public TMP_Text timerShadowText;
 
     void Start()
     {
-
+        StartBreakTimer();
 
         timerText = GameObject.Find("Time").GetComponent<TextMeshProUGUI>();
         //timerText = GetComponentInChildren<TextMeshProUGUI>();
@@ -22,17 +23,31 @@ public class Timer : MonoBehaviour
     }
     void Update()
     {
-        if (isTiming)
+        if (isTiming && !isTimingBreak)
         {
-            elapsedTime += Time.deltaTime;
-            UpdateTimerDisplay(elapsedTime);
+            timeLeft -= Time.deltaTime;
+            if (timeLeft < 0)
+            {
+                WaveManager.waveManagerInstance.LoseCondition();
+            }
         }
+        else if (isTimingBreak && !isTiming)
+        {
+            timeLeft -= Time.deltaTime;
+            if (timeLeft <= 0)
+            {
+                WaveManager.waveManagerInstance.StartWave();
+            }
+        }
+        UpdateTimerDisplay(timeLeft);
     }
 
     // Method to start the timer
     public void StartTimer()
     {
         isTiming = true;
+        isTimingBreak = false;
+        timeLeft = WaveManager.waveManagerInstance.waveTime;
     }
 
     // Method to stop the timer
@@ -41,11 +56,18 @@ public class Timer : MonoBehaviour
         isTiming = false;
     }
 
+    public void StartBreakTimer()
+    {
+        isTimingBreak = true;
+        timeLeft = WaveManager.waveManagerInstance.timeBetweenWaves;
+        isTiming = false;
+    }
+
     // Method to reset the timer (optional)
     public void ResetTimer()
     {
-        elapsedTime = 0f;
-        UpdateTimerDisplay(elapsedTime);
+        timeLeft = WaveManager.waveManagerInstance.waveTime;
+        UpdateTimerDisplay(timeLeft);
     }
 
     // Format and display the timer

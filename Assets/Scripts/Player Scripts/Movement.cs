@@ -174,7 +174,7 @@ public class Movement : MonoBehaviour
         //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        Debug.DrawRay(transform.position, velocity * 5, Color.red);
+        Debug.DrawRay(transform.position, velocity * 2, Color.red);
     }
 
     void MovePlayer()
@@ -221,13 +221,13 @@ public class Movement : MonoBehaviour
         Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         float encouragedAmount = Vector3.Dot(movementInputWorld, horizontalVelocity.normalized) * (1 - momentumRatio);
 
-        Vector3 targetVelocity = (movementInputWorld * moveSpeed) * (momentumRatio);
+        Vector3 targetVelocity = (movementInputWorld * moveSpeed) * momentumRatio;
 
         if ((targetVelocity + horizontalVelocity).magnitude >= maxPlayerInputSpeed && !isDashing)
         {
             float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, targetVelocity.magnitude);
             resultantMagnitude -= targetVelocity.magnitude;
-            if (!isSliding) horizontalVelocity =  horizontalVelocity.normalized * resultantMagnitude;
+            if (!isSliding) horizontalVelocity = horizontalVelocity.normalized * resultantMagnitude;
 
             velocity.x = horizontalVelocity.x;
             velocity.z = horizontalVelocity.z;
@@ -567,7 +567,7 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 slideCollider.transform.position - new Vector3(0.5f, 0, 0),
                 slideCollider.transform.position + new Vector3(0.5f, 0, 0),
-                0.35f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
+                0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
                 velocity = Vector3.ClampMagnitude(velocity, hit.distance);
