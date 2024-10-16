@@ -473,6 +473,7 @@ public class Movement : MonoBehaviour
             Vector3 targetDirection = grappleObject.transform.position - transform.position;
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
+            lastGrappleTime = Time.time;
         }
     }
 
@@ -487,7 +488,7 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
-        lastGrappleTime = Time.time;
+        //lastGrappleTime = Time.time;
     }
 
     private void UntiltCamera(float tiltAngle, float tiltSpeed)

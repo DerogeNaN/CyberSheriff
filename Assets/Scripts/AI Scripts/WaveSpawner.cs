@@ -15,11 +15,25 @@ public class WaveSpawner : MonoBehaviour
 
     void Start()
     {
-        WaveManager.StartNewWave += PrepareNextWave;
-        waves = new GameObject[][] { wave1Enemies, wave2Enemies, wave3Enemies };
-        //spawnZone = GetComponent<BoxCollider>();
+        // Always reassign spawnZone reference in case the reference is lost
+        spawnZone = GetComponent<BoxCollider>();
+
+        if (spawnZone == null)
+        {
+            Debug.LogError("Failed to retrieve BoxCollider component on spawnZone!");
+            return;  // Exit the Start method if spawnZone is missing
+        }
+
+        // Proceed with setup if spawnZone exists
         center = transform.position;
         size = spawnZone.size;
+
+        WaveManager.StartNewWave += PrepareNextWave;
+        waves = new GameObject[][] { wave1Enemies, wave2Enemies, wave3Enemies };
+
+        //spawnZone = GetComponent<BoxCollider>();
+        //center = transform.position;
+        //size = spawnZone.size;
     }
 
     void SpawnWave(int waveNumber)
@@ -35,7 +49,14 @@ public class WaveSpawner : MonoBehaviour
 
     void PrepareNextWave()
     {
-        Debug.Log("Preparing wave:" + (WaveManager.waveManagerInstance.waveNumber + 1));
+        if (spawnZone == null)
+        {
+            Debug.LogError("SpawnZone is null in PrepareNextWave!");
+        }
+        else
+        {
+            Debug.Log("SpawnZone is valid in PrepareNextWave.");
+        }
         SpawnWave(WaveManager.waveManagerInstance.waveNumber);
     }
 }

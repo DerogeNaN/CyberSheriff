@@ -29,7 +29,14 @@ public class WaveManager : MonoBehaviour
 
     void Awake()
     {
-        waveManagerInstance = this;
+        if (waveManagerInstance == null)
+        {
+            waveManagerInstance = this;
+        }
+        else if (waveManagerInstance != this)
+        {
+            Destroy(gameObject);  // Avoid keeping duplicate managers
+        }
     }
 
     
@@ -66,6 +73,7 @@ public class WaveManager : MonoBehaviour
     {
         waveNumber = 0;
         enemiesRemaining = 0;
+        StartNewWave = null;  // Unsubscribe from event ADDED THIS MAYBE?
         Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
@@ -78,6 +86,7 @@ public class WaveManager : MonoBehaviour
     {
         waveNumber = 0;
         enemiesRemaining = 0;
+        StartNewWave = null;  // Unsubscribe from event ADDED THIS MAYBE THIS DID IT?
         Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
