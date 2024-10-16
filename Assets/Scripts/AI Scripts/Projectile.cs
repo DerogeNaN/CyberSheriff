@@ -22,7 +22,7 @@ public class Projectile : MonoBehaviour
             other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage, 0);
             Destroy(gameObject);
         }
-        else if (other.gameObject.CompareTag("Wall"))
+        else if (!other.gameObject.CompareTag("EnemyHitbox"))
         {
             Destroy(gameObject);
         }
