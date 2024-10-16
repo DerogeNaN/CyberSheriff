@@ -77,7 +77,7 @@ public class AoeDamager : MonoBehaviour
                     //make sure on  Kill isnt all ready an event;
                    
                     Debug.Log(hitCollider.name + "Was Caught in Blast");
-                    hpscript.TakeDamage(damage, 0);
+                    hpscript.TakeDamage(damage, 0,gameObject);
                     continue;
                 }
                 else if (hitCollider.transform.parent.TryGetComponent<Health>(out hpscript))
@@ -88,7 +88,7 @@ public class AoeDamager : MonoBehaviour
                     //make sure on  Kill isnt all ready an event;
                  
 
-                    hpscript.TakeDamage(damage, 0);
+                    hpscript.TakeDamage(damage, 0,gameObject);
                     continue;
                 }
                 else
@@ -98,7 +98,7 @@ public class AoeDamager : MonoBehaviour
             {
                 Debug.Log(hpscript);
                 Debug.Log(hitCollider.name + "Was Caught in Blast");
-                hpscript.TakeDamage(damage, 0);
+                hpscript.TakeDamage(damage, 0,gameObject);
             }
         }
         Destroy(gameObject);

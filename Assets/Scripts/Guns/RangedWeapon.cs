@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.VFX;
 using static RangedWeapon;
@@ -81,6 +82,9 @@ public class RangedWeapon : MonoBehaviour
     public GameObject HitEffect;
 
     [SerializeField]
+    public GameObject enemyHitEffect;
+
+    [SerializeField]
     public GameObject BulletHitDecal;
 
     [Header("Scene Refrences")]
@@ -101,10 +105,6 @@ public class RangedWeapon : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Awake()
     {
-
-        Debug.Log("SETTING");
-        //make sure on  Kill isnt all ready an event;
-
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
     }
@@ -144,11 +144,9 @@ public class RangedWeapon : MonoBehaviour
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;
 
-                if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
+                if (rayData.hit.transform.gameObject.layer != 3)
                 {
-                    //..It isn't the player but it is an enemy...?
-                    GameObject hitFX = Instantiate(HitEffect);
-                    hitFX.transform.position = rayData.hit.point;
+
                     if (rayData.hit.rigidbody)
                     {
                         rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -158,17 +156,23 @@ public class RangedWeapon : MonoBehaviour
                         Debug.Log("Does Not have rigidbody");
                     }
 
-                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb)) //AND it isn't an enemy
+                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
                     {
                         SpawnBulletHoleDecal(rayData);
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = rayData.hit.point;
                     }
-
-                    //  Debug.Log(" ray hit : " + rayData.hit.collider);
 
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
+                            GameObject hitFX = Instantiate(HitEffect);
+                            hitFX.transform.position = rayData.hit.point; 
+
+                            GameObject hitFX2 = Instantiate(enemyHitEffect);
+                            hitFX2.transform.position = rayData.hit.point;
+
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                             int damage = DamageValue;
 
@@ -181,7 +185,7 @@ public class RangedWeapon : MonoBehaviour
                                 }
 
                             }
-                            EnemyHealth.TakeDamage(damage, 0);
+                            EnemyHealth.TakeDamage(damage, 0,gameObject);
                         }
                     }
                 }
@@ -199,6 +203,7 @@ public class RangedWeapon : MonoBehaviour
 
     public void OnKill()
     {
+        
         Debug.Log(" Enemy was Killed.");
         if (shotgun.currentKillstoRecharge < shotgun.RequiredKillsToRecharge)
         {
