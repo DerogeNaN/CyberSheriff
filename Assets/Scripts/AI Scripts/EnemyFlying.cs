@@ -1,60 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class EnemyFlying : EnemyBase
 {
-    [Header("Flying Settings")]
-    public float targetHeight = 1.0f;
-    public float targetDistance = 3.0f;
-    public float maxSpeed = 5.0f;
-    public float accelerationSpeed = 1.0f;
-    public float decelerationSpeed = 2.0f;
+    [Header("Flying Movement Settings")]
+    public float maxSpeed;
+    public float turnSpeed;
+    public float acceleration;
+    public float deceleration;
+    public float yOffset;
 
-    private Vector3 velcoity;
+    [Header("Flying Advanced Settings")]
+    public float closeDistance;
+    public float zeroVelocityBuffer;
+
+    Vector3 dir;
+    Vector3 toPlayer;
+    float currentSpeed;
+
+    bool close;
 
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
         enemy.shouldPath = false;
+        dir = Vector3.zero;
     }
 
     protected override void OnUpdate()
     {
         enemy.lookTarget = enemy.playerTransform.position;
 
-        transform.position += velcoity * Time.deltaTime;
-
-        //if (velcoity.magnitude < 0.1f) velcoity = Vector3.zero;
+        toPlayer = enemy.playerTransform.position - transform.position + new Vector3(0, yOffset, 0);
+        close = toPlayer.magnitude <= closeDistance;
     }
 
-    protected override void IdleUpdate()
+    private void FixedUpdate()
     {
-        if (enemy.hasLineOfSight)
+        if (toPlayer.magnitude > closeDistance)
         {
-            SetState(EnemyState.movingToTarget);
-        }
-        else if (velcoity.magnitude > 0)
-        {
-            velcoity -= velcoity.normalized * decelerationSpeed * Time.deltaTime;
-        }
-    }
+            // look at player
+            dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
 
-    protected override void MovingToTargetUpdate()
-    {
-        if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
-
-        Vector3 toPlayer = enemy.playerTransform.position - transform.position;
-        float distanceToPlayer = toPlayer.magnitude;
-        
-        if (distanceToPlayer >= targetDistance && velcoity.magnitude <= maxSpeed)
-        {
-            velcoity += toPlayer.normalized * accelerationSpeed * Time.deltaTime;
+            // increase speed
+            if (currentSpeed < maxSpeed) currentSpeed += acceleration;
+            else currentSpeed = maxSpeed;
         }
         else
         {
-            velcoity -= velcoity.normalized * decelerationSpeed * Time.deltaTime;
+            // decrease speed
+            if (currentSpeed > 0.0f) currentSpeed -= deceleration;
+            else currentSpeed = 0.0f;
         }
+
+        // apply movement
+        transform.position += currentSpeed * dir * Time.deltaTime;
     }
 }
