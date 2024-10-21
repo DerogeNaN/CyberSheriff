@@ -10,14 +10,13 @@ public class Revolver : RangedWeapon
     [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
     {
-        //make sure on  Kill isnt all ready an event;
         animator.SetTrigger("ShootTrig");
         base.EngagePrimaryFire();
     }
 
     public override IEnumerator Reload()
     {
-        animator.SetBool("ReloadBool", true);
+        animator.SetTrigger("ReloadTrigger");
 
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
@@ -28,7 +27,6 @@ public class Revolver : RangedWeapon
             currentBullets = BulletsPerClip;
         }
         reloading = false;
-        animator.SetBool("ReloadBool", false);
     }
 
     public override void EngageAltFire()
@@ -58,7 +56,7 @@ public class Revolver : RangedWeapon
                         Debug.Log("Does Not have rigidbody");
                     }
 
-                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
+                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb))
                     {
                         SpawnBulletHoleDecal(rayData);
                         GameObject hitFX = Instantiate(HitEffect);
@@ -68,7 +66,7 @@ public class Revolver : RangedWeapon
 
                     if (rayData.hit.transform.parent)
                     {
-                        if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                        if (rayData.hit.transform.parent.TryGetComponent(out EnemyBase eb2))
                         {
                             GameObject hitFX = Instantiate(enemyHitEffect);
                             hitFX.transform.position = rayData.hit.point;

@@ -5,6 +5,8 @@ using static RangedWeapon;
 using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine.Rendering.Universal.Internal;
+using System.Linq.Expressions;
+using UnityEditor.AnimatedValues;
 
 
 public class Shotgun : RangedWeapon
@@ -39,7 +41,7 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     float grenadeLaucherForceMultiplier;
 
-    [Tooltip("Please dont mess with This(Grenade will be ready once grenade timer reach grenade cooldown  just reduce th cooldown if its to slow)")]
+    [Tooltip("Please dont mess with This(Grenade will be ready so Long as the ammo is above zero)")]
     [SerializeField]
     public bool grenadeReady = false;
 
@@ -47,7 +49,7 @@ public class Shotgun : RangedWeapon
     public int RequiredKillsToRecharge = 5;
 
     [SerializeField]
-    public int currentKillstoRecharge = 0;
+    public int currentKillsToRecharge = 0;
 
     [SerializeField]
     public int grenadeAmmo = 3;
@@ -75,6 +77,7 @@ public class Shotgun : RangedWeapon
 
                 if (inputTime >= chargeTime)
                 {
+                  
                     charged = true;
                     inputTime = 0;
 
@@ -88,9 +91,10 @@ public class Shotgun : RangedWeapon
 
         }
 
-        if (shouldShootPrimary == false && waiting == false && reloading == false && canPressAltFire == true)
+        if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true && currentBullets > 1)
         {
-            animator.SetTrigger("ShootCTrig");
+               animator.SetBool("ChargeBool",true);
+            //animator.ResetTrigger("ChargeTrigger");
         }
 
 
@@ -116,8 +120,9 @@ public class Shotgun : RangedWeapon
 
     public override IEnumerator Reload()
     {
-        animator.SetBool("ReloadBool", true);
+        //ForceFeed Maybe?
 
+        animator.SetTrigger("ReloadTrigger");
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
         Debug.Log("Reloading...");
@@ -127,31 +132,30 @@ public class Shotgun : RangedWeapon
             currentBullets = BulletsPerClip;
         }
         reloading = false;
-        animator.SetBool("ReloadBool", false);
     }
 
     public void EngagePrimaryFire(bool charged)
     {
-
         chargeExited = false;
         inputTime = 0;
         int pellets;
         //Primary Fire Logic
-        if (charged)
+        if (charged && currentBullets > 1)
         {
 
+            animator.SetTrigger("ShootCTrig");
             pellets = bulletsPerShot * 2;
         }
         else
         {
-            animator.ResetTrigger("ShootCTrig");
+
             animator.SetTrigger("ShootTrig");
             pellets = bulletsPerShot;
         }
 
         if (currentBullets > 0)
         {
-            if (charged)
+            if (charged && currentBullets > 1)
             {
                 currentBullets -= 2;
                 BulletFlash.Play();
@@ -169,11 +173,11 @@ public class Shotgun : RangedWeapon
                 RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
                 if (rayData.hit.point != null)
                 {
-                    CurrentlyHitting = rayData.hit.transform.gameObject;
+                    //CurrentlyHitting = rayData.hit.transform.gameObject;
 
-                    if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
+                    if (rayData.hit.transform.gameObject.layer != 3)
                     {
-                        //..It isn't the player but it is an enemy...?
+
 
                         if (rayData.hit.rigidbody)
                         {
@@ -184,7 +188,7 @@ public class Shotgun : RangedWeapon
                             Debug.Log("Does Not have rigidbody");
                         }
 
-                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb)) //AND it isn't an enemy
+                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb))
                         {
                             SpawnBulletHoleDecal(rayData);
                             GameObject hitFX = Instantiate(HitEffect);
@@ -193,7 +197,7 @@ public class Shotgun : RangedWeapon
 
                         if (rayData.hit.transform.parent)
                         {
-                            if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                            if (rayData.hit.transform.parent.TryGetComponent(out EnemyBase eb2))
                             {
 
                                 GameObject hitFX = Instantiate(enemyHitEffect);
@@ -289,7 +293,8 @@ public class Shotgun : RangedWeapon
     //Active every interval of Primaryfire set in this script
     public override void OnPrimaryFireStay()
     {
-        shouldShootPrimary = true;
+        if (reloading == false)
+            shouldShootPrimary = true;
     }
 
     //Active every interval  of altfire set in this script
@@ -307,6 +312,7 @@ public class Shotgun : RangedWeapon
     {
         shouldShootPrimary = false;
         chargeExited = true;
+        animator.SetBool("ChargeBool", false);
         Debug.Log("end Primary Fire");
     }
 

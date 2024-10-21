@@ -209,16 +209,16 @@ public class RangedWeapon : MonoBehaviour
     {
         
         Debug.Log(" Enemy was Killed.");
-        if (shotgun.currentKillstoRecharge < shotgun.RequiredKillsToRecharge)
+        if (shotgun.currentKillsToRecharge < shotgun.RequiredKillsToRecharge)
         {
-            shotgun.currentKillstoRecharge++;
+            shotgun.currentKillsToRecharge++;
         }
 
-        if (shotgun.currentKillstoRecharge >= shotgun.RequiredKillsToRecharge)
+        if (shotgun.currentKillsToRecharge >= shotgun.RequiredKillsToRecharge)
         {
             if (shotgun.grenadeAmmo < shotgun.grenadeAmmoMax)
                 shotgun.grenadeAmmo++;
-            shotgun.currentKillstoRecharge = 0;
+            shotgun.currentKillsToRecharge = 0;
             Debug.Log("grenade Gained");
         }
 
