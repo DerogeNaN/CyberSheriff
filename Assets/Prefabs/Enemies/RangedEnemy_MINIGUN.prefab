@@ -348,6 +348,7 @@ GameObject:
   - component: {fileID: 6991281258385706519}
   - component: {fileID: 7347678125838754822}
   - component: {fileID: 7347678125838754823}
+  - component: {fileID: -1349017783242776033}
   m_Layer: 7
   m_Name: RangedEnemy_MINIGUN
   m_TagString: Untagged
@@ -386,6 +387,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   debugText: {fileID: 3722352282116432452}
+  lastHitBy: {fileID: 0}
 --- !u!114 &7347678125838754822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,23 +400,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d93ca2c493c264da38c7a43260bf8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 1
-  health: 100
-  playerTransform: {fileID: 0}
-  sightRange: 30
   state: 0
-  debugStateText: {fileID: 6991281258233866409}
-  mesh: {fileID: 1836709804989361481}
-  lineOfSightOffset: {x: 0, y: 0, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
   stationary: 0
   runSpeed: 10
   walkSpeed: 4
   stopDistance: 15
   attackRange: 30
   attackTime: 0.01
-  attackCooldown: 0.01
+  attackCooldownMin: 1
+  attackCooldownMax: 3
   bulletPrefab: {fileID: 946708688116722392, guid: 48f74cd19883f2041b00f84575f4de80,
     type: 3}
 --- !u!195 &7347678125838754823
@@ -439,6 +433,30 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-1349017783242776033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6991281258385706527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 0
+  sightRange: 25
+  speed: 5
+  mesh: {fileID: 919132149155446097, guid: e34ee608805647b4aa8b699a44ceada2, type: 3}
+  lineOfSightOffset: {x: 0, y: 0, z: 0}
+  floorRaycastPos: {x: 0, y: 0, z: 0}
+  floorRaycastLength: 0
+  playerTransform: {fileID: 0}
+  moveTarget: {x: 0, y: 0, z: 0}
+  lookTarget: {x: 0, y: 0, z: 0}
+  hasLineOfSight: 0
+  shouldPath: 0
 --- !u!1 &7397408616369813214
 GameObject:
   m_ObjectHideFlags: 0
