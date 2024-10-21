@@ -549,17 +549,22 @@ public class Movement : MonoBehaviour
             if (Physics.CapsuleCast(
                 transform.position + new Vector3(0, 0.5f, 0),
                 transform.position - new Vector3(0, 0.5f, 0),
-                0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
+                0.5f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
-                velocity = Vector3.ClampMagnitude(velocity, hit.distance);
 
-                //float velocityInNormalDirection = Vector3.Dot(momentum, hit.normal);
-                //
-                //if (velocityInNormalDirection < 0)
-                //{
-                //    momentum -= velocityInNormalDirection * hit.normal;
-                //}
+                float velocityInNormalDirection = Vector3.Dot(velocity, hit.normal);
+
+                velocity -= velocityInNormalDirection * hit.normal;
+                
+                if (Vector3.Dot(hit.normal, Vector3.up) <= 0.25f)
+                {
+                    float clampAmmount = Vector3.Dot(movementInputWorld, -hit.normal);
+                    clampAmmount = 1 - clampAmmount;
+                    
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                }
             }
         }
         
@@ -571,14 +576,14 @@ public class Movement : MonoBehaviour
                 0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
-                velocity = Vector3.ClampMagnitude(velocity, hit.distance);
+                //velocity = Vector3.ClampMagnitude(velocity, hit.distance);
 
-                //float velocityInNormalDirection = Vector3.Dot(momentum, hit.normal);
-                //
-                //if (velocityInNormalDirection < 0)
-                //{
-                //    momentum -= velocityInNormalDirection * hit.normal;
-                //}
+                float velocityInNormalDirection = Vector3.Dot(velocity, hit.normal);
+                
+                if (velocityInNormalDirection < 0)
+                {
+                    velocity -= velocityInNormalDirection * hit.normal;
+                }
             }
         }
     }
