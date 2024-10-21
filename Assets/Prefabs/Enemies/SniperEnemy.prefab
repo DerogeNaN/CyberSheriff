@@ -50,7 +50,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7989121754168259081}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -360,7 +360,9 @@ GameObject:
   - component: {fileID: 8781144055303266578}
   - component: {fileID: 8781144055303266590}
   - component: {fileID: 7868308199360839163}
+  - component: {fileID: 456546549912402000}
   - component: {fileID: 9017003524051536654}
+  - component: {fileID: 8235846997500683284}
   m_Layer: 7
   m_Name: SniperEnemy
   m_TagString: Untagged
@@ -401,6 +403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   debugText: {fileID: 3130728591011433805}
+  lastHitBy: {fileID: 0}
 --- !u!114 &7868308199360839163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,26 +416,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d93ca2c493c264da38c7a43260bf8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 1
-  health: 100
-  playerTransform: {fileID: 0}
-  sightRange: 50
   state: 0
-  debugStateText: {fileID: 8781144055186671520}
-  mesh: {fileID: 8508684111999068476}
-  lineOfSightOffset: {x: 0, y: 1, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
   stationary: 1
-  runSpeed: 8
+  runSpeed: 4
   walkSpeed: 2
-  stopDistance: 10
-  attackRange: 50
+  stopDistance: 20
+  attackRange: 100
   attackTime: 1
   attackCooldownMin: 3
   attackCooldownMax: 3
-  bulletPrefab: {fileID: 946708688116722392, guid: 6e81436d39747b04e9d80b2964ade7f0,
+  bulletPrefab: {fileID: 946708688116722392, guid: 7e50d3a41778a404e940c95df4e10ae8,
     type: 3}
+--- !u!114 &456546549912402000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8781144055303266582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 1
+  sightRange: 80
+  speed: 5
+  mesh: {fileID: 8508684111999068476}
+  lineOfSightOffset: {x: 0, y: 2, z: 0}
+  floorRaycastPos: {x: 0, y: 0, z: 0}
+  floorRaycastLength: 0
+  playerTransform: {fileID: 0}
+  moveTarget: {x: 0, y: 0, z: 0}
+  lookTarget: {x: 0, y: 0, z: 0}
+  hasLineOfSight: 0
+  shouldPath: 0
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -446,7 +464,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 20
   avoidancePriority: 50
-  m_AngularSpeed: 180
+  m_AngularSpeed: 300
   m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -455,6 +473,52 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8235846997500683284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8781144055303266582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 518fbd512ac3d084fa0253bb85a2360d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 3
+  m_Curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &9088834753660796872
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,7 +569,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9088834753660796872}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -779,6 +843,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7035158125780842655, guid: 0305acaed504f1d4d93704a7d1d0538b,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1f3586fd591eac942916794694a89080, type: 2}
     - target: {fileID: -6885053803469423709, guid: 0305acaed504f1d4d93704a7d1d0538b,
         type: 3}
       propertyPath: m_IsActive
@@ -789,6 +858,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3608895119330378335, guid: 0305acaed504f1d4d93704a7d1d0538b,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1f3586fd591eac942916794694a89080, type: 2}
     - target: {fileID: -1481278822611150125, guid: 0305acaed504f1d4d93704a7d1d0538b,
         type: 3}
       propertyPath: m_IsActive
@@ -804,6 +878,16 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6486065251852212024, guid: 0305acaed504f1d4d93704a7d1d0538b,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1f3586fd591eac942916794694a89080, type: 2}
+    - target: {fileID: 8449996119470504636, guid: 0305acaed504f1d4d93704a7d1d0538b,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1f3586fd591eac942916794694a89080, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0305acaed504f1d4d93704a7d1d0538b, type: 3}
 --- !u!1 &8508684111999068476 stripped

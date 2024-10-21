@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -7,6 +5,10 @@ public class Health : MonoBehaviour
 {
     public int health = 100;
     public TMP_Text debugText;
+    public GameObject lastHitBy;
+
+    public delegate void EnemyKillEvent();
+    public static event EnemyKillEvent enemyKill;
 
     private void Update()
     {
@@ -16,11 +18,11 @@ public class Health : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage, int damageType)
+    public void TakeDamage(int damage, int damageType, GameObject attacker)
     {
         health -= damage;
         //Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
-
+        lastHitBy = attacker;
         // destroys this gameobject if health <= 0
         IsDestroyed();
     }
@@ -32,6 +34,23 @@ public class Health : MonoBehaviour
             health = 0;
             //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (lastHitBy != null) 
+        { 
+            if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw)) enemyKill();
+        }
+        
+        else
+            Debug.Log("Seems Like a grenade");
+
+        if (WaveManager.waveManagerInstance != null)
+        {
+            WaveManager.waveManagerInstance.enemiesRemaining--;
+            if (WaveManager.waveManagerInstance.enemiesRemaining <= 0) WaveManager.waveManagerInstance.timerScript.StartBreakTimer();
         }
     }
 }

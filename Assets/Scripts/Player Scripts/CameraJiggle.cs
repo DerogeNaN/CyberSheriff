@@ -20,9 +20,9 @@ public class CameraJiggle : MonoBehaviour
     
     void Update()
     {
-        if (!Movement.playerMovement.isWallrunning && !Movement.playerMovement.isSliding && Time.time > Movement.playerMovement.cameraLeaveWallrunTime)
+        if (!Movement.playerMovement.isWallRunning && !Movement.playerMovement.isSliding && Time.time > Movement.playerMovement.cameraLeaveWallrunTime)
         {
-            tilt = Vector3.Dot(-transform.right, Vector3.ClampMagnitude(Movement.playerMovement.momentum, maxMomentumInfluence));
+            tilt = Vector3.Dot(-transform.right, Vector3.ClampMagnitude(Movement.playerMovement.velocity, maxMomentumInfluence));
             tilt /= maxMomentumInfluence;
             tilt *= headTiltAtMax;
 
@@ -35,7 +35,7 @@ public class CameraJiggle : MonoBehaviour
 
         else if (Movement.playerMovement.isSliding)
         {
-            tilt = Vector3.Dot(transform.right, Vector3.ClampMagnitude(Movement.playerMovement.momentum, maxMomentumInfluence));
+            tilt = Vector3.Dot(transform.right, Vector3.ClampMagnitude(Movement.playerMovement.velocity, maxMomentumInfluence));
             tilt /= maxMomentumInfluence;
             tilt *= headTiltAtMax;
 
@@ -48,7 +48,7 @@ public class CameraJiggle : MonoBehaviour
 
         if (Movement.playerMovement.isDashing)
         {
-            float fOVRatio = Mathf.InverseLerp(0, maxMomentumInfluence, Mathf.Abs(Vector3.Dot(Movement.playerMovement.momentum, Movement.playerMovement.transform.forward)));
+            float fOVRatio = Mathf.InverseLerp(0, maxMomentumInfluence, Mathf.Abs(Vector3.Dot(Movement.playerMovement.velocity, Movement.playerMovement.transform.forward)));
             fOVRatio = defaultFOVCurve.Evaluate(fOVRatio);
 
             currFOV = Mathf.Lerp(defaultFOV, maxDashFOV, fOVRatio);
@@ -56,7 +56,7 @@ public class CameraJiggle : MonoBehaviour
         }
         else
         {
-            float fOVRatio = Mathf.InverseLerp(0, maxMomentumInfluence, Mathf.Abs(Vector3.Dot(Movement.playerMovement.momentum, Movement.playerMovement.transform.forward)));
+            float fOVRatio = Mathf.InverseLerp(0, maxMomentumInfluence, Mathf.Abs(Vector3.Dot(Movement.playerMovement.velocity, Movement.playerMovement.transform.forward)));
             fOVRatio = defaultFOVCurve.Evaluate(fOVRatio);
             currFOV = Mathf.Lerp(defaultFOV, maxFOV, fOVRatio);
         }

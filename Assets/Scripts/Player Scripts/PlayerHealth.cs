@@ -23,19 +23,19 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "EnemyHitbox")
-        {
-            EnemyHitbox hitbox = other.GetComponent<EnemyHitbox>();
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.tag == "EnemyHitbox")
+    //    {
+    //        EnemyHitbox hitbox = other.GetComponent<EnemyHitbox>();
 
-            if (hitbox && hitbox.active)
-            {
-                TakeDamage(hitbox.damage, 0);
-                hitbox.active = false;
-            }
-        }
-    }
+    //        if (hitbox && hitbox.active)
+    //        {
+    //            TakeDamage(hitbox.damage, 0);
+    //            hitbox.active = false;
+    //        }
+    //    }
+    //}
 
     public void TakeDamage(int damage, int damageType)
     {
@@ -51,8 +51,7 @@ public class PlayerHealth : MonoBehaviour
         {
             Debug.Log("you died");
             // THIS NEEDS TO BE CHANGED BACK TO 0 HEALTH
-            health = 100;
-            Movement.playerMovement.transform.position = Movement.playerMovement.respawnPos.position;
+            WaveManager.waveManagerInstance.LoseCondition();
 
             //Movement.playerMovement.playerInputActions.Disable();
         }

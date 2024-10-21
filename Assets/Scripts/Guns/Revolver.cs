@@ -10,6 +10,8 @@ public class Revolver : RangedWeapon
     [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
     {
+        //make sure on  Kill isnt all ready an event;
+
         animator.SetBool("ShootBool", true);
         base.EngagePrimaryFire();
     }
@@ -18,11 +20,6 @@ public class Revolver : RangedWeapon
     {
         animator.SetBool("ShootBool", false);
         animator.SetBool("ReloadBool", true);
-
-        //float animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
-        //float reloadAnimationSpeed = animationLength / reloadTime;
-        //
-        //animator.GetCurrentAnimatorClipInfo(0).S = reloadAnimationSpeed;
 
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
@@ -53,8 +50,6 @@ public class Revolver : RangedWeapon
                 if (rayData.hit.transform.gameObject.layer != 3)
                 {
 
-                    GameObject hitFX = Instantiate(HitEffect);
-                    hitFX.transform.position = rayData.hit.point;
                     if (rayData.hit.rigidbody)
                     {
                         rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -67,24 +62,24 @@ public class Revolver : RangedWeapon
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
                     {
                         SpawnBulletHoleDecal(rayData);
+                        GameObject hitFX = Instantiate(HitEffect);
+                        hitFX.transform.position = rayData.hit.point;
                     }
+                  
 
-                  //  Debug.Log(" ray hit : " + rayData.hit.collider);
                     if (rayData.hit.transform.parent)
                     {
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
+                            GameObject hitFX = Instantiate(enemyHitEffect);
+                            hitFX.transform.position = rayData.hit.point;
+
+                            GameObject hitFX2 = Instantiate(HitEffect);
+                            hitFX2.transform.position = rayData.hit.point;
+
                             int damage = DamageValue;
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                            if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
-                            {
-                                if (eh.isHeadshot == true)
-                                {
-                                    damage *= headShotMultiplier;
-                                }
-
-                            }
-                            EnemyHealth.TakeDamage(damage, 0);
+                            EnemyHealth.TakeDamage(damage, 0,gameObject);
                         }
                     }
                 }
@@ -99,7 +94,6 @@ public class Revolver : RangedWeapon
         }
 
     }
-
 
     public RayData AltRayCastAndGenGunRayData(Transform muzzle)
     {

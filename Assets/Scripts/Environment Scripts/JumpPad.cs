@@ -8,9 +8,9 @@ public class JumpPad : MonoBehaviour
 
     public void JumpBoost()
     {
-        Debug.Log("Jump boost");
+        //Debug.Log("Jump boost");
         Movement.playerMovement.isGrounded = false;
-        Movement.playerMovement.momentum.y = jumpPadStrength;
+        Movement.playerMovement.velocity.y = jumpPadStrength;
     }
 
     private void OnTriggerEnter(Collider other)

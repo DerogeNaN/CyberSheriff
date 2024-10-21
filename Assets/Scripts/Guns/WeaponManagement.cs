@@ -29,11 +29,14 @@ public class WeaponManagement : MonoBehaviour
 
     bool start = false;
 
+
+
     // Start is called before the first frame update
     void Start()
     {
-
-
+        Debug.Log("");
+        //make sure on  Kill isnt all ready an event;
+        Health.enemyKill += currentActiveWeapon.GetComponent<RangedWeapon>().OnKill;
     }
 
     private void OnDrawGizmos()
