@@ -963,10 +963,10 @@ VisualEffect:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 2.9960785, y: 0.972549, z: 0, w: 0}
+      - m_Value: {x: 2.1185474, y: 0.89844155, z: 0.17746994, w: 0}
         m_Name: Flash_Colour
         m_Overridden: 0
-      - m_Value: {x: 8.47419, y: 2.9282541, z: 0.22183743, w: 0}
+      - m_Value: {x: 2, y: 0.19607843, z: 0, w: 0}
         m_Name: Inner_Flash
         m_Overridden: 0
     m_Uint:
@@ -1450,11 +1450,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   muzzlePoint: {fileID: 6106579689615445286}
   altMuzzlePoint: {fileID: 5417552234440080051}
+  shotgun: {fileID: 0}
   DamageValue: 5
   headShotMultiplier: 2
   bulletForceMultiplier: 1
   shotGapTime: 1
-  AltshotGapTime: 0.01
+  AltshotGapTime: 2
   reloadTime: 2
   BulletsPerClip: 2
   currentBullets: 0
@@ -1465,9 +1466,11 @@ MonoBehaviour:
   waiting: 0
   reloading: 0
   BulletFlash: {fileID: 5493636922081618511}
-  HitEffect: {fileID: 7610885174257348678, guid: a49c2a9c29e480f4a9d9feef54d707c4,
+  HitEffect: {fileID: 1198571276748615873, guid: 26dfd83321a38a34aa5137ac12cccf6f,
     type: 3}
-  BulletHitDecal: {fileID: 4215241873354640552, guid: 09828abd8ded024488972d5e092933af,
+  enemyHitEffect: {fileID: 4253158056739826801, guid: 369148f1dbb82a24b9206bf878a26e83,
+    type: 3}
+  BulletHitDecal: {fileID: 1200606425068812548, guid: 5b263b1b0e8f39141b9fc3541f53b638,
     type: 3}
   camRef: {fileID: 0}
   CurrentlyHitting: {fileID: 0}
@@ -1478,11 +1481,10 @@ MonoBehaviour:
   inputTime: 0
   charged: 0
   Grenade: {fileID: 911812781045158418, guid: 9fb5ac429395f914a98b1146e2ebab00, type: 3}
-  grenadeReloadTime: 5
-  grenadeLoadTime: 1
-  grenadeLauncherTimer: 0
   grenadeLaucherForceMultiplier: 30
   grenadeReady: 0
+  RequiredKillsToRecharge: 5
+  currentKillstoRecharge: 0
   grenadeAmmo: 3
   grenadeAmmoMax: 3
 --- !u!1 &4523091791687891413
