@@ -3108,14 +3108,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  maxSpeed: 0.5
+  maxSpeed: 0.4
   turnSpeed: 0.1
   acceleration: 0.01
   deceleration: 0.02
   yOffset: 1.5
   closeDistance: 7
-  avoidanceStrength: 0
-  avoidDistance: 0
+  avoidanceStrength: 0.1
+  avoidDistance: 5
+  avoidanceDistanceWeight: 0.2
+  avoidanceSpeedWeight: 1
 --- !u!114 &1933425886
 MonoBehaviour:
   m_ObjectHideFlags: 0

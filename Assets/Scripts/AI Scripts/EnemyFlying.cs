@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class EnemyFlying : EnemyBase
     [Header("Flying Advanced Settings")]
     public float avoidanceStrength;
     public float avoidDistance;
+    public float avoidanceDistanceWeight;
+    public float avoidanceSpeedWeight;
 
     Vector3 dir;
     Vector3 toPlayer;
@@ -38,9 +41,6 @@ public class EnemyFlying : EnemyBase
         close = toPlayer.magnitude <= closeDistance;
 
         transform.rotation = Quaternion.LookRotation(dir);
-
-        Vector3 left = Quaternion.Euler(0, -45, 0) * transform.position;
-        Debug.DrawRay(transform.position, left);
     }
 
     private void FixedUpdate()
@@ -48,7 +48,7 @@ public class EnemyFlying : EnemyBase
         // look at player
         dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
 
-        if (toPlayer.magnitude > closeDistance)
+        if (enemy.hasLineOfSight && toPlayer.magnitude > closeDistance)
         {
             // increase speed
             if (currentSpeed < maxSpeed) currentSpeed += acceleration;
@@ -70,16 +70,27 @@ public class EnemyFlying : EnemyBase
     private Vector3 GetAvoidance()
     {
         Vector3 avoidance = new();
-
-        Vector3 left = Quaternion.Euler(0, -45, 0) * transform.position;
-        Debug.DrawRay(transform.position, left);
-
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, left, out hit, avoidDistance))
+        Vector3[] rays =
         {
-            avoidance -= hit.normal * avoidanceStrength;
+             Quaternion.Euler(0, -45, 0) * transform.forward, // left
+             Quaternion.Euler(0, 45, 0) * transform.forward, // right
+        };
+
+        // loop through rays for each direction and add to avoidance amount
+        foreach (Vector3 v in rays)
+        {
+            Debug.DrawRay(transform.position, v * avoidDistance);
+
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, v, out hit, avoidDistance))
+            {
+                avoidance += hit.normal * (hit.distance * avoidanceDistanceWeight);
+            }
         }
 
-        return avoidance;
+        // scale avoidance based on the percentage of current speed to max speed (i think)
+        avoidance *= ((currentSpeed / maxSpeed) * avoidanceSpeedWeight);
+
+        return avoidance * avoidanceStrength;
     }
 }
