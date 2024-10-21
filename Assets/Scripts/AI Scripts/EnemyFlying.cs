@@ -9,16 +9,18 @@ public class EnemyFlying : EnemyBase
     public float turnSpeed;
     public float acceleration;
     public float deceleration;
+
+    [Header("Flying Offset Settings")]
     public float yOffset;
+    public float closeDistance;
 
     [Header("Flying Advanced Settings")]
-    public float closeDistance;
-    public float zeroVelocityBuffer;
+    public float avoidanceStrength;
+    public float avoidDistance;
 
     Vector3 dir;
     Vector3 toPlayer;
     float currentSpeed;
-
     bool close;
 
     protected override void OnStart()
@@ -34,15 +36,20 @@ public class EnemyFlying : EnemyBase
 
         toPlayer = enemy.playerTransform.position - transform.position + new Vector3(0, yOffset, 0);
         close = toPlayer.magnitude <= closeDistance;
+
+        transform.rotation = Quaternion.LookRotation(dir);
+
+        Vector3 left = Quaternion.Euler(0, -45, 0) * transform.position;
+        Debug.DrawRay(transform.position, left);
     }
 
     private void FixedUpdate()
     {
+        // look at player
+        dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
+
         if (toPlayer.magnitude > closeDistance)
         {
-            // look at player
-            dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
-
             // increase speed
             if (currentSpeed < maxSpeed) currentSpeed += acceleration;
             else currentSpeed = maxSpeed;
@@ -54,7 +61,25 @@ public class EnemyFlying : EnemyBase
             else currentSpeed = 0.0f;
         }
 
+        Vector3 towardsPlayer = currentSpeed * dir;
+
         // apply movement
-        transform.position += currentSpeed * dir * Time.deltaTime;
+        transform.position += towardsPlayer + GetAvoidance();
+    }
+
+    private Vector3 GetAvoidance()
+    {
+        Vector3 avoidance = new();
+
+        Vector3 left = Quaternion.Euler(0, -45, 0) * transform.position;
+        Debug.DrawRay(transform.position, left);
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, left, out hit, avoidDistance))
+        {
+            avoidance -= hit.normal * avoidanceStrength;
+        }
+
+        return avoidance;
     }
 }
