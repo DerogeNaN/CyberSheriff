@@ -1,8 +1,8 @@
 using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Drawing;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 
 public class EnemyFlying : EnemyBase
 {
@@ -22,21 +22,34 @@ public class EnemyFlying : EnemyBase
     public float avoidanceDistanceWeight;
     public float avoidanceSpeedWeight;
     public float avoidFloorDistance;
+    public float closeBuffer;
+
+    [Header("Flying Randomise Settings")]
+    public Vector2 randomiseTimerRange;
+    public Vector2 closeDistanceRange;
+    public Vector2 yOffsetRange;
+    public Vector2 maxSpeedRange;
 
     Vector3 dir;
     Vector3 toPlayer;
     float currentSpeed;
     bool close;
+    float timer;
 
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
         enemy.shouldPath = false;
         dir = Vector3.zero;
+
+        maxSpeed = Random.Range(maxSpeedRange.x, maxSpeedRange.y);
     }
 
     protected override void OnUpdate()
     {
+        timer -= Time.deltaTime;
+        if (timer <= 0) RandomiseValues();
+
         enemy.lookTarget = enemy.playerTransform.position;
 
         toPlayer = enemy.playerTransform.position - transform.position + new Vector3(0, yOffset, 0);
@@ -50,18 +63,34 @@ public class EnemyFlying : EnemyBase
         // look at player
         dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
 
-        if (enemy.hasLineOfSight && toPlayer.magnitude > closeDistance)
+        if (enemy.hasLineOfSight)
         {
-            // increase speed
-            if (currentSpeed < maxSpeed) currentSpeed += acceleration;
-            else currentSpeed = maxSpeed;
+            if (toPlayer.magnitude > closeDistance + closeBuffer)
+            {
+                // if far from player, move towards them
+                if (currentSpeed < maxSpeed) currentSpeed += acceleration;
+                //else currentSpeed = maxSpeed;
+            }
+            else if (toPlayer.magnitude < closeDistance - closeBuffer)
+            {
+                // if close to player, move away from them
+                if (currentSpeed > -maxSpeed) currentSpeed -= acceleration;
+                //else currentSpeed = -maxSpeed;
+            }
+            else
+            {
+                // decelerate
+                float sign = Mathf.Sign(currentSpeed);
+                currentSpeed -= deceleration * sign;
+
+                if (sign > 0) if (currentSpeed < 0) currentSpeed = 0;
+                else if (sign < 0) if (currentSpeed > 0) currentSpeed = 0;
+
+                //if (currentSpeed > 0.0f) currentSpeed -= deceleration;
+                //else currentSpeed = 0.0f;
+            }
         }
-        else
-        {
-            // decrease speed
-            if (currentSpeed > 0.0f) currentSpeed -= deceleration;
-            else currentSpeed = 0.0f;
-        }
+
 
         Vector3 towardsPlayer = currentSpeed * dir;
 
@@ -88,7 +117,7 @@ public class EnemyFlying : EnemyBase
             RaycastHit hit;
             if (Physics.Raycast(transform.position, v, out hit, v.magnitude))
             {
-                avoidance += hit.normal * (hit.distance * avoidanceDistanceWeight);
+                avoidance += hit.normal;
             }
         }
 
@@ -115,6 +144,13 @@ public class EnemyFlying : EnemyBase
         }
 
         return avoidance * avoidanceStrength;
+    }
+
+    void RandomiseValues()
+    {
+        timer = Random.Range(randomiseTimerRange.x, randomiseTimerRange.y);
+        yOffset = Random.Range(yOffsetRange.x, yOffsetRange.y);
+        closeDistance = Random.Range(closeDistanceRange.x, closeDistanceRange.y);
     }
 
     static bool IsDescendantOf(Transform maybeParent, Transform maybeChild)
