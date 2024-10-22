@@ -9,6 +9,8 @@ public class JumpPad : MonoBehaviour
     public void JumpBoost()
     {
         //Debug.Log("Jump boost");
+        Movement.playerMovement.isTryingSlide = false;
+        Movement.playerMovement.isSliding = false;
         Movement.playerMovement.isGrounded = false;
         Movement.playerMovement.velocity.y = jumpPadStrength;
     }
