@@ -2,11 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using System.Collections;
 using static RangedWeapon;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
-using UnityEngine.Rendering.Universal.Internal;
-using System.Linq.Expressions;
-using UnityEditor.AnimatedValues;
+
 
 
 public class Shotgun : RangedWeapon
@@ -59,6 +55,14 @@ public class Shotgun : RangedWeapon
 
     public override void Update()
     {
+        //if (chargeExited)
+        //{
+        //    animator.SetTrigger("ShootCTrig");
+        //}
+        //else
+        //    animator.ResetTrigger("ShootCTrig");
+
+        animator.SetBool("ChargedBool", charged);
         if (currentBullets <= 0 && reloading == false)
         {
             canFire = false;
@@ -73,6 +77,7 @@ public class Shotgun : RangedWeapon
                 if (inputTime < chargeTime && charged == false)
                 {
                     inputTime += Time.deltaTime;
+
                 }
 
                 if (inputTime >= chargeTime)
@@ -93,8 +98,8 @@ public class Shotgun : RangedWeapon
 
         if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true && currentBullets > 1)
         {
-            animator.SetBool("ChargeBool", true);
-            //animator.ResetTrigger("ChargeTrigger");
+            animator.SetTrigger("ChargeStartTrigger");
+
         }
 
 
@@ -123,6 +128,7 @@ public class Shotgun : RangedWeapon
         //ForceFeed Maybe?
 
         animator.SetTrigger("ReloadTrigger");
+        animator.PlayInFixedTime("S_Reload", 0);
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
         Debug.Log("Reloading...");
@@ -142,13 +148,11 @@ public class Shotgun : RangedWeapon
         //Primary Fire Logic
         if (charged && currentBullets > 1)
         {
-
             animator.SetTrigger("ShootCTrig");
             pellets = bulletsPerShot * 2;
         }
         else
         {
-
             animator.SetTrigger("ShootTrig");
             pellets = bulletsPerShot;
         }
@@ -171,7 +175,7 @@ public class Shotgun : RangedWeapon
             for (int i = 0; i < pellets; i++)
             {
                 bool hit;
-                RayData rayData = RayCastAndGenGunRayData(muzzlePoint,out hit);
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hit);
                 if (hit != false)
                 {
                     //CurrentlyHitting = rayData.hit.transform.gameObject;
@@ -224,6 +228,7 @@ public class Shotgun : RangedWeapon
                     }
                 }
             }
+            animator.SetBool("ChargeReleaseBool", false);
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
@@ -320,12 +325,13 @@ public class Shotgun : RangedWeapon
     {
         if (reloading == false)
             shouldShootPrimary = true;
+
     }
 
     //Active every interval  of altfire set in this script
     public override void OnAltFireStay()
     {
-     
+
 
     }
 
@@ -334,7 +340,8 @@ public class Shotgun : RangedWeapon
     {
         shouldShootPrimary = false;
         chargeExited = true;
-        animator.SetBool("ChargeBool", false);
+
+
         Debug.Log("end Primary Fire");
     }
 
