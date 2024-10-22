@@ -193,6 +193,7 @@ public class Movement : MonoBehaviour
         {
             standingCollider.enabled = false;
             slideCollider.enabled = true;
+            //movementInputWorld = Vector3.zero;
 
             if (velocity.magnitude <= 1) isSliding = false;
         }
@@ -222,19 +223,30 @@ public class Movement : MonoBehaviour
         float encouragedAmount = Vector3.Dot(movementInputWorld, horizontalVelocity.normalized) * (1 - momentumRatio);
 
         Vector3 targetVelocity = (movementInputWorld * moveSpeed) * momentumRatio;
-
-        if ((targetVelocity + horizontalVelocity).magnitude >= maxPlayerInputSpeed && !isDashing)
+        if (isSliding)
         {
-            float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, targetVelocity.magnitude);
-            resultantMagnitude -= targetVelocity.magnitude;
-            if (!isSliding) horizontalVelocity = horizontalVelocity.normalized * resultantMagnitude;
-
+            float currSpeed = horizontalVelocity.magnitude;
+            horizontalVelocity = Vector3.ClampMagnitude(horizontalVelocity, currSpeed);
             velocity.x = horizontalVelocity.x;
             velocity.z = horizontalVelocity.z;
         }
 
-        velocity.x += targetVelocity.x;
-        velocity.z += targetVelocity.z;
+        else
+        {
+            if ((targetVelocity + horizontalVelocity).magnitude >= maxPlayerInputSpeed && !isDashing)
+            {
+                float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, horizontalVelocity.magnitude);
+                resultantMagnitude -= targetVelocity.magnitude;
+                if (!isSliding) horizontalVelocity = horizontalVelocity.normalized * resultantMagnitude;
+
+                velocity.x = horizontalVelocity.x;
+                velocity.z = horizontalVelocity.z;
+            }
+
+            velocity.x += targetVelocity.x;
+            velocity.z += targetVelocity.z;
+
+        }
 
         if (movementInputLocal == Vector2.zero && isGrounded && !isSliding && !isDashing)
         {
@@ -576,13 +588,18 @@ public class Movement : MonoBehaviour
                 0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
-                //velocity = Vector3.ClampMagnitude(velocity, hit.distance);
 
                 float velocityInNormalDirection = Vector3.Dot(velocity, hit.normal);
-                
-                if (velocityInNormalDirection < 0)
+
+                velocity -= velocityInNormalDirection * hit.normal;
+
+                if (Vector3.Dot(hit.normal, Vector3.up) <= 0.25f)
                 {
-                    velocity -= velocityInNormalDirection * hit.normal;
+                    float clampAmmount = Vector3.Dot(movementInputWorld, -hit.normal);
+                    clampAmmount = 1 - clampAmmount;
+
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                 }
             }
         }
