@@ -153,9 +153,16 @@ public class WeaponManagement : MonoBehaviour
         {
             Debug.Log("WeaponFound!!");
         }
+
         if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
         {
             currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+        }
+
+        if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+        {
+            currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+            currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
         }
         //set next to true 
         currentActiveWeapon.gameObject.SetActive(true);
@@ -180,6 +187,18 @@ public class WeaponManagement : MonoBehaviour
         //set next to true 
         currentActiveWeapon.gameObject.SetActive(true);
 
+
+        if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+        {
+            currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+        }
+
+        if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+        {
+            currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+            currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+        }
+
         currentActiveWeapon.transform.position = WeaponGripTransform.position;
         currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
     }
@@ -200,9 +219,20 @@ public class WeaponManagement : MonoBehaviour
             Debug.Log("WeaponFound!!");
         }
 
+
         //set next to true 
         currentActiveWeapon.gameObject.SetActive(true);
 
+        if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+        {
+            currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+        }
+
+        if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+        {
+            currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+            currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+        }
         currentActiveWeapon.transform.position = BoomstickTransform.position;
         currentActiveWeapon.transform.rotation = BoomstickTransform.rotation;
     }
