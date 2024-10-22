@@ -560,7 +560,7 @@ public class Movement : MonoBehaviour
             //TODO ADD DELTA TIME TO THE RAYCAST MOMENTUM
             if (Physics.CapsuleCast(
                 transform.position + new Vector3(0, 0.5f, 0),
-                transform.position - new Vector3(0, 0.5f, 0),
+                transform.position - new Vector3(0, 0.7f, 0),
                 0.5f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
@@ -584,7 +584,7 @@ public class Movement : MonoBehaviour
         {
             if (Physics.CapsuleCast(
                 slideCollider.transform.position - new Vector3(0.5f, 0, 0),
-                slideCollider.transform.position + new Vector3(0.5f, 0, 0),
+                slideCollider.transform.position + new Vector3(0.7f, 0, 0),
                 0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
                 ))
             {
