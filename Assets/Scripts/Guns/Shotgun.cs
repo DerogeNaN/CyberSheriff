@@ -325,10 +325,7 @@ public class Shotgun : RangedWeapon
     //Active every interval  of altfire set in this script
     public override void OnAltFireStay()
     {
-        //if (shouldShootAlt)
-        //{
-        //    Debug.Log("alt fire stay ");
-        //}
+     
 
     }
 
