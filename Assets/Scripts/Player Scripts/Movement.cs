@@ -238,15 +238,13 @@ public class Movement : MonoBehaviour
             {
                 float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, horizontalVelocity.magnitude);
                 resultantMagnitude -= targetVelocity.magnitude;
-                Vector2 horiNorm = horizontalVelocity.normalized;
-                float amountToReduce = 0.0f;
 
-                //if (isGrounded)
-                //{
-                //    amountToReduce = Mathf.Min(moveSpeed, (targetVelocity + horizontalVelocity).magnitude - maxPlayerInputSpeed);
-                //}
+                if (isGrounded)
+                {
+                    
+                }
 
-                horizontalVelocity = horizontalVelocity.normalized * resultantMagnitude;
+                horizontalVelocity = horizontalVelocity.normalized * (resultantMagnitude);
 
                 velocity.x = horizontalVelocity.x;
                 velocity.z = horizontalVelocity.z;
