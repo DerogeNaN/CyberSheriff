@@ -77,7 +77,7 @@ public class Shotgun : RangedWeapon
 
                 if (inputTime >= chargeTime)
                 {
-                  
+
                     charged = true;
                     inputTime = 0;
 
@@ -93,7 +93,7 @@ public class Shotgun : RangedWeapon
 
         if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true && currentBullets > 1)
         {
-               animator.SetBool("ChargeBool",true);
+            animator.SetBool("ChargeBool", true);
             //animator.ResetTrigger("ChargeTrigger");
         }
 
@@ -170,8 +170,9 @@ public class Shotgun : RangedWeapon
 
             for (int i = 0; i < pellets; i++)
             {
-                RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
-                if (rayData.hit.point != null)
+                bool hit;
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint,out hit);
+                if (hit != false)
                 {
                     //CurrentlyHitting = rayData.hit.transform.gameObject;
 
@@ -255,7 +256,32 @@ public class Shotgun : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        Physics.Raycast(gunRay, out gunHit, Mathf.Infinity);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+
+        return new RayData { ray = gunRay, hit = gunHit };
+    }
+
+    public override RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected)
+    {
+        Ray gunRay = new Ray();
+
+        //we get the start and direction for our "Bullet" from our Gun Here
+        gunRay.direction = muzzlePoint.transform.forward;
+        gunRay.origin = muzzlePoint.position;
+
+        RaycastHit gunHit;
+        RayData camRayData = RayCastAndGenCameraRayData();
+        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
+
+        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+
+        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
+
+        //set ray direction to the barrel to look point direction 
+        gunRay.direction = barrelToLookPointDir;
+        gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
+
+        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
@@ -264,7 +290,6 @@ public class Shotgun : RangedWeapon
     {
         if (grenadeReady)
         {
-
             animator.ResetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
             RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);

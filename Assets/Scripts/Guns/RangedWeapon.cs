@@ -138,13 +138,14 @@ public class RangedWeapon : MonoBehaviour
         //Primary Fire Logic
         if (currentBullets > 0)
         {
-            RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
+            bool hit;
+            RayData rayData = RayCastAndGenGunRayData(muzzlePoint,out hit);
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
-           
+
             currentBullets--;
-            if (rayData.hit.point != null)
+            if (hit != false)
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;
 
@@ -172,7 +173,7 @@ public class RangedWeapon : MonoBehaviour
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
                             GameObject hitFX = Instantiate(HitEffect);
-                            hitFX.transform.position = rayData.hit.point; 
+                            hitFX.transform.position = rayData.hit.point;
 
                             GameObject hitFX2 = Instantiate(enemyHitEffect);
                             hitFX2.transform.position = rayData.hit.point;
@@ -189,7 +190,7 @@ public class RangedWeapon : MonoBehaviour
                                 }
 
                             }
-                            EnemyHealth.TakeDamage(damage, 0,gameObject);
+                            EnemyHealth.TakeDamage(damage, 0, gameObject);
                         }
                     }
                 }
@@ -207,7 +208,7 @@ public class RangedWeapon : MonoBehaviour
 
     public void OnKill()
     {
-        
+
         Debug.Log(" Enemy was Killed.");
         if (shotgun.currentKillsToRecharge < shotgun.RequiredKillsToRecharge)
         {
@@ -257,8 +258,25 @@ public class RangedWeapon : MonoBehaviour
             Debug.Log(" altfire active cannot reload");
         }
     }
-
+    
+   
     virtual public RayData RayCastAndGenCameraRayData()
+    {
+
+        Ray cameraRay = new Ray();
+
+        RaycastHit cameraHit;
+
+        cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
+
+        cameraRay.direction = camRef.transform.forward;
+
+        Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
+
+        return new RayData { ray = cameraRay, hit = cameraHit };
+    }
+
+    virtual public RayData RayCastAndGenCameraRayData(out bool hitDetected)
     {
         Ray cameraRay = new Ray();
 
@@ -268,9 +286,10 @@ public class RangedWeapon : MonoBehaviour
 
         cameraRay.direction = camRef.transform.forward;
 
-        Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
+        hitDetected = Physics.Raycast(cameraRay, out cameraHit,camRef.farClipPlane);
 
         return new RayData { ray = cameraRay, hit = cameraHit };
+
     }
 
     virtual public RayData RayCastAndGenGunRayData(Transform muzzle)
@@ -292,7 +311,31 @@ public class RangedWeapon : MonoBehaviour
         //set ray direction to the barrel to look point direction 
         gunRay.direction = barrelToLookPointDir;
 
-        Physics.Raycast(gunRay, out gunHit, Mathf.Infinity);
+        Physics.Raycast(gunRay, out gunHit,camRef.farClipPlane);
+
+        return new RayData { ray = gunRay, hit = gunHit };
+    }
+
+    virtual public RayData RayCastAndGenGunRayData(Transform muzzle,out bool hitDetected )
+    {
+        Ray gunRay = new Ray();
+
+        //we get the start and direction for our "Bullet" from our Gun Here
+        gunRay.direction = muzzlePoint.transform.forward;
+        gunRay.origin = muzzlePoint.position;
+
+        RaycastHit gunHit;
+        RayData camRayData = RayCastAndGenCameraRayData();
+        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
+
+        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+
+        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
+
+        //set ray direction to the barrel to look point direction 
+        gunRay.direction = barrelToLookPointDir;
+
+        hitDetected = Physics.Raycast(gunRay, out gunHit,camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
