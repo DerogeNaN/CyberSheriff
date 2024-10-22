@@ -7,6 +7,7 @@ using TMPro;
 
 public class Scoreboard : MonoBehaviour
 {
+    [Header ("Scoreboard visuals")]
     public TMP_Text scoreText;
     public TMP_Text scoreShadowText;
     public TMP_Text rankText;
@@ -16,9 +17,43 @@ public class Scoreboard : MonoBehaviour
     public RawImage decayBar;
     public GameObject scoreboardPanel; // Reference to the scoreboard panel to show/hide
 
-    private int score;
-    private int comboMultiplier;
+    public TMP_Text debugRankValue; // temporary Debug value for rank tracking.
+
+    private float score;
+    private float comboMultiplier;
     private string rank;
+
+    //Internal Scorebar Progression
+    private int rankPointsMax = 100;
+    private int rankPointsCurrent = 0;
+
+    [Header("Rank up Balancing")] // these values control how much your decay bar jumps up when you score points.
+    
+
+    [Header("Score Bonus On Rank Decay")]
+    [SerializeField] private int eRankBonus = 5;
+    [SerializeField] private int dRankBonus = 50;
+    [SerializeField] private int cRankBonus = 200;
+    [SerializeField] private int bRankBonus = 500;
+    [SerializeField] private int aRankBonus = 1000;
+    [SerializeField] private int sRankBonus = 2000;
+
+    [Header("Score Multipliers")]
+    [SerializeField] private float eRankMulti = 0.5f;
+    [SerializeField] private float dRankMulti = 1.0f;
+    [SerializeField] private float cRankMulti = 1.1f;
+    [SerializeField] private float bRankMulti = 1.3f;
+    [SerializeField] private float aRankMulti = 1.6f;
+    [SerializeField] private float sRankMulti = 1.7f;
+
+    [Header("Rank Handycap")]
+    [SerializeField] private float eRankHandicap = 1.0f;
+    [SerializeField] private float dRankHandicap = 0.9f;
+    [SerializeField] private float cRankHandicap = 0.8f;
+    [SerializeField] private float bRankHandicap = 0.7f;
+    [SerializeField] private float aRankHandicap = 0.6f;
+    [SerializeField] private float sRankHandicap = 0.5f;
+
 
     private float decayTimer;
     public float decayInterval = 10f; // Time in seconds before rank decays
@@ -39,7 +74,7 @@ public class Scoreboard : MonoBehaviour
     void Start()
     {
         score = 0;
-        comboMultiplier = 1;
+        comboMultiplier = eRankMulti;
         rank = "E";
         decayTimer = decayInterval;
         decayBarMaxWidth = decayBar.rectTransform.sizeDelta.x;
@@ -97,109 +132,101 @@ public class Scoreboard : MonoBehaviour
 
     public void AddScore(int amount)
     {
-        score += amount * comboMultiplier;
+        /*score += amount * comboMultiplier;
         decayTimer = decayInterval; // Reset the timer when score is added
         UpdateRank();
+        UpdateScoreboard();*/
+        int adjustedPoints = Mathf.RoundToInt(amount * comboMultiplier);
+        score += adjustedPoints;
+
+        //UpdateRankPoints(minorAction); // You can pass midAction or majorAction based on the action type
+        decayTimer = decayInterval; // Reset decay bar
         UpdateScoreboard();
     }
-    public void AddRawScore(int amount)
+    /*public void AddRawScore(int amount)
     {
         score += amount;
         decayTimer = decayInterval; // Reset the timer when score is added
         UpdateRank();
         UpdateScoreboard();
-    }
+    }*/
 
-    public void IncrementCombo()
+    public void ResetMultiplier() // general multiplier reset
     {
-        comboMultiplier++;
+        comboMultiplier = eRankMulti;
         UpdateScoreboard();
     }
-
-    public void ResetCombo()
-    {
-        comboMultiplier = 1;
-        UpdateScoreboard();
-    }
-    public void ResetScore()
+    public void ResetScore()  //For level resetting.
     {
         score = 0;
         UpdateScoreboard();
     }
-    public void ScoreDeduction()
+
+    public void UpdateRankPoints(int actionPoints)
     {
-        score = score/2;
-    }
+        rankPointsCurrent += Mathf.RoundToInt(actionPoints * GetRankHandicap());
 
-
-
-    void UpdateRank()
-    {
-        string previousRank = rank;
-
-        if (score > 10000)
-            rank = "S";
-        else if (score > 5000)
-            rank = "A";
-        else if (score > 2000)
-            rank = "B";
-        else if (score > 1000)
-            rank = "C";
-        else if (score > 500)
-            rank = "D";
-        else
-            rank = "E";
-        if (previousRank != rank)
+        if (rankPointsCurrent >= rankPointsMax)
         {
-            rankTextPulsateEffect.StartPulsateAndShake();
+            PromoteRank();
         }
+
+        UpdateScoreboard();
     }
 
-    void DecayRank()
+    void PromoteRank()
     {
         switch (rank)
         {
+            case "E": rank = "D"; comboMultiplier = dRankMulti; break;
+            case "D": rank = "C"; comboMultiplier = cRankMulti; break;
+            case "C": rank = "B"; comboMultiplier = bRankMulti; break;
+            case "B": rank = "A"; comboMultiplier = aRankMulti; break;
+            case "A": rank = "S"; comboMultiplier = sRankMulti; break;
             case "S":
-                rank = "A";
-                ScoreDeduction();
-                scoreTextShakeEffect.StartScorePulsateAndShake();
-                Debug.Log("S to A");
+                comboMultiplier += 0.1f; // Increase multiplier further
                 break;
-            case "A":
-                rank = "B";
-                ScoreDeduction();
-                scoreTextShakeEffect.StartScorePulsateAndShake();
-                Debug.Log("A to B");
-                break;
-            case "B":
-                rank = "C";
-                ScoreDeduction();
-                scoreTextShakeEffect.StartScorePulsateAndShake();
-                Debug.Log("B to C");
-                break;
-            case "C":
-                rank = "D";
-                ScoreDeduction();
-                scoreTextShakeEffect.StartScorePulsateAndShake();
-                Debug.Log("C to D");
-                break;
-            case "D":
-                rank = "E";
-                ScoreDeduction();
-                scoreTextShakeEffect.StartScorePulsateAndShake();
-                Debug.Log("D to E");
-                break;
-            case "E":
-                ResetScore();
-                Debug.Log("Reset Score");
-                break;
-                
         }
-        ResetCombo();
-        //ScoreDeduction();
-        //scoreTextShakeEffect.StartScorePulsateAndShake();
+
+        rankPointsCurrent = 0; // Reset rank points  // THIS MIGHT BE A PROBLEM
+        rankTextPulsateEffect.StartPulsateAndShake();
+    }
+    void DecayRank()
+    {
+        // Regardless of rank, reset to E and award the bonus for the current rank
+        AwardRankBonus();            // Award bonus based on the current rank
+        rank = "E";                  // Reset to E rank
+        rankPointsCurrent = 0;        // Reset rank points
+        ResetMultiplier();  
+        // Reset multiplier to E rank's multiplier
+        rankTextPulsateEffect.StartPulsateAndShake();  // Visual effect on rank change
         UpdateScoreboard();
-        
+    }
+    void AwardRankBonus()
+    {
+        switch (rank)
+        {
+            case "S": score += sRankBonus; break;
+            case "A": score += aRankBonus; break;
+            case "B": score += bRankBonus; break;
+            case "C": score += cRankBonus; break;
+            case "D": score += dRankBonus; break;
+            case "E": score += eRankBonus; break;
+        }
+    }
+
+    float GetRankHandicap()
+    {
+        switch (rank)
+        {
+            case "S": return sRankHandicap;
+            case "A": return aRankHandicap;
+            case "B": return bRankHandicap;
+            case "C": return cRankHandicap;
+            case "D": return dRankHandicap;
+            case "E": return eRankHandicap;
+            default: return 1.0f;
+        }
     }
     Color GetRankColor(string rank)
     {
