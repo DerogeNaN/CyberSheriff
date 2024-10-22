@@ -7995,7 +7995,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2160141226817289326}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.442, z: 0}
+  m_LocalPosition: {x: 0, y: -0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8728,6 +8728,7 @@ MonoBehaviour:
     type: 3}
   BulletHitDecal: {fileID: 1200606425068812548, guid: 5b263b1b0e8f39141b9fc3541f53b638,
     type: 3}
+  animator: {fileID: 0}
   camRef: {fileID: 0}
   CurrentlyHitting: {fileID: 0}
   bulletsPerShot: 8
@@ -8740,7 +8741,7 @@ MonoBehaviour:
   grenadeLaucherForceMultiplier: 30
   grenadeReady: 0
   RequiredKillsToRecharge: 5
-  currentKillstoRecharge: 0
+  currentKillsToRecharge: 0
   grenadeAmmo: 3
   grenadeAmmoMax: 3
 --- !u!1 &2565124354369410739
@@ -17842,7 +17843,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4613755221126713083}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.981, z: 0}
+  m_LocalPosition: {x: 0, y: -1.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18031,9 +18032,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 2.2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.1, z: 0}
 --- !u!114 &4613755221359916253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18142,7 +18143,7 @@ MonoBehaviour:
   currEncouragment: 0
   encouragedGroundMomentum: 3
   encouragedAirMomentum: 6
-  encouragedSlideMomentum: 30
+  encouragedSlideMomentum: 9
   slowDownPercentage: 110
   jumpCount: 0
   jumpCooldown: 0.02
@@ -22144,9 +22145,9 @@ MonoBehaviour:
     type: 3}
   BulletHitDecal: {fileID: 1200606425068812548, guid: 5b263b1b0e8f39141b9fc3541f53b638,
     type: 3}
+  animator: {fileID: 1127317406843591159}
   camRef: {fileID: 0}
   CurrentlyHitting: {fileID: 0}
-  animator: {fileID: 1127317406843591159}
   spreadMultiplier: 0.1
 --- !u!82 &9042454961554677082
 AudioSource:
@@ -24512,8 +24513,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeLeft: 0
   isTiming: 0
-  timerText: {fileID: 0}
-  timerShadowText: {fileID: 0}
+  timerText: {fileID: 6946850198942622759}
+  timerShadowText: {fileID: 2064280135118600950}
 --- !u!1 &6946850200052048783
 GameObject:
   m_ObjectHideFlags: 0
@@ -25665,7 +25666,7 @@ GameObject:
   - component: {fileID: 208496163852964873}
   m_Layer: 3
   m_Name: Slide Collider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25678,7 +25679,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7404591792155407665}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.569, z: 0}
+  m_LocalPosition: {x: 0, y: -0.85, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
