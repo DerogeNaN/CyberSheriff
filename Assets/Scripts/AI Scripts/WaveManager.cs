@@ -9,9 +9,8 @@ public class WaveManager : MonoBehaviour
     GameManager gameManager;
     public static WaveManager waveManagerInstance;
 
-    public bool tutorialLevel = false;
-
     [Header("Global Wave Settings")]
+    public bool tutorialLevel;
     public float waveTime;
     public float timeBetweenWaves;
 
@@ -31,23 +30,20 @@ public class WaveManager : MonoBehaviour
 
     void Awake()
     {
-        if (!tutorialLevel)
+        if (waveManagerInstance == null)
         {
-            if (waveManagerInstance == null)
-            {
-                waveManagerInstance = this;
-            }
-            else if (waveManagerInstance != this)
-            {
-                Destroy(gameObject);  // Avoid keeping duplicate managers
-            }
+            waveManagerInstance = this;
+        }
+        else if (waveManagerInstance != this)
+        {
+            Destroy(gameObject);  // Avoid keeping duplicate managers
         }
     }
 
     
     void Update()
     {
-        if (!tutorialLevel)
+        if (tutorialLevel)
         {
             if (enemiesRemainingText != null)
             {
@@ -60,24 +56,21 @@ public class WaveManager : MonoBehaviour
 
     public void StartWave()
     {
-        if (!tutorialLevel)
+        Debug.Log("Wave Manager starting new wave");
+        if (enemiesRemaining <= 0)
         {
-            Debug.Log("Wave Manager starting new wave");
-            if (enemiesRemaining <= 0)
+            if (waveNumber > 2)
             {
-                if (waveNumber > 2)
-                {
-                    WinCondition();
-                }
-                else
-                {
-                    StartNewWave();
-                    timerScript.StartTimer();
-                    waveNumber++;
-                }
+                WinCondition();
             }
-            else LoseCondition();
+            else
+            {
+                StartNewWave();
+                timerScript.StartTimer();
+                waveNumber++;
+            }
         }
+        else LoseCondition();
     }
 
     public void WinCondition()

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -237,7 +238,13 @@ public class Movement : MonoBehaviour
             {
                 float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, horizontalVelocity.magnitude);
                 resultantMagnitude -= targetVelocity.magnitude;
-                if (!isSliding) horizontalVelocity = horizontalVelocity.normalized * resultantMagnitude;
+
+                if (isGrounded)
+                {
+                    
+                }
+
+                horizontalVelocity = horizontalVelocity.normalized * (resultantMagnitude);
 
                 velocity.x = horizontalVelocity.x;
                 velocity.z = horizontalVelocity.z;

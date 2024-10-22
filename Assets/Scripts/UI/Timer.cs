@@ -12,14 +12,13 @@ public class Timer : MonoBehaviour
     public TMP_Text timerText;  // Assign a UI Text element in the Inspector
     public TMP_Text timerShadowText;
 
-    public WaveManager wm;
-
     void Start()
     {
-        if (!wm.tutorialLevel)
+        if (WaveManager.waveManagerInstance != null || !WaveManager.waveManagerInstance.tutorialLevel)
         {
             StartBreakTimer();
         }
+
 
         timerText = GameObject.Find("Time").GetComponent<TextMeshProUGUI>();
         //timerText = GetComponentInChildren<TextMeshProUGUI>();
@@ -28,7 +27,7 @@ public class Timer : MonoBehaviour
     }
     void Update()
     {
-        if (!wm.tutorialLevel)
+        if (WaveManager.waveManagerInstance != null || !WaveManager.waveManagerInstance.tutorialLevel)
         {
             if (isTiming && !isTimingBreak)
             {
