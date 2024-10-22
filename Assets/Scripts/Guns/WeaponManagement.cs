@@ -153,7 +153,10 @@ public class WeaponManagement : MonoBehaviour
         {
             Debug.Log("WeaponFound!!");
         }
-
+        if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+        {
+            currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+        }
         //set next to true 
         currentActiveWeapon.gameObject.SetActive(true);
 

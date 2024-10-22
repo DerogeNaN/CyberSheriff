@@ -80,7 +80,7 @@ public class AoeDamager : MonoBehaviour
                     hpscript.TakeDamage(damage, 0,gameObject);
                     continue;
                 }
-                else if (hitCollider.transform.parent.TryGetComponent<Health>(out hpscript))
+                else if (hitCollider.transform.parent.TryGetComponent(out hpscript))
                 {
                     Debug.Log(hpscript);
                     Debug.Log(hitCollider.name + "Was Caught in Blast");
@@ -94,7 +94,7 @@ public class AoeDamager : MonoBehaviour
                 else
                     Debug.Log("Not allowed to take Damage");
             }
-            else if (hitCollider.TryGetComponent<Health>(out hpscript))
+            else if (hitCollider.TryGetComponent(out hpscript))
             {
                 Debug.Log(hpscript);
                 Debug.Log(hitCollider.name + "Was Caught in Blast");
