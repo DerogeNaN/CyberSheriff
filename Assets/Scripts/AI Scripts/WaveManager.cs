@@ -9,6 +9,8 @@ public class WaveManager : MonoBehaviour
     GameManager gameManager;
     public static WaveManager waveManagerInstance;
 
+    public bool tutorialLevel = false;
+
     [Header("Global Wave Settings")]
     public float waveTime;
     public float timeBetweenWaves;
@@ -29,44 +31,53 @@ public class WaveManager : MonoBehaviour
 
     void Awake()
     {
-        if (waveManagerInstance == null)
+        if (!tutorialLevel)
         {
-            waveManagerInstance = this;
-        }
-        else if (waveManagerInstance != this)
-        {
-            Destroy(gameObject);  // Avoid keeping duplicate managers
+            if (waveManagerInstance == null)
+            {
+                waveManagerInstance = this;
+            }
+            else if (waveManagerInstance != this)
+            {
+                Destroy(gameObject);  // Avoid keeping duplicate managers
+            }
         }
     }
 
     
     void Update()
     {
-        if (enemiesRemainingText != null)
+        if (!tutorialLevel)
         {
-            enemiesRemainingText.text = enemiesRemaining.ToString();
-        }
+            if (enemiesRemainingText != null)
+            {
+                enemiesRemainingText.text = enemiesRemaining.ToString();
+            }
 
-        if (waveCountText != null) waveCountText.text = waveNumber.ToString();
+            if (waveCountText != null) waveCountText.text = waveNumber.ToString();
+        }
     }
 
     public void StartWave()
     {
-        Debug.Log("Wave Manager starting new wave");
-        if (enemiesRemaining <= 0)
+        if (!tutorialLevel)
         {
-            if (waveNumber > 2)
+            Debug.Log("Wave Manager starting new wave");
+            if (enemiesRemaining <= 0)
             {
-                WinCondition();
+                if (waveNumber > 2)
+                {
+                    WinCondition();
+                }
+                else
+                {
+                    StartNewWave();
+                    timerScript.StartTimer();
+                    waveNumber++;
+                }
             }
-            else
-            {
-                StartNewWave();
-                timerScript.StartTimer();
-                waveNumber++;
-            }
+            else LoseCondition();
         }
-        else LoseCondition();
     }
 
     public void WinCondition()
