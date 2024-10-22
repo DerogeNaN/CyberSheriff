@@ -51,8 +51,7 @@ public class PlayerHealth : MonoBehaviour
         {
             Debug.Log("you died");
             // THIS NEEDS TO BE CHANGED BACK TO 0 HEALTH
-            health = 100;
-            Movement.playerMovement.transform.position = Movement.playerMovement.respawnPos.position;
+            WaveManager.waveManagerInstance.LoseCondition();
 
             //Movement.playerMovement.playerInputActions.Disable();
         }

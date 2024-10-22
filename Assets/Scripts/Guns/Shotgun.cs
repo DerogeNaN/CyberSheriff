@@ -295,7 +295,7 @@ public class Shotgun : RangedWeapon
             RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
             grenadeRB.AddForce(ray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
-            grenadeRB.AddForce(Movement.playerMovement.momentum, ForceMode.Impulse);
+            grenadeRB.AddForce(Movement.playerMovement.velocity, ForceMode.Impulse);
             grenadeReady = false;
             grenadeAmmo--;
             StartCoroutine(Wait(AltshotGapTime));

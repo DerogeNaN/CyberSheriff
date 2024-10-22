@@ -10,8 +10,8 @@ public class SpeedTracker : MonoBehaviour
     
     void Update()
     {
-        Vector2 speedXZ = new Vector2(Movement.playerMovement.momentum.x, Movement.playerMovement.momentum.z);
+        Vector2 speedXZ = new Vector2(Movement.playerMovement.velocity.x, Movement.playerMovement.velocity.z);
         if (!showGravity) tmp.text = speedXZ.magnitude.ToString("F3");
-        else tmp.text = Movement.playerMovement.momentum.y.ToString("F3");
+        else tmp.text = Movement.playerMovement.velocity.y.ToString("F3");
     }
 }
