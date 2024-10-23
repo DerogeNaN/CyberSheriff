@@ -2,11 +2,6 @@ using UnityEngine;
 using Unity.Mathematics;
 using System.Collections;
 using static RangedWeapon;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
-using UnityEngine.Rendering.Universal.Internal;
-using System.Linq.Expressions;
-using UnityEditor.AnimatedValues;
 
 
 public class Shotgun : RangedWeapon
