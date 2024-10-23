@@ -105,6 +105,7 @@ public class Movement : MonoBehaviour
     public int encouragedAirMomentum = 35;
     public int encouragedSlideMomentum = 30;
     public int slowDownPercentage = 30;
+    public float speedLimitEnforceAmmount = 1.5f;
     private float momentumRatio;
     private float actualGravity = 0;
 
@@ -222,8 +223,10 @@ public class Movement : MonoBehaviour
 
         Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         float encouragedAmount = Vector3.Dot(movementInputWorld, horizontalVelocity.normalized) * (1 - momentumRatio);
-
         Vector3 targetVelocity = (movementInputWorld * moveSpeed) * momentumRatio;
+        float nextFrameMagnitude = (horizontalVelocity + targetVelocity).magnitude;
+        float horizontalMag = horizontalVelocity.magnitude;
+
         if (isSliding)
         {
             float currSpeed = horizontalVelocity.magnitude;
@@ -234,17 +237,12 @@ public class Movement : MonoBehaviour
 
         else
         {
-            if ((targetVelocity + horizontalVelocity).magnitude >= maxPlayerInputSpeed && !isDashing)
+            if (nextFrameMagnitude >= maxPlayerInputSpeed && !isDashing)
             {
-                float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, horizontalVelocity.magnitude);
+                float resultantMagnitude = Mathf.Max(maxPlayerInputSpeed, horizontalMag);
                 resultantMagnitude -= targetVelocity.magnitude;
 
-                if (isGrounded)
-                {
-                    
-                }
-
-                horizontalVelocity = horizontalVelocity.normalized * (resultantMagnitude);
+                horizontalVelocity = horizontalVelocity.normalized * resultantMagnitude;
 
                 velocity.x = horizontalVelocity.x;
                 velocity.z = horizontalVelocity.z;
@@ -253,6 +251,16 @@ public class Movement : MonoBehaviour
             velocity.x += targetVelocity.x;
             velocity.z += targetVelocity.z;
 
+            if (isGrounded)
+            {
+                horizontalVelocity += targetVelocity;
+
+                float velocityMag = horizontalVelocity.magnitude;
+
+                horizontalVelocity = Vector3.ClampMagnitude(horizontalVelocity, Mathf.Max(maxPlayerInputSpeed, velocityMag - speedLimitEnforceAmmount));
+                velocity.x = horizontalVelocity.x;
+                velocity.z = horizontalVelocity.z;
+            }
         }
 
         if (movementInputLocal == Vector2.zero && isGrounded && !isSliding && !isDashing)

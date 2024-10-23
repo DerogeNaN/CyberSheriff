@@ -43,7 +43,7 @@ public class WaveManager : MonoBehaviour
     
     void Update()
     {
-        if (tutorialLevel)
+        if (!tutorialLevel)
         {
             if (enemiesRemainingText != null)
             {

@@ -14,7 +14,7 @@ public class Timer : MonoBehaviour
 
     void Start()
     {
-        if (WaveManager.waveManagerInstance != null || !WaveManager.waveManagerInstance.tutorialLevel)
+        if (WaveManager.waveManagerInstance != null && !WaveManager.waveManagerInstance.tutorialLevel)
         {
             StartBreakTimer();
         }
@@ -27,7 +27,7 @@ public class Timer : MonoBehaviour
     }
     void Update()
     {
-        if (WaveManager.waveManagerInstance != null || !WaveManager.waveManagerInstance.tutorialLevel)
+        if (WaveManager.waveManagerInstance != null && !WaveManager.waveManagerInstance.tutorialLevel)
         {
             if (isTiming && !isTimingBreak)
             {
