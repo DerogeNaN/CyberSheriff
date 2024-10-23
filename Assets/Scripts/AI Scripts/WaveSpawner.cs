@@ -7,6 +7,13 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] public GameObject[] wave1Enemies;
     [SerializeField] public GameObject[] wave2Enemies;
     [SerializeField] public GameObject[] wave3Enemies;
+    [SerializeField] public GameObject[] wave4Enemies;
+    [SerializeField] public GameObject[] wave5Enemies;
+    [SerializeField] public GameObject[] wave6Enemies;
+    [SerializeField] public GameObject[] wave7Enemies;
+    [SerializeField] public GameObject[] wave8Enemies;
+    [SerializeField] public GameObject[] wave9Enemies;
+    [SerializeField] public GameObject[] wave10Enemies;
     private GameObject[][] waves;
 
     [SerializeField] private BoxCollider spawnZone;
@@ -29,7 +36,7 @@ public class WaveSpawner : MonoBehaviour
         size = spawnZone.size;
 
         WaveManager.StartNewWave += PrepareNextWave;
-        waves = new GameObject[][] { wave1Enemies, wave2Enemies, wave3Enemies };
+        waves = new GameObject[][] { wave1Enemies, wave2Enemies, wave3Enemies, wave4Enemies, wave5Enemies, wave6Enemies, wave7Enemies, wave8Enemies, wave9Enemies, wave10Enemies};
 
         //spawnZone = GetComponent<BoxCollider>();
         //center = transform.position;
