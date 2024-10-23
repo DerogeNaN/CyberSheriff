@@ -483,8 +483,10 @@ public class Movement : MonoBehaviour
 
         else
         {
+            isGrappling = false;
             canGrapple = false;
             grappleObject = null;
+            grappleTargetDirection = Vector3.zero;
             if (grappleUI.isPlaying)
             {
                 grappleUI.gameObject.SetActive(false);
@@ -515,7 +517,6 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
-        //lastGrappleTime = Time.time;
     }
 
     private void UntiltCamera(float tiltAngle, float tiltSpeed)
