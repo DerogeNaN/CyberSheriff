@@ -26,7 +26,7 @@ public class EnemyCommon : MonoBehaviour
     [HideInInspector] public Transform playerTransform;
     [HideInInspector] public Vector3 moveTarget; // the object it follows
     [HideInInspector] public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
-    [HideInInspector] public bool hasLineOfSight;
+    public bool hasLineOfSight;
     [HideInInspector] public bool shouldPath;
 
     private NavMeshAgent navAgent;

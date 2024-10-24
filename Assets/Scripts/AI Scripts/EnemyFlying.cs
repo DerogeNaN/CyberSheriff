@@ -1,6 +1,7 @@
 using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -55,7 +56,24 @@ public class EnemyFlying : EnemyBase
         toPlayer = enemy.playerTransform.position - transform.position + new Vector3(0, yOffset, 0);
         close = toPlayer.magnitude <= closeDistance;
 
-        transform.rotation = Quaternion.LookRotation(dir);
+        // apply movement and rotation
+        transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
+        transform.position += ((currentSpeed * dir) + GetAvoidance2()) * Time.deltaTime;
+
+
+
+
+
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 1.0f);
+
+        foreach (Collider c in colliders)
+        {
+            if (!c.gameObject.CompareTag("Player"))
+            {
+                
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -63,39 +81,36 @@ public class EnemyFlying : EnemyBase
         // look at player
         dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
 
-        if (enemy.hasLineOfSight)
+        if (enemy.hasLineOfSight && toPlayer.magnitude > closeDistance + closeBuffer)
         {
-            if (toPlayer.magnitude > closeDistance + closeBuffer)
-            {
-                // if far from player, move towards them
-                if (currentSpeed < maxSpeed) currentSpeed += acceleration;
-                //else currentSpeed = maxSpeed;
-            }
-            else if (toPlayer.magnitude < closeDistance - closeBuffer)
-            {
-                // if close to player, move away from them
-                if (currentSpeed > -maxSpeed) currentSpeed -= acceleration;
-                //else currentSpeed = -maxSpeed;
-            }
-            else
-            {
-                // decelerate
-                float sign = Mathf.Sign(currentSpeed);
-                currentSpeed -= deceleration * sign;
-
-                if (sign > 0) if (currentSpeed < 0) currentSpeed = 0;
-                else if (sign < 0) if (currentSpeed > 0) currentSpeed = 0;
-
-                //if (currentSpeed > 0.0f) currentSpeed -= deceleration;
-                //else currentSpeed = 0.0f;
-            }
+            // if far from player, move towards them
+            if (currentSpeed < maxSpeed) currentSpeed += acceleration;
         }
+        else if (enemy.hasLineOfSight && toPlayer.magnitude < closeDistance - closeBuffer)
+        {
+            // if close to player, move away from them
+            if (currentSpeed > -maxSpeed) currentSpeed -= acceleration;
+        }
+        else
+        {
+            // decelerate
+            float sign = Mathf.Sign(currentSpeed);
+            currentSpeed -= deceleration * sign;
 
+            if (sign > 0) if (currentSpeed < 0) currentSpeed = 0;
+                else if (sign < 0) if (currentSpeed > 0) currentSpeed = 0;
+        }
+    }
 
-        Vector3 towardsPlayer = currentSpeed * dir;
+    private void OnCollisionEnter(Collision collision)
+    {
+            Debug.Log("aaaa");
+        if (!collision.gameObject.CompareTag("Player"))
+        {
 
-        // apply movement
-        transform.position += towardsPlayer + GetAvoidance2();
+            ContactPoint contact = collision.GetContact(0);
+            transform.position += contact.normal * contact.separation;
+        }
     }
 
     private Vector3 GetAvoidance()
@@ -137,7 +152,7 @@ public class EnemyFlying : EnemyBase
         {
             if (!IsDescendantOf(transform, c.gameObject.transform) && c.gameObject.transform != transform)
             {
-                Debug.Log(c.gameObject.name);
+                //Debug.Log(c.gameObject.name);
                 Vector3 fromCollision = transform.position - c.transform.position;
                 avoidance += fromCollision.normalized * (fromCollision.magnitude * avoidanceDistanceWeight);
             }
