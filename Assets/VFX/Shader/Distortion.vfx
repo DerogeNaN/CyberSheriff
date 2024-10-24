@@ -69,8 +69,8 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
-  - name: Mask
-    path: Mask
+  - name: Main_Tex
+    path: Main_Tex
     tooltip: 
     sheetType: m_NamedObject
     realType: Texture2D
@@ -78,7 +78,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"276d9e395ae18fe40a9b4988549f2349","type":3}}'
+      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"c6c4dea94c2b416448c28d09fbc8b3a7","type":3}}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -1263,12 +1263,12 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
   - {fileID: 8926484042661614622}
-  m_ExposedName: Mask
+  m_ExposedName: Main_Tex
   m_Exposed: 1
   m_Order: 1
   m_Category: 
@@ -1285,11 +1285,11 @@ MonoBehaviour:
   m_ValueFilter: 0
   m_Tooltip: 
   m_Nodes:
-  - m_Id: 0
+  - m_Id: 1
     linkedSlots:
     - outputSlot: {fileID: 8926484042661614622}
-      inputSlot: {fileID: 0}
-    position: {x: 790, y: 755}
+      inputSlot: {fileID: 8926484042661614680}
+    position: {x: 686.00006, y: 704.50006}
     expandedSlots: []
     expanded: 0
 --- !u!114 &8926484042661614622
@@ -1317,7 +1317,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"276d9e395ae18fe40a9b4988549f2349","type":3}}'
+      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"c6c4dea94c2b416448c28d09fbc8b3a7","type":3}}'
     m_Space: 2147483647
   m_Property:
     name: o
@@ -1325,7 +1325,8 @@ MonoBehaviour:
       m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
   m_Direction: 1
-  m_LinkedSlots: []
+  m_LinkedSlots:
+  - {fileID: 8926484042661614680}
 --- !u!114 &8926484042661614623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2463,4 +2464,5 @@ MonoBehaviour:
       m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
   m_Direction: 0
-  m_LinkedSlots: []
+  m_LinkedSlots:
+  - {fileID: 8926484042661614622}

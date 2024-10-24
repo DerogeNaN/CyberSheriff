@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6384247157016966764
+--- !u!114 &-4223951857590351694
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Electric_Line_var2_Mat
-  m_Shader: {fileID: -6465566751694194690, guid: 505cf5a402689f7438958e967cccda0a,
+  m_Name: Laser_Beam_Tufts_Mat
+  m_Shader: {fileID: -6465566751694194690, guid: 29bd2a890c69e524282c8bce6e3c7f73,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -35,11 +35,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Main_Tex:
-        m_Texture: {fileID: 2800000, guid: b7a44e19205f3354ab994d91c48a71f6, type: 3}
+        m_Texture: {fileID: 2800000, guid: baf40a38c6f4e3d409932c2ae0989c73, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mask:
-        m_Texture: {fileID: 2800000, guid: c0d83b93a5b8bb6448637988a95bf087, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -56,16 +56,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 1
-    - _Alpha_Clip: 0.156
-    - _Dissolve_Scale: 32.3
+    - _Alpha: 0.05
+    - _Alpha_Clip: 0
+    - _Distortion_Amount: 0.183
+    - _Distortion_Scale: 100
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Rotated: 0
     m_Colors:
-    - _Colour_1: {r: 4.7780466, g: 20.306698, b: 57.03793, a: 1}
-    - _Colour_2: {r: 2.447059, g: 2.854902, b: 8, a: 0}
-    - _Dissolve_Speed: {r: 0.9, g: 0, b: 0, a: 0}
-    - _Main_Tex_Speed: {r: -1.45, g: 0, b: 0, a: 0}
-    - _Tiling: {r: 2.05, g: 0.99, b: 0, a: 0}
+    - _Distortion_Speed: {r: 0.07, g: 0, b: 0, a: 0}
+    - _Main_Colour: {r: 37.161514, g: 0.21480642, b: 0, a: 1}
+    - _Main_Tex_Speed: {r: -0.7, g: 0, b: 0, a: 0}
+    - _Tiling: {r: 3.37, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
