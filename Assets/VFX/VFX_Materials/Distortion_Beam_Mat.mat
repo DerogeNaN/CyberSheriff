@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Distortion_Beam_Mat
-  m_Shader: {fileID: -6465566751694194690, guid: 325bef11b60096a4caa4756a88e27836,
+  m_Shader: {fileID: -6465566751694194690, guid: 12f3f936ee1725b40a2ee28be8d381de,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -21,8 +21,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _Mask:
+    - _Main_Tex:
         m_Texture: {fileID: 2800000, guid: baf40a38c6f4e3d409932c2ae0989c73, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask:
+        m_Texture: {fileID: 2800000, guid: c0d83b93a5b8bb6448637988a95bf087, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -39,18 +43,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Distortion_Scale: 19.39
+    - _Alpha: 1
+    - _Distortion_Scale: 18.76
     - _Magnification: -0.6
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Strength: 1.7
+    - _Strength: 0.8
     m_Colors:
     - _Colour_Test: {r: 1, g: 0, b: 0.2501845, a: 0}
-    - _Distortion_Tiling: {r: -1, g: 0, b: 0, a: 0}
-    - _Focal_Point: {r: 0, g: 0.5, b: 0, a: 0}
+    - _Distortion_Tiling: {r: -0.97, g: 0, b: 0, a: 0}
+    - _Focal_Point: {r: 0, g: 1, b: 0, a: 0}
     - _Offset_Speed: {r: 0, g: 0, b: 0, a: 0}
     - _Offset_Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Texture_Offset: {r: -0.54, g: 0, b: 0, a: 0}
+    - _Texture_Offset: {r: -0.37, g: 0, b: 0, a: 0}
     - _Texture_Tiling: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &8258356548152320069
