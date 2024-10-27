@@ -193,7 +193,7 @@ PrefabInstance:
     - target: {fileID: 8781144055303266582, guid: 86139df0a910269489635c190ea0f1df,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86139df0a910269489635c190ea0f1df, type: 3}
@@ -542,7 +542,7 @@ PrefabInstance:
     - target: {fileID: 4443895184043447717, guid: 26ce17e27cc5e904196d0399d0317069,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ce17e27cc5e904196d0399d0317069, type: 3}
@@ -2091,7 +2091,7 @@ PrefabInstance:
     - target: {fileID: 4443895184043447717, guid: 26ce17e27cc5e904196d0399d0317069,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ce17e27cc5e904196d0399d0317069, type: 3}
@@ -2165,7 +2165,7 @@ PrefabInstance:
     - target: {fileID: 8781144055303266582, guid: 59ff60e637596524d9b2c5580319441c,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59ff60e637596524d9b2c5580319441c, type: 3}
@@ -2239,7 +2239,7 @@ PrefabInstance:
     - target: {fileID: 4443895184043447717, guid: 26ce17e27cc5e904196d0399d0317069,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ce17e27cc5e904196d0399d0317069, type: 3}
@@ -2785,7 +2785,7 @@ PrefabInstance:
     - target: {fileID: 8781144055303266582, guid: 86139df0a910269489635c190ea0f1df,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86139df0a910269489635c190ea0f1df, type: 3}
@@ -3619,7 +3619,7 @@ PrefabInstance:
     - target: {fileID: 4443895184043447717, guid: 26ce17e27cc5e904196d0399d0317069,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ce17e27cc5e904196d0399d0317069, type: 3}
@@ -3807,7 +3807,7 @@ PrefabInstance:
     - target: {fileID: 8781144055303266582, guid: 86139df0a910269489635c190ea0f1df,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86139df0a910269489635c190ea0f1df, type: 3}
@@ -3995,7 +3995,7 @@ PrefabInstance:
     - target: {fileID: 8781144055303266582, guid: 86139df0a910269489635c190ea0f1df,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86139df0a910269489635c190ea0f1df, type: 3}
@@ -4191,7 +4191,7 @@ PrefabInstance:
     - target: {fileID: 8781144055303266582, guid: 86139df0a910269489635c190ea0f1df,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86139df0a910269489635c190ea0f1df, type: 3}
@@ -10635,7 +10635,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &994272487825141580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10650,6 +10650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   debugText: {fileID: 6873103680493962015}
+  enemy: {fileID: 0}
 --- !u!4 &995481991087496558
 Transform:
   m_ObjectHideFlags: 0
@@ -11613,6 +11614,7 @@ MonoBehaviour:
   attackRange: 2
   attackTime: 0.5
   attackCooldown: 1
+  debugStunText: {fileID: 0}
 --- !u!33 &1772174317257187925
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -15193,7 +15195,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4429880728595274549}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.8, y: 2.04, z: 39.12}
+  m_LocalPosition: {x: -5.09, y: 2.04, z: -5.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15416,6 +15418,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FlyingEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4443895184043447717, guid: 26ce17e27cc5e904196d0399d0317069,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ce17e27cc5e904196d0399d0317069, type: 3}

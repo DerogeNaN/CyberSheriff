@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyMelee : EnemyBase
 {
@@ -16,11 +16,16 @@ public class EnemyMelee : EnemyBase
     public float attackTime = 1.0f;
     public float attackCooldown = 1.0f;
 
+    [SerializeField] TMP_Text debugStunText;
     Vector3 initialPosition;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
     float remainingAttackCooldown = 0;
+    float stun = 0;
+    Vector3 attackStartRotation;
+    Vector3 attackTargetRotation;
+    float attackRotate = 0;
 
     protected override void OnStart()
     {
@@ -29,6 +34,8 @@ public class EnemyMelee : EnemyBase
         initialPosition = transform.position;
         enemy.moveTarget = initialPosition;
         enemy.speed = walkSpeed;
+
+        if (debugStunText) debugStunText.text = "";
     }
 
     protected override void OnUpdate()
@@ -36,6 +43,12 @@ public class EnemyMelee : EnemyBase
         // do this regardless of state 
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
+    }
+
+    public override void OnHit(int damage, int damageType)
+    {
+        stun = 1.0f;
+        SetState(EnemyState.stunned);
     }
 
     #region enter state
@@ -66,6 +79,17 @@ public class EnemyMelee : EnemyBase
             GameObject hitbox = Instantiate(attackPrefab, enemy.mesh.transform);
             hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
         }
+
+        // look at player
+        Vector3 dir = (enemy.playerTransform.position - transform.position).normalized;
+        transform.rotation = Quaternion.LookRotation(dir);
+
+        // set directions to lerp to quickly when attacking
+        //attackStartRotation = transform.rotation.eulerAngles;
+        //attackRotate = 0;
+
+        //Vector3 dir = (enemy.playerTransform.position - transform.position).normalized;
+        //attackTargetRotation = new(dir.x, 0, dir.z);
     }
     #endregion
 
@@ -114,6 +138,22 @@ public class EnemyMelee : EnemyBase
         if (remainingAttackTime <= 0)
         {
             SetState(EnemyState.movingToTarget);
+        }
+
+        // rotate to look at player
+        //if (attackRotate < 1.0f) attackRotate += Time.deltaTime * 2.0f;
+        //transform.rotation = Quaternion.Euler(Vector3.Lerp(attackStartRotation, attackTargetRotation, attackRotate));
+    }
+
+    protected override void StunnedUpdate()
+    {
+        if (debugStunText) debugStunText.text = "stun";
+
+        stun -= Time.deltaTime;
+        if (stun <= 0)
+        {
+            SetState(EnemyState.idle);
+            if (debugStunText) debugStunText.text = "";
         }
     }
     #endregion
