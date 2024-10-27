@@ -12,6 +12,7 @@ public class Revolver : RangedWeapon
     {
         animator.SetTrigger("ShootTrig");
         base.EngagePrimaryFire();
+        SoundManager2.Instance.PlaySound("Revolver");
     }
 
     public override IEnumerator Reload()
@@ -41,6 +42,7 @@ public class Revolver : RangedWeapon
             ps.Play();
             currentBullets--;
             animator.SetTrigger("ShootAltTrig");
+            SoundManager2.Instance.PlaySound("Revolver");
             if (hit != false)
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;

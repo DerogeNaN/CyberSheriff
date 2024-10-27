@@ -49,6 +49,8 @@ public class EnemyMelee : EnemyBase
         enemy.speed = runSpeed;
         enemy.shouldPath = true;
         enemy.moveTarget = enemy.playerTransform.position;
+        //SoundManager.Instance.PlaySound("Enemy", enemy.transform);
+        SoundManager2.Instance.PlaySound("Enemy", enemy.transform);
     }
     protected override void LostSightOfTargetEnter()
     {
