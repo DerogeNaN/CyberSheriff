@@ -585,43 +585,51 @@ public class Movement : MonoBehaviour
 
             for (int i = 0; i < hitArray.Length; i++)
             {
-                float clampAmmount = Vector3.Dot(movementInputWorld, -hitArray[i].normal);
+                Vector3 normal = hitArray[i].normal;
+                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+
+                if (Vector3.Dot(velocity, normal) < 0) continue;
+
+                float velocityInNormalDirection = Vector3.Dot(velocity, normal);
+                velocity -= velocityInNormalDirection * normal;
+
+                float clampAmmount = Vector3.Dot(movementInputWorld, normal);
                 if (clampAmmount < 0) continue;
 
-                float velocityInNormalDirection = Vector3.Dot(velocity, hitArray[i].normal);
-                velocity -= velocityInNormalDirection * hitArray[i].normal;
-
-                if (Vector3.Dot(hitArray[i].normal, Vector3.up) <= 0.25f)
+                if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
                 {
                     clampAmmount = 1 - clampAmmount;
 
                     velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                     velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                 }
+
+                Debug.DrawRay(transform.position, normal * 5, Color.magenta);
             }
         }
         
         else
         {
-            if (Physics.CapsuleCast(
-                slideCollider.transform.position - new Vector3(0.5f, 0, 0),
-                slideCollider.transform.position + new Vector3(0.7f, 0, 0),
-                0.45f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore
-                ))
-            {
+            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0.5f, 0, 0),
+                                              transform.position - new Vector3(0.5f, 0, 0),
+                                              0.35f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
 
-                float velocityInNormalDirection = Vector3.Dot(velocity, hit.normal);
-                velocity -= velocityInNormalDirection * hit.normal;
-
-                if (Vector3.Dot(hit.normal, Vector3.up) <= 0.25f)
+            for (int i = 0; i < hitArray.Length; i++)
                 {
-                    float clampAmmount = Vector3.Dot(movementInputWorld, -hit.normal);
-                    clampAmmount = 1 - clampAmmount;
+                    float clampAmmount = Vector3.Dot(movementInputWorld, -hitArray[i].normal);
+                    if (clampAmmount < 0) continue;
 
-                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    float velocityInNormalDirection = Vector3.Dot(velocity, hitArray[i].normal);
+                    velocity -= velocityInNormalDirection * hitArray[i].normal;
+
+                    if (Vector3.Dot(hitArray[i].normal, Vector3.up) <= 0.25f)
+                    {
+                        clampAmmount = 1 - clampAmmount;
+
+                        velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                        velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    }
                 }
-            }
         }
     }
 
