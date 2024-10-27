@@ -9,6 +9,8 @@ public class Health : MonoBehaviour
     public int health = 100;
     public TMP_Text debugText;
     public GameObject lastHitBy = null;
+    [Tooltip("calls OnHit on this. can be null.")]
+    public EnemyBase enemy;
 
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;
@@ -26,6 +28,8 @@ public class Health : MonoBehaviour
         health -= damage;
         //Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
         lastHitBy = attacker;
+        enemy.OnHit(damage, damageType);
+
         // destroys this gameobject if health <= 0
         IsDestroyed();
     }
