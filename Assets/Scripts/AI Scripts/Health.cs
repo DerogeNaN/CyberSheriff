@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,8 +8,7 @@ public class Health : MonoBehaviour
 {
     public int health = 100;
     public TMP_Text debugText;
-    [Tooltip("calls OnHit on this. can be null.")]
-    public EnemyBase enemy;
+    public GameObject lastHitBy = null;
 
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;
@@ -21,12 +21,11 @@ public class Health : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage, int damageType)
+    public void TakeDamage(int damage, int damageType, GameObject attacker)
     {
         health -= damage;
         //Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
-        enemy.OnHit(damage, damageType);
-
+        lastHitBy = attacker;
         // destroys this gameobject if health <= 0
         IsDestroyed();
     }
@@ -44,6 +43,12 @@ public class Health : MonoBehaviour
 
     private void OnDestroy()
     {
-        enemyKill();
+        if (lastHitBy)
+        {
+            if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw))
+                enemyKill();
+            else
+                Debug.Log("Seems Like a grenade");
+        }
     }
 }

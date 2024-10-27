@@ -17,7 +17,9 @@ public class ScoringSystem : MonoBehaviour
     public int WallRunningPoints = 1;
     public int GrapplePoints = 40;
 
-
+    [SerializeField] public int minorAction = 10;
+    [SerializeField] public int midAction = 20;
+    [SerializeField] public int majorAction = 50;
 
 
     // Start is called before the first frame update
@@ -29,31 +31,34 @@ public class ScoringSystem : MonoBehaviour
     public void AwardPoints(ActionType actionType)
     {
         int points = 0;
+        int actionPoints = 0;
 
         switch (actionType)
         {
             case ActionType.Jump:
                 points = jumpPoints;
+                actionPoints = majorAction;
+                scoreboard.UpdateRankPoints(actionPoints);
                 scoreboard.AddScore(points);
-                //scoreboard.IncrementCombo();
+                
                 break;
             case ActionType.DoubleJump:
                 points = DoubleJumpPoints;
                 scoreboard.AddScore(points);
-                //scoreboard.IncrementCombo();
+                
                 break;
             case ActionType.WallRunning:
                 points = WallRunningPoints;
-                scoreboard.AddRawScore(points);
+                scoreboard.AddScore(points);
                 break;
             case ActionType.Grapple:
                 points = GrapplePoints;
                 scoreboard.AddScore(points);
-                //scoreboard.IncrementCombo();
+                
                 break;
                 // Add more cases as needed
         }
         //scoreboard.AddScore(points);
-        //scoreboard.IncrementCombo();
+        
     }
 }

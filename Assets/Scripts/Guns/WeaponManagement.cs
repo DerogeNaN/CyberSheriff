@@ -34,7 +34,7 @@ public class WeaponManagement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("");
+       
         //make sure on  Kill isnt all ready an event;
         Health.enemyKill += currentActiveWeapon.GetComponent<RangedWeapon>().OnKill;
     }
@@ -129,79 +129,119 @@ public class WeaponManagement : MonoBehaviour
 
     void ScrollSetWeapon(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        //if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading || currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+        //{
+            float CurrentWeapon = obj.ReadValue<Vector2>().y;
 
-        float CurrentWeapon = obj.ReadValue<Vector2>().y;
+            if (CurrentWeapon > 0)
+            {
+                CurrentWeapon = 1;
+            }
+            else
+                CurrentWeapon = 0;
 
-        if (CurrentWeapon > 0)
-        {
-            CurrentWeapon = 1;
-        }
-        else
-            CurrentWeapon = 0;
+            Debug.Log("Changing Weapon");
+            Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
 
-        Debug.Log("Changing Weapon");
-        Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
+            //set previous to false
+            if (currentActiveWeapon)
+                currentActiveWeapon.gameObject.SetActive(false);
 
-        //set previous to false
-        if (currentActiveWeapon)
-            currentActiveWeapon.gameObject.SetActive(false);
+            Debug.Log("weapon type " + CurrentWeapon);
 
-        Debug.Log("weapon type " + CurrentWeapon);
+            currentActiveWeapon = weaponList[(int)CurrentWeapon];
+            if (currentActiveWeapon)
+            {
+                Debug.Log("WeaponFound!!");
+            }
 
-        currentActiveWeapon = weaponList[(int)CurrentWeapon];
-        if (currentActiveWeapon)
-        {
-            Debug.Log("WeaponFound!!");
-        }
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+            }
 
-        //set next to true 
-        currentActiveWeapon.gameObject.SetActive(true);
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+            }
+            //set next to true 
+            currentActiveWeapon.gameObject.SetActive(true);
+        //}
 
     }
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        //if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading || currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+        //{
+            //set previous to false
+            if (currentActiveWeapon)
+                currentActiveWeapon.gameObject.SetActive(false);
 
-        //set previous to false
-        if (currentActiveWeapon)
-            currentActiveWeapon.gameObject.SetActive(false);
+            Debug.Log("weapon type " + 0);
 
-        Debug.Log("weapon type " + 0);
+            currentActiveWeapon = weaponList[0];
+            if (currentActiveWeapon)
+            {
+                Debug.Log("WeaponFound!!");
+            }
 
-        currentActiveWeapon = weaponList[0];
-        if (currentActiveWeapon)
-        {
-            Debug.Log("WeaponFound!!");
-        }
+            //set next to true 
+            currentActiveWeapon.gameObject.SetActive(true);
 
-        //set next to true 
-        currentActiveWeapon.gameObject.SetActive(true);
 
-        currentActiveWeapon.transform.position = WeaponGripTransform.position;
-        currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+            }
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+            }
+
+            currentActiveWeapon.transform.position = WeaponGripTransform.position;
+            currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+        //}
     }
 
 
     void keySetWeapon2(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        //if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading || currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+        //{
 
-        //set previous to false
-        if (currentActiveWeapon)
-            currentActiveWeapon.gameObject.SetActive(false);
+            //set previous to false
+            if (currentActiveWeapon)
+                currentActiveWeapon.gameObject.SetActive(false);
 
-        Debug.Log("weapon type " + 1);
+            Debug.Log("weapon type " + 1);
 
-        currentActiveWeapon = weaponList[1];
-        if (currentActiveWeapon)
-        {
-            Debug.Log("WeaponFound!!");
-        }
+            currentActiveWeapon = weaponList[1];
+            if (currentActiveWeapon)
+            {
+                Debug.Log("WeaponFound!!");
+            }
 
-        //set next to true 
-        currentActiveWeapon.gameObject.SetActive(true);
 
-        currentActiveWeapon.transform.position = BoomstickTransform.position;
-        currentActiveWeapon.transform.rotation = BoomstickTransform.rotation;
+            //set next to true 
+            currentActiveWeapon.gameObject.SetActive(true);
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+            }
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+            }
+            currentActiveWeapon.transform.position = BoomstickTransform.position;
+            currentActiveWeapon.transform.rotation = BoomstickTransform.rotation;
+        //}
     }
 
 }
