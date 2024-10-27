@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Dissolve_Vertical_Death_Mat
-  m_Shader: {fileID: -6465566751694194690, guid: e11376ecfeb62c94f851487bea26aa5a,
+  m_Name: Dissolve_Death_Mat
+  m_Shader: {fileID: -6465566751694194690, guid: ba2d50e3f60e9aa4da9585433ce898ca,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -68,15 +68,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Dissolve_Amount: 7.42
+    - _Dissolve_Amount: 0.03
     - _Dissolve_Scale: 700
-    - _Edge_Thickness: 0.062
-    - _Noise_Strength: 0.2
+    - _Edge_Pixelation: 25.7
+    - _Edge_Thickness: 0.006
+    - _Noise_Strength: 0.08
     - _Pixelation: 100
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
     - _Base_Offset: {r: 0.01, g: 0.01, b: 0, a: 0}
-    - _Edge_Colour: {r: 0, g: 0.9971727, b: 3.09434, a: 0}
+    - _Edge_Colour: {r: 0, g: 1.0039216, b: 3.0901961, a: 0}
+    - _Edge_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Main_Colour: {r: 1, g: 1, b: 1, a: 0}
     - _Test_Colour: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
