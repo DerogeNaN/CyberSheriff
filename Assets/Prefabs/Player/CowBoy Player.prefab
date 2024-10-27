@@ -546,7 +546,7 @@ GameObject:
   - component: {fileID: 2482690101541362282}
   - component: {fileID: 1201899385012824885}
   - component: {fileID: 1069907538730138377}
-  m_Layer: 11
+  m_Layer: 5
   m_Name: Grapple_Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5323,7 +5323,7 @@ ParticleSystemRenderer:
   m_SortingFudge: 0
   m_NormalDirection: 1
   m_ShadowBias: 0
-  m_RenderAlignment: 0
+  m_RenderAlignment: 3
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
   m_UseCustomVertexStreams: 1
@@ -10720,7 +10720,6 @@ GameObject:
   - component: {fileID: 4613755221359916255}
   - component: {fileID: 4613755221359916240}
   - component: {fileID: 4613755221359916241}
-  - component: {fileID: 4613755221359916250}
   - component: {fileID: 4613755221359916242}
   - component: {fileID: 4613755221359916253}
   - component: {fileID: 4613755221359916254}
@@ -10807,22 +10806,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!54 &4613755221359916250
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4613755221359916243}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!136 &4613755221359916242
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -10919,7 +10902,7 @@ MonoBehaviour:
   gravityStrength: 35
   slideSpeedThreshold: 10
   slideDragDelay: 1.5
-  wallrunSpeedThreshold: 5
+  wallrunSpeedThreshold: 10
   cameraSlidePos: {fileID: 5772166658312057715}
   cameraDefaultPos: {fileID: 343712940333300622}
   cameraWallrunTilt: 8
@@ -10928,7 +10911,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   movementInputWorld: {x: 0, y: 0, z: 0}
   respawnPos: {fileID: 0}
-  rb: {fileID: 4613755221359916250}
+  rb: {fileID: 0}
   slideCollider: {fileID: 208496163852964873}
   isWallRunning: 0
   canWallrun: 0
@@ -10936,8 +10919,8 @@ MonoBehaviour:
   leavingWallrunTime: 0
   lastWallrunTime: 0
   cameraLeaveWallrunTime: 0
-  wallrunJumpAngle: 0.2
-  wallrunMomentumBonus: 0.5
+  wallrunJumpAngle: 1
+  wallrunVelocityBonus: 22
   isSliding: 0
   isTryingSlide: 0
   slideStartTime: 0
