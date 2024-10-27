@@ -1,6 +1,7 @@
 using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -44,12 +45,14 @@ public class EnemyFlying : EnemyBase
         dir = Vector3.zero;
 
         maxSpeed = Random.Range(maxSpeedRange.x, maxSpeedRange.y);
+        yOffset = Random.Range(yOffsetRange.x, yOffsetRange.y);
+        closeDistance = Random.Range(closeDistanceRange.x, closeDistanceRange.y);
     }
 
     protected override void OnUpdate()
     {
-        timer -= Time.deltaTime;
-        if (timer <= 0) RandomiseValues();
+        //timer -= Time.deltaTime;
+        //if (timer <= 0) RandomiseValues();
 
         enemy.lookTarget = enemy.playerTransform.position;
 
@@ -57,60 +60,73 @@ public class EnemyFlying : EnemyBase
         close = toPlayer.magnitude <= closeDistance;
 
         // apply movement and rotation
-        transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
+        transform.rotation = Quaternion.LookRotation(dir);
+        //transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
         transform.position += ((currentSpeed * dir) + GetAvoidance2()) * Time.deltaTime;
-
-
-
-
-
-
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 1.0f);
-
-        foreach (Collider c in colliders)
-        {
-            if (!c.gameObject.CompareTag("Player"))
-            {
-                
-            }
-        }
     }
 
     private void FixedUpdate()
     {
+
+    }
+
+    protected override void IdleUpdate()
+    {
+        // if has line of sight, start chasing
+        if (enemy.hasLineOfSight)
+        {
+            SetState(EnemyState.movingToTarget);
+        }
+
+        Decelerate();
+    }
+
+    protected override void MovingToTargetUpdate()
+    {
+        // if lost line of sight, go back to idle
+        if (!enemy.hasLineOfSight)
+        {
+            SetState(EnemyState.idle);
+        }
+
         // look at player
         dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
 
-        if (enemy.hasLineOfSight && toPlayer.magnitude > closeDistance + closeBuffer)
+        if (toPlayer.magnitude > closeDistance + closeBuffer)
         {
             // if far from player, move towards them
-            if (currentSpeed < maxSpeed) currentSpeed += acceleration;
+            if (currentSpeed < maxSpeed) currentSpeed += acceleration * Time.deltaTime;
         }
-        else if (enemy.hasLineOfSight && toPlayer.magnitude < closeDistance - closeBuffer)
+        else if (toPlayer.magnitude < closeDistance - closeBuffer)
         {
             // if close to player, move away from them
-            if (currentSpeed > -maxSpeed) currentSpeed -= acceleration;
+            if (currentSpeed > -maxSpeed) currentSpeed -= acceleration * Time.deltaTime;
         }
         else
         {
-            // decelerate
-            float sign = Mathf.Sign(currentSpeed);
-            currentSpeed -= deceleration * sign;
-
-            if (sign > 0) if (currentSpeed < 0) currentSpeed = 0;
-                else if (sign < 0) if (currentSpeed > 0) currentSpeed = 0;
+            Decelerate();
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-            Debug.Log("aaaa");
+        Debug.Log("aaaa");
         if (!collision.gameObject.CompareTag("Player"))
         {
 
             ContactPoint contact = collision.GetContact(0);
             transform.position += contact.normal * contact.separation;
         }
+    }
+
+    private void Decelerate()
+    {
+        // decelerate
+        float sign = Mathf.Sign(currentSpeed);
+        currentSpeed -= deceleration * sign * Time.deltaTime;
+
+        if (sign > 0) if (currentSpeed < 0) currentSpeed = 0;
+            else if (sign < 0) if (currentSpeed > 0) currentSpeed = 0;
     }
 
     private Vector3 GetAvoidance()
@@ -174,6 +190,7 @@ public class EnemyFlying : EnemyBase
         if (maybeChild.parent == null) return false;
         return IsDescendantOf(maybeParent, maybeChild.parent);
     }
+
     static bool IsDescendantOf_NotRecursive(Transform maybeParent, Transform maybeChild)
     {
         Transform currentChild = maybeChild;
