@@ -59,6 +59,7 @@ public class WaveManager : MonoBehaviour
     public void StartWave()
     {
         Debug.Log("Wave Manager starting new wave");
+        SoundManager2.Instance.PlaySound("Alarm_sound");
         if (enemiesRemaining <= 0)
         {
             if (waveNumber > 2)

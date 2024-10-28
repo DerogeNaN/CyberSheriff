@@ -7,6 +7,8 @@ public class Health : MonoBehaviour
     public TMP_Text debugText;
     public GameObject lastHitBy = null;
 
+    
+
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;
 
@@ -31,6 +33,8 @@ public class Health : MonoBehaviour
     {
         if (health <= 0)
         {
+            Transform objectTransform = transform;
+            SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
             health = 0;
             //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);

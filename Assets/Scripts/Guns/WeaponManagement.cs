@@ -134,11 +134,16 @@ public class WeaponManagement : MonoBehaviour
             float CurrentWeapon = obj.ReadValue<Vector2>().y;
 
             if (CurrentWeapon > 0)
-            {
-                CurrentWeapon = 1;
-            }
-            else
-                CurrentWeapon = 0;
+        {
+            CurrentWeapon = 1;
+            SoundManager2.Instance.PlaySound("WeaponSwap");
+        }
+        else
+        {
+            CurrentWeapon = 0;
+            SoundManager2.Instance.PlaySound("WeaponSwap");
+        }
+                
 
             Debug.Log("Changing Weapon");
             Debug.Log("Mouse Wheel Value : " + CurrentWeapon);

@@ -25,7 +25,7 @@ public class EnemyMelee : EnemyBase
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
-
+        SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
         initialPosition = transform.position;
         enemy.moveTarget = initialPosition;
         enemy.speed = walkSpeed;
@@ -49,6 +49,7 @@ public class EnemyMelee : EnemyBase
         enemy.speed = runSpeed;
         enemy.shouldPath = true;
         enemy.moveTarget = enemy.playerTransform.position;
+        //SoundManager2.Instance.PlaySound("RobotSoundSFX", enemy.transform);
     }
     protected override void LostSightOfTargetEnter()
     {

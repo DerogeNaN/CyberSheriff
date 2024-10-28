@@ -34,6 +34,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0;
         isPaused = true;
 
+        SoundManager2.Instance.PlaySound("UIButtonSFX");
         //Activating player menu input
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
@@ -50,6 +51,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1;
         isPaused = false;
 
+        SoundManager2.Instance.PlaySound("UIButtonSFX");
         //Activating player menu input
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -62,12 +64,14 @@ public class PauseMenu : MonoBehaviour
 
     public void OptionsButton()
     {
+        SoundManager2.Instance.PlaySound("UIButtonSFX");
         pauseMenu.SetActive(false);
         optionsMenu.SetActive(true);
     }
 
     public void ReturnToMenuButton()
     {
+        SoundManager2.Instance.PlaySound("UIButtonSFX");
         pauseMenu.SetActive(true);
         optionsMenu.SetActive(false);
     }
@@ -76,6 +80,7 @@ public class PauseMenu : MonoBehaviour
     {
         optionsMenu.SetActive(false);
         pauseMenu.SetActive(false);
+        SoundManager2.Instance.PlaySound("UIButtonSFX");
 
 
         SceneManager.LoadScene("Alec_Main_Menu");
@@ -86,6 +91,7 @@ public class PauseMenu : MonoBehaviour
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
 #endif
+        SoundManager2.Instance.PlaySound("UIButtonSFX");
         Application.Quit();
         
     }

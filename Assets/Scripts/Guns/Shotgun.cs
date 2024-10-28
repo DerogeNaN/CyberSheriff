@@ -154,6 +154,7 @@ public class Shotgun : RangedWeapon
         else
         {
             animator.SetTrigger("ShootTrig");
+            SoundManager2.Instance.PlaySound("ShotgunFire");
             pellets = bulletsPerShot;
         }
 
@@ -296,6 +297,7 @@ public class Shotgun : RangedWeapon
         if (grenadeReady)
         {
             animator.ResetTrigger("ShootAltTrig");
+            SoundManager2.Instance.PlaySound("ShotgunLauncherThunk");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
             RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
