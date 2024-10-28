@@ -894,6 +894,261 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4e7430bc158509469de9934fb532703, type: 3}
+--- !u!1 &42899514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 42899517}
+  - component: {fileID: 42899516}
+  - component: {fileID: 42899515}
+  m_Layer: 0
+  m_Name: SoundManager2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &42899515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42899514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2459045e942424b9764cc71ff8b7a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &42899516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42899514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 679ee3600fb998b468b63dcca05099bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Footsteps_Concrete
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: b0f008d8774bcaf4e8bebf8860b341a7, type: 3}
+    - {fileID: 8300000, guid: dae8c2bc9ad94ae4d85e7c7b4606245d, type: 3}
+    - {fileID: 8300000, guid: 920dabe5cd2e1064b95fcbe92a94e32f, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Revolver
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 80cbb79c005ee6046b52e78cdf564a51, type: 3}
+    - {fileID: 8300000, guid: 39e58ee4e1f32104a85ca894dbb8eeeb, type: 3}
+    volume: 0.1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: DashSFX
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 700a12dccfdef02438302beeee5c1e1a, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: SlideSFX
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: f8c29e3b4d07a504db94fa0a691fb4b7, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Wallrunning
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: d9efaad7caaa43445924c8f1fffe7bba, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ShotgunFire
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 2add3e0b0ad0edf459b4a2aa13f7d298, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ShotgunGranadeExplosion
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 528abb8b90e16f745be764a2ad1cca43, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ShotgunLauncherThunk
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 02fdfe99f7bae804fb64b7f87e19538c, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: WeaponSwap
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 0a05a8615ca7b4c45a8d9e8639759c0b, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Grapple
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 462b16a183e3f6a4594f7327a723cf72, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TEST_Footstep_wood
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 44e9c0a4fdcdff84780f611036b83ed5, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TEST_Footstep_metal
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 6e1b272cd7eab00469c43944c586ea77, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TEST_Footstep_conrete
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 3d99e6b8bebc05b4292443427d9b85c2, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Alarm_sound
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 7199626b2844c6d44b3fa92f6a8d5025, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotSpawnSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 1a59afe786584f545b73e60c514cded9, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotLazerSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 09482d088d0a8b746b562b37fef70942, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotWalkingSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 4cd5f96ccff974947998ea78feecd2a5, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotHitSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 6542978a127b31c47b30020a7b035773, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotDeathSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 9bf8cadd727b23144a4d5e587fbad3df, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotSoundSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 949cc025e80ad5e4fa1b15a4fc5f834f, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: UIButtonSFX
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: d9c44d71ed7e44b448f323d7b6907b38, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: 1
+    soundType: 0
+    clips: []
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  musicTracks:
+  - name: 1
+    track: {fileID: 8300000, guid: dc4f67ad153dfe4458e4e4519865dd85, type: 3}
+    volume: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: 2
+    track: {fileID: 8300000, guid: 9dfd6443886508c47bae8bfe04adc207, type: 3}
+    volume: 1
+    loop: 0
+    source: {fileID: 0}
+  ambienceClips:
+  - name: 
+    soundType: 0
+    tracks: []
+    volume: 0
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+--- !u!4 &42899517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42899514}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 94.76745, y: 10.297826, z: 19.734581}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &45078274
 GameObject:
   m_ObjectHideFlags: 0
@@ -11306,7 +11561,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8510804645585479890}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &680084192
 MonoBehaviour:
