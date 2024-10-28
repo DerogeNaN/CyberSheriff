@@ -36,6 +36,11 @@ public class Shotgun : RangedWeapon
     float grenadeLaucherForceMultiplier;
 
     [Tooltip("Please dont mess with This(Grenade will be ready so Long as the ammo is above zero)")]
+
+    [SerializeField]
+    float grenadeYEffectMult = 0.2f; 
+
+
     [SerializeField]
     public bool grenadeReady = false;
 
@@ -273,7 +278,7 @@ public class Shotgun : RangedWeapon
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData();
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
         Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
@@ -282,9 +287,9 @@ public class Shotgun : RangedWeapon
 
         //set ray direction to the barrel to look point direction 
         gunRay.direction = barrelToLookPointDir;
-        gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
+        gunRay.direction = gunRay.direction += UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        hitDetected = Physics.Raycast(gunRay, out gunHit, Mathf.Infinity);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
@@ -294,22 +299,26 @@ public class Shotgun : RangedWeapon
         bool hit = false;
         if (grenadeReady)
         {
-            animator.ResetTrigger("ShootAltTrig");
+
+            Vector3 GrenadeDirection = Vector3.zero;
+
+            animator.SetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
-            RayData ray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
+            RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
 
             if (hit == false)
             {
+                Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData().ray.direction * camRef.farClipPlane);
                 Debug.Log("fallicies and falsehoods");
             }
-            else 
+            else
             {
                 Debug.Log("Dogmas and definitudes ");
             }
 
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
-            grenadeRB.AddForce(ray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
-            grenadeRB.AddForce(Movement.playerMovement.velocity, ForceMode.Impulse);
+            grenadeRB.AddForce(Gunray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
+            grenadeRB.AddForce(new Vector3(Movement.playerMovement.velocity.x, Movement.playerMovement.velocity.y * grenadeYEffectMult, Movement.playerMovement.velocity.z), ForceMode.Impulse);
             grenadeReady = false;
             grenadeAmmo--;
             StartCoroutine(Wait(AltshotGapTime));

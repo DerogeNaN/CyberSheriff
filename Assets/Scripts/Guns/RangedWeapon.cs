@@ -140,7 +140,7 @@ public class RangedWeapon : MonoBehaviour
         if (currentBullets > 0)
         {
             bool hit;
-            RayData rayData = RayCastAndGenGunRayData(muzzlePoint,out hit);
+            RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hit);
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
@@ -259,8 +259,8 @@ public class RangedWeapon : MonoBehaviour
             Debug.Log(" altfire active cannot reload");
         }
     }
-    
-   
+
+
     virtual public RayData RayCastAndGenCameraRayData()
     {
 
@@ -287,7 +287,7 @@ public class RangedWeapon : MonoBehaviour
 
         cameraRay.direction = camRef.transform.forward;
 
-        hitDetected = Physics.Raycast(cameraRay, out cameraHit,camRef.farClipPlane);
+        hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
 
         return new RayData { ray = cameraRay, hit = cameraHit };
 
@@ -312,12 +312,12 @@ public class RangedWeapon : MonoBehaviour
         //set ray direction to the barrel to look point direction 
         gunRay.direction = barrelToLookPointDir;
 
-        Physics.Raycast(gunRay, out gunHit,camRef.farClipPlane);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
-    virtual public RayData RayCastAndGenGunRayData(Transform muzzle,out bool hitDetected )
+    virtual public RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected)
     {
         Ray gunRay = new Ray();
 
@@ -326,7 +326,7 @@ public class RangedWeapon : MonoBehaviour
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData();
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
         Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
@@ -336,18 +336,25 @@ public class RangedWeapon : MonoBehaviour
         //set ray direction to the barrel to look point direction 
         gunRay.direction = barrelToLookPointDir;
 
-        hitDetected = Physics.Raycast(gunRay, out gunHit,camRef.farClipPlane);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
     private void OnDrawGizmos()
     {
-        RayData rd = RayCastAndGenCameraRayData();
-        Gizmos.color = Color.yellow;
-        Debug.Log("we hit" + rd.hit.collider.name);
-        Gizmos.DrawRay(rd.ray);
-        Gizmos.DrawWireSphere(rd.hit.point, 1);
+        //RayData rd = RayCastAndGenCameraRayData(out bool hit);
+        //if (hit == true)
+        //{
+        //    Gizmos.color = Color.yellow;
+        //    Debug.Log("we hit" + rd.hit.collider.name);
+        //    Gizmos.DrawRay(rd.ray);
+        //    Gizmos.DrawWireSphere(rd.hit.point, 1);
+        //}
+        //else 
+        //{
+        //    Debug.Log("No Luck Homie");
+        //}
     }
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
