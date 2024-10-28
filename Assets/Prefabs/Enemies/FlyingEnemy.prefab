@@ -52,6 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   debugText: {fileID: 0}
+  lastHitBy: {fileID: 0}
   enemy: {fileID: 0}
 --- !u!114 &4443895184043447712
 MonoBehaviour:
@@ -78,6 +79,11 @@ MonoBehaviour:
   avoidanceSpeedWeight: 0
   avoidFloorDistance: 0
   closeBuffer: 1
+  attackRange: 25
+  attackCooldownMin: 1
+  attackCooldownMax: 3
+  bulletPrefab: {fileID: 946708688116722392, guid: 48f74cd19883f2041b00f84575f4de80,
+    type: 3}
   randomiseTimerRange: {x: 2, y: 5}
   closeDistanceRange: {x: 4, y: 10}
   yOffsetRange: {x: 1, y: 2.5}
@@ -150,7 +156,7 @@ GameObject:
   - component: {fileID: 4443895185962462418}
   m_Layer: 7
   m_Name: BodyHurtbox
-  m_TagString: Untagged
+  m_TagString: EnemyHitbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

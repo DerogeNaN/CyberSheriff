@@ -22,6 +22,12 @@ public class EnemyFlying : EnemyBase
     public float avoidFloorDistance;
     public float closeBuffer;
 
+    [Header("FlyingAttack Settings")]
+    public float attackRange = 25.0f;
+    public float attackCooldownMin = 1.0f;
+    public float attackCooldownMax = 3.0f;
+    [SerializeField] GameObject bulletPrefab;
+
     [Header("Flying Randomise Settings")]
     public Vector2 randomiseTimerRange;
     public Vector2 closeDistanceRange;
@@ -33,6 +39,7 @@ public class EnemyFlying : EnemyBase
     float currentSpeed;
     bool close;
     float timer;
+    float attackCooldown;
 
     protected override void OnStart()
     {
@@ -43,6 +50,7 @@ public class EnemyFlying : EnemyBase
         maxSpeed = Random.Range(maxSpeedRange.x, maxSpeedRange.y);
         yOffset = Random.Range(yOffsetRange.x, yOffsetRange.y);
         closeDistance = Random.Range(closeDistanceRange.x, closeDistanceRange.y);
+        attackCooldown = Random.Range(attackCooldownMin, attackCooldownMax);
     }
 
     protected override void OnUpdate()
@@ -101,6 +109,17 @@ public class EnemyFlying : EnemyBase
         else
         {
             Decelerate();
+        }
+
+        // attack
+        attackCooldown -= Time.deltaTime;
+        if (attackCooldown <= 0)
+        {
+            attackCooldown = Random.Range(attackCooldownMin, attackCooldownMax);
+
+            // do attack here
+            Projectile projectile = Instantiate(bulletPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
+            projectile.Shoot(enemy.playerTransform.position);
         }
     }
 
