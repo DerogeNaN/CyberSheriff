@@ -4,7 +4,7 @@ using TMPro;
 public class WeaponManagement : MonoBehaviour
 {
     [SerializeField]
-    List<GameObject> weaponList;
+    public List<GameObject> weaponList;
 
     [SerializeField]
     int weaponIterator = 0;

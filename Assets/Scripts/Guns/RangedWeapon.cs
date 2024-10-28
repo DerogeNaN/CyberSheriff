@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Net;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -340,7 +341,14 @@ public class RangedWeapon : MonoBehaviour
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
-
+    private void OnDrawGizmos()
+    {
+        RayData rd = RayCastAndGenCameraRayData();
+        Gizmos.color = Color.yellow;
+        Debug.Log("we hit" + rd.hit.collider.name);
+        Gizmos.DrawRay(rd.ray);
+        Gizmos.DrawWireSphere(rd.hit.point, 1);
+    }
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
     public IEnumerator Wait(float shotGapTime)

@@ -7,8 +7,6 @@ using static RangedWeapon;
 
 public class Shotgun : RangedWeapon
 {
-
-
     [Header("I be riding shotgun underneath the hot sun...")]
     [SerializeField]
     int bulletsPerShot = 5;
@@ -286,18 +284,29 @@ public class Shotgun : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        hitDetected = Physics.Raycast(gunRay, out gunHit, Mathf.Infinity);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
     public override void EngageAltFire()
     {
+        bool hit = false;
         if (grenadeReady)
         {
             animator.ResetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
-            RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
+            RayData ray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
+
+            if (hit == false)
+            {
+                Debug.Log("fallicies and falsehoods");
+            }
+            else 
+            {
+                Debug.Log("Dogmas and definitudes ");
+            }
+
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
             grenadeRB.AddForce(ray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
             grenadeRB.AddForce(Movement.playerMovement.velocity, ForceMode.Impulse);
