@@ -26,7 +26,7 @@ public class EnemyCommon : MonoBehaviour
     [HideInInspector] public Transform playerTransform;
     [HideInInspector] public Vector3 moveTarget; // the object it follows
     [HideInInspector] public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
-    [HideInInspector] public bool hasLineOfSight;
+    public bool hasLineOfSight;
     [HideInInspector] public bool shouldPath;
 
     private NavMeshAgent navAgent;
@@ -80,9 +80,9 @@ public class EnemyCommon : MonoBehaviour
 
 
         // draw ray for debugging
-        if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
-        else Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
-        Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
+        //if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
+        //else Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
+        //Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
     }
 
     private void UpdateNavAgent()

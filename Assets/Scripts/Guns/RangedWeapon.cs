@@ -179,7 +179,7 @@ public class RangedWeapon : MonoBehaviour
                             GameObject hitFX2 = Instantiate(enemyHitEffect);
                             hitFX2.transform.position = rayData.hit.point;
 
-                            Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
+                            Health EnemyHealth = rayData.hit.transform.parent.GetComponent<Health>();
                             int damage = DamageValue;
 
 
