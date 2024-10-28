@@ -55,8 +55,8 @@ public class EnemyFlying : EnemyBase
 
     protected override void OnUpdate()
     {
-        //timer -= Time.deltaTime;
-        //if (timer <= 0) RandomiseValues();
+        timer -= Time.deltaTime;
+        if (timer <= 0) RandomiseValues();
 
         enemy.lookTarget = enemy.playerTransform.position;
 
@@ -64,8 +64,8 @@ public class EnemyFlying : EnemyBase
         close = toPlayer.magnitude <= closeDistance;
 
         // apply movement and rotation
-        if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
-        //transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
+        //if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
+        if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
         transform.position += ((currentSpeed * dir) + GetAvoidance2()) * Time.deltaTime;
 
         //transform.position += transform.right * 1.0f * Time.deltaTime;
@@ -127,7 +127,7 @@ public class EnemyFlying : EnemyBase
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("aaaa");
+        //Debug.Log("aaaa");
         if (!collision.gameObject.CompareTag("Player"))
         {
 
@@ -192,9 +192,9 @@ public class EnemyFlying : EnemyBase
         }
 
         // floor avoidance
-        if (Physics.Raycast(transform.position, -transform.up))
+        if (Physics.Raycast(transform.position, -transform.up, avoidFloorDistance))
         {
-            avoidance += transform.up * avoidanceStrength;
+            avoidance += transform.up * avoidanceStrength * 2.0f;
         }
 
         return avoidance * avoidanceStrength;

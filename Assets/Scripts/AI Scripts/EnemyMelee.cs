@@ -48,7 +48,7 @@ public class EnemyMelee : EnemyBase
 
     public override void OnHit(int damage, int damageType)
     {
-        stun = 1.0f;
+        stun = 0.5f;
         SetState(EnemyState.stunned);
     }
 
