@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class WaveSpawner : MonoBehaviour
 {
@@ -49,6 +50,10 @@ public class WaveSpawner : MonoBehaviour
         {
             Debug.Log("Attempting to spawn wave " + (WaveManager.waveManagerInstance.waveNumber + 1).ToString() + " enemies");
             Vector3 spawnPos = center + new Vector3(Random.Range(-size.x / 2, size.x / 2), 0, Random.Range(- size.z / 2, size.z / 2));
+
+            NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
+            spawnPos = hit.position;
+
             Instantiate(enemy, spawnPos, spawnZone.transform.rotation);
             WaveManager.waveManagerInstance.enemiesRemaining++;
         }

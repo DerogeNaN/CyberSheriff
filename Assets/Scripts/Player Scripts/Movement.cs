@@ -137,7 +137,7 @@ public class Movement : MonoBehaviour
     public bool isGrappling = false;
     public bool canGrapple = false;
     public GameObject grappleObject;
-    public ParticleSystem grappleUI;
+    public GameObject grappleUI;
     public float grappleSpeed = 1f;
     public float grappleCooldown = 5;
     public float maxGrappleDistance = 100f;
@@ -178,8 +178,8 @@ public class Movement : MonoBehaviour
         //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        Debug.DrawRay(transform.position, velocity * 5, Color.red);
-        Debug.DrawRay(transform.position, wallTangent * 2, Color.yellow);
+        //Debug.DrawRay(transform.position, velocity * 5, Color.red);
+        //Debug.DrawRay(transform.position, wallTangent * 2, Color.yellow);
     }
 
     void MovePlayer()
@@ -477,11 +477,10 @@ public class Movement : MonoBehaviour
         {
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position;
-            if (!grappleUI.isPlaying && lastGrappleTime + grappleCooldown < Time.time)
+            if (lastGrappleTime + grappleCooldown < Time.time)
             {
                 canGrapple = true;
                 grappleUI.gameObject.SetActive(true);
-                grappleUI.Play();
             }
             
         }
@@ -492,11 +491,7 @@ public class Movement : MonoBehaviour
             canGrapple = false;
             grappleObject = null;
             grappleTargetDirection = Vector3.zero;
-            if (grappleUI.isPlaying)
-            {
-                grappleUI.gameObject.SetActive(false);
-                grappleUI.Stop();
-            }
+            grappleUI.gameObject.SetActive(false);
         }
     }
 
@@ -591,7 +586,7 @@ public class Movement : MonoBehaviour
                 if (Vector3.Dot(velocity, normal) < 0) continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
-                Debug.Log(normalInUp);
+                //Debug.Log(normalInUp);
                 if(normalInUp < 0.95f && normalInUp > 0.05f)
                 {
                     Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
@@ -612,7 +607,7 @@ public class Movement : MonoBehaviour
                     velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                 }
 
-                Debug.DrawRay(transform.position, normal * 5, Color.magenta);
+                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
             }
         }
         
@@ -639,11 +634,6 @@ public class Movement : MonoBehaviour
                     }
                 }
         }
-    }
-
-    private void DepenetratePlayer()
-    {
-
     }
 
     private void CheckForWallRun()
@@ -714,53 +704,4 @@ public class Movement : MonoBehaviour
             return;
         }
     }
-
-    //private void OnCollisionEnter(Collision collision)
-    //{ 
-    //    Vector3 normal = collision.GetContact(0).normal.normalized;
-    //    normal *= Mathf.Sign(Vector3.Dot(transform.position - collision.transform.position, normal));
-    //    
-    //    wallNormal = normal;
-    //    
-    //    //If the normal of the wall collision points not up or down
-    //    if (Mathf.Abs(Vector3.Dot(normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
-    //    {
-    //        Vector3 tangent = Vector3.Cross(Vector3.up, normal);
-    //        wallTangent = tangent * Mathf.Sign(Vector3.Dot(velocity, tangent));
-    //        float wallSpeed = Vector3.Dot(tangent, velocity);
-    //    
-    //        if(Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
-    //        {
-    //            lastWallrunTime = Time.time;
-    //            cameraLeaveWallrunTime = Time.time + 0.2f;
-    //            isWallRunning = true;
-    //            velocity = wallSpeed * tangent;
-    //            jumpCount = 0;
-    //            return;
-    //        }
-    //    }
-    //
-    //    //Get velocity relative to the collision normal
-    //    float velocityInNormalDirection = Vector3.Dot(velocity, normal);
-    //
-    //    //Check if positive or negative, if negative the player is trying to move into a wall so run the below code
-    //    if (velocityInNormalDirection < 0)
-    //    {
-    //        velocity -= velocityInNormalDirection * normal;
-    //    }
-    //}
-    //
-    //private void OnCollisionStay(Collision collision)
-    //{
-    //    OnCollisionEnter(collision);
-    //}
-    //
-    //private void OnCollisionExit(Collision collision)
-    //{   
-    //    if (isWallRunning)
-    //    {
-    //        leavingWallrunTime = Time.time;
-    //        isWallRunning = false;
-    //    }
-    //}
 }

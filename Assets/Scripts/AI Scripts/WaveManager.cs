@@ -52,6 +52,8 @@ public class WaveManager : MonoBehaviour
 
             if (waveCountText != null) waveCountText.text = waveNumber.ToString();
         }
+
+        if (Input.GetKeyDown(KeyCode.N)) StartWave();
     }
 
     public void StartWave()
