@@ -7,10 +7,15 @@ public class Health : MonoBehaviour
     public TMP_Text debugText;
     public GameObject lastHitBy = null;
     [Tooltip("calls OnHit on this. can be null.")]
-    public EnemyBase enemy;
+    [HideInInspector] public EnemyBase enemy;
 
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;
+
+    private void Start()
+    {
+        enemy = GetComponent<EnemyBase>();
+    }
 
     private void Update()
     {

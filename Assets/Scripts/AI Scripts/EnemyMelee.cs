@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class EnemyMelee : EnemyBase
@@ -90,6 +91,11 @@ public class EnemyMelee : EnemyBase
 
         //Vector3 dir = (enemy.playerTransform.position - transform.position).normalized;
         //attackTargetRotation = new(dir.x, 0, dir.z);
+    }
+
+    protected override void StunnedEnter()
+    {
+        enemy.shouldPath = false;
     }
     #endregion
 

@@ -64,7 +64,7 @@ public class EnemyFlying : EnemyBase
         close = toPlayer.magnitude <= closeDistance;
 
         // apply movement and rotation
-        transform.rotation = Quaternion.LookRotation(dir);
+        if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
         //transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
         transform.position += ((currentSpeed * dir) + GetAvoidance2()) * Time.deltaTime;
 
