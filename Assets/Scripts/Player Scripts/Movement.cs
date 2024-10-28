@@ -178,7 +178,7 @@ public class Movement : MonoBehaviour
         //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        //Debug.DrawRay(transform.position, velocity * 2, Color.red);
+        Debug.DrawRay(transform.position, velocity * 5, Color.red);
         Debug.DrawRay(transform.position, wallTangent * 2, Color.yellow);
     }
 
@@ -590,6 +590,14 @@ public class Movement : MonoBehaviour
 
                 if (Vector3.Dot(velocity, normal) < 0) continue;
 
+                float normalInUp = Vector3.Dot(Vector3.up, normal);
+                Debug.Log(normalInUp);
+                if(normalInUp < 0.95f && normalInUp > 0.05f)
+                {
+                    Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
+                    float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
+                    velocity -= velocityInHoriNormalDirection * horiNormal;
+                }
                 float velocityInNormalDirection = Vector3.Dot(velocity, normal);
                 velocity -= velocityInNormalDirection * normal;
 
@@ -631,6 +639,11 @@ public class Movement : MonoBehaviour
                     }
                 }
         }
+    }
+
+    private void DepenetratePlayer()
+    {
+
     }
 
     private void CheckForWallRun()
