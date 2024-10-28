@@ -123,7 +123,7 @@ public class WeaponManagement : MonoBehaviour
         else
         {
 
-            Debug.Log("Cannot reload at This Time");
+         //   Debug.Log("Cannot reload at This Time");
         }
     }
 
@@ -184,12 +184,12 @@ public class WeaponManagement : MonoBehaviour
             if (currentActiveWeapon)
                 currentActiveWeapon.gameObject.SetActive(false);
 
-            Debug.Log("weapon type " + 0);
+           // Debug.Log("weapon type " + 0);
 
             currentActiveWeapon = weaponList[0];
             if (currentActiveWeapon)
             {
-                Debug.Log("WeaponFound!!");
+              //  Debug.Log("WeaponFound!!");
             }
 
             //set next to true 
@@ -222,12 +222,12 @@ public class WeaponManagement : MonoBehaviour
             if (currentActiveWeapon)
                 currentActiveWeapon.gameObject.SetActive(false);
 
-            Debug.Log("weapon type " + 1);
+         //   Debug.Log("weapon type " + 1);
 
             currentActiveWeapon = weaponList[1];
             if (currentActiveWeapon)
             {
-                Debug.Log("WeaponFound!!");
+               // Debug.Log("WeaponFound!!");
             }
 
 
