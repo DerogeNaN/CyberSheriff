@@ -4,8 +4,6 @@ using Unity.Mathematics;
 
 public class Revolver : RangedWeapon
 {
-
-
     [Header("Other Values")]
     [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
@@ -130,7 +128,7 @@ public class Revolver : RangedWeapon
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData();
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
         Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
@@ -141,7 +139,7 @@ public class Revolver : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
