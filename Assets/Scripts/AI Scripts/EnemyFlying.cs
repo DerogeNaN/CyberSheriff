@@ -67,6 +67,8 @@ public class EnemyFlying : EnemyBase
         transform.rotation = Quaternion.LookRotation(dir);
         //transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
         transform.position += ((currentSpeed * dir) + GetAvoidance2()) * Time.deltaTime;
+
+        //transform.position += transform.right * 1.0f * Time.deltaTime;
     }
 
     private void FixedUpdate()
@@ -187,6 +189,12 @@ public class EnemyFlying : EnemyBase
                 Vector3 fromCollision = transform.position - c.transform.position;
                 avoidance += fromCollision.normalized * (fromCollision.magnitude * avoidanceDistanceWeight);
             }
+        }
+
+        // floor avoidance
+        if (Physics.Raycast(transform.position, -transform.up))
+        {
+            avoidance += transform.up * avoidanceStrength;
         }
 
         return avoidance * avoidanceStrength;
