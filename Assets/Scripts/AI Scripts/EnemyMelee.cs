@@ -49,7 +49,7 @@ public class EnemyMelee : EnemyBase
         enemy.speed = runSpeed;
         enemy.shouldPath = true;
         enemy.moveTarget = enemy.playerTransform.position;
-        SoundManager2.Instance.PlaySound("RobotSoundSFX", enemy.transform);
+        //SoundManager2.Instance.PlaySound("RobotSoundSFX", enemy.transform);
     }
     protected override void LostSightOfTargetEnter()
     {
