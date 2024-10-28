@@ -35,8 +35,10 @@ public class SoundManager2 : MonoBehaviour
     public class AmbienceMaster
     {
         public string name;
-        public AudioClip track;
+        public SoundType soundType; // Added SoundType
+        public AudioClip[] tracks;
         [Range(0f, 1f)] public float volume = 1f;
+        [Range(0.1f, 3f)] public float pitch = 1f;
         public bool loop; // Ensure looping option for ambience
         [HideInInspector] public AudioSource source;
     }
@@ -86,9 +88,39 @@ public class SoundManager2 : MonoBehaviour
         foreach (var a in ambienceClips)
         {
             a.source = gameObject.AddComponent<AudioSource>();
-            a.source.clip = a.track;
             a.source.volume = a.volume;
-            a.source.loop = a.loop; // Preserve looping option
+            a.source.pitch = a.pitch;
+            if (a.soundType == SoundType.Global2D)
+            {
+                globalSounds[a.name] = a.source; // Track global sounds
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (isMusicFading)
+        {
+            Debug.Log($"Fading from {currentMusic.name} to {nextMusic?.name}");
+
+            FadeMusic();
+            if (currentMusic != null)
+            {
+                currentMusic.source.volume = currentMusic.volume;
+            }
+            else if (currentMusic == null)
+            {
+                return;
+            }
+
+            if (nextMusic != null)
+            {
+                nextMusic.source.volume = nextMusic.volume;
+            }
+            else if (nextMusic == null)
+            {
+                return;
+            }
         }
     }
 
@@ -116,11 +148,26 @@ public class SoundManager2 : MonoBehaviour
         }
     }
 
-    public void StopSound(string name)
+  /*  public void StopSound(string name)
     {
         if (globalSounds.ContainsKey(name))
         {
             globalSounds[name].Stop(); // Stop global sound
+        }
+    }*/
+    public void StopSound(string soundName, Transform targetObject = null)
+    {
+        if (globalSounds.ContainsKey(soundName) && targetObject == null)
+        {
+            globalSounds[soundName].Stop();
+        }
+        else if (targetObject != null)
+        {
+            AudioSource localAudioSource = targetObject.GetComponent<AudioSource>();
+            if (localAudioSource != null)
+            {
+                localAudioSource.Stop();
+            }
         }
     }
 
@@ -144,17 +191,30 @@ public class SoundManager2 : MonoBehaviour
         }
     }
 
-    public void PlayAmbience(string name)
+    public void PlayAmbience(string name,Transform targetObject = null)
     {
-        AmbienceMaster ambience = ambienceClips.Find(a => a.name == name);
-        if (ambience != null) ambience.source.Play();
-    }
+       /* AmbienceMaster ambience = ambienceClips.Find(a => a.name == name);
+        if (ambience != null) ambience.source.Play();*/
 
-    private void Update()
-    {
-        if (isMusicFading)
+        AmbienceMaster ambience = ambienceClips.Find(s => s.name == name);
+        if (ambience != null && ambience.tracks.Length > 0)
         {
-            FadeMusic();
+            // Select a random clip from the array of clips
+            AudioClip trackToPlay = ambience.tracks[UnityEngine.Random.Range(0, ambience.tracks.Length)];
+
+            // Create a new AudioSource for this specific instance
+            AudioSource tempSource = gameObject.AddComponent<AudioSource>();
+            tempSource.clip = trackToPlay;
+            tempSource.volume = ambience.volume;
+            tempSource.pitch = ambience.pitch;
+
+            // Set 3D sound properties if Local3D
+            tempSource.spatialBlend = (ambience.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
+
+            tempSource.Play();
+
+            // Clean up after the clip has finished playing
+            Destroy(tempSource, trackToPlay.length);
         }
     }
 
@@ -172,6 +232,7 @@ public class SoundManager2 : MonoBehaviour
             currentMusic.source.Stop();
             currentMusic = nextMusic;
             nextMusic = null;
+            currentMusic?.source.Play(); // Play the new current track
             isMusicFading = false;
         }
     }

@@ -1466,6 +1466,104 @@ Transform:
   m_Father: {fileID: 962388821}
   m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &302767866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 302767867}
+  - component: {fileID: 302767870}
+  - component: {fileID: 302767869}
+  - component: {fileID: 302767868}
+  m_Layer: 0
+  m_Name: Scaffold_Set02  (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &302767867
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302767866}
+  m_LocalRotation: {x: -6.123234e-17, y: 1, z: 6.123234e-17, w: -6.123234e-17}
+  m_LocalPosition: {x: -1.1160103, y: 13.202362, z: 1.4762921}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7898840418202429864}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &302767868
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302767866}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2293889585594762647, guid: 4a848915081a2884597a12bccc1dd006, type: 3}
+--- !u!23 &302767869
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302767866}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 5561349426305759274, guid: 4a848915081a2884597a12bccc1dd006, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &302767870
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302767866}
+  m_Mesh: {fileID: -2293889585594762647, guid: 4a848915081a2884597a12bccc1dd006, type: 3}
 --- !u!1001 &314893359
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2683,6 +2781,58 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6e7a41021dca8e44a69e5e0f4f22b0f, type: 3}
+--- !u!1 &435626875
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 435626877}
+  - component: {fileID: 435626876}
+  m_Layer: 0
+  m_Name: JumpPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &435626876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435626875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: -1372625422
+  m_StartPoint: {x: -3.3075433, y: -1.9632139, z: -5.170439}
+  m_EndPoint: {x: -0.79165405, y: 1.4340601, z: 5.262284}
+  m_Width: 10
+  m_CostModifier: -1
+  m_Bidirectional: 1
+  m_AutoUpdatePosition: 0
+  m_Area: 2
+--- !u!4 &435626877
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435626875}
+  m_LocalRotation: {x: 0, y: 0.6083077, z: 0, w: 0.7937013}
+  m_LocalPosition: {x: 83.08528, y: 11.033214, z: 28.779018}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &437732315
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8012,7 +8162,7 @@ PrefabInstance:
     - target: {fileID: 6505671239171312606, guid: 75ff23b45c454b44faa679f39244aa20,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6505671239171312606, guid: 75ff23b45c454b44faa679f39244aa20,
         type: 3}
@@ -8540,7 +8690,7 @@ GameObject:
   - component: {fileID: 1559990343}
   - component: {fileID: 1559990342}
   m_Layer: 0
-  m_Name: SoundManager2 (merging mile's into mine, very messy)
+  m_Name: SoundManager2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8581,14 +8731,6 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: Enemy
-    soundType: 1
-    clips:
-    - {fileID: 8300000, guid: 949cc025e80ad5e4fa1b15a4fc5f834f, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
   - name: Revolver
     soundType: 0
     clips:
@@ -8598,13 +8740,183 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: DashSFX
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 700a12dccfdef02438302beeee5c1e1a, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: SlideSFX
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: f8c29e3b4d07a504db94fa0a691fb4b7, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Wallrunning
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: d9efaad7caaa43445924c8f1fffe7bba, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ShotgunFire
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 2add3e0b0ad0edf459b4a2aa13f7d298, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ShotgunGranadeExplosion
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 528abb8b90e16f745be764a2ad1cca43, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ShotgunLauncherThunk
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 02fdfe99f7bae804fb64b7f87e19538c, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: WeaponSwap
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 0a05a8615ca7b4c45a8d9e8639759c0b, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Grapple
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 462b16a183e3f6a4594f7327a723cf72, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TEST_Footstep_wood
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 44e9c0a4fdcdff84780f611036b83ed5, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TEST_Footstep_metal
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 6e1b272cd7eab00469c43944c586ea77, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TEST_Footstep_conrete
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 3d99e6b8bebc05b4292443427d9b85c2, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Alarm_sound
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: 7199626b2844c6d44b3fa92f6a8d5025, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotSpawnSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 1a59afe786584f545b73e60c514cded9, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotLazerSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 09482d088d0a8b746b562b37fef70942, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotWalkingSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 4cd5f96ccff974947998ea78feecd2a5, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotHitSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 6542978a127b31c47b30020a7b035773, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotDeathSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 9bf8cadd727b23144a4d5e587fbad3df, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: RobotSoundSFX
+    soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 949cc025e80ad5e4fa1b15a4fc5f834f, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: 1
+    soundType: 0
+    clips: []
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: 1
+    soundType: 0
+    clips: []
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   musicTracks:
+  - name: 1
+    track: {fileID: 8300000, guid: dc4f67ad153dfe4458e4e4519865dd85, type: 3}
+    volume: 1
+    loop: 0
+    source: {fileID: 0}
   - name: 2
     track: {fileID: 8300000, guid: 9dfd6443886508c47bae8bfe04adc207, type: 3}
     volume: 1
-    loop: 1
+    loop: 0
     source: {fileID: 0}
-  ambienceClips: []
+  ambienceClips:
+  - name: 
+    soundType: 0
+    tracks: []
+    volume: 0
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
 --- !u!4 &1559990344
 Transform:
   m_ObjectHideFlags: 0
@@ -10567,7 +10879,7 @@ PrefabInstance:
     - target: {fileID: 6505671239171312606, guid: 75ff23b45c454b44faa679f39244aa20,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6505671239171312606, guid: 75ff23b45c454b44faa679f39244aa20,
         type: 3}
@@ -20882,6 +21194,7 @@ Transform:
   - {fileID: 4467137341094912467}
   - {fileID: 6057933602610676761}
   - {fileID: 1924470805084708847}
+  - {fileID: 302767867}
   m_Father: {fileID: 962388821}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
