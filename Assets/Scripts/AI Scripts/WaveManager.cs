@@ -10,6 +10,7 @@ public class WaveManager : MonoBehaviour
     public static WaveManager waveManagerInstance;
 
     [Header("Global Wave Settings")]
+    public bool tutorialLevel;
     public float waveTime;
     public float timeBetweenWaves;
 
@@ -42,12 +43,15 @@ public class WaveManager : MonoBehaviour
     
     void Update()
     {
-        if (enemiesRemainingText != null)
+        if (!tutorialLevel)
         {
-            enemiesRemainingText.text = enemiesRemaining.ToString();
-        }
+            if (enemiesRemainingText != null)
+            {
+                enemiesRemainingText.text = enemiesRemaining.ToString();
+            }
 
-        if (waveCountText != null) waveCountText.text = waveNumber.ToString();
+            if (waveCountText != null) waveCountText.text = waveNumber.ToString();
+        }
     }
 
     public void StartWave()

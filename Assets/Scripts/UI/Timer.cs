@@ -14,7 +14,11 @@ public class Timer : MonoBehaviour
 
     void Start()
     {
-        StartBreakTimer();
+        if (WaveManager.waveManagerInstance != null && !WaveManager.waveManagerInstance.tutorialLevel)
+        {
+            StartBreakTimer();
+        }
+
 
         timerText = GameObject.Find("Time").GetComponent<TextMeshProUGUI>();
         //timerText = GetComponentInChildren<TextMeshProUGUI>();
@@ -23,7 +27,7 @@ public class Timer : MonoBehaviour
     }
     void Update()
     {
-        if (WaveManager.waveManagerInstance != null)
+        if (WaveManager.waveManagerInstance != null && !WaveManager.waveManagerInstance.tutorialLevel)
         {
             if (isTiming && !isTimingBreak)
             {

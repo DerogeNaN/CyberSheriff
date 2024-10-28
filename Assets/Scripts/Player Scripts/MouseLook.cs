@@ -30,7 +30,7 @@ public class MouseLook : MonoBehaviour
 
     void InitializeMouseLook()
     {
-        //LockCursor();
+        LockCursor();
 
         cam.fieldOfView = defaultFOV;
 

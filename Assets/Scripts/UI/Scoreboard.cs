@@ -48,11 +48,11 @@ public class Scoreboard : MonoBehaviour
 
     [Header("Rank Handycap")]
     [SerializeField] private float eRankHandicap = 1.0f;
-    [SerializeField] private float dRankHandicap = 0.9f;
-    [SerializeField] private float cRankHandicap = 0.8f;
-    [SerializeField] private float bRankHandicap = 0.7f;
-    [SerializeField] private float aRankHandicap = 0.6f;
-    [SerializeField] private float sRankHandicap = 0.5f;
+    [SerializeField] private float dRankHandicap = 0.8f;
+    [SerializeField] private float cRankHandicap = 0.6f;
+    [SerializeField] private float bRankHandicap = 0.4f;
+    [SerializeField] private float aRankHandicap = 0.2f;
+    [SerializeField] private float sRankHandicap = 0.1f;
 
 
     private float decayTimer;
@@ -104,10 +104,11 @@ public class Scoreboard : MonoBehaviour
                 DecayRank();
                 decayTimer = decayInterval; // Reset the timer
             }
+            //decayBar.color = GetRankColor(rank);
         }
         else
         {
-           HideScoreboard();
+          // HideScoreboard();
         }
     }
     void UpdateScoreboard()
@@ -123,10 +124,11 @@ public class Scoreboard : MonoBehaviour
 
             comboText.text = comboMultiplier + "x";
             comboShadowText.text = comboMultiplier + "x";
+            debugRankValue.text = "rankpoints" + rankPointsCurrent;
         }
         else
         {
-           HideScoreboard();
+           //HideScoreboard();
         }
     }
 
@@ -251,7 +253,6 @@ public class Scoreboard : MonoBehaviour
     void ShowScoreboard()
     {
         scoreboardPanel.SetActive(true);
-        
     }
 
     void HideScoreboard()
