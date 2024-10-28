@@ -19,7 +19,9 @@ public class WaveManager : MonoBehaviour
     public float timeLeftInWave;
     public int enemiesRemaining;
     [SerializeField] private TextMeshProUGUI enemiesRemainingText;
+    [SerializeField] private TextMeshProUGUI enemiesRemainingShadow;
     [SerializeField] private TextMeshProUGUI waveCountText;
+    [SerializeField] private TextMeshProUGUI waveCountShadow;
 
     [SerializeField] PauseMenu pauseMenuScript;
     [SerializeField] public Timer timerScript;
@@ -43,6 +45,9 @@ public class WaveManager : MonoBehaviour
     
     void Update()
     {
+        enemiesRemainingShadow.text = enemiesRemainingText.text;
+        waveCountShadow.text = waveCountText.text;
+        
         if (!tutorialLevel)
         {
             if (enemiesRemainingText != null)

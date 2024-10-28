@@ -8,7 +8,9 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth;
     public int health;
 
-    [SerializeField] TMP_Text healthUI;
+    public GameObject healthUI1;
+    public GameObject healthUI2;
+    public GameObject healthUI3;
 
     void Start()
     {
@@ -59,8 +61,22 @@ public class PlayerHealth : MonoBehaviour
 
     void UpdateHealthUI()
     {
-        healthUI.text = "hp: " + health;
-    }
+        if (health < 75)
+        {
+            healthUI1.SetActive(true);
+            if (health <= 50)
+            {
+                healthUI2.SetActive(true);
 
-   
+                if (health <= 25) healthUI3.SetActive(true);
+            }
+        }
+
+        else
+        {
+             healthUI1.SetActive(false);
+             healthUI2.SetActive(false);
+             healthUI3.SetActive(false);
+        }
+    }
 }
