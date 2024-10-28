@@ -11,14 +11,14 @@ public class GrenadeAmmoUI : MonoBehaviour
 
     public WeaponManagement weaponManagementScript;
 
+    [SerializeField]
     int UIGrenadeAmmo;
 
     Shotgun shotgun;
 
     private void Awake()
     {
-        if (AmmoHolderUI != null)
-            grenadeLogos = AmmoHolderUI.GetComponentsInChildren<Transform>().ToList();
+
 
         for (int i = 0; i < weaponManagementScript.weaponList.Count; i++)
         {
@@ -37,21 +37,17 @@ public class GrenadeAmmoUI : MonoBehaviour
         {
             for (int i = 0; i < grenadeLogos.Count; i++)
             {
-                if (i == 0)
-                {
-                    continue;
-                }
 
-                if (UIGrenadeAmmo >= 1 && i == 1)
+                if (UIGrenadeAmmo >= 1 && i == 0)
                 {
                     grenadeLogos[i].gameObject.SetActive(true);
 
                 }
-                else if (UIGrenadeAmmo >= 2 && i == 2)
+                else if (UIGrenadeAmmo >= 2 && i == 1)
                 {
                     grenadeLogos[i].gameObject.SetActive(true);
                 }
-                else if (UIGrenadeAmmo >= 3 && i == 3)
+                else if (UIGrenadeAmmo >= 3 && i == 2)
                 {
                     grenadeLogos[i].gameObject.SetActive(true);
                 }

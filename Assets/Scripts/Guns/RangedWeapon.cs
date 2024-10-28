@@ -159,7 +159,7 @@ public class RangedWeapon : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("Does Not have rigidbody");
+                      //  Debug.Log("Does Not have rigidbody");
                     }
 
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
@@ -210,7 +210,7 @@ public class RangedWeapon : MonoBehaviour
     public void OnKill()
     {
 
-        Debug.Log(" Enemy was Killed.");
+       // Debug.Log(" Enemy was Killed.");
         if (shotgun.currentKillsToRecharge < shotgun.RequiredKillsToRecharge)
         {
             shotgun.currentKillsToRecharge++;
@@ -221,7 +221,7 @@ public class RangedWeapon : MonoBehaviour
             if (shotgun.grenadeAmmo < shotgun.grenadeAmmoMax)
                 shotgun.grenadeAmmo++;
             shotgun.currentKillsToRecharge = 0;
-            Debug.Log("grenade Gained");
+          //  Debug.Log("grenade Gained");
         }
 
     }
@@ -239,7 +239,7 @@ public class RangedWeapon : MonoBehaviour
         Vector3 pos = Decal.transform.position;
         Decal.transform.LookAt(pos + rayData.hit.normal, Vector3.up);
         Decal.transform.position += -rayData.hit.normal;
-        Debug.Log("ray hit normal: " + rayData.hit.normal);
+      //  Debug.Log("ray hit normal: " + rayData.hit.normal);
     }
 
 
@@ -252,11 +252,11 @@ public class RangedWeapon : MonoBehaviour
         }
         else if (reloading == true)
         {
-            Debug.Log(" Already Reloading ");
+      //      Debug.Log(" Already Reloading ");
         }
         else
         {
-            Debug.Log(" altfire active cannot reload");
+           // Debug.Log(" altfire active cannot reload");
         }
     }
 
@@ -362,7 +362,7 @@ public class RangedWeapon : MonoBehaviour
     {
         waiting = true;
         yield return new WaitForSeconds(shotGapTime);
-        Debug.Log("Waiting...");
+       // Debug.Log("Waiting...");
         canFire = true;
         waiting = false;
     }
@@ -371,7 +371,7 @@ public class RangedWeapon : MonoBehaviour
     {
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
-        Debug.Log("Reloading...");
+       // Debug.Log("Reloading...");
         canFire = true;
         if (currentBullets != BulletsPerClip)
         {
@@ -385,14 +385,14 @@ public class RangedWeapon : MonoBehaviour
     public virtual void OnPrimaryFireBegin()
     {
         shouldShootPrimary = true;
-        Debug.Log("Beginning primary Fire");
+      //  Debug.Log("Beginning primary Fire");
     }
 
     //Active on Begining of alt-firing action
     public virtual void OnAltFireBegin()
     {
         shouldShootAlt = true;
-        Debug.Log("Beginning primary Fire");
+      //  Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
@@ -400,7 +400,7 @@ public class RangedWeapon : MonoBehaviour
     {
         if (shouldShootPrimary)
         {
-            Debug.Log("Primary fire stay ");
+         //   Debug.Log("Primary fire stay ");
         }
     }
 
@@ -409,7 +409,7 @@ public class RangedWeapon : MonoBehaviour
     {
         if (shouldShootAlt)
         {
-            Debug.Log("alt fire stay ");
+          //  Debug.Log("alt fire stay ");
         }
 
     }
@@ -418,14 +418,14 @@ public class RangedWeapon : MonoBehaviour
     public virtual void OnprimaryFireEnd()
     {
         shouldShootPrimary = false;
-        Debug.Log("end Primary Fire");
+     //   Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public virtual void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        Debug.Log("end alt fire");
+      //  Debug.Log("end alt fire");
     }
 
 }

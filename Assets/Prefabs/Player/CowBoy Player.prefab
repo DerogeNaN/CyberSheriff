@@ -2200,6 +2200,7 @@ GameObject:
   - component: {fileID: 6452811729899345332}
   - component: {fileID: 8646844202202542112}
   - component: {fileID: 1346461832529855091}
+  - component: {fileID: 6722608498010979276}
   m_Layer: 5
   m_Name: Ammo_Count
   m_TagString: Untagged
@@ -2283,6 +2284,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.69411767}
   m_EffectDistance: {x: 3, y: -3}
   m_UseGraphicAlpha: 1
+--- !u!114 &6722608498010979276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914617775485471128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fab3984e90fe100408ba170c5c6ad637, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponManagmentScript: {fileID: 187740034541792969}
+  ammoText: {fileID: 119845866574491422}
+  shadowAmmoText: {fileID: 2703587468116860266}
 --- !u!1 &2102067105725834926
 GameObject:
   m_ObjectHideFlags: 0
@@ -10089,6 +10105,7 @@ GameObject:
   - component: {fileID: 2430032042057025386}
   - component: {fileID: 1706399774577067819}
   - component: {fileID: 3495385351703793688}
+  - component: {fileID: 4734482021172748228}
   m_Layer: 5
   m_Name: Grenade
   m_TagString: Untagged
@@ -10170,6 +10187,24 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 2.8, y: -2.58}
   m_UseGraphicAlpha: 1
+--- !u!114 &4734482021172748228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6300466524677348644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a69fda0a1892a428a0a522246c5508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AmmoHolderUI: {fileID: 2625540897927843952}
+  grenadeLogos:
+  - {fileID: 302137416228505671}
+  - {fileID: 3021058769794280119}
+  - {fileID: 5092214854352622885}
+  weaponManagementScript: {fileID: 187740034541792969}
 --- !u!1 &6336379061403418262
 GameObject:
   m_ObjectHideFlags: 0

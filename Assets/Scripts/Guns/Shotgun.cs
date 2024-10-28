@@ -134,7 +134,7 @@ public class Shotgun : RangedWeapon
         animator.PlayInFixedTime("S_Reload", 0);
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
-        Debug.Log("Reloading...");
+        //Debug.Log("Reloading...");
         canFire = true;
         if (currentBullets != BulletsPerClip)
         {
@@ -220,7 +220,7 @@ public class Shotgun : RangedWeapon
                                 {
                                     if (eh.isHeadshot == true)
                                     {
-                                        Debug.Log("HeadShot");
+                                   //     Debug.Log("HeadShot");
                                         damage *= headShotMultiplier;
                                     }
 
@@ -309,11 +309,11 @@ public class Shotgun : RangedWeapon
             if (hit == false)
             {
                 Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData().ray.direction * camRef.farClipPlane);
-                Debug.Log("fallicies and falsehoods");
+           //     Debug.Log("fallicies and falsehoods");
             }
             else
             {
-                Debug.Log("Dogmas and definitudes ");
+             //   Debug.Log("Dogmas and definitudes ");
             }
 
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
@@ -335,7 +335,7 @@ public class Shotgun : RangedWeapon
     public override void OnAltFireBegin()
     {
         shouldShootAlt = true;
-        Debug.Log("Beginning primary Fire");
+       // Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
@@ -360,13 +360,13 @@ public class Shotgun : RangedWeapon
         chargeExited = true;
 
 
-        Debug.Log("end Primary Fire");
+      //  Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        Debug.Log("end alt fire");
+      //  Debug.Log("end alt fire");
     }
 }
