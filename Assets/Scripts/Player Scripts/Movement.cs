@@ -171,9 +171,13 @@ public class Movement : MonoBehaviour
     private Collider standingCollider;
     private PauseMenu pauseMenu;
 
-    void Start()
+    private void Awake()
     {
         playerMovement = this;
+    }
+
+    void Start()
+    {
         standingCollider = GetComponent<Collider>();
         pauseMenu = GetComponentInChildren<PauseMenu>();
         InitialiseMovement();
