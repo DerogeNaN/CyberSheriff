@@ -4,7 +4,7 @@ using TMPro;
 public class WeaponManagement : MonoBehaviour
 {
     [SerializeField]
-    List<GameObject> weaponList;
+    public List<GameObject> weaponList;
 
     [SerializeField]
     int weaponIterator = 0;
@@ -34,7 +34,7 @@ public class WeaponManagement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("");
+       
         //make sure on  Kill isnt all ready an event;
         Health.enemyKill += currentActiveWeapon.GetComponent<RangedWeapon>().OnKill;
     }
@@ -134,11 +134,16 @@ public class WeaponManagement : MonoBehaviour
             float CurrentWeapon = obj.ReadValue<Vector2>().y;
 
             if (CurrentWeapon > 0)
-            {
-                CurrentWeapon = 1;
-            }
-            else
-                CurrentWeapon = 0;
+        {
+            CurrentWeapon = 1;
+            SoundManager2.Instance.PlaySound("WeaponSwap");
+        }
+        else
+        {
+            CurrentWeapon = 0;
+            SoundManager2.Instance.PlaySound("WeaponSwap");
+        }
+                
 
             Debug.Log("Changing Weapon");
             Debug.Log("Mouse Wheel Value : " + CurrentWeapon);

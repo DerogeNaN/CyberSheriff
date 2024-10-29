@@ -1,58 +1,65 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
-
 public class GrenadeAmmoUI : MonoBehaviour
 {
-    [SerializeField]
-    public List<GameObject> grenadeLogos;
+
+    public GameObject AmmoHolderUI;
 
     [SerializeField]
+    public List<Transform> grenadeLogos;
+
+    public WeaponManagement weaponManagementScript;
+
+    int UIGrenadeAmmo;
+
     Shotgun shotgun;
 
-
-
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
+        if (AmmoHolderUI != null)
+            grenadeLogos = AmmoHolderUI.GetComponentsInChildren<Transform>().ToList();
 
+        for (int i = 0; i < weaponManagementScript.weaponList.Count; i++)
+        {
+            if (weaponManagementScript.weaponList[i].TryGetComponent(out shotgun))
+                UIGrenadeAmmo = shotgun.grenadeAmmo;
+            else
+                UIGrenadeAmmo = 0;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (shotgun.grenadeAmmo == 0)
+        UIGrenadeAmmo = shotgun.grenadeAmmo;
+        if (shotgun.isActiveAndEnabled)
         {
-            grenadeLogos[0].SetActive(false);
-            grenadeLogos[1].SetActive(false);
-            grenadeLogos[2].SetActive(false);
+            for (int i = 0; i < grenadeLogos.Count; i++)
+            {
+                if (i == 0)
+                {
+                    continue;
+                }
 
-        }
+                if (UIGrenadeAmmo >= 1 && i == 1)
+                {
+                    grenadeLogos[i].gameObject.SetActive(true);
 
-        if (shotgun.grenadeAmmo == 1)
-        {
-            grenadeLogos[0].SetActive(true);
-            grenadeLogos[1].SetActive(false);
-            grenadeLogos[2].SetActive(false);
-
-        }
-
-        if (shotgun.grenadeAmmo == 2)
-        {
-            grenadeLogos[0].SetActive(true);
-            grenadeLogos[1].SetActive(true);
-            grenadeLogos[2].SetActive(false);
-
-        }
-
-        if (shotgun.grenadeAmmo == 3)
-        {
-            grenadeLogos[0].SetActive(true);
-            grenadeLogos[1].SetActive(true);
-            grenadeLogos[2].SetActive(true);
-
+                }
+                else if (UIGrenadeAmmo >= 2 && i == 2)
+                {
+                    grenadeLogos[i].gameObject.SetActive(true);
+                }
+                else if (UIGrenadeAmmo >= 3 && i == 3)
+                {
+                    grenadeLogos[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    grenadeLogos[i].gameObject.SetActive(false);
+                }
+            }
         }
     }
 

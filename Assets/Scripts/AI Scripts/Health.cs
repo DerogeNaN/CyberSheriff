@@ -6,9 +6,18 @@ public class Health : MonoBehaviour
     public int health = 100;
     public TMP_Text debugText;
     public GameObject lastHitBy = null;
+    [Tooltip("calls OnHit on this. can be null.")]
+    [HideInInspector] public EnemyBase enemy;
+
+    
 
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;
+
+    private void Start()
+    {
+        enemy = GetComponent<EnemyBase>();
+    }
 
     private void Update()
     {
@@ -23,6 +32,8 @@ public class Health : MonoBehaviour
         health -= damage;
         //Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
         lastHitBy = attacker;
+        enemy.OnHit(damage, damageType);
+
         // destroys this gameobject if health <= 0
         IsDestroyed();
     }
@@ -31,6 +42,8 @@ public class Health : MonoBehaviour
     {
         if (health <= 0)
         {
+            Transform objectTransform = transform;
+            SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
             health = 0;
             //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);

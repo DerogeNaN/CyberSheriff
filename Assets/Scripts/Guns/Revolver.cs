@@ -4,14 +4,13 @@ using Unity.Mathematics;
 
 public class Revolver : RangedWeapon
 {
-
-
     [Header("Other Values")]
     [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
     {
         animator.SetTrigger("ShootTrig");
         base.EngagePrimaryFire();
+        SoundManager2.Instance.PlaySound("Revolver");
     }
 
     public override IEnumerator Reload()
@@ -20,7 +19,7 @@ public class Revolver : RangedWeapon
 
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
-        Debug.Log("Reloading...");
+        //Debug.Log("Reloading...");
         canFire = true;
         if (currentBullets != BulletsPerClip)
         {
@@ -41,6 +40,7 @@ public class Revolver : RangedWeapon
             ps.Play();
             currentBullets--;
             animator.SetTrigger("ShootAltTrig");
+            SoundManager2.Instance.PlaySound("Revolver");
             if (hit != false)
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;
@@ -54,7 +54,7 @@ public class Revolver : RangedWeapon
                     }
                     else
                     {
-                        Debug.Log("Does Not have rigidbody");
+                        //Debug.Log("Does Not have rigidbody");
                     }
 
                     if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb))
@@ -128,7 +128,7 @@ public class Revolver : RangedWeapon
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData();
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
         Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
@@ -139,7 +139,7 @@ public class Revolver : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
@@ -148,14 +148,14 @@ public class Revolver : RangedWeapon
     public override void OnPrimaryFireBegin()
     {
         shouldShootPrimary = true;
-        Debug.Log("Beginning primary Fire");
+        //Debug.Log("Beginning primary Fire");
     }
 
     //Active on Begining of alt-firing action
     public override void OnAltFireBegin()
     {
         shouldShootAlt = true;
-        Debug.Log("Beginning primary Fire");
+        //Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
@@ -163,7 +163,7 @@ public class Revolver : RangedWeapon
     {
         if (shouldShootPrimary)
         {
-            Debug.Log("Primary fire stay ");
+            //Debug.Log("Primary fire stay ");
         }
     }
 
@@ -172,7 +172,7 @@ public class Revolver : RangedWeapon
     {
         if (shouldShootAlt)
         {
-            Debug.Log("alt fire stay ");
+            //Debug.Log("alt fire stay ");
         }
 
     }
@@ -182,14 +182,14 @@ public class Revolver : RangedWeapon
     {
         shouldShootPrimary = false;
         animator.SetBool("ShootBool", false);
-        Debug.Log("end Primary Fire");
+        //Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        Debug.Log("end alt fire");
+        //Debug.Log("end alt fire");
     }
 
 }

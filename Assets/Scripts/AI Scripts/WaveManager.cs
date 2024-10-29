@@ -19,7 +19,9 @@ public class WaveManager : MonoBehaviour
     public float timeLeftInWave;
     public int enemiesRemaining;
     [SerializeField] private TextMeshProUGUI enemiesRemainingText;
+    [SerializeField] private TextMeshProUGUI enemiesRemainingShadow;
     [SerializeField] private TextMeshProUGUI waveCountText;
+    [SerializeField] private TextMeshProUGUI waveCountShadow;
 
     [SerializeField] PauseMenu pauseMenuScript;
     [SerializeField] public Timer timerScript;
@@ -43,6 +45,9 @@ public class WaveManager : MonoBehaviour
     
     void Update()
     {
+        enemiesRemainingShadow.text = enemiesRemainingText.text;
+        waveCountShadow.text = waveCountText.text;
+        
         if (!tutorialLevel)
         {
             if (enemiesRemainingText != null)
@@ -52,11 +57,14 @@ public class WaveManager : MonoBehaviour
 
             if (waveCountText != null) waveCountText.text = waveNumber.ToString();
         }
+
+        if (Input.GetKeyDown(KeyCode.N)) StartWave();
     }
 
     public void StartWave()
     {
         Debug.Log("Wave Manager starting new wave");
+        SoundManager2.Instance.PlaySound("Alarm_sound");
         if (enemiesRemaining <= 0)
         {
             if (waveNumber > 2)

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AI;
 
 // this is the base enemy state machine
 // this should not be put on gameobjects, use one of the inheriting classes
@@ -17,6 +16,7 @@ public enum EnemyState
     attacking,
     stunned,
     downed,
+    chargeAttack
 }
 
 public class EnemyBase : MonoBehaviour
@@ -40,6 +40,7 @@ public class EnemyBase : MonoBehaviour
 
     virtual protected void OnStart() { }
     virtual protected void OnUpdate() { }
+    virtual public void OnHit(int damage, int damageType) { }
 
     public void SetState(EnemyState state)
     {
@@ -64,6 +65,12 @@ public class EnemyBase : MonoBehaviour
             case EnemyState.attacking:
                 AttackingEnter();
                 break;
+            case EnemyState.stunned:
+                StunnedEnter();
+                break;
+            case EnemyState.chargeAttack:
+                ChargeAttackEnter();
+                break;
         }
     }
 
@@ -82,6 +89,12 @@ public class EnemyBase : MonoBehaviour
                 break;
             case EnemyState.attacking:
                 AttackingUpdate();
+                break;
+            case EnemyState.stunned:
+                StunnedUpdate();
+                break;
+            case EnemyState.chargeAttack:
+                ChargeAttackUpdate();
                 break;
         }
     }
@@ -102,6 +115,12 @@ public class EnemyBase : MonoBehaviour
             case EnemyState.attacking:
                 AttackingExit();
                 break;
+            case EnemyState.stunned:
+                StunnedExit();
+                break;
+            case EnemyState.chargeAttack:
+                ChargeAttackExit();
+                break;
         }
     }
 
@@ -120,4 +139,12 @@ public class EnemyBase : MonoBehaviour
     virtual protected void AttackingEnter() { }
     virtual protected void AttackingUpdate() { }
     virtual protected void AttackingExit() { }
+
+    virtual protected void StunnedEnter() { }
+    virtual protected void StunnedUpdate() { }
+    virtual protected void StunnedExit() { }
+
+    virtual protected void ChargeAttackEnter() { }
+    virtual protected void ChargeAttackUpdate() { }
+    virtual protected void ChargeAttackExit() { }
 }
