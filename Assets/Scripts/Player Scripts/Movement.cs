@@ -21,8 +21,11 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("The maximum speed the player can move through any means")]
     private float maxSpeed = 100.0f;
 
-    //Backend Variables:
 
+
+    //Backend Variables:
+    [HideInInspector] public bool isGrounded = true;
+    [HideInInspector] public float lastGroundedTime = 0;
     #endregion
 
     #region Jumping
@@ -57,10 +60,28 @@ public class Movement : MonoBehaviour
     [Header("Wall Run Settings")]
     [SerializeField][Tooltip("How fast the player must be moving to enter a wallrun")]
     private float wallrunSpeedThreshold = 0.1f;                                 //How fast the player must be moving to enter a wallrun
+
+    [SerializeField][Tooltip("Time delay between wallruns (So player doesn't accidentally instantly enter another wall run)")]
+    public float wallrunCooldown = 0.5f;
+
+    [SerializeField][Tooltip("The angle that the player jumps towards while wall running (1 is roughly 90 degrees from the wall)")]
+    public float wallrunJumpAngle = 45.0f;
+
+    [SerializeField][Tooltip("The maximum speed the player can move through any means")]
+    public float wallrunVelocityBonus = 0.2f;
+
+
+
+    //Backend Variables:
+    [HideInInspector] public float cameraLeaveWallrunTime = 0;
+    private float lastWallrunTime = 0;
+    private float leavingWallrunTime = 0;
+    [HideInInspector] public bool isWallRunning = false;
+    private bool canWallrun = false;
     #endregion
 
     #region Camera
-    [Header("Camera Settings - TEMPORARY! WILL BE MOVED")]
+    [Header("Camera Settings")]
     [SerializeField] Transform cameraSlidePos;
     [SerializeField] Transform cameraDefaultPos;
     [SerializeField][Tooltip("How much the camera tilts during wallruns in degrees")]
@@ -69,7 +90,7 @@ public class Movement : MonoBehaviour
     [SerializeField][Range(0, 1)][Tooltip("How quick to tilt during wallrun (0 - never, 1 - instant)")]
     private float cameraWallRunTiltTime = 0.2f;                                 //How quick to tilt during wallrun 0 - never, 1 - instant
 
-    [SerializeField][Tooltip("WIP - Not functional ATM!")]
+    [SerializeField][Tooltip("How long the camera takes to lower (0 - never, 1 - instant)")]
     public float cameraSlideTransitionTime = 0.1f;
     #endregion
 
@@ -80,20 +101,12 @@ public class Movement : MonoBehaviour
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
     public Transform respawnPos;
-    //public Rigidbody rb;
     public Collider slideCollider;
     private Collider standingCollider;
     private PauseMenu pauseMenu;
 
     //----WALLRUNNING----
-    public bool isWallRunning = false;
-    public bool canWallrun = false;
-    public float wallrunCooldown = 0.5f;
-    public float leavingWallrunTime = 0;
-    public float lastWallrunTime = 0;
-    public float cameraLeaveWallrunTime = 0;
-    public float wallrunJumpAngle = 45.0f;
-    public float wallrunVelocityBonus = 0.2f;
+
 
     //----SLIDING----
     public bool isSliding = false;
@@ -109,7 +122,6 @@ public class Movement : MonoBehaviour
     public int slowDownPercentage = 30;
     public float speedLimitEnforceAmmount = 1.5f;
     private float momentumRatio;
-    private float actualGravity = 0;
 
     //----JUMPING----
     public int jumpCount = 0;
@@ -129,9 +141,7 @@ public class Movement : MonoBehaviour
     public float dashCooldown = 1;
 
     //----MOVEMENT----
-    public bool isGrounded = true;
-    public float lastGroundedTime = 0;
-    public MovementState playerState;
+
 
     //----GRAPPLE----
     public bool isGrappling = false;
@@ -161,7 +171,6 @@ public class Movement : MonoBehaviour
         standingCollider = GetComponent<Collider>();
         pauseMenu = GetComponentInChildren<PauseMenu>();
         InitialiseMovement();
-        playerState = MovementState.grounded;
     }
 
     public void UpdateMovement()
@@ -298,35 +307,6 @@ public class Movement : MonoBehaviour
         //rb.velocity = Vector3.zero;
         //velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         transform.position += velocity * Time.deltaTime;
-    }
-
-    void SetState(MovementState desiredState)
-    {
-        MovementState prevState = playerState;
-        playerState = desiredState;
-
-        StateTransition(prevState, playerState);
-    }
-
-    void StateTransition(MovementState oldState, MovementState newState)
-    {
-        if (oldState == MovementState.grounded && newState == MovementState.air)
-        {
-            
-        }
-
-        if (oldState == MovementState.grounded && newState == MovementState.sliding)
-        {
-            isSliding = true;
-            slideStartTime = Time.time;
-            isGrounded = false;
-        }
-
-        if (oldState == MovementState.sliding && newState == MovementState.grounded)
-        {
-            isSliding = false;
-            isGrounded = true;
-        }
     }
 
     void Gravity()
