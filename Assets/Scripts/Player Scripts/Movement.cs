@@ -571,7 +571,7 @@ public class Movement : MonoBehaviour
     void CheckForOncomingCollision()
     {
         RaycastHit[] hitArray;
-        
+
         if (!isSliding)
         {
             hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.65f, 0),
@@ -587,7 +587,46 @@ public class Movement : MonoBehaviour
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
                 //Debug.Log(normalInUp);
-                if(normalInUp < 0.95f && normalInUp > 0.05f)
+                if (normalInUp < 0.95f && normalInUp > 0.05f)
+                {
+                    Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
+                    float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
+                    velocity -= velocityInHoriNormalDirection * horiNormal;
+                }
+                float velocityInNormalDirection = Vector3.Dot(velocity, normal);
+                velocity -= velocityInNormalDirection * normal;
+
+                float clampAmmount = Vector3.Dot(movementInputWorld, normal);
+                if (clampAmmount < 0) continue;
+
+                if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
+                {
+                    clampAmmount = 1 - clampAmmount;
+
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                }
+
+                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
+            }
+        }
+
+        else
+        {
+            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0.5f, 0, 0),
+                                              transform.position - new Vector3(0.5f, 0, 0),
+                                              0.35f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+
+            for (int i = 0; i < hitArray.Length; i++)
+            {
+                Vector3 normal = hitArray[i].normal;
+                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+
+                if (Vector3.Dot(velocity, normal) < 0) continue;
+
+                float normalInUp = Vector3.Dot(Vector3.up, normal);
+                //Debug.Log(normalInUp);
+                if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
                     Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
                     float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
@@ -611,29 +650,6 @@ public class Movement : MonoBehaviour
             }
         }
         
-        else
-        {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0.5f, 0, 0),
-                                              transform.position - new Vector3(0.5f, 0, 0),
-                                              0.35f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
-
-            for (int i = 0; i < hitArray.Length; i++)
-                {
-                    float clampAmmount = Vector3.Dot(movementInputWorld, -hitArray[i].normal);
-                    if (clampAmmount < 0) continue;
-
-                    float velocityInNormalDirection = Vector3.Dot(velocity, hitArray[i].normal);
-                    velocity -= velocityInNormalDirection * hitArray[i].normal;
-
-                    if (Vector3.Dot(hitArray[i].normal, Vector3.up) <= 0.25f)
-                    {
-                        clampAmmount = 1 - clampAmmount;
-
-                        velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                        velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                    }
-                }
-        }
     }
 
     private void CheckForWallRun()
