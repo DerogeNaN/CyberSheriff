@@ -145,19 +145,19 @@ public class WeaponManagement : MonoBehaviour
         }
                 
 
-            Debug.Log("Changing Weapon");
-            Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
+           // Debug.Log("Changing Weapon");
+           // Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
 
             //set previous to false
             if (currentActiveWeapon)
                 currentActiveWeapon.gameObject.SetActive(false);
 
-            Debug.Log("weapon type " + CurrentWeapon);
+          //  Debug.Log("weapon type " + CurrentWeapon);
 
             currentActiveWeapon = weaponList[(int)CurrentWeapon];
             if (currentActiveWeapon)
             {
-                Debug.Log("WeaponFound!!");
+               // Debug.Log("WeaponFound!!");
             }
 
             if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
