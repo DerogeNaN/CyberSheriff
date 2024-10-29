@@ -21,6 +21,7 @@ public class EnemyFlying : EnemyBase
     public float avoidanceSpeedWeight;
     public float avoidFloorDistance;
     public float closeBuffer;
+    public float backwardsAccelerationMultiplier = 1.0f;
 
     [Header("FlyingAttack Settings")]
     public float attackRange = 25.0f;
@@ -37,7 +38,6 @@ public class EnemyFlying : EnemyBase
     Vector3 dir;
     Vector3 toPlayer;
     float currentSpeed;
-    bool close;
     float timer;
     float attackCooldown;
 
@@ -61,7 +61,6 @@ public class EnemyFlying : EnemyBase
         enemy.lookTarget = enemy.playerTransform.position;
 
         toPlayer = enemy.playerTransform.position - transform.position + new Vector3(0, yOffset, 0);
-        close = toPlayer.magnitude <= closeDistance;
 
         // apply movement and rotation
         //if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
@@ -106,7 +105,7 @@ public class EnemyFlying : EnemyBase
         else if (toPlayer.magnitude < closeDistance - closeBuffer)
         {
             // if close to player, move away from them
-            if (currentSpeed > -maxSpeed) currentSpeed -= acceleration * Time.deltaTime;
+            if (currentSpeed > -maxSpeed) currentSpeed -= acceleration * backwardsAccelerationMultiplier * Time.deltaTime;
         }
         else
         {
