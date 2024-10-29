@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using System.Collections;
 using static RangedWeapon;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 
@@ -38,7 +39,7 @@ public class Shotgun : RangedWeapon
     [Tooltip("Please dont mess with This(Grenade will be ready so Long as the ammo is above zero)")]
 
     [SerializeField]
-    float grenadeYEffectMult = 0.2f; 
+    float grenadeYEffectMult = 0.2f;
 
 
     [SerializeField]
@@ -101,7 +102,7 @@ public class Shotgun : RangedWeapon
 
         if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true && currentBullets > 1)
         {
-            animator.SetTrigger("ChargeStartTrigger");
+            // animator.SetTrigger("ChargeStartTrigger");
 
         }
 
@@ -128,10 +129,8 @@ public class Shotgun : RangedWeapon
 
     public override IEnumerator Reload()
     {
-        //ForceFeed Maybe?
-
         animator.SetTrigger("ReloadTrigger");
-        animator.PlayInFixedTime("S_Reload", 0);
+        //  animator.GetCurrentAnimatorStateInfo(0).length
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
         //Debug.Log("Reloading...");
@@ -145,6 +144,7 @@ public class Shotgun : RangedWeapon
 
     public void EngagePrimaryFire(bool charged)
     {
+
         chargeExited = false;
         inputTime = 0;
         int pellets;
@@ -220,7 +220,7 @@ public class Shotgun : RangedWeapon
                                 {
                                     if (eh.isHeadshot == true)
                                     {
-                                   //     Debug.Log("HeadShot");
+                                        //     Debug.Log("HeadShot");
                                         damage *= headShotMultiplier;
                                     }
 
@@ -231,7 +231,7 @@ public class Shotgun : RangedWeapon
                     }
                 }
             }
-            animator.SetBool("ChargeReleaseBool", false);
+            // animator.SetBool("ChargeReleaseBool", false);
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
@@ -309,11 +309,11 @@ public class Shotgun : RangedWeapon
             if (hit == false)
             {
                 Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData().ray.direction * camRef.farClipPlane);
-           //     Debug.Log("fallicies and falsehoods");
+                //     Debug.Log("fallicies and falsehoods");
             }
             else
             {
-             //   Debug.Log("Dogmas and definitudes ");
+                //   Debug.Log("Dogmas and definitudes ");
             }
 
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
@@ -322,6 +322,11 @@ public class Shotgun : RangedWeapon
             grenadeReady = false;
             grenadeAmmo--;
             StartCoroutine(Wait(AltshotGapTime));
+        }
+        else if (grenadeAmmo <= 0) 
+        {
+        
+        
         }
     }
 
@@ -335,7 +340,7 @@ public class Shotgun : RangedWeapon
     public override void OnAltFireBegin()
     {
         shouldShootAlt = true;
-       // Debug.Log("Beginning primary Fire");
+        // Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
@@ -360,13 +365,13 @@ public class Shotgun : RangedWeapon
         chargeExited = true;
 
 
-      //  Debug.Log("end Primary Fire");
+        //  Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
-      //  Debug.Log("end alt fire");
+        //  Debug.Log("end alt fire");
     }
 }
