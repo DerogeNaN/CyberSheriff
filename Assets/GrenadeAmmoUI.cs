@@ -18,8 +18,6 @@ public class GrenadeAmmoUI : MonoBehaviour
 
     private void Awake()
     {
-
-
         for (int i = 0; i < weaponManagementScript.weaponList.Count; i++)
         {
             if (weaponManagementScript.weaponList[i].TryGetComponent(out shotgun))
