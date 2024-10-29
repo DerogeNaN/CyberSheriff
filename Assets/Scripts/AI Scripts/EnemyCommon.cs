@@ -19,6 +19,7 @@ public class EnemyCommon : MonoBehaviour
 
     [Header("Advanced")]
     public GameObject mesh;
+    public Animator animator;
     public Vector3 lineOfSightOffset;
     public Vector3 floorRaycastPos;
     public float floorRaycastLength;
@@ -118,7 +119,7 @@ public class EnemyCommon : MonoBehaviour
     void SetPlayerTransform()
     {
         // get the transform of whatever has the main camera
-        playerTransform = Camera.main.transform.parent;
+        playerTransform = Movement.playerMovement.gameObject.transform;
     }
 }
 

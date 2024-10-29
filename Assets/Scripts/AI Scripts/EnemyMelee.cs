@@ -86,6 +86,8 @@ public class EnemyMelee : EnemyBase
         Vector3 dir = (enemy.playerTransform.position - transform.position).normalized;
         transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
 
+        enemy.animator.SetBool("Attack", true);
+
         // set directions to lerp to quickly when attacking
         //attackStartRotation = transform.rotation.eulerAngles;
         //attackRotate = 0;
