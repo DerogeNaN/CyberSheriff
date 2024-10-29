@@ -307,9 +307,6 @@ public class Shotgun : RangedWeapon
         bool hit = false;
         if (grenadeReady)
         {
-
-            Vector3 GrenadeDirection = Vector3.zero;
-
             animator.SetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
             RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
