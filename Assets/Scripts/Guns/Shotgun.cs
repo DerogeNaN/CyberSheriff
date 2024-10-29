@@ -195,7 +195,16 @@ public class Shotgun : RangedWeapon
                             Debug.Log("Does Not have rigidbody");
                         }
 
-                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb))
+                        if (rayData.hit.transform.parent)
+                        {
+                            if (!(rayData.hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
+                            {
+                                SpawnBulletHoleDecal(rayData);
+                                GameObject hitFX = Instantiate(HitEffect);
+                                hitFX.transform.position = rayData.hit.point;
+                            }
+                        }
+                        else
                         {
                             SpawnBulletHoleDecal(rayData);
                             GameObject hitFX = Instantiate(HitEffect);
