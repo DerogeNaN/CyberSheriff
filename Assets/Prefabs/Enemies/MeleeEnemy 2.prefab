@@ -554,9 +554,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  runSpeed: 10
+  runSpeed: 16
   walkSpeed: 3
-  chaseTime: 2
+  chaseTime: 5
   attackPrefab: {fileID: 2145299806175634582, guid: c184ff413ccf685469543a500061ea73,
     type: 3}
   attackRange: 2
@@ -576,7 +576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
-  sightRange: 30
+  sightRange: 45
   speed: 5
   mesh: {fileID: 8508684111999068476}
   lineOfSightOffset: {x: 0, y: 2, z: 0}
@@ -598,7 +598,7 @@ NavMeshAgent:
   m_AgentTypeID: -1372625422
   m_Radius: 1
   m_Speed: 3.5
-  m_Acceleration: 20
+  m_Acceleration: 30
   avoidancePriority: 10
   m_AngularSpeed: 300
   m_StoppingDistance: 2
