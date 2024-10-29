@@ -9,6 +9,8 @@ public class Health : MonoBehaviour
     [Tooltip("calls OnHit on this. can be null.")]
     [HideInInspector] public EnemyBase enemy;
 
+    
+
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;
 
@@ -40,6 +42,8 @@ public class Health : MonoBehaviour
     {
         if (health <= 0)
         {
+            Transform objectTransform = transform;
+            SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
             health = 0;
             //Debug.Log(gameObject.name + " was destroyed");
             Destroy(gameObject);

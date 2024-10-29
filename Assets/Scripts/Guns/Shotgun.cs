@@ -7,8 +7,6 @@ using static RangedWeapon;
 
 public class Shotgun : RangedWeapon
 {
-
-
     [Header("I be riding shotgun underneath the hot sun...")]
     [SerializeField]
     int bulletsPerShot = 5;
@@ -38,6 +36,11 @@ public class Shotgun : RangedWeapon
     float grenadeLaucherForceMultiplier;
 
     [Tooltip("Please dont mess with This(Grenade will be ready so Long as the ammo is above zero)")]
+
+    [SerializeField]
+    float grenadeYEffectMult = 0.2f;
+
+
     [SerializeField]
     public bool grenadeReady = false;
 
@@ -98,7 +101,7 @@ public class Shotgun : RangedWeapon
 
         if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true && currentBullets > 1)
         {
-            animator.SetTrigger("ChargeStartTrigger");
+            // animator.SetTrigger("ChargeStartTrigger");
 
         }
 
@@ -125,13 +128,11 @@ public class Shotgun : RangedWeapon
 
     public override IEnumerator Reload()
     {
-        //ForceFeed Maybe?
-
         animator.SetTrigger("ReloadTrigger");
-        animator.PlayInFixedTime("S_Reload", 0);
+        //  animator.GetCurrentAnimatorStateInfo(0).length
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
-        Debug.Log("Reloading...");
+        //Debug.Log("Reloading...");
         canFire = true;
         if (currentBullets != BulletsPerClip)
         {
@@ -142,6 +143,7 @@ public class Shotgun : RangedWeapon
 
     public void EngagePrimaryFire(bool charged)
     {
+
         chargeExited = false;
         inputTime = 0;
         int pellets;
@@ -217,7 +219,7 @@ public class Shotgun : RangedWeapon
                                 {
                                     if (eh.isHeadshot == true)
                                     {
-                                        Debug.Log("HeadShot");
+                                        //     Debug.Log("HeadShot");
                                         damage *= headShotMultiplier;
                                     }
 
@@ -228,7 +230,7 @@ public class Shotgun : RangedWeapon
                     }
                 }
             }
-            animator.SetBool("ChargeReleaseBool", false);
+            // animator.SetBool("ChargeReleaseBool", false);
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
@@ -275,7 +277,7 @@ public class Shotgun : RangedWeapon
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData();
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
         Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
@@ -284,26 +286,46 @@ public class Shotgun : RangedWeapon
 
         //set ray direction to the barrel to look point direction 
         gunRay.direction = barrelToLookPointDir;
-        gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
+        gunRay.direction = gunRay.direction += UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
     public override void EngageAltFire()
     {
+        bool hit = false;
         if (grenadeReady)
         {
-            animator.ResetTrigger("ShootAltTrig");
+
+            Vector3 GrenadeDirection = Vector3.zero;
+
+            animator.SetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
-            RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
+            RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
+
+            if (hit == false)
+            {
+                Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData().ray.direction * camRef.farClipPlane);
+                //     Debug.Log("fallicies and falsehoods");
+            }
+            else
+            {
+                //   Debug.Log("Dogmas and definitudes ");
+            }
+
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
-            grenadeRB.AddForce(ray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
-            grenadeRB.AddForce(Movement.playerMovement.velocity, ForceMode.Impulse);
+            grenadeRB.AddForce(Gunray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
+            grenadeRB.AddForce(new Vector3(Movement.playerMovement.velocity.x, Movement.playerMovement.velocity.y * grenadeYEffectMult, Movement.playerMovement.velocity.z), ForceMode.Impulse);
             grenadeReady = false;
             grenadeAmmo--;
             StartCoroutine(Wait(AltshotGapTime));
+        }
+        else if (grenadeAmmo <= 0) 
+        {
+        
+        
         }
     }
 
@@ -317,7 +339,7 @@ public class Shotgun : RangedWeapon
     public override void OnAltFireBegin()
     {
         shouldShootAlt = true;
-        Debug.Log("Beginning primary Fire");
+        // Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
@@ -342,13 +364,13 @@ public class Shotgun : RangedWeapon
         chargeExited = true;
 
 
-        Debug.Log("end Primary Fire");
+        //  Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        Debug.Log("end alt fire");
+        //  Debug.Log("end alt fire");
     }
 }

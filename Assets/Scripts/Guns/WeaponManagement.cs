@@ -4,7 +4,7 @@ using TMPro;
 public class WeaponManagement : MonoBehaviour
 {
     [SerializeField]
-    List<GameObject> weaponList;
+    public List<GameObject> weaponList;
 
     [SerializeField]
     int weaponIterator = 0;
@@ -123,7 +123,7 @@ public class WeaponManagement : MonoBehaviour
         else
         {
 
-            Debug.Log("Cannot reload at This Time");
+         //   Debug.Log("Cannot reload at This Time");
         }
     }
 
@@ -134,25 +134,30 @@ public class WeaponManagement : MonoBehaviour
             float CurrentWeapon = obj.ReadValue<Vector2>().y;
 
             if (CurrentWeapon > 0)
-            {
-                CurrentWeapon = 1;
-            }
-            else
-                CurrentWeapon = 0;
+        {
+            CurrentWeapon = 1;
+            SoundManager2.Instance.PlaySound("WeaponSwap");
+        }
+        else
+        {
+            CurrentWeapon = 0;
+            SoundManager2.Instance.PlaySound("WeaponSwap");
+        }
+                
 
-            Debug.Log("Changing Weapon");
-            Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
+           // Debug.Log("Changing Weapon");
+           // Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
 
             //set previous to false
             if (currentActiveWeapon)
                 currentActiveWeapon.gameObject.SetActive(false);
 
-            Debug.Log("weapon type " + CurrentWeapon);
+          //  Debug.Log("weapon type " + CurrentWeapon);
 
             currentActiveWeapon = weaponList[(int)CurrentWeapon];
             if (currentActiveWeapon)
             {
-                Debug.Log("WeaponFound!!");
+               // Debug.Log("WeaponFound!!");
             }
 
             if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
@@ -179,12 +184,12 @@ public class WeaponManagement : MonoBehaviour
             if (currentActiveWeapon)
                 currentActiveWeapon.gameObject.SetActive(false);
 
-            Debug.Log("weapon type " + 0);
+           // Debug.Log("weapon type " + 0);
 
             currentActiveWeapon = weaponList[0];
             if (currentActiveWeapon)
             {
-                Debug.Log("WeaponFound!!");
+              //  Debug.Log("WeaponFound!!");
             }
 
             //set next to true 
@@ -217,12 +222,12 @@ public class WeaponManagement : MonoBehaviour
             if (currentActiveWeapon)
                 currentActiveWeapon.gameObject.SetActive(false);
 
-            Debug.Log("weapon type " + 1);
+         //   Debug.Log("weapon type " + 1);
 
             currentActiveWeapon = weaponList[1];
             if (currentActiveWeapon)
             {
-                Debug.Log("WeaponFound!!");
+               // Debug.Log("WeaponFound!!");
             }
 
 
