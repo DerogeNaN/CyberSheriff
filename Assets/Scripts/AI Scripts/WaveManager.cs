@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class WaveManager : MonoBehaviour
 {
-    GameManager gameManager;
     public static WaveManager waveManagerInstance;
 
     [Header("Global Wave Settings")]
@@ -40,6 +39,8 @@ public class WaveManager : MonoBehaviour
         {
             Destroy(gameObject);  // Avoid keeping duplicate managers
         }
+
+        SetupWaveManager();
     }
 
     
@@ -59,6 +60,17 @@ public class WaveManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.N)) StartWave();
+    }
+
+    private void SetupWaveManager()
+    {
+        if (enemiesRemainingText == null) enemiesRemainingText = GameObject.Find("Enemy_Amount_Text").GetComponent<TextMeshProUGUI>();
+        if (enemiesRemainingShadow == null) enemiesRemainingShadow = GameObject.Find("Enemy_Amount_Shadow").GetComponent<TextMeshProUGUI>();
+        if (waveCountText == null) waveCountText = GameObject.Find("Wave_Amount_Text").GetComponent<TextMeshProUGUI>();
+        if (waveCountShadow == null) waveCountShadow = GameObject.Find("Wave_Amount_Shadow").GetComponent<TextMeshProUGUI>();
+
+        if (timerScript == null) timerScript = GameObject.Find("Timer").GetComponent<Timer>();
+        if (pauseMenuScript == null) pauseMenuScript = GameObject.Find("PauseMenuScript").GetComponent<PauseMenu>();
     }
 
     public void StartWave()
