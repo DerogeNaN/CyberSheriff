@@ -31,7 +31,6 @@ public class EnemyMelee : EnemyBase
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
-        SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
         initialPosition = transform.position;
         enemy.moveTarget = initialPosition;
         enemy.speed = walkSpeed;
