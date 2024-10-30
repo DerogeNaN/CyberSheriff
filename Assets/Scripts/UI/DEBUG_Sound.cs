@@ -22,7 +22,7 @@ public class DEBUG_Sound : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.U))
         {
-            SoundManager2.Instance.PlayMusic("1");
+            SoundManager2.Instance.PlayMusic("2");
         }
     }
 

@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class EnemyMelee : EnemyBase
@@ -74,6 +71,7 @@ public class EnemyMelee : EnemyBase
     protected override void AttackingEnter()
     {
         enemy.shouldPath = false;
+        enemy.navAgent.avoidancePriority = 99;
         remainingAttackTime = attackTime;
 
         if (attackPrefab != null)
@@ -84,7 +82,7 @@ public class EnemyMelee : EnemyBase
 
         // look at player
         Vector3 dir = (enemy.playerTransform.position - transform.position).normalized;
-        transform.rotation = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
 
         // set directions to lerp to quickly when attacking
         //attackStartRotation = transform.rotation.eulerAngles;
@@ -182,6 +180,7 @@ public class EnemyMelee : EnemyBase
     protected override void AttackingExit()
     {
         remainingAttackCooldown = attackCooldown;
+        enemy.navAgent.avoidancePriority = 50;
     }
     #endregion
 }

@@ -29,7 +29,7 @@ public class EnemyCommon : MonoBehaviour
     public bool hasLineOfSight;
     [HideInInspector] public bool shouldPath;
 
-    private NavMeshAgent navAgent;
+    [HideInInspector] public NavMeshAgent navAgent;
 
     private void Start()
     {
@@ -92,11 +92,14 @@ public class EnemyCommon : MonoBehaviour
             // enemy types that inherit from this decide when to set shouldPath to true or false
             if (shouldPath)
             {
-                navAgent.enabled = true;
                 navAgent.speed = speed;
                 navAgent.SetDestination(moveTarget);
             }
-            else navAgent.enabled = false;
+            else
+            {
+                navAgent.speed = 0;
+                navAgent.velocity = Vector3.zero;
+            }
         }
     }
 

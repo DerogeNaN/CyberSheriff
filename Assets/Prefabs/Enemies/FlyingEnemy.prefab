@@ -68,7 +68,7 @@ MonoBehaviour:
   maxSpeed: 30
   turnSpeed: 0.05
   acceleration: 10
-  deceleration: 40
+  deceleration: 30
   yOffset: 1.5
   closeDistance: 7
   avoidanceStrength: 0.5
@@ -77,6 +77,7 @@ MonoBehaviour:
   avoidanceSpeedWeight: 0
   avoidFloorDistance: 1
   closeBuffer: 1
+  backwardsAccelerationMultiplier: 2
   attackRange: 25
   attackCooldownMin: 3
   attackCooldownMax: 5
@@ -110,6 +111,7 @@ MonoBehaviour:
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
   shouldPath: 0
+  navAgent: {fileID: 0}
 --- !u!1 &4443895185962462416
 GameObject:
   m_ObjectHideFlags: 0
