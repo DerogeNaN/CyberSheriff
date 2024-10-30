@@ -54,8 +54,7 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("How fast the player must be moving to slide")]
     private float slideSpeedThreshold = 0.1f;                                   //How fast the player must be moving to slide
 
-    [SerializeField]
-    [Tooltip("How much time is seconds before \"slide drag\" is applied")]
+    [SerializeField][Tooltip("How much time is seconds before \"slide drag\" is applied")]
     private float slideDragDelay = 4f;                                        //Time it takes to start adding drag back to the player
 
     [SerializeField][Tooltip("The amount the player slows down each frame after \"Slide Drag Delay\"")]
@@ -69,13 +68,13 @@ public class Movement : MonoBehaviour
 
     #region Dashing
     [Header("Dash Settings")]
-    [HideInInspector][Tooltip("The speed the player travels while in a dash")]
+    [SerializeField][Tooltip("The speed the player travels while in a dash")]
     public float dashSpeed = 10.0f;
 
-    [HideInInspector][Tooltip("How long in seconds the player travels at \"Dash Speed\"")]
+    [SerializeField][Tooltip("How long in seconds the player travels at \"Dash Speed\"")]
     public float dashTime = 0.5f;
 
-    [HideInInspector][Tooltip("Time in seconds between dashes")]
+    [SerializeField][Tooltip("Time in seconds between dashes")]
     public float dashCooldown = 1;
 
     //Backend Variables
@@ -112,13 +111,13 @@ public class Movement : MonoBehaviour
 
     #region Grapple
     [Header("Grapple Settings")]
-    [HideInInspector][Tooltip("How fast the player travels while in a grapple")]
+    [SerializeField][Tooltip("How fast the player travels while in a grapple")]
     public float grappleSpeed = 1f;
 
-    [HideInInspector][Tooltip("Time in seconds between grapples")]
+    [SerializeField][Tooltip("Time in seconds between grapples")]
     public float grappleCooldown = 5;
 
-    [HideInInspector][Tooltip("Max distance the player can enter a grapple")]
+    [SerializeField][Tooltip("Max distance the player can enter a grapple")]
     public float maxGrappleDistance = 100f;
 
     //Backend Variables
