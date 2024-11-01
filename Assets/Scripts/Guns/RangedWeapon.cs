@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Net;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -87,6 +88,9 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public GameObject BulletHitDecal;
 
+    [SerializeField]
+    public Animator animator;
+
     [Header("Scene Refrences")]
     [SerializeField]
     public Camera camRef;
@@ -135,12 +139,14 @@ public class RangedWeapon : MonoBehaviour
         //Primary Fire Logic
         if (currentBullets > 0)
         {
-            RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
+            bool hit;
+            RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hit);
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
+
             currentBullets--;
-            if (rayData.hit.point != null)
+            if (hit != false)
             {
                 CurrentlyHitting = rayData.hit.transform.gameObject;
 
@@ -153,10 +159,19 @@ public class RangedWeapon : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("Does Not have rigidbody");
+                        //  Debug.Log("Does Not have rigidbody");
                     }
 
-                    if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent<EnemyBase>(out EnemyBase eb))
+                    if (rayData.hit.transform.parent)
+                    {
+                        if (!(rayData.hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
+                        {
+                            SpawnBulletHoleDecal(rayData);
+                            GameObject hitFX = Instantiate(HitEffect);
+                            hitFX.transform.position = rayData.hit.point;
+                        }
+                    }
+                    else 
                     {
                         SpawnBulletHoleDecal(rayData);
                         GameObject hitFX = Instantiate(HitEffect);
@@ -168,12 +183,12 @@ public class RangedWeapon : MonoBehaviour
                         if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
                             GameObject hitFX = Instantiate(HitEffect);
-                            hitFX.transform.position = rayData.hit.point; 
+                            hitFX.transform.position = rayData.hit.point;
 
                             GameObject hitFX2 = Instantiate(enemyHitEffect);
                             hitFX2.transform.position = rayData.hit.point;
 
-                            Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
+                            Health EnemyHealth = rayData.hit.transform.parent.GetComponent<Health>();
                             int damage = DamageValue;
 
 
@@ -185,7 +200,7 @@ public class RangedWeapon : MonoBehaviour
                                 }
 
                             }
-                            EnemyHealth.TakeDamage(damage, 0,gameObject);
+                            EnemyHealth.TakeDamage(damage, 0, gameObject);
                         }
                     }
                 }
@@ -203,19 +218,19 @@ public class RangedWeapon : MonoBehaviour
 
     public void OnKill()
     {
-        
-        Debug.Log(" Enemy was Killed.");
-        if (shotgun.currentKillstoRecharge < shotgun.RequiredKillsToRecharge)
+
+        // Debug.Log(" Enemy was Killed.");
+        if (shotgun.currentKillsToRecharge < shotgun.RequiredKillsToRecharge)
         {
-            shotgun.currentKillstoRecharge++;
+            shotgun.currentKillsToRecharge++;
         }
 
-        if (shotgun.currentKillstoRecharge >= shotgun.RequiredKillsToRecharge)
+        if (shotgun.currentKillsToRecharge >= shotgun.RequiredKillsToRecharge)
         {
             if (shotgun.grenadeAmmo < shotgun.grenadeAmmoMax)
                 shotgun.grenadeAmmo++;
-            shotgun.currentKillstoRecharge = 0;
-            Debug.Log("grenade Gained");
+            shotgun.currentKillsToRecharge = 0;
+            //  Debug.Log("grenade Gained");
         }
 
     }
@@ -233,7 +248,7 @@ public class RangedWeapon : MonoBehaviour
         Vector3 pos = Decal.transform.position;
         Decal.transform.LookAt(pos + rayData.hit.normal, Vector3.up);
         Decal.transform.position += -rayData.hit.normal;
-        Debug.Log("ray hit normal: " + rayData.hit.normal);
+        //  Debug.Log("ray hit normal: " + rayData.hit.normal);
     }
 
 
@@ -246,15 +261,32 @@ public class RangedWeapon : MonoBehaviour
         }
         else if (reloading == true)
         {
-            Debug.Log(" Already Reloading ");
+            //      Debug.Log(" Already Reloading ");
         }
         else
         {
-            Debug.Log(" altfire active cannot reload");
+            // Debug.Log(" altfire active cannot reload");
         }
     }
 
+
     virtual public RayData RayCastAndGenCameraRayData()
+    {
+
+        Ray cameraRay = new Ray();
+
+        RaycastHit cameraHit;
+
+        cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
+
+        cameraRay.direction = camRef.transform.forward;
+
+        Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
+
+        return new RayData { ray = cameraRay, hit = cameraHit };
+    }
+
+    virtual public RayData RayCastAndGenCameraRayData(out bool hitDetected)
     {
         Ray cameraRay = new Ray();
 
@@ -264,9 +296,10 @@ public class RangedWeapon : MonoBehaviour
 
         cameraRay.direction = camRef.transform.forward;
 
-        Physics.Raycast(cameraRay, out cameraHit, Mathf.Infinity);
+        hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
 
         return new RayData { ray = cameraRay, hit = cameraHit };
+
     }
 
     virtual public RayData RayCastAndGenGunRayData(Transform muzzle)
@@ -288,19 +321,57 @@ public class RangedWeapon : MonoBehaviour
         //set ray direction to the barrel to look point direction 
         gunRay.direction = barrelToLookPointDir;
 
-        Physics.Raycast(gunRay, out gunHit, Mathf.Infinity);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
+    virtual public RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected)
+    {
+        Ray gunRay = new Ray();
 
+        //we get the start and direction for our "Bullet" from our Gun Here
+        gunRay.direction = muzzlePoint.transform.forward;
+        gunRay.origin = muzzlePoint.position;
+
+        RaycastHit gunHit;
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
+        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
+
+        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+
+        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
+
+        //set ray direction to the barrel to look point direction 
+        gunRay.direction = barrelToLookPointDir;
+
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+
+        return new RayData { ray = gunRay, hit = gunHit };
+    }
+
+    private void OnDrawGizmos()
+    {
+        //RayData rd = RayCastAndGenCameraRayData(out bool hit);
+        //if (hit == true)
+        //{
+        //    Gizmos.color = Color.yellow;
+        //    Debug.Log("we hit" + rd.hit.collider.name);
+        //    Gizmos.DrawRay(rd.ray);
+        //    Gizmos.DrawWireSphere(rd.hit.point, 1);
+        //}
+        //else 
+        //{
+        //    Debug.Log("No Luck Homie");
+        //}
+    }
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
     public IEnumerator Wait(float shotGapTime)
     {
         waiting = true;
         yield return new WaitForSeconds(shotGapTime);
-        Debug.Log("Waiting...");
+        // Debug.Log("Waiting...");
         canFire = true;
         waiting = false;
     }
@@ -309,7 +380,7 @@ public class RangedWeapon : MonoBehaviour
     {
         reloading = true;
         yield return new WaitForSeconds(reloadTime);
-        Debug.Log("Reloading...");
+        // Debug.Log("Reloading...");
         canFire = true;
         if (currentBullets != BulletsPerClip)
         {
@@ -323,14 +394,14 @@ public class RangedWeapon : MonoBehaviour
     public virtual void OnPrimaryFireBegin()
     {
         shouldShootPrimary = true;
-        Debug.Log("Beginning primary Fire");
+        //  Debug.Log("Beginning primary Fire");
     }
 
     //Active on Begining of alt-firing action
     public virtual void OnAltFireBegin()
     {
         shouldShootAlt = true;
-        Debug.Log("Beginning primary Fire");
+        //  Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
@@ -338,7 +409,7 @@ public class RangedWeapon : MonoBehaviour
     {
         if (shouldShootPrimary)
         {
-            Debug.Log("Primary fire stay ");
+            //   Debug.Log("Primary fire stay ");
         }
     }
 
@@ -347,7 +418,7 @@ public class RangedWeapon : MonoBehaviour
     {
         if (shouldShootAlt)
         {
-            Debug.Log("alt fire stay ");
+            //  Debug.Log("alt fire stay ");
         }
 
     }
@@ -356,14 +427,14 @@ public class RangedWeapon : MonoBehaviour
     public virtual void OnprimaryFireEnd()
     {
         shouldShootPrimary = false;
-        Debug.Log("end Primary Fire");
+        //   Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public virtual void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        Debug.Log("end alt fire");
+        //  Debug.Log("end alt fire");
     }
 
 }

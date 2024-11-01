@@ -20,7 +20,7 @@ public class GroundCheck : MonoBehaviour
         {
             Movement.playerMovement.transform.position = Movement.playerMovement.respawnPos.position;
             Movement.playerMovement.transform.rotation = Movement.playerMovement.respawnPos.rotation;
-            Movement.playerMovement.momentum = new Vector3(0, 0, 0);
+            Movement.playerMovement.velocity = new Vector3(0, 0, 0);
         }
         //TODO: ADD GROUND LAYER SO THAT THE PLAYER CANT JUMP OFF ENEMIES
         Movement.playerMovement.isGrounded = true;

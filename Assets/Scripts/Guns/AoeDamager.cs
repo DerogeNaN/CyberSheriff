@@ -60,6 +60,7 @@ public class AoeDamager : MonoBehaviour
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, blastRadius);
         GameObject vfx = Instantiate(explosionVFX);
+        SoundManager2.Instance.PlaySound("ShotgunGranadeExplosion");
         vfx.transform.position = transform.position;
 
         foreach (var hitCollider in hitColliders)
@@ -80,7 +81,7 @@ public class AoeDamager : MonoBehaviour
                     hpscript.TakeDamage(damage, 0,gameObject);
                     continue;
                 }
-                else if (hitCollider.transform.parent.TryGetComponent<Health>(out hpscript))
+                else if (hitCollider.transform.parent.TryGetComponent(out hpscript))
                 {
                     Debug.Log(hpscript);
                     Debug.Log(hitCollider.name + "Was Caught in Blast");
@@ -94,7 +95,7 @@ public class AoeDamager : MonoBehaviour
                 else
                     Debug.Log("Not allowed to take Damage");
             }
-            else if (hitCollider.TryGetComponent<Health>(out hpscript))
+            else if (hitCollider.TryGetComponent(out hpscript))
             {
                 Debug.Log(hpscript);
                 Debug.Log(hitCollider.name + "Was Caught in Blast");

@@ -17,10 +17,13 @@ public class EnemyRanged : EnemyBase
     public float attackCooldownMin = 1.0f;
     public float attackCooldownMax = 3.0f; 
     [SerializeField] GameObject bulletPrefab;
+    public bool doSniperAimEffect;
+    public float sniperAimEffectLength;
 
     Vector3 initialPosition;
     float remainingAttackTime;
     float remainingAttackCooldown;
+    float remainingSniperAimTime;
 
     protected override void OnStart()
     {
@@ -56,13 +59,18 @@ public class EnemyRanged : EnemyBase
         // change spawn pos to gun pos
         Projectile projectile = Instantiate(bulletPrefab, transform.position + enemy.lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
         projectile.Shoot(enemy.playerTransform.position);
-
+        SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
         // snap to point at player when firing
         transform.LookAt(enemy.playerTransform);
 
         Vector3 rot = transform.rotation.eulerAngles;
         rot.x = 0;
         transform.rotation = Quaternion.Euler(rot);
+    }
+
+    protected override void ChargeAttackEnter()
+    {
+        remainingSniperAimTime = sniperAimEffectLength;
     }
     #endregion
 
@@ -93,7 +101,8 @@ public class EnemyRanged : EnemyBase
         // can attack even before reached stopping distance
         if (remainingAttackCooldown <= 0)
         {
-            SetState(EnemyState.attacking);
+            if (doSniperAimEffect) SetState(EnemyState.chargeAttack);
+            else SetState(EnemyState.attacking);
         }
     }
     protected override void AttackingUpdate()
@@ -106,6 +115,13 @@ public class EnemyRanged : EnemyBase
         }
     }
 
+    protected override void ChargeAttackUpdate()
+    {
+        Debug.DrawRay(transform.position + enemy.lineOfSightOffset, enemy.playerTransform.position - transform.position + enemy.lineOfSightOffset, new(1, 0, 0));
+
+        remainingSniperAimTime -= Time.deltaTime;
+        if (remainingSniperAimTime <= 0) SetState(EnemyState.attacking);
+    }
     #endregion
 
     #region exit state

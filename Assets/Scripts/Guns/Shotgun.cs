@@ -1,9 +1,8 @@
 using UnityEngine;
 using Unity.Mathematics;
+using System.Collections;
 using static RangedWeapon;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
-using UnityEngine.Rendering.Universal.Internal;
+
 
 
 public class Shotgun : RangedWeapon
@@ -24,6 +23,7 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     float inputTime = 0;
 
+
     [SerializeField]
     bool charged = false;
 
@@ -35,7 +35,12 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     float grenadeLaucherForceMultiplier;
 
-    [Tooltip("Please dont mess with This(Grenade will be ready once grenade timer reach grenade cooldown  just reduce th cooldown if its to slow)")]
+    [Tooltip("Please dont mess with This(Grenade will be ready so Long as the ammo is above zero)")]
+
+    [SerializeField]
+    float grenadeYEffectMult = 0.2f;
+
+
     [SerializeField]
     public bool grenadeReady = false;
 
@@ -43,7 +48,7 @@ public class Shotgun : RangedWeapon
     public int RequiredKillsToRecharge = 5;
 
     [SerializeField]
-    public int currentKillstoRecharge = 0;
+    public int currentKillsToRecharge = 0;
 
     [SerializeField]
     public int grenadeAmmo = 3;
@@ -53,6 +58,14 @@ public class Shotgun : RangedWeapon
 
     public override void Update()
     {
+        //if (chargeExited)
+        //{
+        //    animator.SetTrigger("ShootCTrig");
+        //}
+        //else
+        //    animator.ResetTrigger("ShootCTrig");
+
+        animator.SetBool("ChargedBool", charged);
         if (currentBullets <= 0 && reloading == false)
         {
             canFire = false;
@@ -67,10 +80,12 @@ public class Shotgun : RangedWeapon
                 if (inputTime < chargeTime && charged == false)
                 {
                     inputTime += Time.deltaTime;
+
                 }
 
                 if (inputTime >= chargeTime)
                 {
+
                     charged = true;
                     inputTime = 0;
 
@@ -83,6 +98,13 @@ public class Shotgun : RangedWeapon
             grenadeReady = true;
 
         }
+
+        if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true && currentBullets > 1)
+        {
+            // animator.SetTrigger("ChargeStartTrigger");
+
+        }
+
 
         if (shouldShootPrimary == false && chargeExited == true && waiting == false && reloading == false && canPressAltFire == true)
         {
@@ -104,24 +126,42 @@ public class Shotgun : RangedWeapon
 
 
 
+    public override IEnumerator Reload()
+    {
+        animator.SetTrigger("ReloadTrigger");
+        //  animator.GetCurrentAnimatorStateInfo(0).length
+        reloading = true;
+        yield return new WaitForSeconds(reloadTime);
+        //Debug.Log("Reloading...");
+        canFire = true;
+        if (currentBullets != BulletsPerClip)
+        {
+            currentBullets = BulletsPerClip;
+        }
+        reloading = false;
+    }
+
     public void EngagePrimaryFire(bool charged)
     {
+
         chargeExited = false;
         inputTime = 0;
         int pellets;
         //Primary Fire Logic
-        if (charged)
+        if (charged && currentBullets > 1)
         {
+            animator.SetTrigger("ShootCTrig");
             pellets = bulletsPerShot * 2;
         }
         else
         {
+            animator.SetTrigger("ShootTrig");
             pellets = bulletsPerShot;
         }
 
         if (currentBullets > 0)
         {
-            if (charged)
+            if (charged && currentBullets > 1)
             {
                 currentBullets -= 2;
                 BulletFlash.Play();
@@ -136,15 +176,16 @@ public class Shotgun : RangedWeapon
 
             for (int i = 0; i < pellets; i++)
             {
-                RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
-                if (rayData.hit.point != null)
+                bool hit;
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hit);
+                if (hit != false)
                 {
-                    CurrentlyHitting = rayData.hit.transform.gameObject;
+                    //CurrentlyHitting = rayData.hit.transform.gameObject;
 
-                    if (rayData.hit.transform.gameObject.layer != 3) //If the thing hit isn't the player...
+                    if (rayData.hit.transform.gameObject.layer != 3)
                     {
-                        //..It isn't the player but it is an enemy...?
-                       
+
+
                         if (rayData.hit.rigidbody)
                         {
                             rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
@@ -154,7 +195,16 @@ public class Shotgun : RangedWeapon
                             Debug.Log("Does Not have rigidbody");
                         }
 
-                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb)) //AND it isn't an enemy
+                        if (rayData.hit.transform.parent)
+                        {
+                            if (!(rayData.hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
+                            {
+                                SpawnBulletHoleDecal(rayData);
+                                GameObject hitFX = Instantiate(HitEffect);
+                                hitFX.transform.position = rayData.hit.point;
+                            }
+                        }
+                        else
                         {
                             SpawnBulletHoleDecal(rayData);
                             GameObject hitFX = Instantiate(HitEffect);
@@ -163,7 +213,7 @@ public class Shotgun : RangedWeapon
 
                         if (rayData.hit.transform.parent)
                         {
-                            if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                            if (rayData.hit.transform.parent.TryGetComponent(out EnemyBase eb2))
                             {
 
                                 GameObject hitFX = Instantiate(enemyHitEffect);
@@ -178,17 +228,18 @@ public class Shotgun : RangedWeapon
                                 {
                                     if (eh.isHeadshot == true)
                                     {
-                                        Debug.Log("HeadShot");
+                                        //     Debug.Log("HeadShot");
                                         damage *= headShotMultiplier;
                                     }
 
                                 }
-                                EnemyHealth.TakeDamage(damage, 0,gameObject);
+                                EnemyHealth.TakeDamage(damage, 0, gameObject);
                             }
                         }
                     }
                 }
             }
+            // animator.SetBool("ChargeReleaseBool", false);
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
@@ -221,23 +272,69 @@ public class Shotgun : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        Physics.Raycast(gunRay, out gunHit, Mathf.Infinity);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+
+        return new RayData { ray = gunRay, hit = gunHit };
+    }
+
+    public override RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected)
+    {
+        Ray gunRay = new Ray();
+
+        //we get the start and direction for our "Bullet" from our Gun Here
+        gunRay.direction = muzzlePoint.transform.forward;
+        gunRay.origin = muzzlePoint.position;
+
+        RaycastHit gunHit;
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
+        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
+
+        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+
+        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
+
+        //set ray direction to the barrel to look point direction 
+        gunRay.direction = barrelToLookPointDir;
+        gunRay.direction = gunRay.direction += UnityEngine.Random.insideUnitSphere * spreadMultiplier;
+
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
     public override void EngageAltFire()
     {
+        bool hit = false;
         if (grenadeReady)
         {
+
+            Vector3 GrenadeDirection = Vector3.zero;
+
+            animator.SetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
-            RayData ray = base.RayCastAndGenGunRayData(muzzlePoint);
+            RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
+
+            if (hit == false)
+            {
+                Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData().ray.direction * camRef.farClipPlane);
+                //     Debug.Log("fallicies and falsehoods");
+            }
+            else
+            {
+                //   Debug.Log("Dogmas and definitudes ");
+            }
+
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
-            grenadeRB.AddForce(ray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
-            grenadeRB.AddForce(Movement.playerMovement.momentum, ForceMode.Impulse);
+            grenadeRB.AddForce(Gunray.ray.direction * grenadeLaucherForceMultiplier, ForceMode.Impulse);
+            grenadeRB.AddForce(new Vector3(Movement.playerMovement.velocity.x, Movement.playerMovement.velocity.y * grenadeYEffectMult, Movement.playerMovement.velocity.z), ForceMode.Impulse);
             grenadeReady = false;
             grenadeAmmo--;
             StartCoroutine(Wait(AltshotGapTime));
+        }
+        else if (grenadeAmmo <= 0) 
+        {
+        
+        
         }
     }
 
@@ -251,22 +348,21 @@ public class Shotgun : RangedWeapon
     public override void OnAltFireBegin()
     {
         shouldShootAlt = true;
-        Debug.Log("Beginning primary Fire");
+        // Debug.Log("Beginning primary Fire");
     }
 
     //Active every interval of Primaryfire set in this script
     public override void OnPrimaryFireStay()
     {
-        shouldShootPrimary = true;
+        if (reloading == false)
+            shouldShootPrimary = true;
+
     }
 
     //Active every interval  of altfire set in this script
     public override void OnAltFireStay()
     {
-        //if (shouldShootAlt)
-        //{
-        //    Debug.Log("alt fire stay ");
-        //}
+
 
     }
 
@@ -275,13 +371,15 @@ public class Shotgun : RangedWeapon
     {
         shouldShootPrimary = false;
         chargeExited = true;
-        Debug.Log("end Primary Fire");
+
+
+        //  Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        Debug.Log("end alt fire");
+        //  Debug.Log("end alt fire");
     }
 }

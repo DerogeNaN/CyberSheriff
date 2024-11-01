@@ -16,6 +16,8 @@ public class UIManager : MonoBehaviour
     //[SerializeField] GameObject graphicsMenu;
     //[SerializeField] GameObject MiscMenu;
 
+    
+
     private GameObject currentMenu = null;
     private GameObject previousMenu = null;
 
@@ -43,7 +45,7 @@ public class UIManager : MonoBehaviour
         optionsMenu.SetActive(false);
         creditsMenu.SetActive(false);
 
-        SceneManager.LoadScene("Stan Lvl 2");
+        SceneManager.LoadScene(1);
     }
 
     public void LeaderboardButton()

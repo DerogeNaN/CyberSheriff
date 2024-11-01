@@ -4,7 +4,7 @@ using TMPro;
 public class WeaponManagement : MonoBehaviour
 {
     [SerializeField]
-    List<GameObject> weaponList;
+    public List<GameObject> weaponList;
 
     [SerializeField]
     int weaponIterator = 0;
@@ -34,7 +34,7 @@ public class WeaponManagement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("");
+
         //make sure on  Kill isnt all ready an event;
         Health.enemyKill += currentActiveWeapon.GetComponent<RangedWeapon>().OnKill;
     }
@@ -123,85 +123,127 @@ public class WeaponManagement : MonoBehaviour
         else
         {
 
-            Debug.Log("Cannot reload at This Time");
+            //   Debug.Log("Cannot reload at This Time");
         }
     }
 
     void ScrollSetWeapon(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-
-        float CurrentWeapon = obj.ReadValue<Vector2>().y;
-
-        if (CurrentWeapon > 0)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
         {
-            CurrentWeapon = 1;
+            float CurrentWeapon = obj.ReadValue<Vector2>().y;
+
+            if (CurrentWeapon > 0)
+            {
+                CurrentWeapon = 1;
+                SoundManager2.Instance.PlaySound("WeaponSwap");
+            }
+            else
+            {
+                CurrentWeapon = 0;
+                SoundManager2.Instance.PlaySound("WeaponSwap");
+            }
+
+            //set previous to false
+            if (currentActiveWeapon)
+                currentActiveWeapon.gameObject.SetActive(false);
+
+            currentActiveWeapon = weaponList[(int)CurrentWeapon];
+            if (currentActiveWeapon)
+            {
+                // Debug.Log("WeaponFound!!");
+            }
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+            }
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+            }
+
+
+            //set next to true 
+            currentActiveWeapon.gameObject.SetActive(true);
+            //}
         }
-        else
-            CurrentWeapon = 0;
-
-        Debug.Log("Changing Weapon");
-        Debug.Log("Mouse Wheel Value : " + CurrentWeapon);
-
-        //set previous to false
-        if (currentActiveWeapon)
-            currentActiveWeapon.gameObject.SetActive(false);
-
-        Debug.Log("weapon type " + CurrentWeapon);
-
-        currentActiveWeapon = weaponList[(int)CurrentWeapon];
-        if (currentActiveWeapon)
-        {
-            Debug.Log("WeaponFound!!");
-        }
-
-        //set next to true 
-        currentActiveWeapon.gameObject.SetActive(true);
 
     }
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-
-        //set previous to false
-        if (currentActiveWeapon)
-            currentActiveWeapon.gameObject.SetActive(false);
-
-        Debug.Log("weapon type " + 0);
-
-        currentActiveWeapon = weaponList[0];
-        if (currentActiveWeapon)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
         {
-            Debug.Log("WeaponFound!!");
+            //if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading || currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            //{
+            //set previous to false
+            if (currentActiveWeapon)
+                currentActiveWeapon.gameObject.SetActive(false);
+
+            // Debug.Log("weapon type " + 0);
+
+            currentActiveWeapon = weaponList[0];
+            if (currentActiveWeapon)
+            {
+                //  Debug.Log("WeaponFound!!");
+            }
+
+            //set next to true 
+            currentActiveWeapon.gameObject.SetActive(true);
+
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+            }
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+            }
         }
-
-        //set next to true 
-        currentActiveWeapon.gameObject.SetActive(true);
-
-        currentActiveWeapon.transform.position = WeaponGripTransform.position;
-        currentActiveWeapon.transform.rotation = WeaponGripTransform.rotation;
+        //}
     }
 
 
     void keySetWeapon2(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-
-        //set previous to false
-        if (currentActiveWeapon)
-            currentActiveWeapon.gameObject.SetActive(false);
-
-        Debug.Log("weapon type " + 1);
-
-        currentActiveWeapon = weaponList[1];
-        if (currentActiveWeapon)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
         {
-            Debug.Log("WeaponFound!!");
+            //if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading || currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            //{
+
+            //set previous to false
+            if (currentActiveWeapon)
+                currentActiveWeapon.gameObject.SetActive(false);
+
+            //   Debug.Log("weapon type " + 1);
+            currentActiveWeapon = weaponList[1];
+            if (currentActiveWeapon)
+            {
+                // Debug.Log("WeaponFound!!");
+            }
+
+            //set next to true 
+            currentActiveWeapon.gameObject.SetActive(true);
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+            }
+
+            if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+            {
+                currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+            }
+            //}
         }
 
-        //set next to true 
-        currentActiveWeapon.gameObject.SetActive(true);
-
-        currentActiveWeapon.transform.position = BoomstickTransform.position;
-        currentActiveWeapon.transform.rotation = BoomstickTransform.rotation;
     }
 
 }
