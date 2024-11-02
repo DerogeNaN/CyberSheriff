@@ -8,26 +8,24 @@ using UnityEngine.AI;
 
 public class EnemyCommon : MonoBehaviour
 {
-    [Header("Basic Settings")]
-    public bool active;
-
-    [Header("Detection Settings")]
+    [Header("Enemy Settings")]
+    [HideInInspector] public bool active;
+    [Tooltip("maximum distance at which the player can be considered in line of sight")]
     public float sightRange = 25.0f;
-
-    [Header("General Movement Settings")]
+    public Vector3 lineOfSightOffset;
     [HideInInspector] public float speed = 5.0f;
 
     [Header("Advanced")]
+    [Tooltip("reference to the enemy's mesh GameObject, used for animation")]
     public GameObject mesh;
+    [Tooltip("the animator to use. should be a component of the mesh GameObject")]
     public Animator animator;
-    public Vector3 lineOfSightOffset;
-    public Vector3 floorRaycastPos;
-    public float floorRaycastLength;
+    [Tooltip("offset from where the enemy's eyes are, for checking line of sight")]
 
     [HideInInspector] public Transform playerTransform;
     [HideInInspector] public Vector3 moveTarget; // the object it follows
     [HideInInspector] public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
-    public bool hasLineOfSight;
+    [HideInInspector] public bool hasLineOfSight;
     [HideInInspector] public bool shouldPath;
 
     [HideInInspector] public NavMeshAgent navAgent;

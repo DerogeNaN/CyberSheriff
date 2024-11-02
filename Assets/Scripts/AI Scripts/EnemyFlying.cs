@@ -5,35 +5,58 @@ using UnityEngine;
 public class EnemyFlying : EnemyBase
 {
     [Header("Flying Movement Settings")]
+    [Tooltip("maximuim speed the enemy can be moving")]
     public float maxSpeed;
+    [Tooltip("speed at which the enemy turns towards the player")]
     public float turnSpeed;
+    [Tooltip("rate at which the enemy increases in speed while chasing the player")]
     public float acceleration;
+    [Tooltip("rate at which the enemy decreases in speed while not chasing the player")]
     public float deceleration;
 
     [Header("Flying Offset Settings")]
+    [Tooltip("height offset from the player's y position to move towards")]
     public float yOffset;
+    [Tooltip("the distance the enemy should try to keep from the player")]
     public float closeDistance;
-
-    [Header("Flying Advanced Settings")]
-    public float avoidanceStrength;
-    public float avoidDistance;
-    public float avoidanceDistanceWeight;
-    public float avoidanceSpeedWeight;
+    [Tooltip("the distance to the floor the enemy can be before trying to move upwards")]
     public float avoidFloorDistance;
-    public float closeBuffer;
-    public float backwardsAccelerationMultiplier = 1.0f;
 
-    [Header("FlyingAttack Settings")]
+    [Header("Flying Attack Settings")]
+    [Tooltip("the maximum range at which the enemy can shoot at the player")]
     public float attackRange = 25.0f;
+    [Tooltip("time before the enemy can shoot again. attackCooldown is randomised between the min and max so enemies don't keep shooting in sync")]
     public float attackCooldownMin = 1.0f;
+    [Tooltip("time before the enemy can shoot again. attackCooldown is randomised between the min and max so enemies don't keep shooting in sync")]
     public float attackCooldownMax = 3.0f;
+    [Tooltip("the gameObject to spawn when shooting. should be the bullet prefab")]
     [SerializeField] GameObject bulletPrefab;
 
     [Header("Flying Randomise Settings")]
+    [Tooltip("whether or not to randomise movement values every so often")]
+    public bool randomiseValues;
+    [Tooltip("if enabled, this is the time to wait between randomising the values. the timer itself is a random range")]
     public Vector2 randomiseTimerRange;
+    [Tooltip("see \"closeDistance\"")]
     public Vector2 closeDistanceRange;
+    [Tooltip("see \"yOffset\"")]
     public Vector2 yOffsetRange;
+    [Tooltip("see \"maxSpeed\"")]
     public Vector2 maxSpeedRange;
+
+    [Header("Flying Advanced Settings")]
+    [Tooltip("strength multiplier for avoiding other flying enemies")]
+    public float avoidanceStrength;
+    [Tooltip("max distance to detect nearby enemies")]
+    public float avoidDistance;
+    [Tooltip("weight multiplier for the influence of distance to enemies")]
+    public float avoidanceDistanceWeight;
+    [Tooltip("weight multiplier for the influence of the current speed")]
+    public float avoidanceSpeedWeight;
+    [Tooltip("the distance range in which the enemy is considered both near enough and far enough from the player to stop moving. stops jittering between forwards and backwards")]
+    public float closeBuffer;
+    [Tooltip("multiplier for the acceleration when moving away from the player")]
+    public float backwardsAccelerationMultiplier = 1.0f;
 
     Vector3 dir;
     Vector3 toPlayer;
@@ -55,8 +78,11 @@ public class EnemyFlying : EnemyBase
 
     protected override void OnUpdate()
     {
-        timer -= Time.deltaTime;
-        if (timer <= 0) RandomiseValues();
+        if (randomiseValues)
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 0) RandomiseValues();
+        }
 
         enemy.lookTarget = enemy.playerTransform.position;
 
@@ -89,10 +115,7 @@ public class EnemyFlying : EnemyBase
     protected override void MovingToTargetUpdate()
     {
         // if lost line of sight, go back to idle
-        if (!enemy.hasLineOfSight)
-        {
-            SetState(EnemyState.idle);
-        }
+        //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
 
         // look at player
         dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);

@@ -5,18 +5,24 @@ using UnityEngine;
 public class EnemyMelee : EnemyBase
 {
     [Header("Melee Movement Settings")]
+    [Tooltip("movement speed when chasing the player")]
     public float runSpeed = 5.0f;
-    public float walkSpeed = 2.0f;
-    public float chaseTime = 2.0f;
+    float walkSpeed = 2.0f; // unused, enemy doesn't return to spawn point
+    float chaseTime = 2.0f; // unused, enemy doesn't leave the chase state
 
     [Header("Melee Attack Settings")]
+    [Tooltip("the GameObject spawned when this attacks. should be the melee hitbox prefab")]
     public GameObject attackPrefab;
+    [Tooltip("distance at which to start attacking.")]
     public float attackRange = 2.0f;
-    public float attackTime = 1.0f;
-    public float attackCooldown = 1.0f;
+    [Tooltip("time between the attack animation starting, and the attack hitbox coming out")]
     public float attackStartUp = 0.5f;
+    [Tooltip("remaining time in the attack animation after the hitbox comes out")]
+    public float attackEndlag = 1.0f;
+    [Tooltip("time before the enemy can attempt an attack again, even if the player is still in range")]
+    public float attackCooldown = 1.0f;
 
-    [SerializeField] TMP_Text debugStunText;
+    TMP_Text debugStunText;
     Vector3 initialPosition;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
@@ -34,7 +40,7 @@ public class EnemyMelee : EnemyBase
         SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
         initialPosition = transform.position;
         enemy.moveTarget = initialPosition;
-        enemy.speed = walkSpeed;
+        enemy.speed = runSpeed;
 
         if (debugStunText) debugStunText.text = "";
     }
@@ -56,7 +62,6 @@ public class EnemyMelee : EnemyBase
     {
         SetState(EnemyState.downed);
         enemy.animator.SetTrigger("Death");
-        Debug.Log("among us!!!!");
     }
 
     #region enter state
@@ -82,7 +87,7 @@ public class EnemyMelee : EnemyBase
     {
         enemy.shouldPath = false;
         enemy.navAgent.avoidancePriority = 99;
-        remainingAttackTime = attackTime + attackStartUp;
+        remainingAttackTime = attackEndlag + attackStartUp;
 
         // look at player
         Vector3 dir = (enemy.playerTransform.position - transform.position).normalized;
@@ -151,7 +156,7 @@ public class EnemyMelee : EnemyBase
         remainingAttackTime -= Time.deltaTime;
 
         // if startup time has passed, spawn the hitbox
-        if (!createdHitbox && remainingAttackTime < attackTime)
+        if (!createdHitbox && remainingAttackTime < attackEndlag)
         {
             if (attackPrefab != null)
             {

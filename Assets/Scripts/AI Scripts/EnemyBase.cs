@@ -21,8 +21,7 @@ public enum EnemyState
 
 public class EnemyBase : MonoBehaviour
 {
-    [Header("State Machine")]
-    public EnemyState state;
+    [HideInInspector] public EnemyState state;
 
     protected EnemyCommon enemy;
 
