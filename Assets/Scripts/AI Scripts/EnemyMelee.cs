@@ -1,20 +1,28 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyMelee : EnemyBase
 {
     [Header("Melee Movement Settings")]
+    [Tooltip("movement speed when chasing the player")]
     public float runSpeed = 5.0f;
-    public float walkSpeed = 2.0f;
-    public float chaseTime = 2.0f;
+    float walkSpeed = 2.0f; // unused, enemy doesn't return to spawn point
+    float chaseTime = 2.0f; // unused, enemy doesn't leave the chase state
 
     [Header("Melee Attack Settings")]
+    [Tooltip("the GameObject spawned when this attacks. should be the melee hitbox prefab")]
     public GameObject attackPrefab;
+    [Tooltip("distance at which to start attacking.")]
     public float attackRange = 2.0f;
-    public float attackTime = 1.0f;
+    [Tooltip("time between the attack animation starting, and the attack hitbox coming out")]
+    public float attackStartUp = 0.5f;
+    [Tooltip("remaining time in the attack animation after the hitbox comes out")]
+    public float attackEndlag = 1.0f;
+    [Tooltip("time before the enemy can attempt an attack again, even if the player is still in range")]
     public float attackCooldown = 1.0f;
 
-    [SerializeField] TMP_Text debugStunText;
+    TMP_Text debugStunText;
     Vector3 initialPosition;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
@@ -24,6 +32,7 @@ public class EnemyMelee : EnemyBase
     Vector3 attackStartRotation;
     Vector3 attackTargetRotation;
     float attackRotate = 0;
+    bool createdHitbox = false;
 
     protected override void OnStart()
     {
@@ -31,7 +40,7 @@ public class EnemyMelee : EnemyBase
         SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
         initialPosition = transform.position;
         enemy.moveTarget = initialPosition;
-        enemy.speed = walkSpeed;
+        enemy.speed = runSpeed;
 
         if (debugStunText) debugStunText.text = "";
     }
@@ -47,6 +56,12 @@ public class EnemyMelee : EnemyBase
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
+    }
+
+    public override void OnDestroyed(int damageType)
+    {
+        SetState(EnemyState.downed);
+        enemy.animator.SetTrigger("Death");
     }
 
     #region enter state
@@ -72,17 +87,14 @@ public class EnemyMelee : EnemyBase
     {
         enemy.shouldPath = false;
         enemy.navAgent.avoidancePriority = 99;
-        remainingAttackTime = attackTime;
-
-        if (attackPrefab != null)
-        {
-            GameObject hitbox = Instantiate(attackPrefab, enemy.mesh.transform);
-            hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
-        }
+        remainingAttackTime = attackEndlag + attackStartUp;
 
         // look at player
         Vector3 dir = (enemy.playerTransform.position - transform.position).normalized;
         transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
+
+        enemy.animator.SetBool("Attack", true);
+        enemy.animator.SetBool("Run", false);
 
         // set directions to lerp to quickly when attacking
         //attackStartRotation = transform.rotation.eulerAngles;
@@ -112,8 +124,11 @@ public class EnemyMelee : EnemyBase
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if line of sight is lost, change to lost sight state
-        if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
-        else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
+        //if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
+        //else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
+
+        if (enemy.navAgent.velocity.magnitude > 0) enemy.animator.SetBool("Run", true);
+        else enemy.animator.SetBool("Run", false);
 
         // if has line of sight and within attack range, switch to attack state
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0 && Vector3.Distance(transform.position, enemy.playerTransform.position) <= attackRange)
@@ -121,7 +136,7 @@ public class EnemyMelee : EnemyBase
             SetState(EnemyState.attacking);
         }
     }
-    protected override void LostSightOfTargetUpdate()
+    protected override void LostSightOfTargetUpdate() // UNUSED
     {
         remainingChaseTime -= Time.deltaTime;
         // give up chasing
@@ -139,6 +154,18 @@ public class EnemyMelee : EnemyBase
     protected override void AttackingUpdate()
     {
         remainingAttackTime -= Time.deltaTime;
+
+        // if startup time has passed, spawn the hitbox
+        if (!createdHitbox && remainingAttackTime < attackEndlag)
+        {
+            if (attackPrefab != null)
+            {
+                GameObject hitbox = Instantiate(attackPrefab, enemy.mesh.transform);
+                hitbox.transform.position = hitbox.transform.position + hitbox.transform.forward * 1.0f;
+                createdHitbox = true; // reset when leaving attack state
+            }
+        }
+
         // if attack time ends, go back to idle and set attack cooldown
         if (remainingAttackTime <= 0)
         {
@@ -157,7 +184,7 @@ public class EnemyMelee : EnemyBase
         stun -= Time.deltaTime;
         if (stun <= 0)
         {
-            SetState(EnemyState.idle);
+            SetState(EnemyState.movingToTarget);
             if (debugStunText) debugStunText.text = "";
         }
     }
@@ -181,6 +208,7 @@ public class EnemyMelee : EnemyBase
     {
         remainingAttackCooldown = attackCooldown;
         enemy.navAgent.avoidancePriority = 50;
+        createdHitbox = false;
     }
     #endregion
 }

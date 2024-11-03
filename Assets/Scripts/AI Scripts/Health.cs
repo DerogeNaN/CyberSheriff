@@ -34,20 +34,15 @@ public class Health : MonoBehaviour
         lastHitBy = attacker;
         enemy.OnHit(damage, damageType);
 
-        // destroys this gameobject if health <= 0
-        IsDestroyed();
-    }
-
-    public void IsDestroyed()
-    {
+        // if destroyed
         if (health <= 0)
         {
+            health = 0;
+            enemy.OnDestroyed(damageType);
+            if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
+
             Transform objectTransform = transform;
             SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
-            health = 0;
-            //Debug.Log(gameObject.name + " was destroyed");
-            Destroy(gameObject);
-            if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
         }
     }
 

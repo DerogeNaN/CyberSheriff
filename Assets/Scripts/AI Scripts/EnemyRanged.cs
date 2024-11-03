@@ -1,23 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyRanged : EnemyBase
 {
     [Header("Ranged Movement Settings")]
-    public bool stationary = false;
+    [Tooltip("movement speed when chasing the player")]
     public float runSpeed = 5.0f;
-    public float walkSpeed = 2.0f;
+    [Tooltip("distance to stop moving towards the player. ignores this if no line of sight")]
     public float stopDistance = 7.0f;
 
     [Header("Ranged Attack Settings")]
+    [Tooltip("minimum distance to the player to shoot")]
     public float attackRange = 25.0f;
-    public float attackTime = 1.0f;
+    [Tooltip("remaining time in the animation after firing")]
+    public float attackEndlag = 1.0f;
+    [Tooltip("time before the enemy can shoot again. attackCooldown is randomised between the min and max so enemies don't keep shooting in sync")]
     public float attackCooldownMin = 1.0f;
-    public float attackCooldownMax = 3.0f; 
+    [Tooltip("time before the enemy can shoot again. attackCooldown is randomised between the min and max so enemies don't keeo shooting in sync")]
+    public float attackCooldownMax = 3.0f;
+    [Tooltip("the gameObject to spawn when shooting. should be the bullet prefab")]
     [SerializeField] GameObject bulletPrefab;
+    [Tooltip("whether or not to use the sniper's aiming effect before shooting")]
     public bool doSniperAimEffect;
+    [Tooltip("if enabled, the amount of time the sniper's aiming effect lasts before the enemy shoots")]
     public float sniperAimEffectLength;
 
     Vector3 initialPosition;
@@ -27,6 +33,9 @@ public class EnemyRanged : EnemyBase
 
     protected override void OnStart()
     {
+        // randomly change stopDistance between -25% and +25% per enemy
+        stopDistance += Random.Range(-stopDistance * 0.25f, stopDistance * 0.25f);
+
         initialPosition = transform.position;
         enemy.speed = runSpeed;
         SetState(EnemyState.idle);
@@ -42,24 +51,23 @@ public class EnemyRanged : EnemyBase
     #region enter state
     protected override void IdleEnter()
     {
-        if (!stationary) enemy.shouldPath = true;
+        enemy.shouldPath = true;
         enemy.moveTarget = initialPosition;
     }
     protected override void MovingToTargetEnter()
     {
-        if (!stationary) enemy.shouldPath = true;
+        enemy.shouldPath = true;
     }
     protected override void AttackingEnter()
     {
         enemy.shouldPath = false;
-        remainingAttackTime = attackTime;
-        enemy.speed = walkSpeed;
+        remainingAttackTime = attackEndlag;
 
         // do attack here
         // change spawn pos to gun pos
         Projectile projectile = Instantiate(bulletPrefab, transform.position + enemy.lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
         projectile.Shoot(enemy.playerTransform.position);
-        SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
+        //SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
         // snap to point at player when firing
         transform.LookAt(enemy.playerTransform);
 
@@ -82,24 +90,16 @@ public class EnemyRanged : EnemyBase
     }
     protected override void MovingToTargetUpdate()
     {
-
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
-        if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
+        //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
 
-        float distance = Vector3.Distance(transform.position, enemy.moveTarget);
-        if (distance >= stopDistance)
-        {
-            if (!stationary) enemy.shouldPath = true;
-        }
-        else
-        {
-            enemy.shouldPath = false;
-        }
+        Vector3 toPlayer = enemy.playerTransform.position - transform.position;
 
-        // can attack even before reached stopping distance
-        if (remainingAttackCooldown <= 0)
+        enemy.shouldPath = toPlayer.magnitude > stopDistance || !enemy.hasLineOfSight;
+
+        if (enemy.hasLineOfSight && remainingAttackCooldown <= 0)
         {
             if (doSniperAimEffect) SetState(EnemyState.chargeAttack);
             else SetState(EnemyState.attacking);
@@ -136,7 +136,6 @@ public class EnemyRanged : EnemyBase
     protected override void AttackingExit()
     {
         remainingAttackCooldown = Random.Range(attackCooldownMin, attackCooldownMax);
-        enemy.speed = runSpeed;
     }
     #endregion
 }
