@@ -71,22 +71,23 @@ MonoBehaviour:
   deceleration: 30
   yOffset: 1.5
   closeDistance: 7
-  avoidanceStrength: 0.5
-  avoidDistance: 2
-  avoidanceDistanceWeight: 1
-  avoidanceSpeedWeight: 0
   avoidFloorDistance: 1
-  closeBuffer: 1
-  backwardsAccelerationMultiplier: 2
   attackRange: 25
   attackCooldownMin: 3
   attackCooldownMax: 5
-  bulletPrefab: {fileID: 946708688116722392, guid: b1911614f4f1dfd4689e4c3670ea4ccd,
+  bulletPrefab: {fileID: 2283474032520723176, guid: 8d807f61d3310a94281947f2d4224b9f,
     type: 3}
+  randomiseValues: 0
   randomiseTimerRange: {x: 1, y: 4}
   closeDistanceRange: {x: 6, y: 15}
   yOffsetRange: {x: 1.5, y: 4}
   maxSpeedRange: {x: 20, y: 40}
+  avoidanceStrength: 0.5
+  avoidDistance: 2
+  avoidanceDistanceWeight: 1
+  avoidanceSpeedWeight: 0
+  closeBuffer: 1
+  backwardsAccelerationMultiplier: 2
 --- !u!114 &4443895184043447715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,11 +102,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   sightRange: 40
+  lineOfSightOffset: {x: 0, y: 0, z: 0}
   speed: 5
   mesh: {fileID: 6199602304891668101}
-  lineOfSightOffset: {x: 0, y: 0, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
+  animator: {fileID: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}

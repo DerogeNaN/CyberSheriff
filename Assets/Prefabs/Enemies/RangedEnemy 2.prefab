@@ -418,15 +418,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  stationary: 0
   runSpeed: 10
-  walkSpeed: 4
   stopDistance: 15
   attackRange: 30
-  attackTime: 0.5
+  attackEndlag: 1
   attackCooldownMin: 1
   attackCooldownMax: 3
-  bulletPrefab: {fileID: 946708688116722392, guid: 48f74cd19883f2041b00f84575f4de80,
+  bulletPrefab: {fileID: 7825625112763865121, guid: 34eb51ad2fb77f24ca242f0395755654,
     type: 3}
   doSniperAimEffect: 0
   sniperAimEffectLength: 0
@@ -444,16 +442,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   sightRange: 45
+  lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
   mesh: {fileID: 8508684111999068476}
-  lineOfSightOffset: {x: 0, y: 2, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
+  animator: {fileID: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
   shouldPath: 0
+  navAgent: {fileID: 0}
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
