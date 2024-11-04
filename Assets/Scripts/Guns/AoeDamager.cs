@@ -25,13 +25,12 @@ public class AoeDamager : MonoBehaviour
     GameObject explosionVFX;
 
     [SerializeField]
-    DecalProjector explosionMarkDecal;
+    GameObject grenadeMesh;
 
     // Start is called before the first frame update
     void Start()
     {
         collider = GetComponent<Collider>();
-        explosionMarkDecal = explosionVFX.GetComponentInChildren<DecalProjector>();
     }
 
     private void OnDrawGizmosSelected()
@@ -45,6 +44,7 @@ public class AoeDamager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        grenadeMesh.transform.LookAt(transform.position + GetComponent<Rigidbody>().velocity , Vector3.up);
     }
 
     private void OnCollisionEnter(Collision collision)
