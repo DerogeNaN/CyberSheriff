@@ -99,14 +99,17 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("Speed the player travels when wallrunning")]
     public float wallrunVelocityBonus = 0.2f;
 
+    [SerializeField][Tooltip("How long in seconds the player can wallrun until gravity kicks in")]
+    public float maxWallrunTime = 2.0f;
 
 
     //Backend Variables:
     [HideInInspector] public float cameraLeaveWallrunTime = 0;
-    private float lastWallrunTime = 0;
+    private float lastWallRunTime = 0;
     private float leavingWallrunTime = 0;
     [HideInInspector] public bool isWallRunning = false;
-    private bool canWallrun = false;
+    private float wallRunStartTime = 0;
+    private bool startWallrun = false;
     #endregion
 
     #region Grapple
@@ -443,7 +446,7 @@ public class Movement : MonoBehaviour
                     jumpCount++;
                 }
 
-                else if (lastWallrunTime + wallrunJumpGraceLength > Time.time)
+                else if (lastWallRunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
                 }
@@ -595,8 +598,6 @@ public class Movement : MonoBehaviour
                     velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                     velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                 }
-
-                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
             }
         }
 
@@ -614,7 +615,6 @@ public class Movement : MonoBehaviour
                 if (Vector3.Dot(velocity, normal) < 0) continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
-                //Debug.Log(normalInUp);
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
                     Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
@@ -634,8 +634,6 @@ public class Movement : MonoBehaviour
                     velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                     velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                 }
-
-                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
             }
         }
         
@@ -676,8 +674,7 @@ public class Movement : MonoBehaviour
 
             else if (isWallRunning)
             {
-                isWallRunning = false;
-                leavingWallrunTime = Time.time;
+                WallRunReset();
             }
         }
 
@@ -693,9 +690,10 @@ public class Movement : MonoBehaviour
         Vector3 tangent = Vector3.Cross(Vector3.up, wallNormal);
         wallTangent = tangent * Mathf.Sign(Vector3.Dot(velocity, tangent));
         float wallSpeed = Vector3.Dot(tangent, velocity);
-        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
+        if (!isWallRunning) wallRunStartTime = Time.time;
+        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time)
         {
-            lastWallrunTime = Time.time;
+            lastWallRunTime = Time.time;
             cameraLeaveWallrunTime = Time.time + 0.2f;
             isWallRunning = true;
             velocity = wallSpeed * tangent;
@@ -708,5 +706,21 @@ public class Movement : MonoBehaviour
 
             return;
         }
+        else
+        {
+            Vector3 velocityHori = new Vector3(velocity.x, 0, velocity.z);
+            velocityHori.Normalize();
+
+            Vector3 targetDirection = Vector3.RotateTowards(velocityHori, wallNormal, wallrunJumpAngle, 0);
+            velocity = targetDirection * velocity.magnitude;
+        }
+    }
+
+    private void WallRunReset()
+    {
+        lastWallRunTime = Time.time;
+        cameraLeaveWallrunTime = Time.time + 0.2f;
+        isWallRunning = false;
+        wallNormal = Vector3.zero;
     }
 }
