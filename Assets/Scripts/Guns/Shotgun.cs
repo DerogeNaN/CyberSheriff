@@ -58,13 +58,6 @@ public class Shotgun : RangedWeapon
 
     public override void Update()
     {
-        //if (chargeExited)
-        //{
-        //    animator.SetTrigger("ShootCTrig");
-        //}
-        //else
-        //    animator.ResetTrigger("ShootCTrig");
-
         animator.SetBool("ChargedBool", charged);
         if (currentBullets <= 0 && reloading == false)
         {
@@ -176,55 +169,65 @@ public class Shotgun : RangedWeapon
 
             for (int i = 0; i < pellets; i++)
             {
-                bool hit;
-                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hit);
-                if (hit != false)
+                bool hitDetected;
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hitDetected);
+                if (hitDetected != false)
                 {
                     //CurrentlyHitting = rayData.hit.transform.gameObject;
-
-                    if (rayData.hit.transform.gameObject.layer != 3)
+                    //if (rayData.hit)
                     {
 
-
-                        if (rayData.hit.rigidbody)
+                        if (rayData.hit.transform.gameObject.layer != 3)
                         {
-                            rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
-                        }
-                        else
-                        {
-                            Debug.Log("Does Not have rigidbody");
-                        }
-
-                        if (!rayData.hit.transform.parent && !rayData.hit.transform.TryGetComponent(out EnemyBase eb))
-                        {
-                            SpawnBulletHoleDecal(rayData);
-                            GameObject hitFX = Instantiate(HitEffect);
-                            hitFX.transform.position = rayData.hit.point;
-                        }
-
-                        if (rayData.hit.transform.parent)
-                        {
-                            if (rayData.hit.transform.parent.TryGetComponent(out EnemyBase eb2))
+                            if (rayData.hit.rigidbody)
                             {
+                                rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
+                            }
+                            else
+                            {
+                                Debug.Log("Does Not have rigidbody");
+                            }
 
-                                GameObject hitFX = Instantiate(enemyHitEffect);
-                                hitFX.transform.position = rayData.hit.point;
-
-                                GameObject hitFX2 = Instantiate(HitEffect);
-                                hitFX2.transform.position = rayData.hit.point;
-
-                                Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
-                                int damage = DamageValue;
-                                if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                            if (rayData.hit.transform.parent)
+                            {
+                                if (!(rayData.hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
                                 {
-                                    if (eh.isHeadshot == true)
-                                    {
-                                        //     Debug.Log("HeadShot");
-                                        damage *= headShotMultiplier;
-                                    }
-
+                                    SpawnBulletHoleDecal(rayData);
+                                    GameObject hitFX = Instantiate(HitEffect);
+                                    hitFX.transform.position = rayData.hit.point;
                                 }
-                                EnemyHealth.TakeDamage(damage, 0, gameObject);
+                            }
+                            else
+                            {
+                                SpawnBulletHoleDecal(rayData);
+                                GameObject hitFX = Instantiate(HitEffect);
+                                hitFX.transform.position = rayData.hit.point;
+                            }
+
+                            if (rayData.hit.transform.parent)
+                            {
+                                if (rayData.hit.transform.parent.TryGetComponent(out EnemyBase eb2))
+                                {
+
+                                    GameObject hitFX = Instantiate(enemyHitEffect);
+                                    hitFX.transform.position = rayData.hit.point;
+
+                                    GameObject hitFX2 = Instantiate(HitEffect);
+                                    hitFX2.transform.position = rayData.hit.point;
+
+                                    Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
+                                    int damage = DamageValue;
+                                    if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                                    {
+                                        if (eh.isHeadshot == true)
+                                        {
+                                            //     Debug.Log("HeadShot");
+                                            damage *= headShotMultiplier;
+                                        }
+
+                                    }
+                                    EnemyHealth.TakeDamage(damage, 0, gameObject);
+                                }
                             }
                         }
                     }
@@ -280,6 +283,7 @@ public class Shotgun : RangedWeapon
         RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
+
         Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
 
         barrelToLookPointDir = math.normalize(barrelToLookPointDir);
@@ -288,7 +292,7 @@ public class Shotgun : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
         return new RayData { ray = gunRay, hit = gunHit };
     }
@@ -298,9 +302,6 @@ public class Shotgun : RangedWeapon
         bool hit = false;
         if (grenadeReady)
         {
-
-            Vector3 GrenadeDirection = Vector3.zero;
-
             animator.SetTrigger("ShootAltTrig");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
             RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
@@ -322,10 +323,10 @@ public class Shotgun : RangedWeapon
             grenadeAmmo--;
             StartCoroutine(Wait(AltshotGapTime));
         }
-        else if (grenadeAmmo <= 0) 
+        else if (grenadeAmmo <= 0)
         {
-        
-        
+
+
         }
     }
 

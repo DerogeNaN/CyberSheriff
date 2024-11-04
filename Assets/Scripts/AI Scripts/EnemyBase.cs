@@ -21,8 +21,7 @@ public enum EnemyState
 
 public class EnemyBase : MonoBehaviour
 {
-    [Header("State Machine")]
-    public EnemyState state;
+    [HideInInspector] public EnemyState state;
 
     protected EnemyCommon enemy;
 
@@ -41,6 +40,7 @@ public class EnemyBase : MonoBehaviour
     virtual protected void OnStart() { }
     virtual protected void OnUpdate() { }
     virtual public void OnHit(int damage, int damageType) { }
+    virtual public void OnDestroyed(int damageType) { }
 
     public void SetState(EnemyState state)
     {
