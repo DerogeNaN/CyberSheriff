@@ -33,16 +33,20 @@ public class EnemyMelee : EnemyBase
     Vector3 attackTargetRotation;
     float attackRotate = 0;
     bool createdHitbox = false;
+    float untilDestroy = 2.0f;
+    Health health;
 
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
-        SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
+        //SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
         initialPosition = transform.position;
         enemy.moveTarget = initialPosition;
         enemy.speed = runSpeed;
 
         if (debugStunText) debugStunText.text = "";
+
+        health = GetComponent<Health>();
     }
 
     protected override void OnUpdate()
@@ -50,6 +54,16 @@ public class EnemyMelee : EnemyBase
         // do this regardless of state 
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
+
+        if (health.health <= 0)
+        {
+            untilDestroy -= Time.deltaTime;
+            Debug.Log(untilDestroy);
+            if (untilDestroy <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 
     public override void OnHit(int damage, int damageType)

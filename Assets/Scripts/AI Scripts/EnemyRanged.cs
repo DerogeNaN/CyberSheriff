@@ -21,10 +21,10 @@ public class EnemyRanged : EnemyBase
     public float attackCooldownMax = 3.0f;
     [Tooltip("the gameObject to spawn when shooting. should be the bullet prefab")]
     [SerializeField] GameObject bulletPrefab;
-    [Tooltip("whether or not to use the sniper's aiming effect before shooting")]
-    public bool doSniperAimEffect;
-    [Tooltip("if enabled, the amount of time the sniper's aiming effect lasts before the enemy shoots")]
-    public float sniperAimEffectLength;
+    //[Tooltip("whether or not to use the sniper's aiming effect before shooting")]
+    bool doSniperAimEffect = false;
+    //[Tooltip("if enabled, the amount of time the sniper's aiming effect lasts before the enemy shoots")]
+    float sniperAimEffectLength;
 
     Vector3 initialPosition;
     float remainingAttackTime;
@@ -46,6 +46,13 @@ public class EnemyRanged : EnemyBase
         // do this regardless of state 
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
+    }
+
+
+    public override void OnDestroyed(int damageType)
+    {
+        SetState(EnemyState.downed);
+        enemy.animator.SetTrigger("Death");
     }
 
     #region enter state
@@ -74,6 +81,8 @@ public class EnemyRanged : EnemyBase
         Vector3 rot = transform.rotation.eulerAngles;
         rot.x = 0;
         transform.rotation = Quaternion.Euler(rot);
+
+        enemy.animator.SetTrigger("Attack");
     }
 
     protected override void ChargeAttackEnter()
@@ -97,7 +106,16 @@ public class EnemyRanged : EnemyBase
 
         Vector3 toPlayer = enemy.playerTransform.position - transform.position;
 
-        enemy.shouldPath = toPlayer.magnitude > stopDistance || !enemy.hasLineOfSight;
+        if (toPlayer.magnitude > stopDistance || !enemy.hasLineOfSight)
+        {
+            enemy.animator.SetBool("Run", true);
+            enemy.shouldPath = true;
+        }
+        else
+        {
+            enemy.animator.SetBool("Run", false);
+            enemy.shouldPath = false;
+        }
 
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0)
         {
@@ -113,6 +131,8 @@ public class EnemyRanged : EnemyBase
         {
             SetState(EnemyState.movingToTarget);
         }
+
+        //enemy.animator.SetFloat("Aim", 0.0f);
     }
 
     protected override void ChargeAttackUpdate()
@@ -131,7 +151,7 @@ public class EnemyRanged : EnemyBase
     }
     protected override void MovingToTargetExit()
     {
-
+        enemy.animator.SetBool("Run", false);
     }
     protected override void AttackingExit()
     {
