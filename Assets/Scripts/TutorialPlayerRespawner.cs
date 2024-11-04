@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class TutorialPlayerRespawner : MonoBehaviour
 {
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.tag == "player")
+        if (other.gameObject.CompareTag("Player"))
         {
             Movement.playerMovement.respawnPos = transform;
         }
