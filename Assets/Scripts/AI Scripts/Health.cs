@@ -29,20 +29,23 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int damage, int damageType, GameObject attacker)
     {
-        health -= damage;
-        //Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
-        lastHitBy = attacker;
-        enemy.OnHit(damage, damageType);
-
-        // if destroyed
-        if (health <= 0)
+        if (health > 0) 
         {
-            health = 0;
-            enemy.OnDestroyed(damageType);
-            if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
+            health -= damage;
+            //Debug.Log("hit:" + gameObject.name + " damage:" + damage + " type:" + damageType);
+            lastHitBy = attacker;
+            enemy.OnHit(damage, damageType);
 
-            Transform objectTransform = transform;
-            SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
+            // if destroyed
+            if (health <= 0)
+            {
+                health = 0;
+                enemy.OnDestroyed(damageType);
+
+                Transform objectTransform = transform;
+                SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
+                if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
+            }
         }
     }
 
