@@ -29,6 +29,7 @@ public class EnemyCommon : MonoBehaviour
     [HideInInspector] public bool shouldPath;
 
     [HideInInspector] public NavMeshAgent navAgent;
+    [HideInInspector] public Health health;
 
     private void Start()
     {
@@ -41,6 +42,8 @@ public class EnemyCommon : MonoBehaviour
         else Despawn();
 
         SetPlayerTransform();
+
+        health = GetComponent<Health>();
     }
 
     private void Update()

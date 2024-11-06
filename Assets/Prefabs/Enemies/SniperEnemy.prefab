@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3356931468920317098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6917458449383203286}
+  m_Layer: 0
+  m_Name: GunPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6917458449383203286
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3356931468920317098}
+  m_LocalRotation: {x: 0.016634135, y: -0.11468564, z: -0.9831189, w: -0.14159012}
+  m_LocalPosition: {x: 0.00017, y: 0.0024, z: -0.00098}
+  m_LocalScale: {x: 0.0066666817, y: 0.0066666687, z: 0.0066666687}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1101666352241605857}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7989121754168259081
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,8 +390,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8781144055303266578}
   - component: {fileID: 8781144055303266590}
-  - component: {fileID: 7868308199360839163}
   - component: {fileID: 456546549912402000}
+  - component: {fileID: 6601329270202779300}
   - component: {fileID: 9017003524051536654}
   - component: {fileID: 8235846997500683284}
   m_Layer: 7
@@ -405,29 +436,6 @@ MonoBehaviour:
   debugText: {fileID: 3130728591011433805}
   lastHitBy: {fileID: 0}
   enemy: {fileID: 0}
---- !u!114 &7868308199360839163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8781144055303266582}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31d93ca2c493c264da38c7a43260bf8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  state: 0
-  runSpeed: 4
-  stopDistance: 20
-  attackRange: 100
-  attackEndlag: 1
-  attackCooldownMin: 3
-  attackCooldownMax: 3
-  bulletPrefab: {fileID: 946708688116722392, guid: 7e50d3a41778a404e940c95df4e10ae8,
-    type: 3}
-  doSniperAimEffect: 1
-  sniperAimEffectLength: 1
 --- !u!114 &456546549912402000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,6 +460,28 @@ MonoBehaviour:
   hasLineOfSight: 0
   shouldPath: 0
   navAgent: {fileID: 0}
+  health: {fileID: 0}
+--- !u!114 &6601329270202779300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8781144055303266582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b2279f8e9b66454bbb821bde2453e8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+  attackRange: 100
+  attackCooldown: 2
+  attackStartup: 1.5
+  shotDelay: 0.5
+  shotDuration: 0.5
+  attackEndlag: 2
+  laser: {fileID: 7148303922545888111, guid: 5e6d4d9669f16fe4180634df81951db9, type: 3}
+  gunPos: {fileID: 6917458449383203286}
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -781,6 +811,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3809636423023998319, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809636423023998319, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809636423023998319, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809636423023998319, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -839,6 +884,12 @@ PrefabInstance:
 --- !u!95 &789518981889586582 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7242386319623804852, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
+    type: 3}
+  m_PrefabInstance: {fileID: 7959813999420744226}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1101666352241605857 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7007344959539633859, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
     type: 3}
   m_PrefabInstance: {fileID: 7959813999420744226}
   m_PrefabAsset: {fileID: 0}

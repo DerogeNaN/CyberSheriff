@@ -30,6 +30,7 @@ public class EnemyRanged : EnemyBase
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
+    float untilDestroy = 2.0f;
 
     protected override void OnStart()
     {
@@ -46,6 +47,15 @@ public class EnemyRanged : EnemyBase
         // do this regardless of state 
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
+
+        if (enemy.health.health <= 0)
+        {
+            untilDestroy -= Time.deltaTime;
+            if (untilDestroy <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 
 
@@ -131,8 +141,6 @@ public class EnemyRanged : EnemyBase
         {
             SetState(EnemyState.movingToTarget);
         }
-
-        //enemy.animator.SetFloat("Aim", 0.0f);
     }
 
     protected override void ChargeAttackUpdate()

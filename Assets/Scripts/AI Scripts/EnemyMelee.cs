@@ -34,7 +34,6 @@ public class EnemyMelee : EnemyBase
     float attackRotate = 0;
     bool createdHitbox = false;
     float untilDestroy = 2.0f;
-    Health health;
 
     protected override void OnStart()
     {
@@ -45,8 +44,6 @@ public class EnemyMelee : EnemyBase
         enemy.speed = runSpeed;
 
         if (debugStunText) debugStunText.text = "";
-
-        health = GetComponent<Health>();
     }
 
     protected override void OnUpdate()
@@ -55,10 +52,9 @@ public class EnemyMelee : EnemyBase
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
 
-        if (health.health <= 0)
+        if (enemy.health.health <= 0)
         {
             untilDestroy -= Time.deltaTime;
-            Debug.Log(untilDestroy);
             if (untilDestroy <= 0)
             {
                 Destroy(gameObject);
