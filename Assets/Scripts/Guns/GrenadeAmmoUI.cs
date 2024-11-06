@@ -31,8 +31,13 @@ public class GrenadeAmmoUI : MonoBehaviour
     void Update()
     {
         UIGrenadeAmmo = shotgun.grenadeAmmo;
+         
         if (shotgun.isActiveAndEnabled)
         {
+
+            //weaponManagementScript.
+
+
             for (int i = 0; i < grenadeLogos.Count; i++)
             {
 

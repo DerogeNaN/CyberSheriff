@@ -19,23 +19,22 @@ public class Timer : MonoBehaviour
             StartBreakTimer();
         }
 
-
         timerText = GameObject.Find("Time").GetComponent<TextMeshProUGUI>();
-        //timerText = GetComponentInChildren<TextMeshProUGUI>();
-        //timerShadowText = GetComponentInChildren<TextMeshProUGUI>();
         timerShadowText = GameObject.Find("Time_Shadow").GetComponent<TextMeshProUGUI>();
     }
     void Update()
     {
         if (WaveManager.waveManagerInstance != null && !WaveManager.waveManagerInstance.tutorialLevel)
         {
+            if (timeLeft < 0) timeLeft = 0;
+
             if (isTiming && !isTimingBreak)
             {
                 timeLeft -= Time.deltaTime;
-                if (timeLeft < 0 && WaveManager.waveManagerInstance.enemiesRemaining > 0)
-                {
-                    WaveManager.waveManagerInstance.LoseCondition();
-                }
+                if (timeLeft <= 0 && WaveManager.waveManagerInstance.enemiesRemaining > 0) WaveManager.waveManagerInstance.LoseCondition();
+
+                else if (WaveManager.waveManagerInstance.enemiesRemaining <= 0) StartBreakTimer();
+                
             }
             else if (isTimingBreak && !isTiming)
             {
