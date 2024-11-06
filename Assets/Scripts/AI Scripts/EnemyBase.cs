@@ -71,6 +71,9 @@ public class EnemyBase : MonoBehaviour
             case EnemyState.chargeAttack:
                 ChargeAttackEnter();
                 break;
+            case EnemyState.downed:
+                DownedEnter();
+                break;
         }
     }
 
@@ -96,6 +99,9 @@ public class EnemyBase : MonoBehaviour
             case EnemyState.chargeAttack:
                 ChargeAttackUpdate();
                 break;
+            case EnemyState.downed:
+                DownedUpdate();
+                break;
         }
     }
 
@@ -118,8 +124,8 @@ public class EnemyBase : MonoBehaviour
             case EnemyState.stunned:
                 StunnedExit();
                 break;
-            case EnemyState.chargeAttack:
-                ChargeAttackExit();
+            case EnemyState.downed:
+                DownedExit();
                 break;
         }
     }
@@ -147,4 +153,8 @@ public class EnemyBase : MonoBehaviour
     virtual protected void ChargeAttackEnter() { }
     virtual protected void ChargeAttackUpdate() { }
     virtual protected void ChargeAttackExit() { }
+
+    virtual protected void DownedEnter() { }
+    virtual protected void DownedUpdate() { }
+    virtual protected void DownedExit() { }
 }
