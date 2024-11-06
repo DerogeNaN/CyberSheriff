@@ -67,12 +67,17 @@ public class WeaponManagement : MonoBehaviour
         CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
         CAWCurrentReserveAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().CurrentReserveAmmo;
         CAWReserveAmmoCap = currentActiveWeapon.GetComponent<RangedWeapon>().ReserveAmmoCap;
-        ammoText = CAWMaxAmmo + " / " + CAWCurrentAmmo;
+        ammoText = CAWCurrentAmmo + " / " + CAWMaxAmmo + " | " + CAWCurrentReserveAmmo;
     }
 
     // Update is called once per frame
     void Update()
     {
+        CAWMaxAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
+        CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
+        CAWCurrentReserveAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().CurrentReserveAmmo;
+        CAWReserveAmmoCap = currentActiveWeapon.GetComponent<RangedWeapon>().ReserveAmmoCap;
+        ammoText = CAWCurrentAmmo + " / " + CAWMaxAmmo + " | " + CAWCurrentReserveAmmo;
 
         if (start == false)
         {
@@ -87,6 +92,7 @@ public class WeaponManagement : MonoBehaviour
             Movement.playerMovement.playerInputActions.Player.Reload.started += ManualReload;
             start = true;
         }
+
 
         PrimaryFireStayCheck(Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress);
         AltFireStayCheck(Movement.playerMovement.playerInputActions.Player.AltFire.inProgress);

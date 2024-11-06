@@ -8,9 +8,12 @@ public class Revolver : RangedWeapon
     [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
     {
-        animator.SetTrigger("ShootTrig");
-        base.EngagePrimaryFire();
-        SoundManager2.Instance.PlaySound("Revolver");
+        if (currentBullets > 0)
+        {
+            animator.SetTrigger("ShootTrig");
+            base.EngagePrimaryFire();
+            SoundManager2.Instance.PlaySound("Revolver");
+        }
     }
 
     public override IEnumerator Reload()
