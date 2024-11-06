@@ -1,9 +1,5 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.ProBuilder;
-using UnityEngine.UIElements;
-
 
 public class Movement : MonoBehaviour
 {
@@ -166,11 +162,16 @@ public class Movement : MonoBehaviour
 
     #region Sound
     [Header("Sound Settings")]
-    [SerializeField][Tooltip("Time in seconds between footsteps when the player is moving at \"Max Input Speed\"")]
-    private float footstepInterval = 0.0f;   
+    [SerializeField][Tooltip("Time in seconds between footsteps")]
+    private float footstepInterval = 0.0f;
+
+    [SerializeField][Tooltip("Time in seconds between footsteps while wall running")]
+    private float wallRunFootstepInterval = 0.0f;
 
     //Backend Variables:
     private float lastFootstepTime = 0.0f;
+    private float lastWallRunFootstepTime = 0.0f;
+    private float slideDelay = 0.0f;
     #endregion
 
     [Space(20.0f)]
@@ -228,7 +229,6 @@ public class Movement : MonoBehaviour
         {
             standingCollider.enabled = false;
             slideCollider.enabled = true;
-            //movementInputWorld = Vector3.zero;
 
             if (velocity.magnitude <= 1) isSliding = false;
         }
@@ -331,6 +331,18 @@ public class Movement : MonoBehaviour
         transform.position += velocity * Time.deltaTime;
     }
 
+    void PlayWallRunFootstepSound()
+    {
+        if (isWallRunning)
+        {
+            if (lastWallRunFootstepTime + wallRunFootstepInterval < Time.time)
+            {
+                lastWallRunFootstepTime = Time.time;
+                SoundManager2.Instance.PlaySound("Wallrunning");
+            }
+        }
+    }
+
     void PlayFootstepSound()
     {
         if (isGrounded && !isSliding && velocity != Vector3.zero && velocity.magnitude >= 3)
@@ -368,6 +380,8 @@ public class Movement : MonoBehaviour
     private void Slide_Performed(InputAction.CallbackContext context)
     {
         isTryingSlide = true;
+
+        SoundManager2.Instance.PlaySound("SlideSFX");
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
@@ -725,7 +739,7 @@ public class Movement : MonoBehaviour
             {
                 velocity = velocity.normalized * wallrunVelocityBonus;                
             }
-
+            PlayWallRunFootstepSound();
             return;
         }
         else
