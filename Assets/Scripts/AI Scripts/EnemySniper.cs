@@ -38,8 +38,15 @@ public class EnemySniper : EnemyBase
 
     protected override void OnUpdate()
     {
-        Vector3[] positions = { transform.position, enemy.playerTransform.position };
-        currentLaser.SetPositions(positions);
+        // face player
+        transform.LookAt(enemy.playerTransform);
+        Vector3 rot = transform.rotation.eulerAngles;
+        rot.x = 0;
+        transform.rotation = Quaternion.Euler(rot);
+
+        enemy.animator.SetFloat("Aim", (enemy.playerTransform.position.y - gunPos.position.y));
+
+        UpdateLaser();
 
         timer -= Time.deltaTime;
 
@@ -83,5 +90,24 @@ public class EnemySniper : EnemyBase
             case LaserState.disappearing:
                 break;
         }
+    }
+
+    void UpdateLaser()
+    {
+        RaycastHit hit;
+        Vector3[] positions = new Vector3[2];
+
+        if (Physics.Raycast(gunPos.position, (enemy.playerTransform.position - gunPos.position).normalized, out hit))
+        {
+            positions[0] = gunPos.position;
+            positions[1] = hit.point;
+        }
+        else
+        {
+            positions[0] = gunPos.position;
+            positions[1] = enemy.playerTransform.position;
+        }
+
+        currentLaser.SetPositions(positions);
     }
 }

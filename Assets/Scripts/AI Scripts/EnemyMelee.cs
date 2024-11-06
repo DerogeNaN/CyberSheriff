@@ -134,8 +134,11 @@ public class EnemyMelee : EnemyBase
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if line of sight is lost, change to lost sight state
-        //if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
-        //else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
+        if (!enemy.neverLoseSight)
+        {
+            if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
+            else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
+        }
 
         if (enemy.navAgent.velocity.magnitude > 0) enemy.animator.SetBool("Run", true);
         else enemy.animator.SetBool("Run", false);
@@ -148,6 +151,8 @@ public class EnemyMelee : EnemyBase
     }
     protected override void LostSightOfTargetUpdate() // UNUSED
     {
+        enemy.animator.SetBool("Run", false);
+
         remainingChaseTime -= Time.deltaTime;
         // give up chasing
         if (remainingChaseTime <= 0)

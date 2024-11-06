@@ -112,7 +112,10 @@ public class EnemyRanged : EnemyBase
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
-        //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
+        if (enemy.neverLoseSight)
+        {
+            if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
+        }
 
         Vector3 toPlayer = enemy.playerTransform.position - transform.position;
 

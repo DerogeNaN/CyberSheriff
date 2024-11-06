@@ -9,6 +9,8 @@ using UnityEngine.AI;
 public class EnemyCommon : MonoBehaviour
 {
     [Header("Enemy Settings")]
+    [Tooltip("if checked, enemies will never stop chasing the player once they see them for the first time")]
+    public bool neverLoseSight;
     [HideInInspector] public bool active;
     [Tooltip("maximum distance at which the player can be considered in line of sight")]
     public float sightRange = 25.0f;
@@ -71,10 +73,9 @@ public class EnemyCommon : MonoBehaviour
         if ((lookTarget - raycastPos).magnitude <= sightRange)
         {
             // check for line of sight with target
-            if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange))
+            if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
             {
-                // colliders tagged as "Wall" will block the line of sight
-                hasLineOfSight = !hit.transform.gameObject.CompareTag("Wall");
+                hasLineOfSight = hit.transform.gameObject.CompareTag("Player");
             }
             else hasLineOfSight = true;
         }
@@ -82,9 +83,9 @@ public class EnemyCommon : MonoBehaviour
 
 
         // draw ray for debugging
-        //if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
-        //else Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
-        //Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
+        if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));
+        else Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(0.0f, 0.0f, 1.0f));
+        Debug.DrawRay(raycastPos, (moveTarget - raycastPos).normalized * sightRange, new(0.5f, 0.0f, 0.5f));
     }
 
     private void UpdateNavAgent()
