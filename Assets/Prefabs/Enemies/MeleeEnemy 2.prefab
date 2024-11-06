@@ -554,13 +554,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  runSpeed: 16
+  runSpeed: 20
   attackPrefab: {fileID: 2145299806175634582, guid: c184ff413ccf685469543a500061ea73,
     type: 3}
-  attackRange: 3
+  attackRange: 2.5
   attackStartUp: 0.3
-  attackEndlag: 1
-  attackCooldown: 1
+  attackEndlag: 0.3
+  attackCooldown: 0.5
 --- !u!114 &6835624540115931486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -597,7 +597,7 @@ NavMeshAgent:
   m_AgentTypeID: -1372625422
   m_Radius: 1
   m_Speed: 3.5
-  m_Acceleration: 30
+  m_Acceleration: 40
   avoidancePriority: 10
   m_AngularSpeed: 350
   m_StoppingDistance: 2
