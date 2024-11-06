@@ -24,13 +24,23 @@ public class AoeDamager : MonoBehaviour
     [SerializeField]
     GameObject explosionVFX;
 
+    [Tooltip("This is the Object That would be affected By the velocity based Rotaion")]
     [SerializeField]
-    GameObject grenadeMesh;
+    GameObject meshObjectRotator;
+
+    [Tooltip("This activates the Fall Movement for the grenades(Mostly for shotgun)")]
+    [SerializeField]
+    bool InstallVelocityBasedObjectRotation = false;
 
     // Start is called before the first frame update
     void Start()
     {
         collider = GetComponent<Collider>();
+
+        if (InstallVelocityBasedObjectRotation)
+        {
+            meshObjectRotator.transform.LookAt(transform.position + GetComponent<Rigidbody>().velocity, Vector3.up);
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -44,7 +54,10 @@ public class AoeDamager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        grenadeMesh.transform.LookAt(transform.position + GetComponent<Rigidbody>().velocity , Vector3.up);
+        if (InstallVelocityBasedObjectRotation)
+        {
+            meshObjectRotator.transform.LookAt(transform.position + GetComponent<Rigidbody>().velocity, Vector3.up);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
