@@ -30,7 +30,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 4994010966963738684}
+  - {fileID: 7338011547388018127}
   - {fileID: 1009520571373690642}
   - {fileID: 6999799791188946354}
   m_Father: {fileID: 0}
@@ -53,6 +53,8 @@ MonoBehaviour:
   blastRadius: 7.14
   explosionVFX: {fileID: 5344405540868197508, guid: 8779517a873998b4cb006cbc2aaf4ee2,
     type: 3}
+  meshObjectRotator: {fileID: 8748221493678175785}
+  InstallVelocityBasedObjectRotation: 1
 --- !u!54 &158062853246228141
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -94,14 +96,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6442224989978855035}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 200, y: 200, z: 200}
+  m_LocalScale: {x: 200, y: 200.00002, z: 200.00002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2685786962208842429}
+  m_Father: {fileID: 7338011547388018127}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &4092011311225438631
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -197,6 +199,38 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &8748221493678175785
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7338011547388018127}
+  m_Layer: 3
+  m_Name: Object Rotator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7338011547388018127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8748221493678175785}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.45, y: 1.45, z: 1.45}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 4994010966963738684}
+  m_Father: {fileID: 2685786962208842429}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7112907769263181715
 PrefabInstance:
   m_ObjectHideFlags: 0
