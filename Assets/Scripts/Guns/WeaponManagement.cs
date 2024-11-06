@@ -25,15 +25,37 @@ public class WeaponManagement : MonoBehaviour
     public int CAWCurrentAmmo;
 
     [SerializeField]
+    public int CAWCurrentReserveAmmo;
+
+    [SerializeField]
+    public int CAWReserveAmmoCap;
+
+
+    [SerializeField]
     public string ammoText;
 
     bool start = false;
 
+    public Shotgun shotgunRef;
+
+    public Revolver revolverRef;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        for (int i = 0; i < weaponList.Count; i++)
+        {
+            if (weaponList[i].GetComponent<Shotgun>())
+            {
+                shotgunRef = weaponList[i].GetComponent<Shotgun>();
+            }
+
+            if (weaponList[i].GetComponent<Revolver>())
+            {
+                revolverRef = weaponList[i].GetComponent<Revolver>();
+            }
+        }
 
         //make sure on  Kill isnt all ready an event;
         Health.enemyKill += currentActiveWeapon.GetComponent<RangedWeapon>().OnKill;
@@ -43,6 +65,8 @@ public class WeaponManagement : MonoBehaviour
     {
         CAWMaxAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
         CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
+        CAWCurrentReserveAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().CurrentReserveAmmo;
+        CAWReserveAmmoCap = currentActiveWeapon.GetComponent<RangedWeapon>().ReserveAmmoCap;
         ammoText = CAWMaxAmmo + " / " + CAWCurrentAmmo;
     }
 
