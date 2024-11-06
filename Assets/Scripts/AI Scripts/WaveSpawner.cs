@@ -65,10 +65,6 @@ public class WaveSpawner : MonoBehaviour
         {
             Debug.LogError("SpawnZone is null in PrepareNextWave!");
         }
-        else
-        {
-            Debug.Log("SpawnZone is valid in PrepareNextWave.");
-        }
-        SpawnWave(WaveManager.waveManagerInstance.waveNumber);
+        else SpawnWave(WaveManager.waveManagerInstance.waveNumber);
     }
 }
