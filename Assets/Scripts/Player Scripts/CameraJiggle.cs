@@ -63,9 +63,4 @@ public class CameraJiggle : MonoBehaviour
         
         //Camera.main.fieldOfView = currFOV;
     }
-
-    private float easeInOutCubic(float value)
-    {
-        return value < 0.5 ? 4 * value * value * value : 1 - Mathf.Pow(-2 * value + 2, 3) / 2;
-    }
 }

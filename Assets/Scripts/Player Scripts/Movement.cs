@@ -147,7 +147,7 @@ public class Movement : MonoBehaviour
 
     //Backend Variables:
     private float currEncouragment;
-    private int slowDownPercentage = 30;
+    public int slowDownPercentage = 30;
     private float speedLimitEnforceAmmount = 1.5f;
     private float momentumRatio;
     #endregion
@@ -162,6 +162,15 @@ public class Movement : MonoBehaviour
 
     [SerializeField][Tooltip("How long the camera takes to lower (0 - never, 1 - instant)")]
     public float cameraSlideTransitionTime = 0.1f;
+    #endregion
+
+    #region Sound
+    [Header("Sound Settings")]
+    [SerializeField][Tooltip("Time in seconds between footsteps when the player is moving at \"Max Input Speed\"")]
+    private float footstepInterval = 0.0f;   
+
+    //Backend Variables:
+    private float lastFootstepTime = 0.0f;
     #endregion
 
     [Space(20.0f)]
@@ -291,13 +300,13 @@ public class Movement : MonoBehaviour
         {
             float speed = velocity.magnitude;
             float moveMag = moveSpeed * momentumRatio * slowDownPercentage / 100;
-            float subtraction = Mathf.Min(speed,moveMag);
+            float subtraction = Mathf.Min(speed, moveMag);
             velocity -= velocity.normalized * subtraction;
 
             if (Mathf.Abs(velocity.x) < 0.0015f && Mathf.Abs(velocity.z) < 0.0015f)
             {
-                velocity.x = 0;
-                velocity.z = 0;
+                //velocity.x = 0;
+                //velocity.z = 0;
             }
         }
 
@@ -316,9 +325,22 @@ public class Movement : MonoBehaviour
         CheckForGrappleTarget();
         Grappling();
 
-        //rb.velocity = Vector3.zero;
-        //velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        PlayFootstepSound();
+
+        //Actually apply motion to player transform
         transform.position += velocity * Time.deltaTime;
+    }
+
+    void PlayFootstepSound()
+    {
+        if (isGrounded && !isSliding && velocity != Vector3.zero && velocity.magnitude >= 3)
+        {
+            if (lastFootstepTime + footstepInterval < Time.time)
+            {
+                lastFootstepTime = Time.time;
+                SoundManager2.Instance.PlaySound("Footsteps_Concrete");
+            }
+        }
     }
 
     void Gravity()
