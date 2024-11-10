@@ -14,26 +14,29 @@ enum LaserState
 
 public class EnemySniper : EnemyBase
 {
+    public bool resetOnLoseSight;
     public float attackRange;
-    public float attackCooldown;
-    public float attackStartup;
-    public float shotDelay;
+    public float chargeTime;
+    public float timeBeforeShot;
     public float shotDuration;
-    public float attackEndlag;
+    public float disappearTime;
+    public float shotCooldown;
     public GameObject laser;
     public Transform gunPos;
 
     LaserState laserState = LaserState.none;
     float timer;
     LineRenderer currentLaser;
+    float laserIntensity = 0.0f;
+    float laserDistance;
 
     protected override void OnStart()
     {
-        timer = attackCooldown;
+        timer = shotCooldown;
         enemy.animator.SetBool("Run", false);
 
         currentLaser = Instantiate(laser, gunPos).GetComponentInChildren<LineRenderer>();
-        Debug.Log(currentLaser);
+        currentLaser.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
     }
 
     protected override void OnUpdate()
@@ -56,22 +59,26 @@ public class EnemySniper : EnemyBase
             {
                 case LaserState.none:
                     laserState = LaserState.charging;
-                    timer = attackStartup;
+                    timer = chargeTime;
+                    laserIntensity = 0.0f;
                     break;
 
                 case LaserState.charging:
                     laserState = LaserState.firing;
                     timer = shotDuration;
+                    laserIntensity = 1.0f;
                     break;
 
                 case LaserState.firing:
                     laserState = LaserState.disappearing;
-                    timer = attackEndlag;
+                    timer = disappearTime;
+                    laserIntensity = 1.0f;
                     break;
 
                 case LaserState.disappearing:
                     laserState = LaserState.none;
-                    timer = attackCooldown;
+                    timer = shotCooldown;
+                    laserIntensity = 0.0f;
                     break;
             }
         }
@@ -82,14 +89,20 @@ public class EnemySniper : EnemyBase
                 break;
 
             case LaserState.charging:
+                if (laserIntensity < 0.5f) laserIntensity += Time.deltaTime * 0.2f;
                 break;
 
             case LaserState.firing:
+                // count down delay before actual shot then fire
+                Fire();
                 break;
 
             case LaserState.disappearing:
+                if (laserIntensity > 0.0f) laserIntensity -= Time.deltaTime * 2.0f;
                 break;
         }
+
+        currentLaser.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, laserIntensity);
     }
 
     void UpdateLaser()
@@ -97,17 +110,40 @@ public class EnemySniper : EnemyBase
         RaycastHit hit;
         Vector3[] positions = new Vector3[2];
 
-        if (Physics.Raycast(gunPos.position, (enemy.playerTransform.position - gunPos.position).normalized, out hit))
+        if (Physics.Raycast(gunPos.position, (enemy.playerTransform.position - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
         {
-            positions[0] = gunPos.position;
-            positions[1] = hit.point;
+            if (hit.collider.CompareTag("Player"))
+            {
+                positions[0] = gunPos.position;
+                positions[1] = enemy.playerTransform.position;
+            }
+            else
+            {
+                positions[0] = gunPos.position;
+                positions[1] = hit.point;
+            }
         }
         else
         {
+            // shouldn't happen?
             positions[0] = gunPos.position;
             positions[1] = enemy.playerTransform.position;
         }
 
         currentLaser.SetPositions(positions);
+    }
+
+    void Fire()
+    {
+        RaycastHit hit;
+
+        // double check that the player is within sight
+        if (Physics.Raycast(gunPos.position, (enemy.playerTransform.position - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                enemy.playerTransform.gameObject.GetComponent<PlayerHealth>().TakeDamage(25, 0);
+            }
+        }
     }
 }

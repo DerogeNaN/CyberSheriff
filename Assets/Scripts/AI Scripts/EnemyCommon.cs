@@ -120,7 +120,7 @@ public class EnemyCommon : MonoBehaviour
 
     void SetPlayerTransform()
     {
-        // get the transform of whatever has the main camera
+        // get the GameObject that the movement script is on
         playerTransform = Movement.playerMovement.gameObject.transform;
     }
 }

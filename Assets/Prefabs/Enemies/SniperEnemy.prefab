@@ -448,6 +448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neverLoseSight: 0
   active: 1
   sightRange: 80
   lineOfSightOffset: {x: 0, y: 2, z: 0}
@@ -473,13 +474,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2279f8e9b66454bbb821bde2453e8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
   attackRange: 100
-  attackCooldown: 2
-  attackStartup: 1.5
-  shotDelay: 0.5
-  shotDuration: 0.5
-  attackEndlag: 2
+  chargeTime: 1.5
+  timeBeforeShot: 0
+  shotDuration: 0.1
+  disappearTime: 1
+  shotCooldown: 2
   laser: {fileID: 7148303922545888111, guid: 5e6d4d9669f16fe4180634df81951db9, type: 3}
   gunPos: {fileID: 6917458449383203286}
 --- !u!195 &9017003524051536654
