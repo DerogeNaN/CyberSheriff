@@ -555,15 +555,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   runSpeed: 16
-  walkSpeed: 3
-  chaseTime: 5
   attackPrefab: {fileID: 2145299806175634582, guid: c184ff413ccf685469543a500061ea73,
     type: 3}
   attackRange: 2
-  attackTime: 0.5
-  attackCooldown: 1
   attackStartUp: 0.3
-  debugStunText: {fileID: 0}
+  attackEndlag: 1
+  attackCooldown: 1
 --- !u!114 &6835624540115931486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,12 +575,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   sightRange: 45
+  lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
   mesh: {fileID: 5499261117489788496}
   animator: {fileID: 3885734300514832499}
-  lineOfSightOffset: {x: 0, y: 2, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
@@ -916,21 +911,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8331554763434989775, guid: 5c06b63126318f044b3d2c4ddd042808,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8331554763434989775, guid: 5c06b63126318f044b3d2c4ddd042808,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8331554763434989775, guid: 5c06b63126318f044b3d2c4ddd042808,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8331554763434989775, guid: 5c06b63126318f044b3d2c4ddd042808,
         type: 3}
