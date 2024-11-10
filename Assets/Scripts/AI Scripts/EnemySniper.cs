@@ -29,6 +29,8 @@ public class EnemySniper : EnemyBase
     LineRenderer currentLaser;
     float laserIntensity = 0.0f;
     float laserDistance;
+    bool fired = false;
+    bool targetPlayer = true;
 
     protected override void OnStart()
     {
@@ -41,15 +43,23 @@ public class EnemySniper : EnemyBase
 
     protected override void OnUpdate()
     {
-        // face player
-        transform.LookAt(enemy.playerTransform);
-        Vector3 rot = transform.rotation.eulerAngles;
-        rot.x = 0;
-        transform.rotation = Quaternion.Euler(rot);
+        if (state == EnemyState.downed) return;
 
-        enemy.animator.SetFloat("Aim", (enemy.playerTransform.position.y - gunPos.position.y));
+        if (targetPlayer)
+        {
+            // target player
+            enemy.lookTarget = enemy.playerTransform.position;
+            UpdateLaser();
 
-        UpdateLaser();
+            // face target
+            transform.LookAt(enemy.playerTransform);
+            Vector3 rot = transform.rotation.eulerAngles;
+            rot.x = 0;
+            transform.rotation = Quaternion.Euler(rot);
+
+            enemy.animator.SetFloat("Aim", enemy.playerTransform.position.y - gunPos.position.y);
+        }
+
 
         timer -= Time.deltaTime;
 
@@ -65,7 +75,8 @@ public class EnemySniper : EnemyBase
 
                 case LaserState.charging:
                     laserState = LaserState.firing;
-                    timer = shotDuration;
+                    fired = false;
+                    timer = shotDuration + timeBeforeShot;
                     laserIntensity = 1.0f;
                     break;
 
@@ -73,12 +84,14 @@ public class EnemySniper : EnemyBase
                     laserState = LaserState.disappearing;
                     timer = disappearTime;
                     laserIntensity = 1.0f;
+                    targetPlayer = false;
                     break;
 
                 case LaserState.disappearing:
                     laserState = LaserState.none;
                     timer = shotCooldown;
                     laserIntensity = 0.0f;
+                    targetPlayer = true;
                     break;
             }
         }
@@ -94,7 +107,11 @@ public class EnemySniper : EnemyBase
 
             case LaserState.firing:
                 // count down delay before actual shot then fire
-                Fire();
+                if (!fired && timer < shotDuration)
+                {
+                    Fire();
+                    fired = true;
+                }
                 break;
 
             case LaserState.disappearing:
@@ -110,24 +127,32 @@ public class EnemySniper : EnemyBase
         RaycastHit hit;
         Vector3[] positions = new Vector3[2];
 
-        if (Physics.Raycast(gunPos.position, (enemy.playerTransform.position - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
+        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
         {
             if (hit.collider.CompareTag("Player"))
             {
                 positions[0] = gunPos.position;
-                positions[1] = enemy.playerTransform.position;
+                positions[1] = enemy.lookTarget;
             }
             else
             {
                 positions[0] = gunPos.position;
                 positions[1] = hit.point;
+                if (resetOnLoseSight)
+                {
+                    // reset progress
+                    if (laserState == LaserState.charging) timer = 0.0f; // if was already charging, start again immedietly
+
+                    laserState = LaserState.none;
+                    laserIntensity = 0.0f;
+                }
             }
         }
         else
         {
             // shouldn't happen?
             positions[0] = gunPos.position;
-            positions[1] = enemy.playerTransform.position;
+            positions[1] = enemy.lookTarget;
         }
 
         currentLaser.SetPositions(positions);
@@ -138,12 +163,18 @@ public class EnemySniper : EnemyBase
         RaycastHit hit;
 
         // double check that the player is within sight
-        if (Physics.Raycast(gunPos.position, (enemy.playerTransform.position - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
+        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
         {
             if (hit.collider.CompareTag("Player"))
             {
                 enemy.playerTransform.gameObject.GetComponent<PlayerHealth>().TakeDamage(25, 0);
             }
         }
+    }
+
+    public override void OnDestroyed(int damageType)
+    {
+        SetState(EnemyState.downed);
+        enemy.animator.SetTrigger("Death");
     }
 }
