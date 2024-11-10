@@ -25,15 +25,37 @@ public class WeaponManagement : MonoBehaviour
     public int CAWCurrentAmmo;
 
     [SerializeField]
+    public int CAWCurrentReserveAmmo;
+
+    [SerializeField]
+    public int CAWReserveAmmoCap;
+
+
+    [SerializeField]
     public string ammoText;
 
     bool start = false;
 
+    public Shotgun shotgunRef;
+
+    public Revolver revolverRef;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        for (int i = 0; i < weaponList.Count; i++)
+        {
+            if (weaponList[i].GetComponent<Shotgun>())
+            {
+                shotgunRef = weaponList[i].GetComponent<Shotgun>();
+            }
+
+            if (weaponList[i].GetComponent<Revolver>())
+            {
+                revolverRef = weaponList[i].GetComponent<Revolver>();
+            }
+        }
 
         //make sure on  Kill isnt all ready an event;
         Health.enemyKill += currentActiveWeapon.GetComponent<RangedWeapon>().OnKill;
@@ -43,12 +65,19 @@ public class WeaponManagement : MonoBehaviour
     {
         CAWMaxAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
         CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
-        ammoText = CAWMaxAmmo + " / " + CAWCurrentAmmo;
+        CAWCurrentReserveAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().CurrentReserveAmmo;
+        CAWReserveAmmoCap = currentActiveWeapon.GetComponent<RangedWeapon>().ReserveAmmoCap;
+        ammoText = CAWCurrentAmmo + " / " + CAWMaxAmmo + " | " + CAWCurrentReserveAmmo;
     }
 
     // Update is called once per frame
     void Update()
     {
+        CAWMaxAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
+        CAWCurrentAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
+        CAWCurrentReserveAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().CurrentReserveAmmo;
+        CAWReserveAmmoCap = currentActiveWeapon.GetComponent<RangedWeapon>().ReserveAmmoCap;
+        ammoText = CAWCurrentAmmo + " / " + CAWMaxAmmo + " | " + CAWCurrentReserveAmmo;
 
         if (start == false)
         {
@@ -63,6 +92,7 @@ public class WeaponManagement : MonoBehaviour
             Movement.playerMovement.playerInputActions.Player.Reload.started += ManualReload;
             start = true;
         }
+
 
         PrimaryFireStayCheck(Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress);
         AltFireStayCheck(Movement.playerMovement.playerInputActions.Player.AltFire.inProgress);

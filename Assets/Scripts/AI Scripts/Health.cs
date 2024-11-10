@@ -42,6 +42,14 @@ public class Health : MonoBehaviour
                 health = 0;
                 enemy.OnDestroyed(damageType);
 
+                if (lastHitBy)
+                {
+                    if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw))
+                        enemyKill();
+                    else
+                        Debug.Log("Seems Like a grenade");
+                }
+
                 Transform objectTransform = transform;
                 SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
                 if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
