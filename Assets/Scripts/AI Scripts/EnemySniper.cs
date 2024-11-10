@@ -76,14 +76,13 @@ public class EnemySniper : EnemyBase
                 case LaserState.charging:
                     laserState = LaserState.firing;
                     fired = false;
+                    targetPlayer = false;
                     timer = shotDuration + timeBeforeShot;
-                    laserIntensity = 1.0f;
                     break;
 
                 case LaserState.firing:
                     laserState = LaserState.disappearing;
                     timer = disappearTime;
-                    laserIntensity = 1.0f;
                     targetPlayer = false;
                     break;
 
@@ -110,6 +109,7 @@ public class EnemySniper : EnemyBase
                 if (!fired && timer < shotDuration)
                 {
                     Fire();
+                    laserIntensity = 1.0f;
                     fired = true;
                 }
                 break;
@@ -154,6 +154,9 @@ public class EnemySniper : EnemyBase
             positions[0] = gunPos.position;
             positions[1] = enemy.lookTarget;
         }
+
+        // get the direction of the beam, then extend it in that direction
+        positions[1] += (positions[1] - positions[0]).normalized * 100.0f;
 
         currentLaser.SetPositions(positions);
     }
