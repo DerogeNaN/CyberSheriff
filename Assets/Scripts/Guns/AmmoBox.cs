@@ -9,7 +9,8 @@ public class AmmoBox : MonoBehaviour
     {
         shotgun,
         revolver,
-        grenade
+        grenade,
+        ShotandRev,
     }
 
     [SerializeField]
@@ -18,8 +19,19 @@ public class AmmoBox : MonoBehaviour
     [SerializeField]
     int ammoGiven = 100;
 
-    [SerializeField]
     WeaponManagement weaponManagement;
+
+    [SerializeField]
+    float timeSinceActive;
+
+    [SerializeField]
+    float respawnTime;
+
+    [SerializeField]
+    MeshRenderer mesh;
+
+    [SerializeField]
+    bool active;
 
     void Start()
     {
@@ -29,30 +41,47 @@ public class AmmoBox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (active == false)
+            if (timeSinceActive < respawnTime)
+            {
+                timeSinceActive += Time.deltaTime;
+                if (timeSinceActive >= respawnTime)
+                {
+                    active = true;
+                    timeSinceActive = 0;
+                }
+            }
+        mesh.enabled = active;
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player")) 
+        if (active)
         {
-            if (ammoType == AmmoType.shotgun)
+            if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
             {
-                Debug.Log("Ammo shotgun Given");
-                weaponManagement.shotgunRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven,0, weaponManagement.shotgunRef.ReserveAmmoCap);
-            }
+                if (ammoType == AmmoType.shotgun)
+                {
+                    Debug.Log("Ammo shotgun Given");
+                    weaponManagement.shotgunRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.shotgunRef.ReserveAmmoCap);
+                    active = false;
+                }
 
-            if (ammoType == AmmoType.revolver)
-            {
-                Debug.Log("Ammo Revolver Given");
+                if (ammoType == AmmoType.revolver)
+                {
+                    Debug.Log("Ammo Revolver Given");
+                    weaponManagement.revolverRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.revolverRef.ReserveAmmoCap);
+                    active = false;
+                }
 
-                weaponManagement.revolverRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.revolverRef.ReserveAmmoCap);
-            }
-
-            if (ammoType == AmmoType.grenade)
-            {
-                Debug.Log("Ammo Grenade Given");
+                if (ammoType == AmmoType.ShotandRev)
+                {
+                    Debug.Log("BothGiven");
+                    weaponManagement.revolverRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.revolverRef.ReserveAmmoCap);
+                    weaponManagement.shotgunRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven / 4, 0, weaponManagement.shotgunRef.ReserveAmmoCap);
+                    active = false;
+                }
             }
         }
     }

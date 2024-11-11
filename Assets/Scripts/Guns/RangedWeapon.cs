@@ -180,7 +180,7 @@ public class RangedWeapon : MonoBehaviour
                             hitFX.transform.position = rayData.hit.point;
                         }
                     }
-                    else 
+                    else
                     {
                         SpawnBulletHoleDecal(rayData);
                         GameObject hitFX = Instantiate(HitEffect);
@@ -263,7 +263,7 @@ public class RangedWeapon : MonoBehaviour
 
     public virtual void ManualReload()
     {
-        if (reloading == false && canPressAltFire == true)//verifies that im not already altfiring for situations like fanFire 
+        if (reloading == false && canPressAltFire == true && currentBullets != BulletsPerClip)//verifies that im not already altfiring for situations like fanFire 
         {
             canFire = false;
             StartCoroutine(Reload());
@@ -375,12 +375,15 @@ public class RangedWeapon : MonoBehaviour
         yield return new WaitForSeconds(reloadTime);
         // Debug.Log("Reloading...");
         canFire = true;
+        int bulletDifference;
         if (currentBullets != BulletsPerClip && CurrentReserveAmmo > BulletsPerClip)
         {
-            CurrentReserveAmmo -= BulletsPerClip;
-            currentBullets = BulletsPerClip;
+            bulletDifference = -(currentBullets - BulletsPerClip);
+
+            CurrentReserveAmmo -= bulletDifference;
+            currentBullets += bulletDifference;
         }
-        else 
+        else
         {
             currentBullets = CurrentReserveAmmo;
             CurrentReserveAmmo -= CurrentReserveAmmo;

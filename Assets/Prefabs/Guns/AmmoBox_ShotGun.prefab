@@ -43,7 +43,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.37
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4314665792516990538
 GameObject:
@@ -94,7 +94,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoType: 0
   ammoGiven: 100
-  weaponManagement: {fileID: 0}
+  timeSinceActive: 0
+  respawnTime: 5
+  mesh: {fileID: 7628080546427515655}
+  active: 0
 --- !u!54 &3147876759109283108
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -190,6 +193,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 469b907e154214e4a9739cc68fc60df3, type: 3}
+--- !u!23 &7628080546427515655 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 469b907e154214e4a9739cc68fc60df3,
+    type: 3}
+  m_PrefabInstance: {fileID: 9087691712054407043}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8761557412915103848 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 469b907e154214e4a9739cc68fc60df3,

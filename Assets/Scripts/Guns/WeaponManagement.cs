@@ -36,8 +36,10 @@ public class WeaponManagement : MonoBehaviour
 
     bool start = false;
 
+    [System.NonSerialized]
     public Shotgun shotgunRef;
 
+    [System.NonSerialized]
     public Revolver revolverRef;
 
 
@@ -166,42 +168,73 @@ public class WeaponManagement : MonoBehaviour
             if (CurrentWeapon > 0)
             {
                 CurrentWeapon = 1;
+            }
+            else if (CurrentWeapon < 0)
+            {
+                CurrentWeapon = 0;
+            }
+
+            if (currentActiveWeapon != weaponList[(int)CurrentWeapon])
+            {
                 SoundManager2.Instance.PlaySound("WeaponSwap");
+
+                //set previous to false
+                if (currentActiveWeapon)
+                    currentActiveWeapon.gameObject.SetActive(false);
+
+                currentActiveWeapon = weaponList[(int)CurrentWeapon];
+
+                if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+                {
+                    currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+                }
+
+                if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+                {
+                    currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                    currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+                }
+
+                //set next to true 
+                currentActiveWeapon.gameObject.SetActive(true);
             }
             else
             {
-                CurrentWeapon = 0;
+                if (CurrentWeapon == 1)
+                {
+                    CurrentWeapon = 0;
+                }
+                else if (CurrentWeapon == 0)
+                    CurrentWeapon = 1;
+
                 SoundManager2.Instance.PlaySound("WeaponSwap");
+
+                //set previous to false
+                if (currentActiveWeapon)
+                    currentActiveWeapon.gameObject.SetActive(false);
+
+                currentActiveWeapon = weaponList[(int)CurrentWeapon];
+
+                if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
+                {
+                    currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
+                }
+
+                if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
+                {
+                    currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
+                    currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
+                }
+
+                //set next to true 
+                currentActiveWeapon.gameObject.SetActive(true);
             }
 
-            //set previous to false
-            if (currentActiveWeapon)
-                currentActiveWeapon.gameObject.SetActive(false);
-
-            currentActiveWeapon = weaponList[(int)CurrentWeapon];
-            if (currentActiveWeapon)
-            {
-                // Debug.Log("WeaponFound!!");
-            }
-
-            if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
-            {
-                currentActiveWeapon.GetComponent<RangedWeapon>().reloading = false;
-            }
-
-            if (currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
-            {
-                currentActiveWeapon.GetComponent<RangedWeapon>().waiting = false;
-                currentActiveWeapon.GetComponent<RangedWeapon>().canFire = true;
-            }
-
-
-            //set next to true 
-            currentActiveWeapon.gameObject.SetActive(true);
-            //}
         }
 
     }
+
+
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
