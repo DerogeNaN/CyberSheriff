@@ -64,9 +64,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c63e58f320a3a844ebbf9f804657af69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
   maxSpeed: 30
-  turnSpeed: 0.05
+  turnSpeed: 10
   acceleration: 10
   deceleration: 30
   yOffset: 1.5
@@ -100,11 +99,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neverLoseSight: 0
   active: 1
   sightRange: 40
   lineOfSightOffset: {x: 0, y: 0, z: 0}
   speed: 5
   mesh: {fileID: 6199602304891668101}
+  meshRenderer: {fileID: 0}
   animator: {fileID: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
@@ -113,6 +114,8 @@ MonoBehaviour:
   shouldPath: 0
   navAgent: {fileID: 0}
   health: {fileID: 0}
+  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
+    type: 3}
 --- !u!1 &4443895185962462416
 GameObject:
   m_ObjectHideFlags: 0

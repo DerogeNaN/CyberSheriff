@@ -29,7 +29,7 @@ public class PlayerUI : MonoBehaviour
         ammoCount = weaponManagmentScript.currentActiveWeapon.GetComponent<RangedWeapon>().currentBullets;
         ammoMax = weaponManagmentScript.currentActiveWeapon.GetComponent<RangedWeapon>().BulletsPerClip;
 
-        ammoText.text = ammoCount.ToString() + "/" + ammoMax.ToString();
+        ammoText.text = weaponManagmentScript.ammoText;
         shadowAmmoText.text = ammoText.text;
     }
 }

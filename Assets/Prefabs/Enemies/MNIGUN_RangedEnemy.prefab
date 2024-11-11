@@ -315,14 +315,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d93ca2c493c264da38c7a43260bf8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 1
   runSpeed: 10
   stopDistance: 15
   attackRange: 30
   attackEndlag: 1
   attackCooldownMin: 0.1
   attackCooldownMax: 0.1
-  bulletPrefab: {fileID: 7825625112763865121, guid: 34eb51ad2fb77f24ca242f0395755654,
+  bulletPrefab: {fileID: 946708688116722392, guid: 48f74cd19883f2041b00f84575f4de80,
     type: 3}
 --- !u!114 &3708427024465655813
 MonoBehaviour:
@@ -336,6 +335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neverLoseSight: 0
   active: 1
   sightRange: 25
   lineOfSightOffset: {x: 0, y: 2, z: 0}

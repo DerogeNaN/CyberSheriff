@@ -11,7 +11,7 @@ public class EnemyRanged : EnemyBase
     public float stopDistance = 7.0f;
 
     [Header("Ranged Attack Settings")]
-    [Tooltip("minimum distance to the player to shoot")]
+    [Tooltip("maximum distance from the player to shoot")]
     public float attackRange = 25.0f;
     [Tooltip("remaining time in the animation after firing")]
     public float attackEndlag = 1.0f;
@@ -112,7 +112,10 @@ public class EnemyRanged : EnemyBase
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
-        //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
+        if (enemy.neverLoseSight)
+        {
+            if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
+        }
 
         Vector3 toPlayer = enemy.playerTransform.position - transform.position;
 

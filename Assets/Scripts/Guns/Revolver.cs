@@ -8,24 +8,18 @@ public class Revolver : RangedWeapon
     [SerializeField] float spreadMultiplier = 0.5f;
     public override void EngagePrimaryFire()
     {
-        animator.SetTrigger("ShootTrig");
-        base.EngagePrimaryFire();
-        SoundManager2.Instance.PlaySound("Revolver");
+        if (currentBullets > 0)
+        {
+            animator.SetTrigger("ShootTrig");
+            base.EngagePrimaryFire();
+            SoundManager2.Instance.PlaySound("Revolver");
+        }
     }
 
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
-
-        reloading = true;
-        yield return new WaitForSeconds(reloadTime);
-        //Debug.Log("Reloading...");
-        canFire = true;
-        if (currentBullets != BulletsPerClip)
-        {
-            currentBullets = BulletsPerClip;
-        }
-        reloading = false;
+        yield return base.Reload() ;
     }
 
     public override void EngageAltFire()
@@ -34,7 +28,7 @@ public class Revolver : RangedWeapon
         if (currentBullets > 0)
         {
             bool hit;
-            RayData rayData = AltRayCastAndGenGunRayData(muzzlePoint,out hit);
+            RayData rayData = AltRayCastAndGenGunRayData(muzzlePoint, out hit);
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
@@ -94,10 +88,10 @@ public class Revolver : RangedWeapon
             canFire = false;
             StartCoroutine(Wait(AltshotGapTime));
         }
-        else if (currentBullets <= 0 && reloading == false)
+        else if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false)
         {
             canFire = false;
-            StartCoroutine(base.Reload());
+            StartCoroutine(Reload());
         }
 
     }
@@ -157,14 +151,14 @@ public class Revolver : RangedWeapon
     public override void OnPrimaryFireBegin()
     {
         shouldShootPrimary = true;
-        //Debug.Log("Beginning primary Fire");
+
     }
 
     //Active on Begining of alt-firing action
     public override void OnAltFireBegin()
     {
         shouldShootAlt = true;
-        //Debug.Log("Beginning primary Fire");
+
     }
 
     //Active every interval of Primaryfire set in this script
@@ -172,7 +166,7 @@ public class Revolver : RangedWeapon
     {
         if (shouldShootPrimary)
         {
-            //Debug.Log("Primary fire stay ");
+
         }
     }
 
@@ -181,7 +175,7 @@ public class Revolver : RangedWeapon
     {
         if (shouldShootAlt)
         {
-            //Debug.Log("alt fire stay ");
+
         }
 
     }
@@ -190,15 +184,14 @@ public class Revolver : RangedWeapon
     public override void OnprimaryFireEnd()
     {
         shouldShootPrimary = false;
-        animator.SetBool("ShootBool", false);
-        //Debug.Log("end Primary Fire");
+
     }
 
     //active on Alt-fire End
     public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        //Debug.Log("end alt fire");
+
     }
 
 }

@@ -13,6 +13,8 @@ public class CameraJiggle : MonoBehaviour
     public float defaultFOV = 80f;
     public float currFOV;
 
+    public GameObject cameraHolder;
+
     public AnimationCurve dashFOVCurve;
     public AnimationCurve defaultFOVCurve;
 
@@ -26,9 +28,9 @@ public class CameraJiggle : MonoBehaviour
             tilt /= maxMomentumInfluence;
             tilt *= headTiltAtMax;
 
-            transform.localEulerAngles = new Vector3(
-                transform.localEulerAngles.x,
-                transform.localEulerAngles.y,
+            cameraHolder.transform.localEulerAngles = new Vector3(
+                cameraHolder.transform.localEulerAngles.x,
+                cameraHolder.transform.localEulerAngles.y,
                 tilt
                 );
         }
@@ -39,9 +41,9 @@ public class CameraJiggle : MonoBehaviour
             tilt /= maxMomentumInfluence;
             tilt *= headTiltAtMax;
 
-            transform.localEulerAngles = new Vector3(
-                transform.localEulerAngles.x,
-                transform.localEulerAngles.y,
+            cameraHolder.transform.localEulerAngles = new Vector3(
+                cameraHolder.transform.localEulerAngles.x,
+                cameraHolder.transform.localEulerAngles.y,
                 tilt
                 );
         }
@@ -62,10 +64,5 @@ public class CameraJiggle : MonoBehaviour
         }
         
         //Camera.main.fieldOfView = currFOV;
-    }
-
-    private float easeInOutCubic(float value)
-    {
-        return value < 0.5 ? 4 * value * value * value : 1 - Mathf.Pow(-2 * value + 2, 3) / 2;
     }
 }

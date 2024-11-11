@@ -21,7 +21,7 @@ public enum EnemyState
 
 public class EnemyBase : MonoBehaviour
 {
-    public EnemyState state;
+    protected EnemyState state;
 
     protected EnemyCommon enemy;
 

@@ -1,9 +1,5 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.ProBuilder;
-using UnityEngine.UIElements;
-
 
 public class Movement : MonoBehaviour
 {
@@ -14,7 +10,7 @@ public class Movement : MonoBehaviour
     public Transform respawnPos;
     [SerializeField] Transform cameraSlidePos;
     [SerializeField] Transform cameraDefaultPos;
-    public Collider slideCollider;
+    //public Collider slideCollider;
     public GameObject grappleUI;
 
     //[HideInInspector][Tooltip("")]
@@ -99,14 +95,17 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("Speed the player travels when wallrunning")]
     public float wallrunVelocityBonus = 0.2f;
 
+    [SerializeField][Tooltip("How long in seconds the player can wallrun until gravity kicks in")]
+    public float maxWallrunTime = 2.0f;
 
 
     //Backend Variables:
     [HideInInspector] public float cameraLeaveWallrunTime = 0;
-    private float lastWallrunTime = 0;
+    private float lastWallRunTime = 0;
     private float leavingWallrunTime = 0;
     [HideInInspector] public bool isWallRunning = false;
-    private bool canWallrun = false;
+    private float wallRunStartTime = 0;
+    private bool startWallrun = false;
     #endregion
 
     #region Grapple
@@ -144,7 +143,7 @@ public class Movement : MonoBehaviour
 
     //Backend Variables:
     private float currEncouragment;
-    private int slowDownPercentage = 30;
+    public int slowDownPercentage = 30;
     private float speedLimitEnforceAmmount = 1.5f;
     private float momentumRatio;
     #endregion
@@ -159,6 +158,23 @@ public class Movement : MonoBehaviour
 
     [SerializeField][Tooltip("How long the camera takes to lower (0 - never, 1 - instant)")]
     public float cameraSlideTransitionTime = 0.1f;
+
+    //Backend Variables:
+    [SerializeField] private GameObject cameraHolder;
+    #endregion
+
+    #region Sound
+    [Header("Sound Settings")]
+    [SerializeField][Tooltip("Time in seconds between footsteps")]
+    private float footstepInterval = 0.0f;
+
+    [SerializeField][Tooltip("Time in seconds between footsteps while wall running")]
+    private float wallRunFootstepInterval = 0.0f;
+
+    //Backend Variables:
+    private float lastFootstepTime = 0.0f;
+    private float lastWallRunFootstepTime = 0.0f;
+    private float slideDelay = 0.0f;
     #endregion
 
     [Space(20.0f)]
@@ -184,20 +200,16 @@ public class Movement : MonoBehaviour
 
     public void UpdateMovement()
     {
-        //TODO: change the currEncourangment check to account for a new "encouragedSlideMomentum"
         if (isSliding && isGrounded) currEncouragment = encouragedSlideMomentum;
         else if (!isGrounded) currEncouragment = encouragedAirMomentum;
         else currEncouragment = encouragedGroundMomentum;
 
-        //currEncouragment = isGrounded ? encouragedGroundMomentum : encouragedAirMomentum;
-
         momentumRatio = 1 / currEncouragment;
 
-        //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        //Debug.DrawRay(transform.position, velocity * 5, Color.red);
-        //Debug.DrawRay(transform.position, wallTangent * 2, Color.yellow);
+
+
     }
 
     void MovePlayer()
@@ -215,15 +227,14 @@ public class Movement : MonoBehaviour
         if (isSliding)
         {
             standingCollider.enabled = false;
-            slideCollider.enabled = true;
-            //movementInputWorld = Vector3.zero;
+            //slideCollider.enabled = true;
 
             if (velocity.magnitude <= 1) isSliding = false;
         }
         else
         {
             standingCollider.enabled = true;
-            slideCollider.enabled = false;
+            //slideCollider.enabled = false;
 
             if (!isGrappling)
             {
@@ -288,13 +299,13 @@ public class Movement : MonoBehaviour
         {
             float speed = velocity.magnitude;
             float moveMag = moveSpeed * momentumRatio * slowDownPercentage / 100;
-            float subtraction = Mathf.Min(speed,moveMag);
+            float subtraction = Mathf.Min(speed, moveMag);
             velocity -= velocity.normalized * subtraction;
 
             if (Mathf.Abs(velocity.x) < 0.0015f && Mathf.Abs(velocity.z) < 0.0015f)
             {
-                velocity.x = 0;
-                velocity.z = 0;
+                //velocity.x = 0;
+                //velocity.z = 0;
             }
         }
 
@@ -313,9 +324,34 @@ public class Movement : MonoBehaviour
         CheckForGrappleTarget();
         Grappling();
 
-        //rb.velocity = Vector3.zero;
-        //velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        PlayFootstepSound();
+
+        //Actually apply motion to player transform
         transform.position += velocity * Time.deltaTime;
+    }
+
+    void PlayWallRunFootstepSound()
+    {
+        if (isWallRunning)
+        {
+            if (lastWallRunFootstepTime + wallRunFootstepInterval < Time.time)
+            {
+                lastWallRunFootstepTime = Time.time;
+                SoundManager2.Instance.PlaySound("Wallrunning");
+            }
+        }
+    }
+
+    void PlayFootstepSound()
+    {
+        if (isGrounded && !isSliding && velocity != Vector3.zero && velocity.magnitude >= 3)
+        {
+            if (lastFootstepTime + footstepInterval < Time.time)
+            {
+                lastFootstepTime = Time.time;
+                SoundManager2.Instance.PlaySound("Footsteps_Concrete");
+            }
+        }
     }
 
     void Gravity()
@@ -343,6 +379,8 @@ public class Movement : MonoBehaviour
     private void Slide_Performed(InputAction.CallbackContext context)
     {
         isTryingSlide = true;
+
+        SoundManager2.Instance.PlaySound("SlideSFX");
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
@@ -361,8 +399,8 @@ public class Movement : MonoBehaviour
 
     private void MoveCameraTowardsTransformHeight(Transform target)
     {
-        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, target.position.y, cameraSlideTransitionTime);
-        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+        float newCameraYPos = Mathf.Lerp(cameraHolder.transform.position.y, target.position.y, cameraSlideTransitionTime);
+        cameraHolder.transform.position = new Vector3(cameraHolder.transform.position.x, newCameraYPos, cameraHolder.transform.position.z);
     }
 
     private void Dash_Performed(InputAction.CallbackContext context)
@@ -443,7 +481,7 @@ public class Movement : MonoBehaviour
                     jumpCount++;
                 }
 
-                else if (lastWallrunTime + wallrunJumpGraceLength > Time.time)
+                else if (lastWallRunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
                 }
@@ -563,8 +601,8 @@ public class Movement : MonoBehaviour
 
         if (!isSliding)
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.65f, 0),
-                                              transform.position - new Vector3(0, 0.65f, 0),
+            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0),
+                                              transform.position - new Vector3(0, 0.7f, 0),
                                               0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hitArray.Length; i++)
@@ -595,16 +633,13 @@ public class Movement : MonoBehaviour
                     velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                     velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                 }
-
-                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
             }
         }
 
         else
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0.5f, 0, 0),
-                                              transform.position - new Vector3(0.5f, 0, 0),
-                                              0.35f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+            hitArray = Physics.SphereCastAll(transform.position + new Vector3(0, -0.7f, 0),
+                                              0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hitArray.Length; i++)
             {
@@ -614,7 +649,6 @@ public class Movement : MonoBehaviour
                 if (Vector3.Dot(velocity, normal) < 0) continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
-                //Debug.Log(normalInUp);
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
                     Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
@@ -634,8 +668,6 @@ public class Movement : MonoBehaviour
                     velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                     velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
                 }
-
-                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
             }
         }
         
@@ -676,8 +708,7 @@ public class Movement : MonoBehaviour
 
             else if (isWallRunning)
             {
-                isWallRunning = false;
-                leavingWallrunTime = Time.time;
+                WallRunReset();
             }
         }
 
@@ -693,9 +724,10 @@ public class Movement : MonoBehaviour
         Vector3 tangent = Vector3.Cross(Vector3.up, wallNormal);
         wallTangent = tangent * Mathf.Sign(Vector3.Dot(velocity, tangent));
         float wallSpeed = Vector3.Dot(tangent, velocity);
-        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
+        if (!isWallRunning) wallRunStartTime = Time.time;
+        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time)
         {
-            lastWallrunTime = Time.time;
+            lastWallRunTime = Time.time;
             cameraLeaveWallrunTime = Time.time + 0.2f;
             isWallRunning = true;
             velocity = wallSpeed * tangent;
@@ -705,8 +737,24 @@ public class Movement : MonoBehaviour
             {
                 velocity = velocity.normalized * wallrunVelocityBonus;                
             }
-
+            PlayWallRunFootstepSound();
             return;
         }
+        else
+        {
+            Vector3 velocityHori = new Vector3(velocity.x, 0, velocity.z);
+            velocityHori.Normalize();
+
+            Vector3 targetDirection = Vector3.RotateTowards(velocityHori, wallNormal, wallrunJumpAngle, 0);
+            velocity = targetDirection * velocity.magnitude;
+        }
+    }
+
+    private void WallRunReset()
+    {
+        lastWallRunTime = Time.time;
+        cameraLeaveWallrunTime = Time.time + 0.2f;
+        isWallRunning = false;
+        wallNormal = Vector3.zero;
     }
 }

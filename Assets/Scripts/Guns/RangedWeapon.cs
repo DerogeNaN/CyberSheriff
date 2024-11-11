@@ -53,6 +53,13 @@ public class RangedWeapon : MonoBehaviour
     [Tooltip("Current Number of Bullets")]
     public int currentBullets;
 
+
+    [SerializeField]
+    public int CurrentReserveAmmo = 50;
+
+    [SerializeField]
+    public int ReserveAmmoCap = 50;
+
     [Header("Gun Behaviour Bools (Do NOT mess With)")]
 
     [SerializeField]
@@ -111,13 +118,15 @@ public class RangedWeapon : MonoBehaviour
     {
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
+        CurrentReserveAmmo = ReserveAmmoCap;
+
     }
 
     // Update is called once per frame
     public virtual void Update()
     {
 
-        if (currentBullets <= 0 && reloading == false)
+        if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false)
         {
             canFire = false;
             StartCoroutine(Reload());
@@ -171,7 +180,7 @@ public class RangedWeapon : MonoBehaviour
                             hitFX.transform.position = rayData.hit.point;
                         }
                     }
-                    else 
+                    else
                     {
                         SpawnBulletHoleDecal(rayData);
                         GameObject hitFX = Instantiate(HitEffect);
@@ -208,7 +217,7 @@ public class RangedWeapon : MonoBehaviour
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
-        else if (currentBullets <= 0 && reloading == false)
+        else if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false)
         {
             canFire = false;
             StartCoroutine(Reload());
@@ -254,7 +263,7 @@ public class RangedWeapon : MonoBehaviour
 
     public virtual void ManualReload()
     {
-        if (reloading == false && canPressAltFire == true)//verifies that im not already altfiring for situations like fanFire 
+        if (reloading == false && canPressAltFire == true && currentBullets != BulletsPerClip)//verifies that im not already altfiring for situations like fanFire 
         {
             canFire = false;
             StartCoroutine(Reload());
@@ -350,22 +359,6 @@ public class RangedWeapon : MonoBehaviour
         return new RayData { ray = gunRay, hit = gunHit };
     }
 
-    private void OnDrawGizmos()
-    {
-        //RayData rd = RayCastAndGenCameraRayData(out bool hit);
-        //if (hit == true)
-        //{
-        //    Gizmos.color = Color.yellow;
-        //    Debug.Log("we hit" + rd.hit.collider.name);
-        //    Gizmos.DrawRay(rd.ray);
-        //    Gizmos.DrawWireSphere(rd.hit.point, 1);
-        //}
-        //else 
-        //{
-        //    Debug.Log("No Luck Homie");
-        //}
-    }
-
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
     public IEnumerator Wait(float shotGapTime)
     {
@@ -382,9 +375,18 @@ public class RangedWeapon : MonoBehaviour
         yield return new WaitForSeconds(reloadTime);
         // Debug.Log("Reloading...");
         canFire = true;
-        if (currentBullets != BulletsPerClip)
+        int bulletDifference;
+        if (currentBullets != BulletsPerClip && CurrentReserveAmmo > BulletsPerClip)
         {
-            currentBullets = BulletsPerClip;
+            bulletDifference = -(currentBullets - BulletsPerClip);
+
+            CurrentReserveAmmo -= bulletDifference;
+            currentBullets += bulletDifference;
+        }
+        else
+        {
+            currentBullets = CurrentReserveAmmo;
+            CurrentReserveAmmo -= CurrentReserveAmmo;
         }
         reloading = false;
     }
