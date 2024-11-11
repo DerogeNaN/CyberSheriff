@@ -8,6 +8,9 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth;
     public int health;
 
+    [SerializeField][Tooltip("If true the player can't take damage during a dash")]
+    private bool invincibleDashing = false;
+
     public GameObject healthUI1;
     public GameObject healthUI2;
     public GameObject healthUI3;
@@ -41,6 +44,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage, int damageType)
     {
+        if (Movement.playerMovement.isDashing && invincibleDashing) return;
         health -= damage;
 
         IsDestroyed();
