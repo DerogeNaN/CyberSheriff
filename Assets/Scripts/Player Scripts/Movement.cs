@@ -10,7 +10,7 @@ public class Movement : MonoBehaviour
     public Transform respawnPos;
     [SerializeField] Transform cameraSlidePos;
     [SerializeField] Transform cameraDefaultPos;
-    public Collider slideCollider;
+    //public Collider slideCollider;
     public GameObject grappleUI;
 
     //[HideInInspector][Tooltip("")]
@@ -158,6 +158,9 @@ public class Movement : MonoBehaviour
 
     [SerializeField][Tooltip("How long the camera takes to lower (0 - never, 1 - instant)")]
     public float cameraSlideTransitionTime = 0.1f;
+
+    //Backend Variables:
+    [SerializeField] private GameObject cameraHolder;
     #endregion
 
     #region Sound
@@ -197,20 +200,16 @@ public class Movement : MonoBehaviour
 
     public void UpdateMovement()
     {
-        //TODO: change the currEncourangment check to account for a new "encouragedSlideMomentum"
         if (isSliding && isGrounded) currEncouragment = encouragedSlideMomentum;
         else if (!isGrounded) currEncouragment = encouragedAirMomentum;
         else currEncouragment = encouragedGroundMomentum;
 
-        //currEncouragment = isGrounded ? encouragedGroundMomentum : encouragedAirMomentum;
-
         momentumRatio = 1 / currEncouragment;
 
-        //UpdateCamera();
         MovePlayer();
         GroundCheck();
-        //Debug.DrawRay(transform.position, velocity * 5, Color.red);
-        //Debug.DrawRay(transform.position, wallTangent * 2, Color.yellow);
+
+
     }
 
     void MovePlayer()
@@ -228,14 +227,14 @@ public class Movement : MonoBehaviour
         if (isSliding)
         {
             standingCollider.enabled = false;
-            slideCollider.enabled = true;
+            //slideCollider.enabled = true;
 
             if (velocity.magnitude <= 1) isSliding = false;
         }
         else
         {
             standingCollider.enabled = true;
-            slideCollider.enabled = false;
+            //slideCollider.enabled = false;
 
             if (!isGrappling)
             {
@@ -400,8 +399,8 @@ public class Movement : MonoBehaviour
 
     private void MoveCameraTowardsTransformHeight(Transform target)
     {
-        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, target.position.y, cameraSlideTransitionTime);
-        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+        float newCameraYPos = Mathf.Lerp(cameraHolder.transform.position.y, target.position.y, cameraSlideTransitionTime);
+        cameraHolder.transform.position = new Vector3(cameraHolder.transform.position.x, newCameraYPos, cameraHolder.transform.position.z);
     }
 
     private void Dash_Performed(InputAction.CallbackContext context)
@@ -602,8 +601,8 @@ public class Movement : MonoBehaviour
 
         if (!isSliding)
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.65f, 0),
-                                              transform.position - new Vector3(0, 0.65f, 0),
+            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0),
+                                              transform.position - new Vector3(0, 0.7f, 0),
                                               0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hitArray.Length; i++)
@@ -639,9 +638,8 @@ public class Movement : MonoBehaviour
 
         else
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0.5f, 0, 0),
-                                              transform.position - new Vector3(0.5f, 0, 0),
-                                              0.35f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+            hitArray = Physics.SphereCastAll(transform.position + new Vector3(0, -0.7f, 0),
+                                              0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hitArray.Length; i++)
             {
