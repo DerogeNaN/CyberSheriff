@@ -613,7 +613,7 @@ public class Movement : MonoBehaviour
                 if (Vector3.Dot(velocity, normal) < 0) continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
-                //Debug.Log(normalInUp);
+                
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
                     Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
@@ -646,7 +646,7 @@ public class Movement : MonoBehaviour
                 Vector3 normal = hitArray[i].normal;
                 normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
 
-                if (Vector3.Dot(velocity, normal) < 0) continue;
+                if (Vector3.Dot(velocity, normal) < 0); //continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
@@ -659,7 +659,10 @@ public class Movement : MonoBehaviour
                 velocity -= velocityInNormalDirection * normal;
 
                 float clampAmmount = Vector3.Dot(movementInputWorld, normal);
-                if (clampAmmount < 0) continue;
+                if (clampAmmount < 0)
+                {
+                    continue;
+                }
 
                 if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
                 {

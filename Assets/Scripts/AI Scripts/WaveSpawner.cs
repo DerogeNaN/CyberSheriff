@@ -18,8 +18,9 @@ public class WaveSpawner : MonoBehaviour
     private GameObject[][] waves;
 
     [SerializeField] private BoxCollider spawnZone;
-    private Vector3 center;
-    private Vector3 size;
+    [SerializeField] private BoxCollider landingZone;
+    private Vector3 centerSpawn;
+    private Vector3 sizeSpawn;
 
     void Start()
     {
@@ -33,23 +34,26 @@ public class WaveSpawner : MonoBehaviour
         }
 
         // Proceed with setup if spawnZone exists
-        center = transform.position;
-        size = spawnZone.size;
+        centerSpawn = transform.position;
+        sizeSpawn = spawnZone.size;
 
         WaveManager.StartNewWave += PrepareNextWave;
-        waves = new GameObject[][] { wave1Enemies, wave2Enemies, wave3Enemies, wave4Enemies, wave5Enemies, wave6Enemies, wave7Enemies, wave8Enemies, wave9Enemies, wave10Enemies};
-
-        //spawnZone = GetComponent<BoxCollider>();
-        //center = transform.position;
-        //size = spawnZone.size;
+        waves = new GameObject[][] {    wave1Enemies, wave2Enemies, wave3Enemies, 
+                                        wave4Enemies, wave5Enemies, wave6Enemies, 
+                                        wave7Enemies, wave8Enemies, wave9Enemies, wave10Enemies };
     }
 
     void SpawnWave(int waveNumber)
     {
+        //for (int i = 0; i < waves[waveNumber].Length; i++) 
+        //{
+        //    Vector3 spawnPos = centerSpawn + new Vector3(Random.Range(-sizeSpawn.x / 2, sizeSpawn.x / 2), 0, Random.Range(-sizeSpawn.z / 2, sizeSpawn.z / 2));
+        //}
+
         foreach (GameObject enemy in waves[waveNumber]) 
         {
-            Debug.Log("Attempting to spawn wave " + (WaveManager.waveManagerInstance.waveNumber + 1).ToString() + " enemies");
-            Vector3 spawnPos = center + new Vector3(Random.Range(-size.x / 2, size.x / 2), 0, Random.Range(- size.z / 2, size.z / 2));
+            //Debug.Log("Attempting to spawn wave " + (WaveManager.waveManagerInstance.waveNumber + 1).ToString() + " enemies");
+            Vector3 spawnPos = centerSpawn + new Vector3(Random.Range(-sizeSpawn.x / 2, sizeSpawn.x / 2), 0, Random.Range(- sizeSpawn.z / 2, sizeSpawn.z / 2));
 
             NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
             spawnPos = hit.position;
@@ -57,6 +61,16 @@ public class WaveSpawner : MonoBehaviour
             Instantiate(enemy, spawnPos, spawnZone.transform.rotation);
             WaveManager.waveManagerInstance.enemiesRemaining++;
         }
+
+        
+
+        //NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
+        //spawnPos = hit.position;
+    }
+
+    Vector3[] FindLandingPoints()
+    {
+        return new Vector3[] { };
     }
 
     void PrepareNextWave()
