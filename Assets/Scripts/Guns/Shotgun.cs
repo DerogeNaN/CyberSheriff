@@ -115,22 +115,7 @@ public class Shotgun : RangedWeapon
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
-        //  animator.GetCurrentAnimatorStateInfo(0).length
-        reloading = true;
-        yield return new WaitForSeconds(reloadTime);
-        //Debug.Log("Reloading...");
-        canFire = true;
-        if (currentBullets != BulletsPerClip && CurrentReserveAmmo > BulletsPerClip)
-        {
-            CurrentReserveAmmo -= BulletsPerClip;
-            currentBullets = BulletsPerClip;
-        }
-        else
-        {
-            currentBullets = CurrentReserveAmmo;
-            CurrentReserveAmmo -= CurrentReserveAmmo;
-        }
-        reloading = false;
+        yield return base.Reload();
     }
 
     public void EngagePrimaryFire(bool charged)
@@ -356,7 +341,7 @@ public class Shotgun : RangedWeapon
     //active on primary fire End
     public override void OnprimaryFireEnd()
     {
-        if (reloading == false && currentBullets > 0)
+        if (reloading == false && currentBullets > 0 && waiting == false )
         {
             shouldShootPrimary = false;
             chargeExited = true;
