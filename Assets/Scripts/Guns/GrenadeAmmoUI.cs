@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 public class GrenadeAmmoUI : MonoBehaviour
 {
 
     public GameObject AmmoHolderUI;
 
     [SerializeField]
-    public List<Transform> grenadeLogos;
+    public List<Slider> grenadeLogos;
 
     public WeaponManagement weaponManagementScript;
 
@@ -27,39 +28,49 @@ public class GrenadeAmmoUI : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    // Update is called once per frame 
     void Update()
     {
+        float percentage = ((float)shotgun.currentKillsToRecharge / (float)shotgun.RequiredKillsToRecharge);
+
         UIGrenadeAmmo = shotgun.grenadeAmmo;
-         
-        if (shotgun.isActiveAndEnabled)
+
+
+        //weaponManagementScript.
+        for (int i = 0; i < grenadeLogos.Count; i++)
         {
-
-            //weaponManagementScript.
-
-
-            for (int i = 0; i < grenadeLogos.Count; i++)
+            if (UIGrenadeAmmo < 1 && i == 0)
             {
-
-                if (UIGrenadeAmmo >= 1 && i == 0)
-                {
-                    grenadeLogos[i].gameObject.SetActive(true);
-
-                }
-                else if (UIGrenadeAmmo >= 2 && i == 1)
-                {
-                    grenadeLogos[i].gameObject.SetActive(true);
-                }
-                else if (UIGrenadeAmmo >= 3 && i == 2)
-                {
-                    grenadeLogos[i].gameObject.SetActive(true);
-                }
-                else
-                {
-                    grenadeLogos[i].gameObject.SetActive(false);
-                }
+                grenadeLogos[i].value = percentage;
+            }
+            else if (UIGrenadeAmmo == 1 && i == 1)
+            {
+                grenadeLogos[i - 1].value = 1;
+                grenadeLogos[i].value = percentage;
+            }
+            else if (UIGrenadeAmmo == 2 && i == 2)
+            {
+                grenadeLogos[i - 1].value = 1;
+                grenadeLogos[i].value = percentage;
+            }
+            else if (UIGrenadeAmmo == 3 && i == 2)
+            {
+                grenadeLogos[i].value = 1;
+            }
+            else if (UIGrenadeAmmo < 1 && i == 0)
+            {
+                grenadeLogos[i].value = 0;
+            }
+            else if (UIGrenadeAmmo < 2 && i == 1)
+            {
+                grenadeLogos[i].value = 0;
+            }
+            else if (UIGrenadeAmmo < 3 && i == 2)
+            {
+                grenadeLogos[i].value = 0;
             }
         }
+
     }
 
 
