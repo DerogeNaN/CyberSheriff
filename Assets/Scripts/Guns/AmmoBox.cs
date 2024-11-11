@@ -9,7 +9,8 @@ public class AmmoBox : MonoBehaviour
     {
         shotgun,
         revolver,
-        grenade
+        grenade,
+        ShotandRev,
     }
 
     [SerializeField]
@@ -18,7 +19,6 @@ public class AmmoBox : MonoBehaviour
     [SerializeField]
     int ammoGiven = 100;
 
-    [SerializeField]
     WeaponManagement weaponManagement;
 
     void Start()
@@ -50,9 +50,12 @@ public class AmmoBox : MonoBehaviour
                 weaponManagement.revolverRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.revolverRef.ReserveAmmoCap);
             }
 
-            if (ammoType == AmmoType.grenade)
+            if (ammoType == AmmoType.ShotandRev)
             {
-                Debug.Log("Ammo Grenade Given");
+                Debug.Log("BothGiven");
+                weaponManagement.revolverRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.revolverRef.ReserveAmmoCap);
+                weaponManagement.shotgunRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven/4, 0, weaponManagement.shotgunRef.ReserveAmmoCap);
+
             }
         }
     }
