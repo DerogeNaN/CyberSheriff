@@ -43,8 +43,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.27
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.61
+  m_Center: {x: 0, y: -0.12, z: 0}
 --- !u!1 &9079136257090432335
 GameObject:
   m_ObjectHideFlags: 0
@@ -92,9 +92,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6aa9f7c85182f545bae0e3f411ba87d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoType: 2
+  ammoType: 3
   ammoGiven: 100
-  weaponManagement: {fileID: 0}
+  timeSinceActive: 0
+  respawnTime: 5
+  mesh: {fileID: 7785398423873704045}
+  active: 0
 --- !u!54 &540686048946375394
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -185,6 +188,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4b22c7846ae6b4f892bcbb4da027d4, type: 3}
+--- !u!23 &7785398423873704045 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: be4b22c7846ae6b4f892bcbb4da027d4,
+    type: 3}
+  m_PrefabInstance: {fileID: 8920187477717830889}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8953268495248730882 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: be4b22c7846ae6b4f892bcbb4da027d4,

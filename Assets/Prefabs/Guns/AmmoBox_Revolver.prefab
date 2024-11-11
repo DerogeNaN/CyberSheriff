@@ -49,7 +49,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoType: 1
   ammoGiven: 100
-  weaponManagement: {fileID: 0}
+  timeSinceActive: 0
+  respawnTime: 5
+  mesh: {fileID: 3715410829659028324}
+  active: 0
 --- !u!54 &553765045398758079
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -109,7 +112,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.29
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2616133811558524896
 PrefabInstance:
@@ -194,6 +197,12 @@ PrefabInstance:
 --- !u!4 &2577438505729310731 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2b8bb2c0b8987f8408a4c54538a2a7e8,
+    type: 3}
+  m_PrefabInstance: {fileID: 2616133811558524896}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &3715410829659028324 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 2b8bb2c0b8987f8408a4c54538a2a7e8,
     type: 3}
   m_PrefabInstance: {fileID: 2616133811558524896}
   m_PrefabAsset: {fileID: 0}

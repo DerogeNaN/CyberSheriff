@@ -341,7 +341,7 @@ public class Shotgun : RangedWeapon
     //Active every interval of Primaryfire set in this script
     public override void OnPrimaryFireStay()
     {
-        if (reloading == false)
+        if (reloading == false && currentBullets > 0)
             shouldShootPrimary = true;
 
     }
@@ -356,8 +356,11 @@ public class Shotgun : RangedWeapon
     //active on primary fire End
     public override void OnprimaryFireEnd()
     {
-        shouldShootPrimary = false;
-        chargeExited = true;
+        if (reloading == false && currentBullets > 0)
+        {
+            shouldShootPrimary = false;
+            chargeExited = true;
+        }
 
 
         //  Debug.Log("end Primary Fire");
