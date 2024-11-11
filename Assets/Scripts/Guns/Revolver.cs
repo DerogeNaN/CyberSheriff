@@ -19,22 +19,7 @@ public class Revolver : RangedWeapon
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
-
-        reloading = true;
-        yield return new WaitForSeconds(reloadTime);
-        //Debug.Log("Reloading...");
-        canFire = true;
-        if (currentBullets != BulletsPerClip && CurrentReserveAmmo > BulletsPerClip)
-        {
-            CurrentReserveAmmo -= BulletsPerClip;
-            currentBullets = BulletsPerClip;
-        }
-        else
-        {
-            currentBullets = CurrentReserveAmmo;
-            CurrentReserveAmmo -= CurrentReserveAmmo;
-        }
-        reloading = false;
+        yield return base.Reload() ;
     }
 
     public override void EngageAltFire()
