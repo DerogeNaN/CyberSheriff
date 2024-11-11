@@ -7,7 +7,7 @@ using static RangedWeapon;
 
 public class Shotgun : RangedWeapon
 {
-    [Header("I be riding shotgun underneath the hot sun...")]
+    [Header("Shotgun Settings")]
     [SerializeField]
     int bulletsPerShot = 5;
 
@@ -27,7 +27,7 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     bool charged = false;
 
-    [Header("I'd Catch a grenade for ya(yeah,yeah,yeah...)")]
+    [Header("Grenade Settings")]
     [SerializeField]
     GameObject Grenade;
 
