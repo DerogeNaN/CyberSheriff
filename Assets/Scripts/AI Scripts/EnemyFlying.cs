@@ -89,11 +89,15 @@ public class EnemyFlying : EnemyBase
         toPlayer = enemy.playerTransform.position - transform.position + new Vector3(0, yOffset, 0);
 
         // apply movement and rotation
-        //if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
         if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(new(dir.x, 0, dir.z));
         transform.position += ((currentSpeed * dir) + GetAvoidance2()) * Time.deltaTime;
 
         //transform.position += transform.right * 1.0f * Time.deltaTime;
+    }
+
+    public override void OnDestroyed(int damageType)
+    {
+        Destroy(gameObject);
     }
 
     private void FixedUpdate()
@@ -118,7 +122,7 @@ public class EnemyFlying : EnemyBase
         //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
 
         // look at player
-        dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
+        dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed * Time.deltaTime);
 
         if (toPlayer.magnitude > closeDistance + closeBuffer)
         {
@@ -168,35 +172,6 @@ public class EnemyFlying : EnemyBase
             else if (sign < 0) if (currentSpeed > 0) currentSpeed = 0;
     }
 
-    private Vector3 GetAvoidance()
-    {
-        Vector3 avoidance = new();
-        Vector3[] rays =
-        {
-             Quaternion.Euler(0, -45, 0) * transform.forward * avoidDistance, // left
-             Quaternion.Euler(0, 45, 0) * transform.forward * avoidDistance,  // right
-             new Vector3(0.0f, -1.0f, 0.0f) * avoidFloorDistance,             // down
-             //transform.forward * avoidFloorDistance,                        // forward
-        };
-
-        // loop through rays for each direction and add to avoidance amount
-        foreach (Vector3 v in rays)
-        {
-            Debug.DrawRay(transform.position, v);
-
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, v, out hit, v.magnitude))
-            {
-                avoidance += hit.normal;
-            }
-        }
-
-        // scale avoidance based on the percentage of current speed to max speed (i think)
-        //avoidance *= ((currentSpeed / maxSpeed) * avoidanceSpeedWeight);
-
-        return avoidance * avoidanceStrength;
-    }
-
     private Vector3 GetAvoidance2()
     {
         Vector3 avoidance = new();
@@ -209,14 +184,15 @@ public class EnemyFlying : EnemyBase
             {
                 //Debug.Log(c.gameObject.name);
                 Vector3 fromCollision = transform.position - c.transform.position;
-                avoidance += fromCollision.normalized * (fromCollision.magnitude * avoidanceDistanceWeight);
+                avoidance += fromCollision.normalized * ((avoidDistance - fromCollision.magnitude) * avoidanceDistanceWeight);
             }
         }
 
         // floor avoidance
-        if (Physics.Raycast(transform.position, -transform.up, avoidFloorDistance))
+        RaycastHit floorHit;
+        if (Physics.Raycast(transform.position, -transform.up, out floorHit, avoidFloorDistance))
         {
-            avoidance += transform.up * avoidanceStrength * 2.0f;
+            avoidance += transform.up * (avoidFloorDistance - floorHit.distance) * 10.0f;
         }
 
         return avoidance * avoidanceStrength;
@@ -229,22 +205,10 @@ public class EnemyFlying : EnemyBase
         closeDistance = Random.Range(closeDistanceRange.x, closeDistanceRange.y);
     }
 
-    static bool IsDescendantOf(Transform maybeParent, Transform maybeChild)
+    bool IsDescendantOf(Transform maybeParent, Transform maybeChild)
     {
         if (maybeParent == maybeChild.parent) return true;
         if (maybeChild.parent == null) return false;
         return IsDescendantOf(maybeParent, maybeChild.parent);
-    }
-
-    static bool IsDescendantOf_NotRecursive(Transform maybeParent, Transform maybeChild)
-    {
-        Transform currentChild = maybeChild;
-
-        while (true)
-        {
-            if (currentChild.parent == null) return false;
-            if (currentChild.parent == maybeParent) return true;
-            currentChild = currentChild.parent;
-        }
     }
 }

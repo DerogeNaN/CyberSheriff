@@ -7,7 +7,7 @@ using static RangedWeapon;
 
 public class Shotgun : RangedWeapon
 {
-    [Header("I be riding shotgun underneath the hot sun...")]
+    [Header("Shotgun Settings")]
     [SerializeField]
     int bulletsPerShot = 5;
 
@@ -27,7 +27,7 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     bool charged = false;
 
-    [Header("I'd Catch a grenade for ya(yeah,yeah,yeah...)")]
+    [Header("Grenade Settings")]
     [SerializeField]
     GameObject Grenade;
 
@@ -59,7 +59,7 @@ public class Shotgun : RangedWeapon
     public override void Update()
     {
         animator.SetBool("ChargedBool", charged);
-        if (currentBullets <= 0 && reloading == false)
+        if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false)
         {
             canFire = false;
             StartCoroutine(Reload());
@@ -92,13 +92,6 @@ public class Shotgun : RangedWeapon
 
         }
 
-        if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true && currentBullets > 1)
-        {
-            // animator.SetTrigger("ChargeStartTrigger");
-
-        }
-
-
         if (shouldShootPrimary == false && chargeExited == true && waiting == false && reloading == false && canPressAltFire == true)
         {
             EngagePrimaryFire(charged);
@@ -122,38 +115,28 @@ public class Shotgun : RangedWeapon
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
-        //  animator.GetCurrentAnimatorStateInfo(0).length
-        reloading = true;
-        yield return new WaitForSeconds(reloadTime);
-        //Debug.Log("Reloading...");
-        canFire = true;
-        if (currentBullets != BulletsPerClip)
-        {
-            currentBullets = BulletsPerClip;
-        }
-        reloading = false;
+        yield return base.Reload();
     }
 
     public void EngagePrimaryFire(bool charged)
     {
-
-        chargeExited = false;
-        inputTime = 0;
-        int pellets;
-        //Primary Fire Logic
-        if (charged && currentBullets > 1)
-        {
-            animator.SetTrigger("ShootCTrig");
-            pellets = bulletsPerShot * 2;
-        }
-        else
-        {
-            animator.SetTrigger("ShootTrig");
-            pellets = bulletsPerShot;
-        }
-
         if (currentBullets > 0)
         {
+            chargeExited = false;
+            inputTime = 0;
+            int pellets;
+            //Primary Fire Logic
+            if (charged && currentBullets > 1)
+            {
+                animator.SetTrigger("ShootCTrig");
+                pellets = bulletsPerShot * 2;
+            }
+            else
+            {
+                animator.SetTrigger("ShootTrig");
+                pellets = bulletsPerShot;
+            }
+
             if (charged && currentBullets > 1)
             {
                 currentBullets -= 2;
@@ -233,11 +216,10 @@ public class Shotgun : RangedWeapon
                     }
                 }
             }
-            // animator.SetBool("ChargeReleaseBool", false);
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
-        else if (currentBullets <= 0 && reloading == false)
+        else if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false)
         {
             canFire = false;
             StartCoroutine(Reload());
@@ -309,11 +291,9 @@ public class Shotgun : RangedWeapon
             if (hit == false)
             {
                 Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData().ray.direction * camRef.farClipPlane);
-                //     Debug.Log("fallicies and falsehoods");
             }
             else
             {
-                //   Debug.Log("Dogmas and definitudes ");
             }
 
             grenadeRB.gameObject.transform.position = muzzlePoint.position;
@@ -346,7 +326,7 @@ public class Shotgun : RangedWeapon
     //Active every interval of Primaryfire set in this script
     public override void OnPrimaryFireStay()
     {
-        if (reloading == false)
+        if (reloading == false && currentBullets > 0)
             shouldShootPrimary = true;
 
     }
@@ -361,8 +341,11 @@ public class Shotgun : RangedWeapon
     //active on primary fire End
     public override void OnprimaryFireEnd()
     {
-        shouldShootPrimary = false;
-        chargeExited = true;
+        if (reloading == false && currentBullets > 0 && waiting == false )
+        {
+            shouldShootPrimary = false;
+            chargeExited = true;
+        }
 
 
         //  Debug.Log("end Primary Fire");

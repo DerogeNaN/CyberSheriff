@@ -64,29 +64,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c63e58f320a3a844ebbf9f804657af69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
   maxSpeed: 30
-  turnSpeed: 0.05
+  turnSpeed: 10
   acceleration: 10
   deceleration: 30
   yOffset: 1.5
   closeDistance: 7
-  avoidanceStrength: 0.5
-  avoidDistance: 2
-  avoidanceDistanceWeight: 1
-  avoidanceSpeedWeight: 0
-  avoidFloorDistance: 1
-  closeBuffer: 1
-  backwardsAccelerationMultiplier: 2
+  avoidFloorDistance: 1.5
   attackRange: 25
   attackCooldownMin: 3
   attackCooldownMax: 5
-  bulletPrefab: {fileID: 946708688116722392, guid: b1911614f4f1dfd4689e4c3670ea4ccd,
+  bulletPrefab: {fileID: 1524708786677827774, guid: d70e0e6b7126bb14bb78798846dabb3c,
     type: 3}
+  randomiseValues: 1
   randomiseTimerRange: {x: 1, y: 4}
   closeDistanceRange: {x: 6, y: 15}
   yOffsetRange: {x: 1.5, y: 4}
   maxSpeedRange: {x: 20, y: 40}
+  avoidanceStrength: 0.3
+  avoidDistance: 3
+  avoidanceDistanceWeight: 3
+  avoidanceSpeedWeight: 0
+  closeBuffer: 1
+  backwardsAccelerationMultiplier: 2
 --- !u!114 &4443895184043447715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,19 +99,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neverLoseSight: 0
   active: 1
   sightRange: 40
+  lineOfSightOffset: {x: 0, y: 0, z: 0}
   speed: 5
   mesh: {fileID: 6199602304891668101}
-  lineOfSightOffset: {x: 0, y: 0, z: 0}
-  floorRaycastPos: {x: 0, y: 0, z: 0}
-  floorRaycastLength: 0
+  meshRenderer: {fileID: 0}
+  animator: {fileID: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
   shouldPath: 0
   navAgent: {fileID: 0}
+  health: {fileID: 0}
+  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
+    type: 3}
 --- !u!1 &4443895185962462416
 GameObject:
   m_ObjectHideFlags: 0

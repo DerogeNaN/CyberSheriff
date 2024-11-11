@@ -33,11 +33,12 @@ public class EnemyMelee : EnemyBase
     Vector3 attackTargetRotation;
     float attackRotate = 0;
     bool createdHitbox = false;
+    float untilDestroy = 2.0f;
 
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
-        SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
+        //SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
         initialPosition = transform.position;
         enemy.moveTarget = initialPosition;
         enemy.speed = runSpeed;
@@ -50,12 +51,22 @@ public class EnemyMelee : EnemyBase
         // do this regardless of state 
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
+
+        if (enemy.health.health <= 0)
+        {
+            untilDestroy -= Time.deltaTime;
+            if (untilDestroy <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 
     public override void OnHit(int damage, int damageType)
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
+        //enemy.CreateHitEffect();
     }
 
     public override void OnDestroyed(int damageType)
@@ -124,8 +135,11 @@ public class EnemyMelee : EnemyBase
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if line of sight is lost, change to lost sight state
-        //if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
-        //else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
+        if (!enemy.neverLoseSight)
+        {
+            if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
+            else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
+        }
 
         if (enemy.navAgent.velocity.magnitude > 0) enemy.animator.SetBool("Run", true);
         else enemy.animator.SetBool("Run", false);
@@ -138,6 +152,8 @@ public class EnemyMelee : EnemyBase
     }
     protected override void LostSightOfTargetUpdate() // UNUSED
     {
+        enemy.animator.SetBool("Run", false);
+
         remainingChaseTime -= Time.deltaTime;
         // give up chasing
         if (remainingChaseTime <= 0)
