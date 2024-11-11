@@ -123,7 +123,7 @@ public class EnemyFlying : EnemyBase
         //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
 
         // look at player
-        dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
+        dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed * Time.deltaTime);
 
         if (toPlayer.magnitude > closeDistance + closeBuffer)
         {

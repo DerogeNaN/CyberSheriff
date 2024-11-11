@@ -14,26 +14,34 @@ enum LaserState
 
 public class EnemySniper : EnemyBase
 {
+    [Tooltip("whether or not the charging progress resets when line of sight is broken")]
     public bool resetOnLoseSight;
-    public float attackRange;
+    [Tooltip("time for the beam to charge up while aiming at the player, before the attack fires")]
     public float chargeTime;
+    [Tooltip("the moment of time that the enemy stops tracking the player before firing, allowing them to dodge the beam before it fires")]
     public float timeBeforeShot;
+    [Tooltip("duration of the firing animation. the actual damaging shot still only happens once")]
     public float shotDuration;
+    [Tooltip("time for the animation of the beam dissipating after firing")]
     public float disappearTime;
+    [Tooltip("time between shots")]
     public float shotCooldown;
+    [Tooltip("the laser LineRenderer prefab")]
     public GameObject laser;
+    [Tooltip("the transform at which to fire the laser from")]
     public Transform gunPos;
 
     LaserState laserState = LaserState.none;
+    float attackRange;
     float timer;
     LineRenderer currentLaser;
     float laserIntensity = 0.0f;
-    float laserDistance;
     bool fired = false;
     bool targetPlayer = true;
 
     protected override void OnStart()
     {
+        attackRange = enemy.sightRange;
         timer = shotCooldown;
         enemy.animator.SetBool("Run", false);
 
