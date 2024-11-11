@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 187740034676310009}
   m_LocalRotation: {x: 0.00000014901163, y: 0.00000011920929, z: -1.776357e-14, w: 1}
-  m_LocalPosition: {x: 0, y: 0.61, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3821,7 +3821,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3140000632606296500}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.7499995, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3869,7 +3869,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 25.450012, y: 1.9500122}
+  m_AnchoredPosition: {x: 25.450073, y: 1.9500122}
   m_SizeDelta: {x: 1920.2238, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6181014099103558673
@@ -6336,8 +6336,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4613755220240394542}
   m_LocalRotation: {x: 0.00000014901163, y: 0.00000011920929, z: -1.776357e-14, w: 1}
-  m_LocalPosition: {x: 0, y: -0.000039100647, z: 0.0006122589}
-  m_LocalScale: {x: 0.01, y: 0.010000003, z: 0.010000003}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3208835295180530157}
@@ -6811,10 +6811,10 @@ MonoBehaviour:
   dashCooldown: 0.5
   isDashing: 0
   wallrunSpeedThreshold: 10
-  wallrunCooldown: 0.5
+  wallrunCooldown: 2
   wallrunJumpAngle: 0.5
   wallrunVelocityBonus: 22
-  maxWallrunTime: 1.5
+  maxWallrunTime: 1
   cameraLeaveWallrunTime: 0
   isWallRunning: 0
   grappleSpeed: 65
@@ -6824,12 +6824,13 @@ MonoBehaviour:
   encouragedGroundMomentum: 3
   encouragedAirMomentum: 6
   encouragedSlideMomentum: 9
-  slowDownPercentage: 30
+  slowDownPercentage: 100
   cameraWallrunTilt: 8
   cameraWallRunTiltTime: 0.2
   cameraSlideTransitionTime: 0.25
-  footstepInterval: 0
-  wallRunFootstepInterval: 0
+  cameraHolder: {fileID: 3140000632606296500}
+  footstepInterval: 0.3
+  wallRunFootstepInterval: 0.25
   velocity: {x: 0, y: 0, z: 0}
   movementInputWorld: {x: 0, y: 0, z: 0}
 --- !u!114 &187740034541792969
@@ -6856,8 +6857,6 @@ MonoBehaviour:
   CAWCurrentReserveAmmo: 40
   CAWReserveAmmoCap: 40
   ammoText: 0 / 6 | 40
-  shotgunRef: {fileID: 0}
-  revolverRef: {fileID: 0}
 --- !u!114 &8956065550447804033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14212,6 +14211,25 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ad589f46d3c9ea4bb9309860f901424, type: 3}
+--- !u!1 &112987523782863142 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 833251768869955330, guid: 6ad589f46d3c9ea4bb9309860f901424,
+    type: 3}
+  m_PrefabInstance: {fileID: 720900967546310180}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1966515743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112987523782863142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af040075683b119489d75fccd92ad316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 4613755220240394542}
 --- !u!4 &2566075230072658965 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2998729188929540657, guid: 6ad589f46d3c9ea4bb9309860f901424,
@@ -14352,6 +14370,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa2980a7d0870641aff585425f9f9f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &5457643355342647286 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7331383682361154434, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+    type: 3}
+  m_PrefabInstance: {fileID: 3315563204100453492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &912487549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5457643355342647286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af040075683b119489d75fccd92ad316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 4613755220240394542}
 --- !u!4 &7375199148661940990 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5213699035369657994, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
