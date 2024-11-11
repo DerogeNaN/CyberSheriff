@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2969367515411259621
 Transform:
   m_ObjectHideFlags: 0
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6123230818614260751}
   m_LocalRotation: {x: -0.012433287, y: -0.012433287, z: -0.7069975, w: 0.7069975}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.0001, y: 0, z: 0.0085}
   m_LocalScale: {x: 0.24999997, y: 0.25, z: 0.24999997}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -116,8 +116,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.4
-      minScalar: 0.2
+      scalar: 0.15
+      minScalar: 0.15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -169,8 +169,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 10
-      minScalar: 1
+      scalar: 0
+      minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -223,7 +223,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.7865716, b: 0.36470592, a: 0.49019608}
+      maxColor: {r: 0, g: 0.8848131, b: 1, a: 0.50980395}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -285,8 +285,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.5
-      minScalar: 0.1
+      scalar: 1.5
+      minScalar: 1.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -660,7 +660,7 @@ ParticleSystem:
         m_RotationOrder: 4
   ShapeModule:
     serializedVersion: 6
-    enabled: 1
+    enabled: 0
     type: 4
     angle: 33.7
     length: 5
@@ -1042,21 +1042,21 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 1
-          inSlope: -1
-          outSlope: -1
-          tangentMode: 34
-          weightedMode: 0
-          inWeight: 0
-          outWeight: 0
-        - serializedVersion: 3
-          time: 1
           value: 0
-          inSlope: -1
-          outSlope: -1
-          tangentMode: 34
+          inSlope: 5.810329
+          outSlope: 5.810329
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
+          outWeight: 0.102040805
+        - serializedVersion: 3
+          time: 0.41176474
+          value: 1
+          inSlope: 0.05985919
+          outSlope: 0.05985919
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.57142866
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -4897,8 +4897,8 @@ Transform:
   m_GameObject: {fileID: 8432325760018212404}
   m_LocalRotation: {x: 0, y: -0.7236902, z: 0, w: 0.690125}
   m_LocalPosition: {x: 19.87, y: -0, z: 0.94}
-  m_LocalScale: {x: 0.07, y: 0.07, z: 0.07}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2969367515411259621}
   m_Father: {fileID: 0}
@@ -4912,7 +4912,7 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8432325760018212404}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: f4c4cc7f033b68943894e81bed692a1f, type: 3}
+  m_Asset: {fileID: 8926484042661614526, guid: e34dfc97498328d4880c614444cb339f, type: 3}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -4920,13 +4920,16 @@ VisualEffect:
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 0.3
+        m_Name: Size_Crosses
+        m_Overridden: 1
     m_Vector2f:
       m_Array:
-      - m_Value: {x: 0.08, y: 0.08}
+      - m_Value: {x: 0.1, y: 0.1}
         m_Name: Lifetime_Flash
         m_Overridden: 1
-      - m_Value: {x: 0.1, y: 0.1}
+      - m_Value: {x: 0.2, y: 0.2}
         m_Name: Lifetime_Cone
         m_Overridden: 1
       - m_Value: {x: 0.5, y: 0.5}
@@ -4936,13 +4939,13 @@ VisualEffect:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0.23470107, y: 0.23470107, z: 3.2019932, w: 0}
+      - m_Value: {x: 0, y: 0.1299157, z: 8.549824, w: 0}
         m_Name: Flash_Colour
         m_Overridden: 1
-      - m_Value: {x: 1.1937171, y: 1.445026, z: 3.9999995, w: 0}
+      - m_Value: {x: 0, y: 0.9540042, z: 6.1208134, w: 1}
         m_Name: Inner_Flash
         m_Overridden: 1
-      - m_Value: {x: 0.5228763, y: 0.29803926, z: 2.9960785, w: 0}
+      - m_Value: {x: 2.9960785, y: 1.3647059, z: 0.29803923, w: 0}
         m_Name: Flash_Colour_Particle
         m_Overridden: 1
     m_Uint:
