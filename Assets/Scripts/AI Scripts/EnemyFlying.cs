@@ -97,8 +97,7 @@ public class EnemyFlying : EnemyBase
 
     public override void OnDestroyed(int damageType)
     {
-        SetState(EnemyState.downed);
-        enemy.animator.SetTrigger("Death");
+        Destroy(gameObject);
     }
 
     private void FixedUpdate()

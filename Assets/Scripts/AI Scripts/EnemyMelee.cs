@@ -66,6 +66,7 @@ public class EnemyMelee : EnemyBase
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
+        //enemy.CreateHitEffect();
     }
 
     public override void OnDestroyed(int damageType)

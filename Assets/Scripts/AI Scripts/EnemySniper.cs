@@ -135,7 +135,7 @@ public class EnemySniper : EnemyBase
         RaycastHit hit;
         Vector3[] positions = new Vector3[2];
 
-        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
+        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))
         {
             if (hit.collider.CompareTag("Player"))
             {
@@ -174,7 +174,7 @@ public class EnemySniper : EnemyBase
         RaycastHit hit;
 
         // double check that the player is within sight
-        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
+        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))
         {
             if (hit.collider.CompareTag("Player"))
             {

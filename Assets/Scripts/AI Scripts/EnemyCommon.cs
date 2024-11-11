@@ -14,15 +14,16 @@ public class EnemyCommon : MonoBehaviour
     [HideInInspector] public bool active;
     [Tooltip("maximum distance at which the player can be considered in line of sight")]
     public float sightRange = 25.0f;
+    [Tooltip("offset from where the enemy's eyes are, for checking line of sight")]
     public Vector3 lineOfSightOffset;
     [HideInInspector] public float speed = 5.0f;
 
     [Header("Advanced")]
     [Tooltip("reference to the enemy's mesh GameObject, used for animation")]
     public GameObject mesh;
+    public SkinnedMeshRenderer meshRenderer;
     [Tooltip("the animator to use. should be a component of the mesh GameObject")]
     public Animator animator;
-    [Tooltip("offset from where the enemy's eyes are, for checking line of sight")]
 
     [HideInInspector] public Transform playerTransform;
     [HideInInspector] public Vector3 moveTarget; // the object it follows
@@ -32,6 +33,7 @@ public class EnemyCommon : MonoBehaviour
 
     [HideInInspector] public NavMeshAgent navAgent;
     [HideInInspector] public Health health;
+    [SerializeField] GameObject hitEffectVFX;
 
     private void Start()
     {
@@ -73,7 +75,7 @@ public class EnemyCommon : MonoBehaviour
         if ((lookTarget - raycastPos).magnitude <= sightRange)
         {
             // check for line of sight with target
-            if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange, LayerMask.GetMask("Wall") | LayerMask.GetMask("Player")))
+            if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange, ~LayerMask.GetMask(new[] { "Enemy" })))
             {
                 hasLineOfSight = hit.transform.gameObject.CompareTag("Player");
             }
@@ -122,6 +124,17 @@ public class EnemyCommon : MonoBehaviour
     {
         // get the GameObject that the movement script is on
         playerTransform = Movement.playerMovement.gameObject.transform;
+    }
+
+    public void CreateHitEffect()
+    {
+        GameObject vfx = Instantiate(hitEffectVFX, transform);
+        ParticleSystem[] particles = vfx.GetComponentsInChildren<ParticleSystem>();
+        
+        foreach(ParticleSystem p in particles)
+        {
+            
+        }
     }
 }
 
