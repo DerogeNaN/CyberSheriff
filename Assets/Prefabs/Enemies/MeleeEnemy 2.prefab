@@ -560,6 +560,8 @@ MonoBehaviour:
   attackStartUp: 0.3
   attackEndlag: 1
   attackCooldown: 1
+  neverLoseSight: 1
+  needsLineOfSight: 0
 --- !u!114 &6835624540115931486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -572,7 +574,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525b574a01df2954eae08859456a2c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neverLoseSight: 0
   active: 1
   sightRange: 45
   lineOfSightOffset: {x: 0, y: 2, z: 0}

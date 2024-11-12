@@ -9,8 +9,6 @@ using UnityEngine.AI;
 public class EnemyCommon : MonoBehaviour
 {
     [Header("Enemy Settings")]
-    [Tooltip("if checked, enemies will never stop chasing the player once they see them for the first time")]
-    public bool neverLoseSight;
     [HideInInspector] public bool active;
     [Tooltip("maximum distance at which the player can be considered in line of sight")]
     public float sightRange = 25.0f;
@@ -82,7 +80,6 @@ public class EnemyCommon : MonoBehaviour
             else hasLineOfSight = true;
         }
         else hasLineOfSight = false;
-
 
         // draw ray for debugging
         if (hasLineOfSight) Debug.DrawRay(raycastPos, (lookTarget - raycastPos).normalized * sightRange, new(1.0f, 0.0f, 0.0f));

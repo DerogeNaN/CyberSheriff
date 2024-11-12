@@ -25,6 +25,10 @@ public class EnemyRanged : EnemyBase
     bool doSniperAimEffect = false;
     //[Tooltip("if enabled, the amount of time the sniper's aiming effect lasts before the enemy shoots")]
     float sniperAimEffectLength;
+    [Tooltip("if checked, enemies will never stop chasing the player once they see them for the first time")]
+    public bool neverLoseSight;
+    [Tooltip("whether or not line of sight to the player is required to start chasing them")]
+    public bool needsLineOfSight;
 
     Vector3 initialPosition;
     float remainingAttackTime;
@@ -105,14 +109,14 @@ public class EnemyRanged : EnemyBase
     protected override void IdleUpdate()
     {
         // if the player gets withing range and line of sight, switch to chasing them
-        if (enemy.hasLineOfSight) SetState(EnemyState.movingToTarget);
+        if (enemy.hasLineOfSight || !needsLineOfSight) SetState(EnemyState.movingToTarget);
     }
     protected override void MovingToTargetUpdate()
     {
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
-        if (enemy.neverLoseSight)
+        if (!neverLoseSight && needsLineOfSight)
         {
             if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
         }

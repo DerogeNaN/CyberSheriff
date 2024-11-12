@@ -100,11 +100,6 @@ public class EnemyFlying : EnemyBase
         Destroy(gameObject);
     }
 
-    private void FixedUpdate()
-    {
-
-    }
-
     protected override void IdleUpdate()
     {
         // if has line of sight, start chasing
