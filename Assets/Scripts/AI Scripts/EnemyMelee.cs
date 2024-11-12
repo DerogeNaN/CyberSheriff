@@ -21,6 +21,10 @@ public class EnemyMelee : EnemyBase
     public float attackEndlag = 1.0f;
     [Tooltip("time before the enemy can attempt an attack again, even if the player is still in range")]
     public float attackCooldown = 1.0f;
+    [Tooltip("if checked, enemies will never stop chasing the player once they see them for the first time")]
+    public bool neverLoseSight;
+    [Tooltip("whether or not line of sight to the player is required to start chasing them")]
+    public bool needsLineOfSight;
 
     TMP_Text debugStunText;
     Vector3 initialPosition;
@@ -125,7 +129,7 @@ public class EnemyMelee : EnemyBase
     protected override void IdleUpdate()
     {
         // if has line of sight, chase player
-        if (enemy.hasLineOfSight)
+        if (enemy.hasLineOfSight || !needsLineOfSight)
         {
             SetState(EnemyState.movingToTarget);
         }
@@ -135,7 +139,7 @@ public class EnemyMelee : EnemyBase
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if line of sight is lost, change to lost sight state
-        if (!enemy.neverLoseSight)
+        if (!neverLoseSight && needsLineOfSight)
         {
             if (!enemy.hasLineOfSight) SetState(EnemyState.lostSightOfTarget);
             else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
