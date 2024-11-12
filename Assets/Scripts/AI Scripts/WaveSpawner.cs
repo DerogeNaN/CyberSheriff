@@ -19,8 +19,8 @@ public class WaveSpawner : MonoBehaviour
 
     [SerializeField] private BoxCollider spawnZone;
     [SerializeField] private BoxCollider landingZone;
-    private Vector3 centerSpawn;
-    private Vector3 sizeSpawn;
+    [SerializeField] private Vector3 centerSpawn;
+    [SerializeField] private Vector3 sizeSpawn;
 
     void Start()
     {
@@ -54,9 +54,8 @@ public class WaveSpawner : MonoBehaviour
         {
             //Debug.Log("Attempting to spawn wave " + (WaveManager.waveManagerInstance.waveNumber + 1).ToString() + " enemies");
             Vector3 spawnPos = centerSpawn + new Vector3(Random.Range(-sizeSpawn.x / 2, sizeSpawn.x / 2), 0, Random.Range(- sizeSpawn.z / 2, sizeSpawn.z / 2));
+            Vector3 offset = new Vector3(Random.Range(-sizeSpawn.x / 2, sizeSpawn.x / 2), 0, Random.Range(-sizeSpawn.z / 2, sizeSpawn.z / 2));
 
-            NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
-            spawnPos = hit.position;
 
             Instantiate(enemy, spawnPos, spawnZone.transform.rotation);
             WaveManager.waveManagerInstance.enemiesRemaining++;

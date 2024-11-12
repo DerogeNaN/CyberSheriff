@@ -608,9 +608,9 @@ public class Movement : MonoBehaviour
             for (int i = 0; i < hitArray.Length; i++)
             {
                 Vector3 normal = hitArray[i].normal;
-                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+                //normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
 
-                if (Vector3.Dot(velocity, normal) < 0) continue;
+                if (Vector3.Dot(velocity, normal) < 0) normal *= -1;// continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
                 
