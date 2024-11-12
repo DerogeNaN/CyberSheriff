@@ -3855,7 +3855,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 25.450073, y: 1.9500122}
+  m_AnchoredPosition: {x: 25.449951, y: 1.9500732}
   m_SizeDelta: {x: 1920.2238, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6181014099103558673
@@ -6392,7 +6392,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -6745,7 +6745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78b920ec190e7264a92adfa1941eff14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSens: 5
+  mouseSens: 10
   defaultFOV: 80
   cameraHolder: {fileID: 3140000632606296500}
   xClamp: 180
@@ -6782,11 +6782,11 @@ MonoBehaviour:
   dashTime: 0.2
   dashCooldown: 0.5
   isDashing: 0
-  wallrunSpeedThreshold: 10
-  wallrunCooldown: 2
+  wallrunSpeedThreshold: 15
+  wallrunCooldown: 1
   wallrunJumpAngle: 0.5
   wallrunVelocityBonus: 22
-  maxWallrunTime: 1
+  maxWallrunTime: 3
   cameraLeaveWallrunTime: 0
   isWallRunning: 0
   grappleSpeed: 65
@@ -6797,7 +6797,7 @@ MonoBehaviour:
   encouragedAirMomentum: 6
   encouragedSlideMomentum: 9
   slowDownPercentage: 100
-  cameraWallrunTilt: 8
+  cameraWallrunTilt: 100
   cameraWallRunTiltTime: 0.2
   cameraSlideTransitionTime: 0.25
   cameraHolder: {fileID: 3140000632606296500}
@@ -14137,6 +14137,12 @@ PrefabInstance:
       objectReference: {fileID: 1640337310644002171}
     - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
+      propertyPath: HitEffect
+      value: 
+      objectReference: {fileID: 5708795553427671543, guid: 44aa8b49cc4be604abacee1b1f847d9e,
+        type: 3}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
       propertyPath: DamageValue
       value: 50
       objectReference: {fileID: 0}
@@ -14145,6 +14151,12 @@ PrefabInstance:
       propertyPath: AltshotGapTime
       value: 0.14
       objectReference: {fileID: 0}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
+      propertyPath: enemyHitEffect
+      value: 
+      objectReference: {fileID: 5708795553427671543, guid: 44aa8b49cc4be604abacee1b1f847d9e,
+        type: 3}
     - target: {fileID: 5824781647199601516, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
       propertyPath: m_Asset
@@ -14230,6 +14242,23 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: HitEffect
+      value: 
+      objectReference: {fileID: 6663271428544070333, guid: 34727982ca16f9e46ba3ac54f6e3f1c1,
+        type: 3}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: enemyHitEffect
+      value: 
+      objectReference: {fileID: 6663271428544070333, guid: 34727982ca16f9e46ba3ac54f6e3f1c1,
+        type: 3}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: spreadMultiplier
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}

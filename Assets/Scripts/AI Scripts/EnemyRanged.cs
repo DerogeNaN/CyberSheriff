@@ -48,6 +48,7 @@ public class EnemyRanged : EnemyBase
     protected override void OnUpdate()
     {
         // do this regardless of state 
+        enemy.playerTransform = Movement.playerMovement.transform;
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
 

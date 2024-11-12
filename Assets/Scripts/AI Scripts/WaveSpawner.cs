@@ -64,6 +64,7 @@ public class WaveSpawner : MonoBehaviour
 
             destination = landingZone.transform.position;
             destination += new Vector3(Random.Range(-sizeLanding.x / 2, sizeLanding.x / 2), 0, Random.Range(-sizeLanding.z / 2, sizeLanding.z / 2));
+            //destination = landingZone.transform.localToWorldMatrix.MultiplyPoint3x4(destination);
 
             //destination = landingZone.transform.position;
             EnemyCommon currentEnemy = waves[waveNumber][i].gameObject.GetComponent<EnemyCommon>();
