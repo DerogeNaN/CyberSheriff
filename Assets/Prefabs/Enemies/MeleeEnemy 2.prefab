@@ -561,7 +561,7 @@ MonoBehaviour:
   attackEndlag: 1
   attackCooldown: 1
   neverLoseSight: 1
-  needsLineOfSight: 0
+  needsLineOfSight: 1
 --- !u!114 &6835624540115931486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -575,12 +575,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
-  sightRange: 45
+  sightRange: 5
   lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
   mesh: {fileID: 3629064875361786265}
   meshRenderer: {fileID: 6861895844492810661}
   animator: {fileID: 5467560562846941114}
+  initialPosition: {x: 0, y: 0, z: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
