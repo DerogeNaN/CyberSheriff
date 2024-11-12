@@ -30,7 +30,6 @@ public class EnemyRanged : EnemyBase
     [Tooltip("whether or not line of sight to the player is required to start chasing them")]
     public bool needsLineOfSight;
 
-    Vector3 initialPosition;
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
@@ -41,7 +40,7 @@ public class EnemyRanged : EnemyBase
         // randomly change stopDistance between -25% and +25% per enemy
         stopDistance += Random.Range(-stopDistance * 0.25f, stopDistance * 0.25f);
 
-        initialPosition = transform.position;
+        enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
         SetState(EnemyState.idle);
     }
@@ -73,7 +72,7 @@ public class EnemyRanged : EnemyBase
     protected override void IdleEnter()
     {
         enemy.shouldPath = true;
-        enemy.moveTarget = initialPosition;
+        enemy.moveTarget = enemy.initialPosition;
     }
     protected override void MovingToTargetEnter()
     {

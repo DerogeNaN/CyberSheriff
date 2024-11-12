@@ -27,7 +27,6 @@ public class EnemyMelee : EnemyBase
     public bool needsLineOfSight;
 
     TMP_Text debugStunText;
-    Vector3 initialPosition;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
@@ -43,8 +42,8 @@ public class EnemyMelee : EnemyBase
     {
         SetState(EnemyState.idle);
         //SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
-        initialPosition = transform.position;
-        enemy.moveTarget = initialPosition;
+        //initialPosition = transform.position;
+        enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
 
         if (debugStunText) debugStunText.text = "";
@@ -83,7 +82,8 @@ public class EnemyMelee : EnemyBase
     protected override void IdleEnter()
     {
         enemy.speed = walkSpeed;
-        enemy.moveTarget = initialPosition;
+        enemy.moveTarget = enemy.initialPosition;
+        enemy.shouldPath = true;
     }
     protected override void MovingToTargetEnter()
     {

@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
         if (despawnTime <= 0) Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)     
     {
         int layerMask = (int)Mathf.Pow(2, other.gameObject.layer);
         if ((layerMask & ~0b110100100) != 0)

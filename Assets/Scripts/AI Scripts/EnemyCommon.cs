@@ -23,11 +23,14 @@ public class EnemyCommon : MonoBehaviour
     [Tooltip("the animator to use. should be a component of the mesh GameObject")]
     public Animator animator;
 
+    [Header("dont change")]
+    public Vector3 initialPosition;
+
     [HideInInspector] public Transform playerTransform;
     [HideInInspector] public Vector3 moveTarget; // the object it follows
     [HideInInspector] public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
     [HideInInspector] public bool hasLineOfSight;
-    [HideInInspector] public bool shouldPath;
+    public bool shouldPath;
 
     [HideInInspector] public NavMeshAgent navAgent;
     [HideInInspector] public Health health;
@@ -36,7 +39,7 @@ public class EnemyCommon : MonoBehaviour
     private void Start()
     {
         // initialise pathing values
-        shouldPath = false;
+        shouldPath = true;
         TryGetComponent<NavMeshAgent>(out navAgent);
 
         // start spawned or despawned
