@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -17,15 +15,15 @@ public class Projectile : MonoBehaviour
         if (despawnTime <= 0) Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)     
     {
-        if (other.gameObject.CompareTag("Player"))
+        int layerMask = (int)Mathf.Pow(2, other.gameObject.layer);
+        if ((layerMask & ~0b110100100) != 0)
         {
-            other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage, 0);
-            Destroy(gameObject);
-        }
-        else if (!other.gameObject.CompareTag("EnemyHitbox"))
-        {
+            if (other.gameObject.CompareTag("Player"))
+            {
+                other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage, 0);
+            }
             Destroy(gameObject);
         }
     }
