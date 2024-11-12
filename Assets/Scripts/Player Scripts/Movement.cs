@@ -324,7 +324,7 @@ public class Movement : MonoBehaviour
         CheckForGrappleTarget();
         Grappling();
 
-        PlayFootstepSound();
+        //PlayFootstepSound();
 
         //Actually apply motion to player transform
         transform.position += velocity * Time.deltaTime;
