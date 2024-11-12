@@ -81,7 +81,7 @@ public class AoeDamager : MonoBehaviour
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, blastRadius);
         GameObject vfx = Instantiate(explosionVFX);
-        SoundManager2.Instance.PlaySound("ShotgunGranadeExplosion");
+        SoundManager2.Instance.PlaySound("ShotgunGranadeExplosion",vfx.gameObject.transform);
         vfx.transform.position = transform.position;
         vfx.transform.LookAt(vfx.transform.position + collision.contacts[0].normal, Vector3.up);
         vfx.transform.position += -collision.contacts[0].normal;

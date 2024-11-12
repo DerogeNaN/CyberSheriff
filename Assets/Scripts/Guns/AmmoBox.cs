@@ -10,7 +10,7 @@ public class AmmoBox : MonoBehaviour
         shotgun,
         revolver,
         grenade,
-        ShotandRev,
+        ShotAndRev,
     }
 
     [SerializeField]
@@ -75,7 +75,7 @@ public class AmmoBox : MonoBehaviour
                     active = false;
                 }
 
-                if (ammoType == AmmoType.ShotandRev)
+                if (ammoType == AmmoType.ShotAndRev)
                 {
                     Debug.Log("BothGiven");
                     weaponManagement.revolverRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.revolverRef.ReserveAmmoCap);
