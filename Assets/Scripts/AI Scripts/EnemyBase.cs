@@ -16,7 +16,8 @@ public enum EnemyState
     attacking,
     stunned,
     downed,
-    chargeAttack
+    chargeAttack,
+    jumping
 }
 
 public class EnemyBase : MonoBehaviour
