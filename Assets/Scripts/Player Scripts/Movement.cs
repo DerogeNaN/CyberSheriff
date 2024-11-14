@@ -598,7 +598,7 @@ public class Movement : MonoBehaviour
     void CheckForOncomingCollision()
     {
         RaycastHit[] hitArray;
-
+        
         if (!isSliding)
         {
             hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0),
@@ -608,9 +608,9 @@ public class Movement : MonoBehaviour
             for (int i = 0; i < hitArray.Length; i++)
             {
                 Vector3 normal = hitArray[i].normal;
-                //normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
 
-                if (Vector3.Dot(velocity, normal) < 0) normal *= -1;// continue;
+                if (Vector3.Dot(velocity, normal) < 0) continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
                 
@@ -673,7 +673,6 @@ public class Movement : MonoBehaviour
                 }
             }
         }
-        
     }
 
     private void CheckForWallRun()
@@ -686,7 +685,7 @@ public class Movement : MonoBehaviour
             //---check RIGHT for wall----
             if (Physics.CapsuleCast(
                 transform.position + new Vector3(0, 0.5f, 0),
-                transform.position - new Vector3(0, 0.5f, 0), 0.35f, transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+                transform.position - new Vector3(0, 0.5f, 0), 0.35f, transform.right, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
                 Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
                 normal = wallHit.normal;
@@ -699,7 +698,7 @@ public class Movement : MonoBehaviour
             //---check LEFT for wall----
             else if (Physics.CapsuleCast(
                 transform.position + new Vector3(0, 0.5f, 0),
-                transform.position - new Vector3(0, 0.5f, 0), 0.35f, -transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+                transform.position - new Vector3(0, 0.5f, 0), 0.35f, -transform.right, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
                 Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
                 normal = wallHit.normal;
