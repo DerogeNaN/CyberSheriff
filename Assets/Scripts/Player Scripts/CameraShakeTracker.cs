@@ -8,7 +8,7 @@ public class CameraShakeTracker : MonoBehaviour
 
     void Update()
     {
-        camera.transform.position = transform.position;
+        camera.transform.position = new Vector3 (transform.position.x, transform.position.y + 0.05f, transform.position.z);
         camera.transform.rotation = transform.rotation;
     }
 }

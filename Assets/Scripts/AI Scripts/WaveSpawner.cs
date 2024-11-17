@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,8 +19,11 @@ public class WaveSpawner : MonoBehaviour
     private GameObject[][] waves;
 
     [SerializeField] private BoxCollider spawnZone;
-    private Vector3 center;
-    private Vector3 size;
+    [SerializeField] private BoxCollider landingZone;
+    private Vector3 centreSpawn;
+    private Vector3 sizeSpawn;
+    private Vector3 centreLanding;
+    private Vector3 sizeLanding;
 
     void Start()
     {
@@ -33,30 +37,48 @@ public class WaveSpawner : MonoBehaviour
         }
 
         // Proceed with setup if spawnZone exists
-        center = transform.position;
-        size = spawnZone.size;
+        centreSpawn = transform.position;
+        sizeSpawn = spawnZone.size;
+        centreLanding = landingZone.transform.position;
+        sizeLanding = landingZone.size;
 
         WaveManager.StartNewWave += PrepareNextWave;
-        waves = new GameObject[][] { wave1Enemies, wave2Enemies, wave3Enemies, wave4Enemies, wave5Enemies, wave6Enemies, wave7Enemies, wave8Enemies, wave9Enemies, wave10Enemies};
-
-        //spawnZone = GetComponent<BoxCollider>();
-        //center = transform.position;
-        //size = spawnZone.size;
+        waves = new GameObject[][] {    wave1Enemies, wave2Enemies, wave3Enemies, 
+                                        wave4Enemies, wave5Enemies, wave6Enemies, 
+                                        wave7Enemies, wave8Enemies, wave9Enemies, wave10Enemies };
     }
 
     void SpawnWave(int waveNumber)
     {
-        foreach (GameObject enemy in waves[waveNumber]) 
+        
+
+        for (int i = 0; i < waves[waveNumber].Length; i++) 
         {
-            Debug.Log("Attempting to spawn wave " + (WaveManager.waveManagerInstance.waveNumber + 1).ToString() + " enemies");
-            Vector3 spawnPos = center + new Vector3(Random.Range(-size.x / 2, size.x / 2), 0, Random.Range(- size.z / 2, size.z / 2));
+            Vector3 destination = Vector3.zero;
 
-            NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
-            spawnPos = hit.position;
+            Vector3 spawnPos = centreSpawn;
+            Vector3 offset = new Vector3(Random.Range(-sizeSpawn.x / 2.0f, sizeSpawn.x / 2.0f), 0.0f, Random.Range(-sizeSpawn.z / 2.0f, sizeSpawn.z / 2.0f));
 
-            Instantiate(enemy, spawnPos, spawnZone.transform.rotation);
+            Instantiate(waves[waveNumber][i], transform.localToWorldMatrix.MultiplyPoint3x4(offset), spawnZone.transform.rotation);
             WaveManager.waveManagerInstance.enemiesRemaining++;
+
+            destination = landingZone.transform.position;
+            destination += new Vector3(Random.Range(-sizeLanding.x / 2, sizeLanding.x / 2), 0, Random.Range(-sizeLanding.z / 2, sizeLanding.z / 2));
+            //destination = landingZone.transform.localToWorldMatrix.MultiplyPoint3x4(destination);
+
+            //destination = landingZone.transform.position;
+            EnemyCommon currentEnemy = waves[waveNumber][i].gameObject.GetComponent<EnemyCommon>();
+            currentEnemy.initialPosition = destination;
+            //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere), destination, Quaternion.identity);
         }
+
+        //NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
+        //spawnPos = hit.position;
+    }
+
+    Vector3[] FindLandingPoints()
+    {
+        return new Vector3[] { };
     }
 
     void PrepareNextWave()
