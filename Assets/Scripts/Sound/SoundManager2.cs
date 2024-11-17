@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Unity.VisualScripting;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class SoundManager2 : MonoBehaviour
 {
@@ -37,7 +39,7 @@ public class SoundManager2 : MonoBehaviour
         public string name;
         public SoundType soundType; // Added SoundType
         public AudioClip[] tracks;
-        [Range(0f, 1f)] public float volume = 1f;
+        [Range(0f, 2f)] public float volume = 1f;
         [Range(0.1f, 3f)] public float pitch = 1f;
         public bool loop; // Ensure looping option for ambience
         [HideInInspector] public AudioSource source;
@@ -62,19 +64,6 @@ public class SoundManager2 : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(this);
-
-        // Initialize sources for sounds
-        foreach (var s in sounds)
-        {
-            s.source = gameObject.AddComponent<AudioSource>();
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
-            if (s.soundType == SoundType.Global2D)
-            {
-                globalSounds[s.name] = s.source; // Track global sounds
-            }
-        }
-
         // Initialize sources for music
         foreach (var m in musicTracks)
         {
@@ -84,17 +73,6 @@ public class SoundManager2 : MonoBehaviour
             m.source.loop = m.loop; // Preserve looping option
         }
 
-        // Initialize sources for ambience
-        foreach (var a in ambienceClips)
-        {
-            a.source = gameObject.AddComponent<AudioSource>();
-            a.source.volume = a.volume;
-            a.source.pitch = a.pitch;
-            if (a.soundType == SoundType.Global2D)
-            {
-                globalSounds[a.name] = a.source; // Track global sounds
-            }
-        }
     }
 
     private void Update()
@@ -133,7 +111,11 @@ public class SoundManager2 : MonoBehaviour
             AudioClip clipToPlay = sound.clips[UnityEngine.Random.Range(0, sound.clips.Length)];
 
             // Create a new AudioSource for this specific instance
-            AudioSource tempSource = gameObject.AddComponent<AudioSource>();
+            AudioSource tempSource = (targetObject == null) ? gameObject.AddComponent<AudioSource>() : targetObject.GetComponent<AudioSource>();
+
+            if (tempSource.gameObject == gameObject && tempSource.isPlaying)
+                tempSource = tempSource.gameObject.AddComponent<AudioSource>();
+
             tempSource.clip = clipToPlay;
             tempSource.volume = sound.volume;
             tempSource.pitch = sound.pitch;
@@ -142,19 +124,15 @@ public class SoundManager2 : MonoBehaviour
             tempSource.spatialBlend = (sound.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
 
             tempSource.Play();
-
+            Debug.Log($"Now adding sound:\"{tempSource.clip.name}\" to \" {tempSource.name}\"");
             // Clean up after the clip has finished playing
-            Destroy(tempSource, clipToPlay.length);
+
+            if (targetObject == null)
+                Destroy(tempSource, clipToPlay.length);
         }
     }
 
-  /*  public void StopSound(string name)
-    {
-        if (globalSounds.ContainsKey(name))
-        {
-            globalSounds[name].Stop(); // Stop global sound
-        }
-    }*/
+
     public void StopSound(string soundName, Transform targetObject = null)
     {
         if (globalSounds.ContainsKey(soundName) && targetObject == null)
@@ -191,10 +169,10 @@ public class SoundManager2 : MonoBehaviour
         }
     }
 
-    public void PlayAmbience(string name,Transform targetObject = null)
+    public void PlayAmbience(string name, Transform targetObject = null)
     {
-       /* AmbienceMaster ambience = ambienceClips.Find(a => a.name == name);
-        if (ambience != null) ambience.source.Play();*/
+        /* AmbienceMaster ambience = ambienceClips.Find(a => a.name == name);
+         if (ambience != null) ambience.source.Play();*/
 
         AmbienceMaster ambience = ambienceClips.Find(s => s.name == name);
         if (ambience != null && ambience.tracks.Length > 0)

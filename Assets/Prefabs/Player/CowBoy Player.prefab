@@ -30,7 +30,7 @@ Transform:
   m_Children:
   - {fileID: 2566075230072658965}
   - {fileID: 7375199148661940990}
-  m_Father: {fileID: 8536436182461542494}
+  m_Father: {fileID: 5644071828968299039}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &203952351273483467
@@ -3811,8 +3811,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4613755220240394539}
-  - {fileID: 187740034676310008}
+  - {fileID: 5644071828968299039}
   m_Father: {fileID: 4613755221359916255}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6314,7 +6313,7 @@ Transform:
   m_Children:
   - {fileID: 3208835295180530157}
   - {fileID: 6946850199542295957}
-  m_Father: {fileID: 8536436182461542494}
+  m_Father: {fileID: 5644071828968299039}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &4613755220240394540
@@ -6764,6 +6763,7 @@ MonoBehaviour:
   respawnPos: {fileID: 0}
   cameraSlidePos: {fileID: 5772166658312057715}
   cameraDefaultPos: {fileID: 343712940333300622}
+  cameraWallrunHolder: {fileID: 0}
   grappleUI: {fileID: 6656417530877702669}
   moveSpeed: 5
   maxPlayerInputSpeed: 15
@@ -13881,6 +13881,39 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: -7.26, y: -10.02}
   m_UseGraphicAlpha: 1
+--- !u!1 &9043033203303647360
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5644071828968299039}
+  m_Layer: 3
+  m_Name: CameraWallRunHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5644071828968299039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9043033203303647360}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4613755220240394539}
+  - {fileID: 187740034676310008}
+  m_Father: {fileID: 8536436182461542494}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9221624264307828541
 GameObject:
   m_ObjectHideFlags: 0
