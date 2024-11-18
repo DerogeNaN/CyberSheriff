@@ -4,6 +4,7 @@ using System;
 using Unity.VisualScripting;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor.SceneManagement;
+using UnityEngine.Animations;
 
 public class SoundManager2 : MonoBehaviour
 {
@@ -126,9 +127,9 @@ public class SoundManager2 : MonoBehaviour
             {
                 if (audioSource.clip == clipToPlay)
                 {
-                    if (!Overlap) 
+                    if (!Overlap)
                     {
-                        Debug.Log($"attempt to add sound duplicate : \"{audioSource.clip.name} \" to \"{((targetObject != null ) ? targetObject.name : gameObject.name)} \"  has been cancelled" );
+                        Debug.Log($"attempt to add sound duplicate : \"{audioSource.clip.name} \" to \"{((targetObject != null) ? targetObject.name : gameObject.name)} \"  has been cancelled");
                         return;
                     }
 
@@ -182,6 +183,9 @@ public class SoundManager2 : MonoBehaviour
         if (music == null) return;
         else
         {
+            if (currentMusic != null)
+                if (music.track == currentMusic.track) return;
+
             music.source = gameObject.AddComponent<AudioSource>();
             music.source.clip = music.track;
             music.source.volume = music.volume;
