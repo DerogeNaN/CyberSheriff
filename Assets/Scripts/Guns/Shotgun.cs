@@ -142,11 +142,14 @@ public class Shotgun : RangedWeapon
                 currentBullets -= 2;
                 BulletFlash.Play();
                 BulletFlash.Play();
+                SoundManager2.Instance.PlaySound("ShotgunFire");
+                SoundManager2.Instance.PlaySound("ShotgunFire");
                 this.charged = false;
             }
             else
             {
                 currentBullets--;
+                SoundManager2.Instance.PlaySound("ShotgunFire");
                 BulletFlash.Play();
             }
 
@@ -285,6 +288,7 @@ public class Shotgun : RangedWeapon
         if (grenadeReady)
         {
             animator.SetTrigger("ShootAltTrig");
+            SoundManager2.Instance.PlaySound("ShotgunLauncherThunk");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
             RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
 
