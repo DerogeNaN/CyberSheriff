@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.ProBuilder.Shapes;
 
 // this is a class containing common functions used my enemies, so include this on enemy GameObjects along with a class the inherits from EnemyBase
 
@@ -128,13 +129,15 @@ public class EnemyCommon : MonoBehaviour
 
     public void CreateHitEffect()
     {
-        GameObject vfx = Instantiate(hitEffectVFX, transform);
-        ParticleSystem[] particles = vfx.GetComponentsInChildren<ParticleSystem>();
-        
-        foreach(ParticleSystem p in particles)
-        {
-            
-        }
+        Instantiate(hitEffectVFX, transform);
+
+        //GameObject vfx = Instantiate(hitEffectVFX, transform);
+        //ParticleSystem[] particles = vfx.GetComponentsInChildren<ParticleSystem>();
+
+        //foreach (ParticleSystem p in particles)
+        //{
+
+        //}
     }
 }
 
