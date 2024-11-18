@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour
     [SerializeField] Transform cameraSlidePos;
     [SerializeField] Transform cameraDefaultPos;
     [SerializeField] GameObject cameraWallrunHolder;
+    [SerializeField] CapsuleCollider playerCapsule;
     [SerializeField] Animator revolverAnimator;
     [SerializeField] Animator shotgunAnimator;
     //public Collider slideCollider;
@@ -189,6 +190,8 @@ public class Movement : MonoBehaviour
     private Collider standingCollider;
     private PauseMenu pauseMenu;
 
+    Vector3 collisionNormal = Vector3.zero;
+
     private void Awake()
     {
         playerMovement = this;
@@ -209,6 +212,7 @@ public class Movement : MonoBehaviour
 
         momentumRatio = 1 / currEncouragment;
 
+        ComputeDepenetration();
         GroundCheck();
         MovePlayer();
     }
@@ -255,7 +259,6 @@ public class Movement : MonoBehaviour
 
 
         Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-        float encouragedAmount = Vector3.Dot(movementInputWorld, horizontalVelocity.normalized) * (1 - momentumRatio);
         Vector3 targetVelocity = (movementInputWorld * moveSpeed) * momentumRatio;
         float nextFrameMagnitude = (horizontalVelocity + targetVelocity).magnitude;
         float horizontalMag = horizontalVelocity.magnitude;
@@ -318,13 +321,13 @@ public class Movement : MonoBehaviour
 
         Gravity();
 
-        CheckForOncomingCollision();
 
         CheckForWallRun();
 
         CheckForGrappleTarget();
         Grappling();
 
+        CheckForOncomingCollision();
         PlayFootstepSound();
 
         //Actually apply motion to player transform
@@ -602,44 +605,79 @@ public class Movement : MonoBehaviour
         }
     }
 
+    void ComputeDepenetration()
+    {
+        Vector3 resolveDirection = Vector3.zero;
+        float resolveDistance = 0.0f;
+        Collider[] overlappingColliders = { };
+
+        overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
+                                                        transform.position - new Vector3(0, 0.7f, 0),
+                                                        0.6f, ~12, QueryTriggerInteraction.Ignore);
+
+        
+
+        for (int i = 0; i < overlappingColliders.Length; i++)
+        {
+            if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
+                                        overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
+                                        out resolveDirection, out resolveDistance))
+            {
+                transform.position += resolveDirection * resolveDistance;
+            }
+        }
+    }
+
     void CheckForOncomingCollision()
     {
         RaycastHit[] hitArray;
-        
+
+        float overShoot = 0f;
+
         if (!isSliding)
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0),
-                                              transform.position - new Vector3(0, 0.7f, 0),
-                                              0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+            Vector3 movementDirection = velocity.normalized;
+            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0) - movementDirection * overShoot,
+                                              transform.position - new Vector3(0, 0.7f, 0) - movementDirection * overShoot,
+                                              0.5f, movementDirection, velocity.magnitude * Time.deltaTime + overShoot, ~12, QueryTriggerInteraction.Ignore);
+
+            //if (Physics.Raycast(transform.position - transform.forward * 0.5f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore))
 
             for (int i = 0; i < hitArray.Length; i++)
             {
-                Vector3 normal = hitArray[i].normal;
-                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+                collisionNormal = hitArray[i].normal;
+                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].point, hitArray[i].normal));
+                Debug.DrawRay(hitArray[i].point, hitArray[i].normal * 2, Color.magenta);
+                if (hitArray[i].point == Vector3.zero)
+                {
+                    Debug.Log("What the eff");
+                }
 
-                if (Vector3.Dot(velocity, normal) < 0) continue;
+                if (Vector3.Dot(velocity, collisionNormal) < 0) continue;
 
-                float normalInUp = Vector3.Dot(Vector3.up, normal);
+                float normalInUp = Vector3.Dot(Vector3.up, collisionNormal);
                 
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
-                    Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
+                    //If the collision is with something that's not a vertical wall *or* a horizontal floor
+                    Vector3 horiNormal = new Vector3(collisionNormal.x, 0, collisionNormal.z).normalized;
                     float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
                     velocity -= velocityInHoriNormalDirection * horiNormal;
                 }
-                float velocityInNormalDirection = Vector3.Dot(velocity, normal);
-                velocity -= velocityInNormalDirection * normal;
 
-                float clampAmmount = Vector3.Dot(movementInputWorld, normal);
-                if (clampAmmount < 0) continue;
+                float clampAmount = Vector3.Dot(movementInputWorld, collisionNormal);
+                if (clampAmount < 0) continue;
 
-                if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
+                if (normalInUp <= 0.25f)
                 {
-                    clampAmmount = 1 - clampAmmount;
+                    clampAmount = 1 - clampAmount;
 
-                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
                 }
+
+                float velocityInNormalDirection = Vector3.Dot(velocity, collisionNormal);
+                velocity -= velocityInNormalDirection * collisionNormal;
             }
         }
 
