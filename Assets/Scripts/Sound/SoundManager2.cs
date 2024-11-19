@@ -50,7 +50,6 @@ public class SoundManager2 : MonoBehaviour
     public List<SoundMaster> sounds = new List<SoundMaster>();
     public List<MusicMaster> musicTracks = new List<MusicMaster>();
     public List<AmbienceMaster> ambienceClips = new List<AmbienceMaster>();
-    private Dictionary<string, AudioSource> globalSounds = new Dictionary<string, AudioSource>(); // Added global sounds dictionary
 
     private MusicMaster currentMusic;
     private MusicMaster nextMusic;
@@ -207,8 +206,7 @@ public class SoundManager2 : MonoBehaviour
 
     public void PlayAmbience(string name, Transform targetObject = null)
     {
-        /* AmbienceMaster ambience = ambienceClips.Find(a => a.name == name);
-         if (ambience != null) ambience.source.Play();*/
+      
 
         AmbienceMaster ambience = ambienceClips.Find(s => s.name == name);
         if (ambience != null && ambience.tracks.Length > 0)
