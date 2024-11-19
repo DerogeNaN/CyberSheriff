@@ -5,10 +5,17 @@ using Unity.VisualScripting;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor.SceneManagement;
 using UnityEngine.Animations;
+using UnityEditor.Rendering;
+using System.Data.Common;
 
 public class SoundManager2 : MonoBehaviour
 {
     public static SoundManager2 Instance;
+
+    [Range(0f, 1f)] public float mastermusicVolume = 1;
+
+    [Range(0f, 1f)] public float masterSfxVolume = 1;
+
 
     public enum SoundCategory { Master, SFX, Music, UI }
     public enum SoundType { Global2D, Local3D }
@@ -66,6 +73,16 @@ public class SoundManager2 : MonoBehaviour
 
         DontDestroyOnLoad(this);
 
+        foreach (SoundMaster source in sounds)
+        {
+            source.volume = masterSfxVolume;
+        }
+
+
+        foreach (MusicMaster source in musicTracks)
+        {
+            source.volume = mastermusicVolume;
+        }
     }
 
     private void Update()
@@ -94,6 +111,7 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
+        //enSured deletion 
         foreach (AudioSource aus in gameObject.GetComponentsInChildren<AudioSource>())
         {
             if (aus.GetComponent<AudioSource>())
@@ -104,6 +122,23 @@ public class SoundManager2 : MonoBehaviour
                 }
             }
         }
+
+        foreach (SoundMaster source in sounds)
+        {
+            source.volume = masterSfxVolume;
+            if (source.source)
+                source.source.volume = masterSfxVolume;
+        }
+
+
+        foreach (MusicMaster source in musicTracks)
+        {
+            source.volume = mastermusicVolume;
+            if (source.source)
+                source.source.volume = mastermusicVolume;
+        }
+
+
     }
 
     public void PlaySound(string name, Transform targetObject = null, bool Overlap = true)
@@ -206,8 +241,6 @@ public class SoundManager2 : MonoBehaviour
 
     public void PlayAmbience(string name, Transform targetObject = null)
     {
-      
-
         AmbienceMaster ambience = ambienceClips.Find(s => s.name == name);
         if (ambience != null && ambience.tracks.Length > 0)
         {
@@ -230,6 +263,19 @@ public class SoundManager2 : MonoBehaviour
             Destroy(ambience.source, trackToPlay.length);
         }
     }
+
+    public void AdjustMusicVolume(float volume)
+    {
+        mastermusicVolume = volume;
+    }
+
+
+    public void AdjustSFXVolume(float volume)
+    {
+        masterSfxVolume = volume;
+    }
+
+
 
     private void FadeMusic()
     {
