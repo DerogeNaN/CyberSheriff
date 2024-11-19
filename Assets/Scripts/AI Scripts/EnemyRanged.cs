@@ -52,21 +52,13 @@ public class EnemyRanged : EnemyBase
         enemy.playerTransform = Movement.playerMovement.transform;
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
-
-        if (enemy.health.health <= 0)
-        {
-            untilDestroy -= Time.deltaTime;
-            if (untilDestroy <= 0)
-            {
-                Destroy(gameObject);
-            }
-        }
     }
 
 
     public override void OnDestroyed(int damageType)
     {
-        //Instantiate(ragdoll, transform.position, transform.rotation);
+        EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, 100.0f);
         Destroy(gameObject);
     }
 

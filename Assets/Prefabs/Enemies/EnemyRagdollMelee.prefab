@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6958783070416735883}
-  - component: {fileID: 5052610753856621100}
+  - component: {fileID: 8757113061593810540}
   m_Layer: 0
   m_Name: EnemyRagdollMelee
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5052610753856621100
+--- !u!114 &8757113061593810540
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,10 +42,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7201130684706207388}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a7c8ea47589e34783c5952432b9f53, type: 3}
+  m_Script: {fileID: 11500000, guid: 89a7a05b8d3cf9e46990886475950101, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeTime: 5
+  despawnTime: 5
+  torso: {fileID: 7435232936121912838}
 --- !u!1001 &6888811463875079964
 PrefabInstance:
   m_ObjectHideFlags: 0
