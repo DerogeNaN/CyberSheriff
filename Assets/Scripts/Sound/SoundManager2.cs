@@ -4,10 +4,18 @@ using System;
 using Unity.VisualScripting;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor.SceneManagement;
+using UnityEngine.Animations;
+using UnityEditor.Rendering;
+using System.Data.Common;
 
 public class SoundManager2 : MonoBehaviour
 {
     public static SoundManager2 Instance;
+
+    [Range(0f, 1f)] public float mastermusicVolume = 1;
+
+    [Range(0f, 1f)] public float masterSfxVolume = 1;
+
 
     public enum SoundCategory { Master, SFX, Music, UI }
     public enum SoundType { Global2D, Local3D }
@@ -49,7 +57,6 @@ public class SoundManager2 : MonoBehaviour
     public List<SoundMaster> sounds = new List<SoundMaster>();
     public List<MusicMaster> musicTracks = new List<MusicMaster>();
     public List<AmbienceMaster> ambienceClips = new List<AmbienceMaster>();
-    private Dictionary<string, AudioSource> globalSounds = new Dictionary<string, AudioSource>(); // Added global sounds dictionary
 
     private MusicMaster currentMusic;
     private MusicMaster nextMusic;
@@ -65,15 +72,17 @@ public class SoundManager2 : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(this);
-        // Initialize sources for music
-        //foreach (var m in musicTracks)
-        //{
-        //    m.source = gameObject.AddComponent<AudioSource>();
-        //    m.source.clip = m.track;
-        //    m.source.volume = m.volume;
-        //    m.source.loop = m.loop; // Preserve looping option
-        //}
 
+        foreach (SoundMaster source in sounds)
+        {
+            source.volume = masterSfxVolume;
+        }
+
+
+        foreach (MusicMaster source in musicTracks)
+        {
+            source.volume = mastermusicVolume;
+        }
     }
 
     private void Update()
@@ -102,6 +111,7 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
+        //enSured deletion 
         foreach (AudioSource aus in gameObject.GetComponentsInChildren<AudioSource>())
         {
             if (aus.GetComponent<AudioSource>())
@@ -112,6 +122,23 @@ public class SoundManager2 : MonoBehaviour
                 }
             }
         }
+
+        foreach (SoundMaster source in sounds)
+        {
+            source.volume = masterSfxVolume;
+            if (source.source)
+                source.source.volume = masterSfxVolume;
+        }
+
+
+        foreach (MusicMaster source in musicTracks)
+        {
+            source.volume = mastermusicVolume;
+            if (source.source)
+                source.source.volume = mastermusicVolume;
+        }
+
+
     }
 
     public void PlaySound(string name, Transform targetObject = null, bool Overlap = true)
@@ -126,9 +153,9 @@ public class SoundManager2 : MonoBehaviour
             {
                 if (audioSource.clip == clipToPlay)
                 {
-                    if (!Overlap) 
+                    if (!Overlap)
                     {
-                        Debug.Log($"attempt to add sound duplicate : \"{audioSource.clip.name} \" to \"{((targetObject != null ) ? targetObject.name : gameObject.name)} \"  has been cancelled" );
+                        Debug.Log($"attempt to add sound duplicate : \"{audioSource.clip.name} \" to \"{((targetObject != null) ? targetObject.name : gameObject.name)} \"  has been cancelled");
                         return;
                     }
 
@@ -137,33 +164,37 @@ public class SoundManager2 : MonoBehaviour
             }
 
             // Create a new AudioSource for this specific instance
-            AudioSource tempSource = (targetObject == null) ? gameObject.AddComponent<AudioSource>() : targetObject.GetComponent<AudioSource>();
+            AudioSource newSource = (targetObject == null) ? gameObject.AddComponent<AudioSource>() : targetObject.GetComponent<AudioSource>();
 
-            if (tempSource.gameObject == gameObject && tempSource.isPlaying)
-                tempSource = tempSource.gameObject.AddComponent<AudioSource>();
+            if (newSource.gameObject == gameObject && newSource.isPlaying)
+                newSource = newSource.gameObject.AddComponent<AudioSource>();
 
-            tempSource.clip = clipToPlay;
-            tempSource.volume = sound.volume;
-            tempSource.pitch = sound.pitch;
+            newSource.clip = clipToPlay;
+            newSource.volume = sound.volume;
+            newSource.pitch = sound.pitch;
 
             // Set 3D sound properties if Local3D
-            tempSource.spatialBlend = (sound.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
+            newSource.spatialBlend = (sound.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
 
-            tempSource.Play();
-            Debug.Log($"Now adding sound:\"{tempSource.clip.name}\" to \" {tempSource.name}\"");
+            sound.source = newSource;
+            sound.source.Play();
+            Debug.Log($"Now adding sound:\"{sound.source.clip.name}\" to \" {sound.source.name}\"");
             // Clean up after the clip has finished playing
 
             if (targetObject == null)
-                Destroy(tempSource, clipToPlay.length);
+                Destroy(sound.source, clipToPlay.length);
         }
     }
 
 
     public void StopSound(string soundName, Transform targetObject = null)
     {
-        if (globalSounds.ContainsKey(soundName) && targetObject == null)
+        SoundMaster sound = sounds.Find(s => s.name == soundName);
+
+        if (sound != null && targetObject == null)
         {
-            globalSounds[soundName].Stop();
+            sound.source.Stop();
+            Destroy(sound.source);
         }
         else if (targetObject != null)
         {
@@ -171,6 +202,7 @@ public class SoundManager2 : MonoBehaviour
             if (localAudioSource != null)
             {
                 localAudioSource.Stop();
+                Destroy(localAudioSource);
             }
         }
     }
@@ -182,6 +214,9 @@ public class SoundManager2 : MonoBehaviour
         if (music == null) return;
         else
         {
+            if (currentMusic != null)
+                if (music.track == currentMusic.track) return;
+
             music.source = gameObject.AddComponent<AudioSource>();
             music.source.clip = music.track;
             music.source.volume = music.volume;
@@ -206,9 +241,6 @@ public class SoundManager2 : MonoBehaviour
 
     public void PlayAmbience(string name, Transform targetObject = null)
     {
-        /* AmbienceMaster ambience = ambienceClips.Find(a => a.name == name);
-         if (ambience != null) ambience.source.Play();*/
-
         AmbienceMaster ambience = ambienceClips.Find(s => s.name == name);
         if (ambience != null && ambience.tracks.Length > 0)
         {
@@ -216,20 +248,34 @@ public class SoundManager2 : MonoBehaviour
             AudioClip trackToPlay = ambience.tracks[UnityEngine.Random.Range(0, ambience.tracks.Length)];
 
             // Create a new AudioSource for this specific instance
-            AudioSource tempSource = gameObject.AddComponent<AudioSource>();
-            tempSource.clip = trackToPlay;
-            tempSource.volume = ambience.volume;
-            tempSource.pitch = ambience.pitch;
+            AudioSource newSource = gameObject.AddComponent<AudioSource>();
+            newSource.clip = trackToPlay;
+            newSource.volume = ambience.volume;
+            newSource.pitch = ambience.pitch;
 
             // Set 3D sound properties if Local3D
-            tempSource.spatialBlend = (ambience.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
+            newSource.spatialBlend = (ambience.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
 
-            tempSource.Play();
+            ambience.source = newSource;
+            ambience.source.Play();
 
             // Clean up after the clip has finished playing
-            Destroy(tempSource, trackToPlay.length);
+            Destroy(ambience.source, trackToPlay.length);
         }
     }
+
+    public void AdjustMusicVolume(float volume)
+    {
+        mastermusicVolume = volume;
+    }
+
+
+    public void AdjustSFXVolume(float volume)
+    {
+        masterSfxVolume = volume;
+    }
+
+
 
     private void FadeMusic()
     {
