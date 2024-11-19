@@ -44,6 +44,7 @@ public class EnemyRanged : EnemyBase
         enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
         SetState(EnemyState.idle);
+        enemy.animator.SetBool("Run", false);
     }
 
     protected override void OnUpdate()
@@ -101,6 +102,7 @@ public class EnemyRanged : EnemyBase
     #region update state
     protected override void IdleUpdate()
     {
+        enemy.speed = runSpeed;
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
         // if the player gets withing range and line of sight, switch to chasing them
@@ -148,7 +150,7 @@ public class EnemyRanged : EnemyBase
     #region exit state
     protected override void IdleExit()
     {
-
+        Debug.Log("among us");
     }
     protected override void MovingToTargetExit()
     {

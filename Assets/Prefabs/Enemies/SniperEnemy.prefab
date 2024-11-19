@@ -454,18 +454,17 @@ MonoBehaviour:
   lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
   mesh: {fileID: 1274072756739348845}
-  meshRenderer: {fileID: 449053596063314026}
   animator: {fileID: 5384380014956159244}
   initialPosition: {x: 0, y: 0, z: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
+  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
+    type: 3}
   shouldPath: 0
   navAgent: {fileID: 0}
   health: {fileID: 0}
-  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
-    type: 3}
 --- !u!114 &6601329270202779300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -999,14 +998,13 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 9212283208061958991, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
+        type: 3}
+      propertyPath: m_Name
+      value: Mesh
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 567a275dacc0f7e4ba4e65e4a70cf161, type: 3}
---- !u!137 &449053596063314026 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 7515851872550294088, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
-    type: 3}
-  m_PrefabInstance: {fileID: 7959813999420744226}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1274072756739348845 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9212283208061958991, guid: 567a275dacc0f7e4ba4e65e4a70cf161,

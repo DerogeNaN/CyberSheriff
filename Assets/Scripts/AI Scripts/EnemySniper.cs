@@ -34,10 +34,12 @@ public class EnemySniper : EnemyBase
     LaserState laserState = LaserState.none;
     float attackRange;
     float timer;
-    LineRenderer currentLaser;
+    //LineRenderer currentLaser;
+    LineRenderer[] lasers;
     float laserIntensity = 0.0f;
     bool fired = false;
     bool targetPlayer = true;
+    GameObject laserObject;
 
     protected override void OnStart()
     {
@@ -45,8 +47,14 @@ public class EnemySniper : EnemyBase
         timer = shotCooldown;
         enemy.animator.SetBool("Run", false);
 
-        currentLaser = Instantiate(laser, gunPos).GetComponentInChildren<LineRenderer>();
-        currentLaser.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
+        laserObject = Instantiate(laser, gunPos);
+        lasers = laserObject.GetComponentsInChildren<LineRenderer>();
+
+        foreach (var l in lasers)
+            l.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
+
+        //currentLaser = Instantiate(laser, gunPos).GetComponentInChildren<LineRenderer>();
+        //currentLaser.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
     }
 
     protected override void OnUpdate()
@@ -127,7 +135,8 @@ public class EnemySniper : EnemyBase
                 break;
         }
 
-        currentLaser.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, laserIntensity);
+        foreach (var l in lasers)
+            l.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, laserIntensity);
     }
 
     void UpdateLaser()
@@ -166,7 +175,8 @@ public class EnemySniper : EnemyBase
         // get the direction of the beam, then extend it in that direction
         positions[1] += (positions[1] - positions[0]).normalized * 100.0f;
 
-        currentLaser.SetPositions(positions);
+        foreach (var l in lasers)
+            l.SetPositions(positions);
     }
 
     void Fire()

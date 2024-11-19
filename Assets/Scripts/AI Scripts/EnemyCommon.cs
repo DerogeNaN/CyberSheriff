@@ -18,11 +18,10 @@ public class EnemyCommon : MonoBehaviour
     [HideInInspector] public float speed = 5.0f;
 
     [Header("Advanced")]
-    [Tooltip("reference to the enemy's mesh GameObject, used for animation")]
-    public GameObject mesh;
-    public SkinnedMeshRenderer meshRenderer;
-    [Tooltip("the animator to use. should be a component of the mesh GameObject")]
-    public Animator animator;
+    //[Tooltip("reference to the enemy's mesh GameObject, used for animation")]
+    [HideInInspector] public GameObject mesh;
+    //[Tooltip("the animator to use. should be a component of the mesh GameObject")]
+    [HideInInspector] public Animator animator;
 
     [Header("dont change")]
     public Vector3 initialPosition;
@@ -31,17 +30,18 @@ public class EnemyCommon : MonoBehaviour
     [HideInInspector] public Vector3 moveTarget; // the object it follows
     [HideInInspector] public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
     [HideInInspector] public bool hasLineOfSight;
+    [SerializeField] GameObject hitEffectVFX;
     public bool shouldPath;
 
     [HideInInspector] public NavMeshAgent navAgent;
     [HideInInspector] public Health health;
-    [SerializeField] GameObject hitEffectVFX;
 
     private void Start()
     {
         // initialise pathing values
         shouldPath = true;
         TryGetComponent<NavMeshAgent>(out navAgent);
+        if (navAgent) navAgent.autoTraverseOffMeshLink = false;
 
         // start spawned or despawned
         if (active) Spawn();
@@ -50,6 +50,8 @@ public class EnemyCommon : MonoBehaviour
         SetPlayerTransform();
 
         health = GetComponent<Health>();
+        mesh = transform.Find("Mesh").gameObject;
+        animator = transform.GetComponentInChildren<Animator>();
     }
 
     private void Update()

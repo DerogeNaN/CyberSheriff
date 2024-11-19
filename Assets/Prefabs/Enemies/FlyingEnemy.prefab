@@ -105,17 +105,17 @@ MonoBehaviour:
   lineOfSightOffset: {x: 0, y: 0, z: 0}
   speed: 5
   mesh: {fileID: 6199602304891668101}
-  meshRenderer: {fileID: 0}
   animator: {fileID: 0}
+  initialPosition: {x: 0, y: 0, z: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
+  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
+    type: 3}
   shouldPath: 0
   navAgent: {fileID: 0}
   health: {fileID: 0}
-  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
-    type: 3}
 --- !u!82 &-5739179628691379400
 AudioSource:
   m_ObjectHideFlags: 0
@@ -419,7 +419,7 @@ PrefabInstance:
     - target: {fileID: 6086923651657551663, guid: 2940b3faa28ce74479ef4d0da88bc382,
         type: 3}
       propertyPath: m_Name
-      value: DroneEnemy
+      value: Mesh
       objectReference: {fileID: 0}
     - target: {fileID: 7036967597124892542, guid: 2940b3faa28ce74479ef4d0da88bc382,
         type: 3}

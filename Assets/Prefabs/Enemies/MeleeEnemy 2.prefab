@@ -582,17 +582,16 @@ MonoBehaviour:
   lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
   mesh: {fileID: 3629064875361786265}
-  meshRenderer: {fileID: 6861895844492810661}
   animator: {fileID: 5467560562846941114}
   initialPosition: {x: -13.704096, y: 0, z: -40.98611}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
+  hitEffectVFX: {fileID: 1596436222856978523}
   shouldPath: 0
   navAgent: {fileID: 0}
   health: {fileID: 0}
-  hitEffectVFX: {fileID: 1596436222856978523}
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1107,6 +1106,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8781144055303266578}
     m_Modifications:
+    - target: {fileID: 493209966654533052, guid: 5c06b63126318f044b3d2c4ddd042808,
+        type: 3}
+      propertyPath: m_Name
+      value: Mesh
+      objectReference: {fileID: 0}
     - target: {fileID: 978384433500419846, guid: 5c06b63126318f044b3d2c4ddd042808,
         type: 3}
       propertyPath: m_RootOrder
