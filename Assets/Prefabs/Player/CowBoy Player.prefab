@@ -6791,7 +6791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78b920ec190e7264a92adfa1941eff14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSens: 10
+  mouseSens: 7
   defaultFOV: 80
   cameraHolder: {fileID: 3140000632606296500}
   xClamp: 180
@@ -6832,10 +6832,10 @@ MonoBehaviour:
   dashTime: 0.2
   dashCooldown: 0.5
   isDashing: 0
-  wallrunSpeedThreshold: 12
+  wallrunSpeedThreshold: 5
   wallrunCooldown: 1
   wallrunJumpAngle: 0.5
-  wallrunVelocityBonus: 22
+  wallrunVelocityBonus: 30
   maxWallrunTime: 3
   cameraLeaveWallrunTime: 0
   isWallRunning: 0
@@ -14226,8 +14226,18 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
+      propertyPath: reloadTime
+      value: 2.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
       propertyPath: DamageValue
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
+      propertyPath: shotGapTime
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
@@ -14236,10 +14246,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
+      propertyPath: ReserveAmmoCap
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
       propertyPath: enemyHitEffect
       value: 
       objectReference: {fileID: 5708795553427671543, guid: 44aa8b49cc4be604abacee1b1f847d9e,
         type: 3}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
+      propertyPath: CurrentReserveAmmo
+      value: 46
+      objectReference: {fileID: 0}
     - target: {fileID: 5824781647199601516, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
       propertyPath: m_Asset
@@ -14334,6 +14354,36 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
+      propertyPath: reloadTime
+      value: 2.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: DamageValue
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: shotGapTime
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: AltshotGapTime
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: ReserveAmmoCap
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: bulletsPerShot
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
       propertyPath: enemyHitEffect
       value: 
       objectReference: {fileID: 6663271428544070333, guid: 34727982ca16f9e46ba3ac54f6e3f1c1,
@@ -14347,6 +14397,11 @@ PrefabInstance:
         type: 3}
       propertyPath: RequiredKillsToRecharge
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: grenadeLaucherForceMultiplier
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5213699035369657994, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
