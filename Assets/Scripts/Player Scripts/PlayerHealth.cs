@@ -26,6 +26,7 @@ public class PlayerHealth : MonoBehaviour
             TakeDamage(10, 0);
             Debug.Log("I took damage");
         }
+        UpdateHealthUI();
     }
 
     //void OnTriggerEnter(Collider other)
@@ -48,7 +49,7 @@ public class PlayerHealth : MonoBehaviour
         health -= damage;
 
         IsDestroyed();
-        UpdateHealthUI();
+       
     }
 
     public void IsDestroyed()
