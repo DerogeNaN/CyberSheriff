@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using Unity.VisualScripting;
 using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEditor.SceneManagement;
 
 public class SoundManager2 : MonoBehaviour
 {
@@ -65,13 +66,13 @@ public class SoundManager2 : MonoBehaviour
 
         DontDestroyOnLoad(this);
         // Initialize sources for music
-        foreach (var m in musicTracks)
-        {
-            m.source = gameObject.AddComponent<AudioSource>();
-            m.source.clip = m.track;
-            m.source.volume = m.volume;
-            m.source.loop = m.loop; // Preserve looping option
-        }
+        //foreach (var m in musicTracks)
+        //{
+        //    m.source = gameObject.AddComponent<AudioSource>();
+        //    m.source.clip = m.track;
+        //    m.source.volume = m.volume;
+        //    m.source.loop = m.loop; // Preserve looping option
+        //}
 
     }
 
@@ -100,15 +101,40 @@ public class SoundManager2 : MonoBehaviour
                 return;
             }
         }
+
+        foreach (AudioSource aus in gameObject.GetComponentsInChildren<AudioSource>())
+        {
+            if (aus.GetComponent<AudioSource>())
+            {
+                if (!aus.GetComponent<AudioSource>().isPlaying)
+                {
+                    Destroy(GetComponent<AudioSource>());
+                }
+            }
+        }
     }
 
-    public void PlaySound(string name, Transform targetObject = null)
+    public void PlaySound(string name, Transform targetObject = null, bool Overlap = true)
     {
         SoundMaster sound = sounds.Find(s => s.name == name);
         if (sound != null && sound.clips.Length > 0)
         {
             // Select a random clip from the array of clips
             AudioClip clipToPlay = sound.clips[UnityEngine.Random.Range(0, sound.clips.Length)];
+
+            foreach (AudioSource audioSource in GetComponentsInChildren<AudioSource>())
+            {
+                if (audioSource.clip == clipToPlay)
+                {
+                    if (!Overlap) 
+                    {
+                        Debug.Log($"attempt to add sound duplicate : \"{audioSource.clip.name} \" to \"{((targetObject != null ) ? targetObject.name : gameObject.name)} \"  has been cancelled" );
+                        return;
+                    }
+
+                }
+
+            }
 
             // Create a new AudioSource for this specific instance
             AudioSource tempSource = (targetObject == null) ? gameObject.AddComponent<AudioSource>() : targetObject.GetComponent<AudioSource>();
@@ -151,8 +177,16 @@ public class SoundManager2 : MonoBehaviour
 
     public void PlayMusic(string name, bool fade = false)
     {
+
         MusicMaster music = musicTracks.Find(m => m.name == name);
         if (music == null) return;
+        else
+        {
+            music.source = gameObject.AddComponent<AudioSource>();
+            music.source.clip = music.track;
+            music.source.volume = music.volume;
+            music.source.loop = music.loop; // Preserve looping option
+        }
 
         if (fade && currentMusic != null)
         {
@@ -167,6 +201,7 @@ public class SoundManager2 : MonoBehaviour
             currentMusic.source.volume = currentMusic.volume;
             currentMusic.source.Play();
         }
+
     }
 
     public void PlayAmbience(string name, Transform targetObject = null)
