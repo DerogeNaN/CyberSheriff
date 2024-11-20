@@ -15,9 +15,7 @@ public class Movement : MonoBehaviour
     [SerializeField] Animator revolverAnimator;
     [SerializeField] Animator shotgunAnimator;
     //public Collider slideCollider;
-    public GameObject grappleUI;
-
-    //[HideInInspector][Tooltip("")]
+    
 
     #region Movement
     [Header("Movement Settings")]
@@ -125,7 +123,7 @@ public class Movement : MonoBehaviour
 
     //Backend Variables
     private Vector3 grappleTargetDirection = Vector3.zero;
-    private float lastGrappleTime = 0;
+    private float lastGrappleTime = -5;
     private GameObject grappleObject;
     private bool isGrappling = false;
     private bool canGrapple = false;
@@ -187,6 +185,7 @@ public class Movement : MonoBehaviour
     [HideInInspector] public Vector3 movementInputWorld = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
+    private GameObject grappleUI;
     private Collider standingCollider;
     private PauseMenu pauseMenu;
 
@@ -199,9 +198,23 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        standingCollider = GetComponent<Collider>();
-        pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (standingCollider == null)       standingCollider = GetComponent<Collider>();
+        if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (grappleUI == null)              grappleUI = GetComponentInChildren<UI_Billboard>().gameObject;
+        if (revolverAnimator == null)       revolverAnimator = GameObject.Find("Revolver_Animated_Mesh").GetComponent<Animator>();
+        if (shotgunAnimator == null)        shotgunAnimator = GameObject.Find("Shotgun_Animated_Mesh").GetComponent<Animator>();
+        if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
+        if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
+        if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
+        if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
+        if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
+
         InitialiseMovement();
+    }
+
+    private void Update()
+    {
+        CheckForGrappleTarget();
     }
 
     public void UpdateMovement()
@@ -324,7 +337,7 @@ public class Movement : MonoBehaviour
 
         CheckForWallRun();
 
-        CheckForGrappleTarget();
+        //CheckForGrappleTarget();
         Grappling();
 
         CheckForOncomingCollision();
@@ -535,8 +548,8 @@ public class Movement : MonoBehaviour
 
     private void CheckForGrappleTarget()
     {
-        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
-            hit.transform.CompareTag("GrappleableObject")))
+        if (Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
+            hit.transform.CompareTag("GrappleableObject"))
         {
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position;

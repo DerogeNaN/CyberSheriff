@@ -1,12 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using Unity.VisualScripting;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.SceneManagement;
-using UnityEngine.Animations;
-using UnityEditor.Rendering;
-using System.Data.Common;
 
 public class SoundManager2 : MonoBehaviour
 {
