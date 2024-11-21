@@ -207,7 +207,7 @@ public class WeaponManagement : MonoBehaviour
                 else if (CurrentWeapon == 0)
                     CurrentWeapon = 1;
 
-                SoundManager2.Instance.PlaySound("WeaponSwap");
+                SoundManager2.Instance.PlaySound("WeaponSwap",null,false);
 
                 //set previous to false
                 if (currentActiveWeapon)

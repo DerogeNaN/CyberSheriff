@@ -15,9 +15,7 @@ public class Movement : MonoBehaviour
     [SerializeField] Animator revolverAnimator;
     [SerializeField] Animator shotgunAnimator;
     //public Collider slideCollider;
-    public GameObject grappleUI;
-
-    //[HideInInspector][Tooltip("")]
+    
 
     #region Movement
     [Header("Movement Settings")]
@@ -107,7 +105,7 @@ public class Movement : MonoBehaviour
     [HideInInspector] public float cameraLeaveWallrunTime = 0;
     private float lastWallRunTime = 0;
     private float leavingWallrunTime = 0;
-    [HideInInspector] public bool isWallRunning = false;
+    public bool isWallRunning = false;
     private float wallRunStartTime = 0;
     private bool startWallrun = false;
     #endregion
@@ -125,7 +123,7 @@ public class Movement : MonoBehaviour
 
     //Backend Variables
     private Vector3 grappleTargetDirection = Vector3.zero;
-    private float lastGrappleTime = 0;
+    private float lastGrappleTime = -5;
     private GameObject grappleObject;
     private bool isGrappling = false;
     private bool canGrapple = false;
@@ -187,6 +185,7 @@ public class Movement : MonoBehaviour
     [HideInInspector] public Vector3 movementInputWorld = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
+    private GameObject grappleUI;
     private Collider standingCollider;
     private PauseMenu pauseMenu;
 
@@ -199,9 +198,23 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        standingCollider = GetComponent<Collider>();
-        pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (standingCollider == null)       standingCollider = GetComponent<Collider>();
+        if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (grappleUI == null)              grappleUI = GetComponentInChildren<UI_Billboard>().gameObject;
+        if (revolverAnimator == null)       revolverAnimator = GameObject.Find("Revolver_Animated_Mesh").GetComponent<Animator>();
+        if (shotgunAnimator == null)        shotgunAnimator = GameObject.Find("Shotgun_Animated_Mesh").GetComponent<Animator>();
+        if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
+        if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
+        if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
+        if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
+        if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
+
         InitialiseMovement();
+    }
+
+    private void Update()
+    {
+        CheckForGrappleTarget();
     }
 
     public void UpdateMovement()
@@ -231,14 +244,14 @@ public class Movement : MonoBehaviour
 
         if (isSliding)
         {
-            standingCollider.enabled = false;
+            //standingCollider.enabled = false;
             //slideCollider.enabled = true;
 
             if (velocity.magnitude <= 1) isSliding = false;
         }
         else
         {
-            standingCollider.enabled = true;
+            //standingCollider.enabled = true;
             //slideCollider.enabled = false;
 
             if (!isGrappling)
@@ -324,14 +337,43 @@ public class Movement : MonoBehaviour
 
         CheckForWallRun();
 
-        CheckForGrappleTarget();
+        //CheckForGrappleTarget();
         Grappling();
 
         CheckForOncomingCollision();
         PlayFootstepSound();
+        WalkingAnimation();
 
         //Actually apply motion to player transform
         transform.position += velocity * Time.deltaTime;
+    }
+
+    void WalkingAnimation()
+    {
+        if (revolverAnimator.isActiveAndEnabled)
+        {
+            if (velocity.magnitude > 3 && isGrounded)
+            {
+                revolverAnimator.SetFloat("Blend", 1.0f);
+                revolverAnimator.SetLayerWeight(2, 1.0f);
+            }
+            else
+            {
+                revolverAnimator.SetFloat("Blend", 0.0f);
+                revolverAnimator.SetLayerWeight(2, 0.0f);
+            }
+        }
+        else if(shotgunAnimator.isActiveAndEnabled)
+        {
+            if (velocity.magnitude > 3 && isGrounded)
+            {
+                shotgunAnimator.SetLayerWeight(2, 1.0f);
+            }
+            else
+            {
+                shotgunAnimator.SetLayerWeight(2, 0.0f);
+            }
+        }
     }
 
     void PlayWallRunFootstepSound()
@@ -506,8 +548,8 @@ public class Movement : MonoBehaviour
 
     private void CheckForGrappleTarget()
     {
-        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
-            hit.transform.CompareTag("GrappleableObject")))
+        if (Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
+            hit.transform.CompareTag("GrappleableObject"))
         {
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position;
@@ -537,7 +579,7 @@ public class Movement : MonoBehaviour
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
             lastGrappleTime = Time.time;
-            SoundManager2.Instance.PlaySound("Grapple");
+            //SoundManager2.Instance.PlaySound("Grapple");
         }
     }
 
@@ -552,12 +594,14 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
-        SoundManager2.Instance.StopSound("Grapple");
+        //SoundManager2.Instance.StopSound("Grapple");
     }
+
+
 
     private void UntiltCamera(float tiltAngle, float tiltSpeed)
     {
-        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
+        float newCameraAngle = Mathf.LerpAngle(cameraWallrunHolder.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
 
         cameraWallrunHolder.transform.localEulerAngles = new Vector3(
             Camera.main.transform.localEulerAngles.x,
@@ -568,9 +612,9 @@ public class Movement : MonoBehaviour
 
     private void TiltCameraFromWall(float tiltAngle, float tiltSpeed, Vector3 normal)
     {
-        float tiltCorrectionSign = Mathf.Sign(Vector3.Dot(-Camera.main.transform.right, normal));
+        float tiltCorrection = Vector3.Dot(-Camera.main.transform.right, normal);
 
-        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle * tiltCorrectionSign, tiltSpeed);
+        float newCameraAngle = Mathf.LerpAngle(cameraWallrunHolder.transform.localEulerAngles.z, tiltAngle * tiltCorrection, tiltSpeed);
 
 
         cameraWallrunHolder.transform.localEulerAngles = new Vector3(
@@ -725,7 +769,7 @@ public class Movement : MonoBehaviour
         RaycastHit wallHit;
         Vector3 normal = Vector3.zero;
 
-        if (!isGrounded)
+        if (!isGrounded && !isWallRunning)
         {
             //---check RIGHT for wall----
             if (Physics.CapsuleCast(
@@ -752,14 +796,29 @@ public class Movement : MonoBehaviour
                 wallNormal = normal;
                 WallRun();
             }
+        }
 
-            else if (isWallRunning)
+        else if (isWallRunning)
+        {
+            if (Physics.CapsuleCast(
+                transform.position + new Vector3(0, 0.7f, 0),
+                transform.position - new Vector3(0, 0.7f, 0), 0.45f, -wallNormal, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
+                Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
-                WallRunReset();
+                normal = wallHit.normal;
+                normal *= -Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
+
+                wallNormal = -normal;
+                WallRun();
+            }
+            else
+            {
+                isWallRunning = false;
+                wallNormal = Vector3.zero;
             }
         }
 
-        else 
+        else
         {
             isWallRunning = false;
             wallNormal = Vector3.zero;
@@ -776,7 +835,6 @@ public class Movement : MonoBehaviour
         if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time)
         {
             lastWallRunTime = Time.time;
-            cameraLeaveWallrunTime = Time.time + 0.2f;
             isWallRunning = true;
             velocity = wallSpeed * tangent;
             jumpCount = 0;
@@ -786,7 +844,6 @@ public class Movement : MonoBehaviour
                 velocity = velocity.normalized * wallrunVelocityBonus;
             }
             PlayWallRunFootstepSound();
-            TiltCameraFromWall(cameraWallrunTilt, cameraLeaveWallrunTime, wallNormal);
             return;
         }
 
@@ -803,7 +860,6 @@ public class Movement : MonoBehaviour
     private void WallRunReset()
     {
         lastWallRunTime = Time.time;
-        cameraLeaveWallrunTime = Time.time + 0.2f;
         isWallRunning = false;
         wallNormal = Vector3.zero;
     }
