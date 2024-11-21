@@ -19074,6 +19074,7 @@ GameObject:
   - component: {fileID: 4613755221359916252}
   - component: {fileID: 187740034541792969}
   - component: {fileID: 8956065550447804033}
+  - component: {fileID: 552541204}
   m_Layer: 3
   m_Name: CowBoy Player
   m_TagString: Player
@@ -19330,6 +19331,21 @@ MonoBehaviour:
   healthUI2: {fileID: 7769124354861152492}
   healthUI3: {fileID: 8028811195217425638}
   healthSlider: {fileID: 3729057871672888955}
+--- !u!114 &552541204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4613755221359916243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fab3984e90fe100408ba170c5c6ad637, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponManagmentScript: {fileID: 187740034541792969}
+  ammoText: {fileID: 3729057870615471924}
+  shadowAmmoText: {fileID: 3729057871177856625}
 --- !u!1 &4733492100488430344
 GameObject:
   m_ObjectHideFlags: 0
