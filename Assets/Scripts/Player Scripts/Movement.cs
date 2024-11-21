@@ -1,5 +1,7 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
 
 public class Movement : MonoBehaviour
 {
@@ -8,13 +10,12 @@ public class Movement : MonoBehaviour
 
     [Header("Serialize Fields - PLUG THESE IN!!!")]
     public Transform respawnPos;
-    [SerializeField] Transform cameraSlidePos;
-    [SerializeField] Transform cameraDefaultPos;
-    [SerializeField] GameObject cameraWallrunHolder;
-    [SerializeField] CapsuleCollider playerCapsule;
+    private Transform cameraSlidePos;
+    private Transform cameraDefaultPos;
+    private GameObject cameraWallrunHolder;
+    private CapsuleCollider playerCapsule;
     [SerializeField] Animator revolverAnimator;
     [SerializeField] Animator shotgunAnimator;
-    //public Collider slideCollider;
     
 
     #region Movement
@@ -103,9 +104,9 @@ public class Movement : MonoBehaviour
 
     //Backend Variables:
     [HideInInspector] public float cameraLeaveWallrunTime = 0;
+    [HideInInspector] public bool isWallRunning = false;
     private float lastWallRunTime = 0;
     private float leavingWallrunTime = 0;
-    public bool isWallRunning = false;
     private float wallRunStartTime = 0;
     private bool startWallrun = false;
     #endregion
@@ -120,6 +121,9 @@ public class Movement : MonoBehaviour
 
     [SerializeField][Tooltip("Max distance the player can enter a grapple")]
     public float maxGrappleDistance = 100f;
+
+    [SerializeField][Tooltip("The amount to offest the grapple UI from the middle of the grapple target")]
+    public Vector3 grappleOffset = Vector3.zero;
 
     //Backend Variables
     private Vector3 grappleTargetDirection = Vector3.zero;
@@ -188,8 +192,11 @@ public class Movement : MonoBehaviour
     private GameObject grappleUI;
     private Collider standingCollider;
     private PauseMenu pauseMenu;
+    private float blendAmount = 0.0f;
 
     Vector3 collisionNormal = Vector3.zero;
+
+    public AnimationCurve walkBlendAmount;
 
     private void Awake()
     {
@@ -201,8 +208,8 @@ public class Movement : MonoBehaviour
         if (standingCollider == null)       standingCollider = GetComponent<Collider>();
         if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
         if (grappleUI == null)              grappleUI = GetComponentInChildren<UI_Billboard>().gameObject;
-        if (revolverAnimator == null)       revolverAnimator = GameObject.Find("Revolver_Animated_Mesh").GetComponent<Animator>();
-        if (shotgunAnimator == null)        shotgunAnimator = GameObject.Find("Shotgun_Animated_Mesh").GetComponent<Animator>();
+        if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
+        if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
         if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
         if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
         if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
@@ -342,36 +349,76 @@ public class Movement : MonoBehaviour
 
         CheckForOncomingCollision();
         PlayFootstepSound();
+        GrappleAnimation();
         WalkingAnimation();
 
         //Actually apply motion to player transform
         transform.position += velocity * Time.deltaTime;
     }
 
+    void GrappleAnimation()
+    {
+        if (revolverAnimator.isActiveAndEnabled)
+        {
+            revolverAnimator.SetBool("Pull", isGrappling);
+        }
+
+        if (shotgunAnimator.isActiveAndEnabled)
+        {
+            shotgunAnimator.SetBool("Pull", isGrappling);
+        }
+    }
+
     void WalkingAnimation()
     {
         if (revolverAnimator.isActiveAndEnabled)
         {
-            if (velocity.magnitude > 3 && isGrounded)
+            if (isGrounded) blendAmount = (((velocity.magnitude - 0) / (15 - 0)) * (1 - 0)) + 0;
+            blendAmount = walkBlendAmount.Evaluate(blendAmount);
+
+            if (velocity.magnitude > 3 && isGrounded && !isSliding)
             {
-                revolverAnimator.SetFloat("Blend", 1.0f);
-                revolverAnimator.SetLayerWeight(2, 1.0f);
+                revolverAnimator.SetFloat("Blend", blendAmount);
+                revolverAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (isWallRunning)
+            {
+                revolverAnimator.SetFloat("Blend", 1 - blendAmount);
+                revolverAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (!isGrounded)
+            {
+                revolverAnimator.SetFloat("Blend", 1 - blendAmount);
+                revolverAnimator.SetLayerWeight(2, 1 - blendAmount);
             }
             else
             {
-                revolverAnimator.SetFloat("Blend", 0.0f);
-                revolverAnimator.SetLayerWeight(2, 0.0f);
+                revolverAnimator.SetFloat("Blend", 0);
+                revolverAnimator.SetLayerWeight(2, 0);
             }
         }
+
         else if(shotgunAnimator.isActiveAndEnabled)
         {
-            if (velocity.magnitude > 3 && isGrounded)
+            if (velocity.magnitude > 3 && isGrounded && !isSliding)
             {
-                shotgunAnimator.SetLayerWeight(2, 1.0f);
+                shotgunAnimator.SetFloat("Blend", blendAmount);
+                shotgunAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (isWallRunning)
+            {
+                shotgunAnimator.SetFloat("Blend", 1 - blendAmount);
+                shotgunAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (!isGrounded)
+            {
+                shotgunAnimator.SetFloat("Blend", 1 - blendAmount);
+                shotgunAnimator.SetLayerWeight(2, 1 - blendAmount);
             }
             else
             {
-                shotgunAnimator.SetLayerWeight(2, 0.0f);
+                shotgunAnimator.SetFloat("Blend", 0);
+                shotgunAnimator.SetLayerWeight(2, 0);
             }
         }
     }
@@ -548,11 +595,11 @@ public class Movement : MonoBehaviour
 
     private void CheckForGrappleTarget()
     {
-        if (Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
             hit.transform.CompareTag("GrappleableObject"))
         {
             grappleObject = hit.collider.gameObject;
-            grappleUI.transform.position = hit.collider.transform.position;
+            grappleUI.transform.position = hit.collider.transform.position + grappleOffset;
             if (lastGrappleTime + grappleCooldown < Time.time)
             {
                 canGrapple = true;
@@ -579,6 +626,8 @@ public class Movement : MonoBehaviour
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
             lastGrappleTime = Time.time;
+            revolverAnimator.SetTrigger("PullTrig");
+            shotgunAnimator.SetTrigger("PullTrig");
             //SoundManager2.Instance.PlaySound("Grapple");
         }
     }
@@ -659,8 +708,6 @@ public class Movement : MonoBehaviour
                                                         transform.position - new Vector3(0, 0.7f, 0),
                                                         0.6f, ~12, QueryTriggerInteraction.Ignore);
 
-        
-
         for (int i = 0; i < overlappingColliders.Length; i++)
         {
             if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
@@ -732,34 +779,39 @@ public class Movement : MonoBehaviour
 
             for (int i = 0; i < hitArray.Length; i++)
             {
-                Vector3 normal = hitArray[i].normal;
-                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+                collisionNormal = hitArray[i].normal;
+                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].point, hitArray[i].normal));
+                Debug.DrawRay(hitArray[i].point, hitArray[i].normal * 2, Color.magenta);
+                if (hitArray[i].point == Vector3.zero)
+                {
+                    Debug.Log("What the eff");
+                }
 
-                if (Vector3.Dot(velocity, normal) < 0); //continue;
+                if (Vector3.Dot(velocity, collisionNormal) < 0) continue;
 
-                float normalInUp = Vector3.Dot(Vector3.up, normal);
+                float normalInUp = Vector3.Dot(Vector3.up, collisionNormal);
+
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
-                    Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
+                    //If the collision is with something that's not a vertical wall *or* a horizontal floor
+                    Vector3 horiNormal = new Vector3(collisionNormal.x, 0, collisionNormal.z).normalized;
                     float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
                     velocity -= velocityInHoriNormalDirection * horiNormal;
                 }
-                float velocityInNormalDirection = Vector3.Dot(velocity, normal);
-                velocity -= velocityInNormalDirection * normal;
 
-                float clampAmmount = Vector3.Dot(movementInputWorld, normal);
-                if (clampAmmount < 0)
+                float clampAmount = Vector3.Dot(movementInputWorld, collisionNormal);
+                if (clampAmount < 0) continue;
+
+                if (normalInUp <= 0.25f)
                 {
-                    continue;
+                    clampAmount = 1 - clampAmount;
+
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
                 }
 
-                if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
-                {
-                    clampAmmount = 1 - clampAmmount;
-
-                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                }
+                float velocityInNormalDirection = Vector3.Dot(velocity, collisionNormal);
+                velocity -= velocityInNormalDirection * collisionNormal;
             }
         }
     }
@@ -854,6 +906,8 @@ public class Movement : MonoBehaviour
 
             Vector3 targetDirection = Vector3.RotateTowards(velocityHori, wallNormal, wallrunJumpAngle, 0);
             velocity = targetDirection * velocity.magnitude;
+            isWallRunning = false;
+
         }
     }
 
