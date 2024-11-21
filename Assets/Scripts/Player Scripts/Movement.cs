@@ -360,12 +360,12 @@ public class Movement : MonoBehaviour
     {
         if (revolverAnimator.isActiveAndEnabled)
         {
-            revolverAnimator.SetBool("Pull", isGrappling);
+            revolverAnimator.SetBool("PullBool", isGrappling);
         }
 
         if (shotgunAnimator.isActiveAndEnabled)
         {
-            shotgunAnimator.SetBool("Pull", isGrappling);
+            shotgunAnimator.SetBool("PullBool", isGrappling);
         }
     }
 
