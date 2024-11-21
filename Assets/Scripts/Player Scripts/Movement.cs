@@ -566,7 +566,7 @@ public class Movement : MonoBehaviour
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
             lastGrappleTime = Time.time;
-            SoundManager2.Instance.PlaySound("Grapple");
+            //SoundManager2.Instance.PlaySound("Grapple");
         }
     }
 
@@ -581,7 +581,7 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
-        SoundManager2.Instance.StopSound("Grapple");
+        //SoundManager2.Instance.StopSound("Grapple");
     }
 
 
