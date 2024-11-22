@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class CameraShakeTracker : MonoBehaviour
 {
-    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject cam;
     public float cameraOffset = 0.0f;
 
     void Update()
     {
-        camera.transform.position = new Vector3 (transform.position.x, transform.position.y + 0.05f, transform.position.z);
-        camera.transform.position -= camera.transform.forward * cameraOffset;
-        camera.transform.rotation = transform.rotation;
+        cam.transform.position = new Vector3 (transform.position.x, transform.position.y + 0.05f, transform.position.z);
+        cam.transform.position -= cam.transform.forward * cameraOffset;
+        cam.transform.rotation = transform.rotation;
     }
 }
