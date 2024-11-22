@@ -371,11 +371,11 @@ public class Movement : MonoBehaviour
 
     void WalkingAnimation()
     {
+        if (isGrounded) blendAmount = (((velocity.magnitude - 0) / (15 - 0)) * (1 - 0)) + 0;
+        blendAmount = walkBlendAmount.Evaluate(blendAmount);
+
         if (revolverAnimator.isActiveAndEnabled)
         {
-            if (isGrounded) blendAmount = (((velocity.magnitude - 0) / (15 - 0)) * (1 - 0)) + 0;
-            blendAmount = walkBlendAmount.Evaluate(blendAmount);
-
             if (velocity.magnitude > 3 && isGrounded && !isSliding)
             {
                 revolverAnimator.SetFloat("Blend", blendAmount);
