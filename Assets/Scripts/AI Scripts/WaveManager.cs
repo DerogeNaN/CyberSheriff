@@ -97,7 +97,6 @@ public class WaveManager : MonoBehaviour
     {
         waveNumber = 0;
         enemiesRemaining = 0;
-        StartNewWave = null;  // Unsubscribe from event ADDED THIS MAYBE?
         Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
