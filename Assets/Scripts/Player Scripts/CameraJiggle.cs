@@ -54,7 +54,6 @@ public class CameraJiggle : MonoBehaviour
             fOVRatio = defaultFOVCurve.Evaluate(fOVRatio);
 
             currFOV = Mathf.Lerp(defaultFOV, maxDashFOV, fOVRatio);
-
         }
         else
         {

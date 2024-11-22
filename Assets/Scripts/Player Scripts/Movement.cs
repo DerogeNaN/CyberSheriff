@@ -10,6 +10,10 @@ public class Movement : MonoBehaviour
     public Transform respawnPos;
     [SerializeField] Transform cameraSlidePos;
     [SerializeField] Transform cameraDefaultPos;
+    [SerializeField] GameObject cameraWallrunHolder;
+    [SerializeField] CapsuleCollider playerCapsule;
+    [SerializeField] Animator revolverAnimator;
+    [SerializeField] Animator shotgunAnimator;
     //public Collider slideCollider;
     public GameObject grappleUI;
 
@@ -103,7 +107,7 @@ public class Movement : MonoBehaviour
     [HideInInspector] public float cameraLeaveWallrunTime = 0;
     private float lastWallRunTime = 0;
     private float leavingWallrunTime = 0;
-    [HideInInspector] public bool isWallRunning = false;
+    public bool isWallRunning = false;
     private float wallRunStartTime = 0;
     private bool startWallrun = false;
     #endregion
@@ -186,6 +190,8 @@ public class Movement : MonoBehaviour
     private Collider standingCollider;
     private PauseMenu pauseMenu;
 
+    Vector3 collisionNormal = Vector3.zero;
+
     private void Awake()
     {
         playerMovement = this;
@@ -206,10 +212,9 @@ public class Movement : MonoBehaviour
 
         momentumRatio = 1 / currEncouragment;
 
-        MovePlayer();
+        ComputeDepenetration();
         GroundCheck();
-
-
+        MovePlayer();
     }
 
     void MovePlayer()
@@ -226,14 +231,14 @@ public class Movement : MonoBehaviour
 
         if (isSliding)
         {
-            standingCollider.enabled = false;
+            //standingCollider.enabled = false;
             //slideCollider.enabled = true;
 
             if (velocity.magnitude <= 1) isSliding = false;
         }
         else
         {
-            standingCollider.enabled = true;
+            //standingCollider.enabled = true;
             //slideCollider.enabled = false;
 
             if (!isGrappling)
@@ -254,7 +259,6 @@ public class Movement : MonoBehaviour
 
 
         Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-        float encouragedAmount = Vector3.Dot(movementInputWorld, horizontalVelocity.normalized) * (1 - momentumRatio);
         Vector3 targetVelocity = (movementInputWorld * moveSpeed) * momentumRatio;
         float nextFrameMagnitude = (horizontalVelocity + targetVelocity).magnitude;
         float horizontalMag = horizontalVelocity.magnitude;
@@ -317,17 +321,46 @@ public class Movement : MonoBehaviour
 
         Gravity();
 
-        CheckForOncomingCollision();
 
         CheckForWallRun();
 
         CheckForGrappleTarget();
         Grappling();
 
-        //PlayFootstepSound();
+        CheckForOncomingCollision();
+        PlayFootstepSound();
+        WalkingAnimation();
 
         //Actually apply motion to player transform
         transform.position += velocity * Time.deltaTime;
+    }
+
+    void WalkingAnimation()
+    {
+        if (revolverAnimator.isActiveAndEnabled)
+        {
+            if (velocity.magnitude > 3 && isGrounded)
+            {
+                revolverAnimator.SetFloat("WalkBlend", 1.0f);
+                revolverAnimator.SetLayerWeight(2, 1.0f);
+            }
+            else
+            {
+                revolverAnimator.SetFloat("WalkBlend", 0.0f);
+                revolverAnimator.SetLayerWeight(2, 0.0f);
+            }
+        }
+        else if(shotgunAnimator.isActiveAndEnabled)
+        {
+            if (velocity.magnitude > 3 && isGrounded)
+            {
+                shotgunAnimator.SetLayerWeight(2, 1.0f);
+            }
+            else
+            {
+                shotgunAnimator.SetLayerWeight(2, 0.0f);
+            }
+        }
     }
 
     void PlayWallRunFootstepSound()
@@ -479,16 +512,19 @@ public class Movement : MonoBehaviour
                 if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
                 {
                     jumpCount++;
+                    SoundManager2.Instance.PlaySound("JumpSFX");
                 }
 
                 else if (lastWallRunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
+                    SoundManager2.Instance.PlaySound("JumpSFX");
                 }
 
                 else
                 {
                     jumpCount += 2;
+                    SoundManager2.Instance.PlaySound("DoubleJumpSFX");
                 }
 
                 velocity.y = jumpStrength;
@@ -530,6 +566,7 @@ public class Movement : MonoBehaviour
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
             lastGrappleTime = Time.time;
+            SoundManager2.Instance.PlaySound("Grapple");
         }
     }
 
@@ -544,13 +581,16 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
+        SoundManager2.Instance.StopSound("Grapple");
     }
+
+
 
     private void UntiltCamera(float tiltAngle, float tiltSpeed)
     {
-        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
+        float newCameraAngle = Mathf.LerpAngle(cameraWallrunHolder.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
 
-        Camera.main.transform.localEulerAngles = new Vector3(
+        cameraWallrunHolder.transform.localEulerAngles = new Vector3(
             Camera.main.transform.localEulerAngles.x,
             Camera.main.transform.localEulerAngles.y,
             newCameraAngle
@@ -559,12 +599,12 @@ public class Movement : MonoBehaviour
 
     private void TiltCameraFromWall(float tiltAngle, float tiltSpeed, Vector3 normal)
     {
-        float tiltCorrectionSign = Mathf.Sign(Vector3.Dot(-Camera.main.transform.right, normal));
+        float tiltCorrection = Vector3.Dot(-Camera.main.transform.right, normal);
 
-        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle * tiltCorrectionSign, tiltSpeed);
+        float newCameraAngle = Mathf.LerpAngle(cameraWallrunHolder.transform.localEulerAngles.z, tiltAngle * tiltCorrection, tiltSpeed);
 
 
-        Camera.main.transform.localEulerAngles = new Vector3(
+        cameraWallrunHolder.transform.localEulerAngles = new Vector3(
             Camera.main.transform.localEulerAngles.x,
             Camera.main.transform.localEulerAngles.y,
             newCameraAngle
@@ -579,6 +619,7 @@ public class Movement : MonoBehaviour
             {
                 if (!hitInfo.collider.isTrigger)
                 {
+                    if (!isGrounded) SoundManager2.Instance.PlaySound("LandingSFX");
                     isGrounded = true;
                     isWallRunning = false;
                     lastGroundedTime = Time.time;
@@ -595,44 +636,79 @@ public class Movement : MonoBehaviour
         }
     }
 
+    void ComputeDepenetration()
+    {
+        Vector3 resolveDirection = Vector3.zero;
+        float resolveDistance = 0.0f;
+        Collider[] overlappingColliders = { };
+
+        overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
+                                                        transform.position - new Vector3(0, 0.7f, 0),
+                                                        0.6f, ~12, QueryTriggerInteraction.Ignore);
+
+        
+
+        for (int i = 0; i < overlappingColliders.Length; i++)
+        {
+            if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
+                                        overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
+                                        out resolveDirection, out resolveDistance))
+            {
+                transform.position += resolveDirection * resolveDistance;
+            }
+        }
+    }
+
     void CheckForOncomingCollision()
     {
         RaycastHit[] hitArray;
 
+        float overShoot = 0f;
+
         if (!isSliding)
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0),
-                                              transform.position - new Vector3(0, 0.7f, 0),
-                                              0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+            Vector3 movementDirection = velocity.normalized;
+            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0) - movementDirection * overShoot,
+                                              transform.position - new Vector3(0, 0.7f, 0) - movementDirection * overShoot,
+                                              0.5f, movementDirection, velocity.magnitude * Time.deltaTime + overShoot, ~12, QueryTriggerInteraction.Ignore);
+
+            //if (Physics.Raycast(transform.position - transform.forward * 0.5f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore))
 
             for (int i = 0; i < hitArray.Length; i++)
             {
-                Vector3 normal = hitArray[i].normal;
-                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+                collisionNormal = hitArray[i].normal;
+                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].point, hitArray[i].normal));
+                Debug.DrawRay(hitArray[i].point, hitArray[i].normal * 2, Color.magenta);
+                if (hitArray[i].point == Vector3.zero)
+                {
+                    Debug.Log("What the eff");
+                }
 
-                if (Vector3.Dot(velocity, normal) < 0) continue;
+                if (Vector3.Dot(velocity, collisionNormal) < 0) continue;
 
-                float normalInUp = Vector3.Dot(Vector3.up, normal);
-                //Debug.Log(normalInUp);
+                float normalInUp = Vector3.Dot(Vector3.up, collisionNormal);
+                
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
-                    Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
+                    //If the collision is with something that's not a vertical wall *or* a horizontal floor
+                    Vector3 horiNormal = new Vector3(collisionNormal.x, 0, collisionNormal.z).normalized;
                     float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
                     velocity -= velocityInHoriNormalDirection * horiNormal;
                 }
-                float velocityInNormalDirection = Vector3.Dot(velocity, normal);
-                velocity -= velocityInNormalDirection * normal;
 
-                float clampAmmount = Vector3.Dot(movementInputWorld, normal);
-                if (clampAmmount < 0) continue;
+                float clampAmount = Vector3.Dot(movementInputWorld, collisionNormal);
+                if (clampAmount < 0) continue;
 
-                if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
+                if (normalInUp <= 0.25f)
                 {
-                    clampAmmount = 1 - clampAmmount;
+                    clampAmount = 1 - clampAmount;
 
-                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
                 }
+
+                float velocityInNormalDirection = Vector3.Dot(velocity, collisionNormal);
+                velocity -= velocityInNormalDirection * collisionNormal;
             }
         }
 
@@ -646,7 +722,7 @@ public class Movement : MonoBehaviour
                 Vector3 normal = hitArray[i].normal;
                 normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
 
-                if (Vector3.Dot(velocity, normal) < 0) continue;
+                if (Vector3.Dot(velocity, normal) < 0); //continue;
 
                 float normalInUp = Vector3.Dot(Vector3.up, normal);
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
@@ -659,7 +735,10 @@ public class Movement : MonoBehaviour
                 velocity -= velocityInNormalDirection * normal;
 
                 float clampAmmount = Vector3.Dot(movementInputWorld, normal);
-                if (clampAmmount < 0) continue;
+                if (clampAmmount < 0)
+                {
+                    continue;
+                }
 
                 if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
                 {
@@ -670,7 +749,6 @@ public class Movement : MonoBehaviour
                 }
             }
         }
-        
     }
 
     private void CheckForWallRun()
@@ -678,12 +756,12 @@ public class Movement : MonoBehaviour
         RaycastHit wallHit;
         Vector3 normal = Vector3.zero;
 
-        if (!isGrounded)
+        if (!isGrounded && !isWallRunning)
         {
             //---check RIGHT for wall----
             if (Physics.CapsuleCast(
-                transform.position + new Vector3(0, 0.5f, 0),
-                transform.position - new Vector3(0, 0.5f, 0), 0.35f, transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+                transform.position + new Vector3(0, 0.7f, 0),
+                transform.position - new Vector3(0, 0.7f, 0), 0.45f, transform.right, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
                 Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
                 normal = wallHit.normal;
@@ -695,8 +773,8 @@ public class Movement : MonoBehaviour
 
             //---check LEFT for wall----
             else if (Physics.CapsuleCast(
-                transform.position + new Vector3(0, 0.5f, 0),
-                transform.position - new Vector3(0, 0.5f, 0), 0.35f, -transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+                transform.position + new Vector3(0, 0.7f, 0),
+                transform.position - new Vector3(0, 0.7f, 0), 0.45f, -transform.right, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
                 Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
                 normal = wallHit.normal;
@@ -705,14 +783,29 @@ public class Movement : MonoBehaviour
                 wallNormal = normal;
                 WallRun();
             }
+        }
 
-            else if (isWallRunning)
+        else if (isWallRunning)
+        {
+            if (Physics.CapsuleCast(
+                transform.position + new Vector3(0, 0.7f, 0),
+                transform.position - new Vector3(0, 0.7f, 0), 0.45f, -wallNormal, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
+                Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
-                WallRunReset();
+                normal = wallHit.normal;
+                normal *= -Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
+
+                wallNormal = -normal;
+                WallRun();
+            }
+            else
+            {
+                isWallRunning = false;
+                wallNormal = Vector3.zero;
             }
         }
 
-        else 
+        else
         {
             isWallRunning = false;
             wallNormal = Vector3.zero;
@@ -724,23 +817,24 @@ public class Movement : MonoBehaviour
         Vector3 tangent = Vector3.Cross(Vector3.up, wallNormal);
         wallTangent = tangent * Mathf.Sign(Vector3.Dot(velocity, tangent));
         float wallSpeed = Vector3.Dot(tangent, velocity);
+
         if (!isWallRunning) wallRunStartTime = Time.time;
         if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time)
         {
             lastWallRunTime = Time.time;
-            cameraLeaveWallrunTime = Time.time + 0.2f;
             isWallRunning = true;
             velocity = wallSpeed * tangent;
             jumpCount = 0;
 
             if (velocity.magnitude < wallrunVelocityBonus)
             {
-                velocity = velocity.normalized * wallrunVelocityBonus;                
+                velocity = velocity.normalized * wallrunVelocityBonus;
             }
             PlayWallRunFootstepSound();
             return;
         }
-        else
+
+        else if (wallRunStartTime + 0.1f < Time.time)
         {
             Vector3 velocityHori = new Vector3(velocity.x, 0, velocity.z);
             velocityHori.Normalize();
@@ -753,7 +847,6 @@ public class Movement : MonoBehaviour
     private void WallRunReset()
     {
         lastWallRunTime = Time.time;
-        cameraLeaveWallrunTime = Time.time + 0.2f;
         isWallRunning = false;
         wallNormal = Vector3.zero;
     }

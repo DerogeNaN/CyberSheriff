@@ -37,8 +37,7 @@ public class Revolver : RangedWeapon
             SoundManager2.Instance.PlaySound("Revolver");
             if (hit != false)
             {
-                CurrentlyHitting = rayData.hit.transform.gameObject;
-
+            
                 if (rayData.hit.transform.gameObject.layer != 3)
                 {
 
