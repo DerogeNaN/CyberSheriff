@@ -341,12 +341,12 @@ public class Movement : MonoBehaviour
         {
             if (velocity.magnitude > 3 && isGrounded)
             {
-                revolverAnimator.SetFloat("Blend", 1.0f);
+                revolverAnimator.SetFloat("WalkBlend", 1.0f);
                 revolverAnimator.SetLayerWeight(2, 1.0f);
             }
             else
             {
-                revolverAnimator.SetFloat("Blend", 0.0f);
+                revolverAnimator.SetFloat("WalkBlend", 0.0f);
                 revolverAnimator.SetLayerWeight(2, 0.0f);
             }
         }
