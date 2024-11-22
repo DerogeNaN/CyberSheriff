@@ -88,7 +88,7 @@ public class EnemyRanged : EnemyBase
         // change spawn pos to gun pos
         Projectile projectile = Instantiate(bulletPrefab, transform.position + enemy.lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
         projectile.Shoot(enemy.playerTransform.position);
-        //SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
+        SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
         // snap to point at player when firing
         transform.LookAt(enemy.playerTransform);
 
