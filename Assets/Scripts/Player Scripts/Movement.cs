@@ -402,22 +402,18 @@ public class Movement : MonoBehaviour
         {
             if (velocity.magnitude > 3 && isGrounded && !isSliding)
             {
-                shotgunAnimator.SetFloat("Blend", blendAmount);
                 shotgunAnimator.SetLayerWeight(2, blendAmount);
             }
             else if (isWallRunning)
             {
-                shotgunAnimator.SetFloat("Blend", 1 - blendAmount);
                 shotgunAnimator.SetLayerWeight(2, blendAmount);
             }
             else if (!isGrounded)
             {
-                shotgunAnimator.SetFloat("Blend", 1 - blendAmount);
                 shotgunAnimator.SetLayerWeight(2, 1 - blendAmount);
             }
             else
             {
-                shotgunAnimator.SetFloat("Blend", 0);
                 shotgunAnimator.SetLayerWeight(2, 0);
             }
         }
