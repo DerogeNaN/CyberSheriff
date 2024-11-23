@@ -53,7 +53,6 @@ public class RangedWeapon : MonoBehaviour
     [Tooltip("Current Number of Bullets")]
     public int currentBullets;
 
-
     [SerializeField]
     public int CurrentReserveAmmo = 50;
 
@@ -101,9 +100,6 @@ public class RangedWeapon : MonoBehaviour
     [Header("Scene Refrences")]
     [SerializeField]
     public Camera camRef;
-
-    [SerializeField]
-    public GameObject CurrentlyHitting;
 
 
     public struct RayData
@@ -157,8 +153,6 @@ public class RangedWeapon : MonoBehaviour
             currentBullets--;
             if (hit != false)
             {
-                CurrentlyHitting = rayData.hit.transform.gameObject;
-
                 if (rayData.hit.transform.gameObject.layer != 3)
                 {
 

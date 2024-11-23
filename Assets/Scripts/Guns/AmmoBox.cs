@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class AmmoBox : MonoBehaviour
 {
@@ -10,14 +11,15 @@ public class AmmoBox : MonoBehaviour
         shotgun,
         revolver,
         grenade,
-        ShotandRev,
+        ShotAndRev,
+        Health,
     }
 
     [SerializeField]
     public AmmoType ammoType;
 
     [SerializeField]
-    int ammoGiven = 100;
+    int ammoGiven = 25;
 
     WeaponManagement weaponManagement;
 
@@ -33,9 +35,14 @@ public class AmmoBox : MonoBehaviour
     [SerializeField]
     bool active;
 
+    [SerializeField]
+    PlayerHealth health;
+
+
     void Start()
     {
         weaponManagement = FindObjectOfType<WeaponManagement>();
+        health = FindObjectOfType<PlayerHealth>();
     }
 
     // Update is called once per frame
@@ -75,11 +82,17 @@ public class AmmoBox : MonoBehaviour
                     active = false;
                 }
 
-                if (ammoType == AmmoType.ShotandRev)
+                if (ammoType == AmmoType.ShotAndRev)
                 {
                     Debug.Log("BothGiven");
                     weaponManagement.revolverRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven, 0, weaponManagement.revolverRef.ReserveAmmoCap);
                     weaponManagement.shotgunRef.CurrentReserveAmmo = Mathf.Clamp(ammoGiven / 4, 0, weaponManagement.shotgunRef.ReserveAmmoCap);
+                    active = false;
+                }
+
+                if (ammoType == AmmoType.Health)
+                {
+                    health.health += ammoGiven;
                     active = false;
                 }
             }
