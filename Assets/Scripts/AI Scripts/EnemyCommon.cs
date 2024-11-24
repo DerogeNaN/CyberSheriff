@@ -10,23 +10,19 @@ using UnityEngine.ProBuilder.Shapes;
 public class EnemyCommon : MonoBehaviour
 {
     [Header("Enemy Settings")]
-    [HideInInspector] public bool active;
+    public bool active = true;
     [Tooltip("maximum distance at which the player can be considered in line of sight")]
     public float sightRange = 25.0f;
     [Tooltip("offset from where the enemy's eyes are, for checking line of sight")]
     public Vector3 lineOfSightOffset;
     [HideInInspector] public float speed = 5.0f;
 
-    [Header("Advanced")]
-    //[Tooltip("reference to the enemy's mesh GameObject, used for animation")]
-    [HideInInspector] public GameObject mesh;
-    //[Tooltip("the animator to use. should be a component of the mesh GameObject")]
-    [HideInInspector] public Animator animator;
-
     [Header("dont change")]
     public Vector3 initialPosition;
+    public GameObject mesh;
+    public Animator animator;
+    public Transform playerTransform;
 
-    [HideInInspector] public Transform playerTransform;
     [HideInInspector] public Vector3 moveTarget; // the object it follows
     [HideInInspector] public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
     [HideInInspector] public bool hasLineOfSight;
@@ -39,19 +35,18 @@ public class EnemyCommon : MonoBehaviour
     private void Start()
     {
         // initialise pathing values
-        shouldPath = true;
         TryGetComponent<NavMeshAgent>(out navAgent);
         if (navAgent) navAgent.autoTraverseOffMeshLink = false;
+
+        health = GetComponent<Health>();
+        mesh = transform.Find("Mesh").gameObject;
+        animator = transform.GetComponentInChildren<Animator>();
 
         // start spawned or despawned
         if (active) Spawn();
         else Despawn();
 
         SetPlayerTransform();
-
-        health = GetComponent<Health>();
-        mesh = transform.Find("Mesh").gameObject;
-        animator = transform.GetComponentInChildren<Animator>();
     }
 
     private void Update()

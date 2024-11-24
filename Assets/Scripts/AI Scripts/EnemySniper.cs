@@ -39,7 +39,6 @@ public class EnemySniper : EnemyBase
     float laserIntensity = 0.0f;
     bool fired = false;
     bool targetPlayer = true;
-    GameObject laserObject;
 
     protected override void OnStart()
     {
@@ -47,8 +46,7 @@ public class EnemySniper : EnemyBase
         timer = shotCooldown;
         enemy.animator.SetBool("Run", false);
 
-        laserObject = Instantiate(laser, gunPos);
-        lasers = laserObject.GetComponentsInChildren<LineRenderer>();
+        lasers = laser.GetComponentsInChildren<LineRenderer>();
 
         foreach (var l in lasers)
             l.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
