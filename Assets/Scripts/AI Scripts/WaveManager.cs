@@ -76,7 +76,12 @@ public class WaveManager : MonoBehaviour
     public void StartWave()
     {
         Debug.Log("Wave Manager starting new wave");
-        SoundManager2.Instance.PlaySound("Alarm_sound");
+        if (waveNumber == 0)
+        {
+            SoundManager2.Instance.PlaySound("FirstWave");
+        }
+        else SoundManager2.Instance.PlaySound("OtherWaves");
+       
 
         if (waveNumber > 2)
         {

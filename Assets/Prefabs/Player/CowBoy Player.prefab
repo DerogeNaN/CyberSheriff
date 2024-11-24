@@ -16638,6 +16638,7 @@ GameObject:
   - component: {fileID: 3729057871203134234}
   - component: {fileID: 3729057871203134233}
   - component: {fileID: 3729057871203134232}
+  - component: {fileID: 4776212865931543527}
   m_Layer: 15
   m_Name: Grenade
   m_TagString: Untagged
@@ -16719,6 +16720,25 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 2.8, y: -2.58}
   m_UseGraphicAlpha: 1
+--- !u!114 &4776212865931543527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3729057871203134246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a69fda0a1892a428a0a522246c5508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AmmoHolderUI: {fileID: 3729057871203134246}
+  grenadeLogos:
+  - {fileID: 5060418707218339427}
+  - {fileID: 3590795158281839890}
+  - {fileID: 8950219112143572107}
+  weaponManagementScript: {fileID: 187740034541792969}
+  UIGrenadeAmmo: 0
 --- !u!1 &3729057871214261278
 GameObject:
   m_ObjectHideFlags: 0
@@ -18924,80 +18944,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1de68c73513f35c40b3081cf31182619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  headTiltAtMax: 5
+  tiltSpeed: 0.08
   maxMomentumInfluence: 10
-  headTiltAtMax: 3
-  tilt: 0
-  maxFOV: 90
-  maxDashFOV: 110
+  cameraTiltCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 5
+      value: 5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   defaultFOV: 80
-  currFOV: 0
+  changeInFOV: 10
+  changeInFOVSpeed: 0.05
   cameraHolder: {fileID: 3140000632606296500}
-  dashFOVCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: -0
-      outSlope: -0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.57916665
-    - serializedVersion: 3
-      time: 0.26491034
-      value: 0.4992418
-      inSlope: 3.231016
-      outSlope: 3.231016
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.07944331
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.26664865
-      value: 0.52357745
-      inSlope: 3.3978608
-      outSlope: 3.3978608
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 1
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.5499878
-      value: 0.9976425
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  defaultFOVCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.20832722
-      value: 0.9999982
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &4613755221126713083
 GameObject:
   m_ObjectHideFlags: 0
@@ -19258,7 +19235,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSens: 14
-  defaultFOV: 80
   cameraHolder: {fileID: 3140000632606296500}
   xClamp: 180
 --- !u!114 &4613755221359916252
