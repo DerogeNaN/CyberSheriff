@@ -112,6 +112,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHeadshot: 1
   enemyHealth: {fileID: 6518627427590021233}
+--- !u!1 &2509788940576025101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3401659443762252549}
+  m_Layer: 0
+  m_Name: GunPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3401659443762252549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2509788940576025101}
+  m_LocalRotation: {x: 0.016634135, y: -0.11468564, z: -0.9831189, w: -0.14159012}
+  m_LocalPosition: {x: 0.00002, y: 0.005846, z: -0.000888}
+  m_LocalScale: {x: 0.0066666803, y: 0.006666669, z: 0.0066666678}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4619319643954928590}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5858045965911771899
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,6 +316,7 @@ MonoBehaviour:
   - {fileID: 8016684951885539720}
   - {fileID: 8016684950981545677}
   - {fileID: 7228293558365097857}
+  gunPos: {fileID: 3401659443762252549}
   targetPos: {fileID: 0}
 --- !u!114 &3021615162122810611
 MonoBehaviour:
@@ -385,7 +417,7 @@ PrefabInstance:
     - target: {fileID: 7148303922545888110, guid: 5e6d4d9669f16fe4180634df81951db9,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 130
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7148303922545888110, guid: 5e6d4d9669f16fe4180634df81951db9,
         type: 3}
@@ -437,7 +469,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sniper_Laser_Line_Renderer
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2834157779059057038, guid: 5e6d4d9669f16fe4180634df81951db9, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5e6d4d9669f16fe4180634df81951db9, type: 3}
 --- !u!120 &7228293558365097857 stripped
 LineRenderer:
@@ -547,6 +580,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 567a275dacc0f7e4ba4e65e4a70cf161, type: 3}
+--- !u!4 &4619319643954928590 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5668864289169173951, guid: 567a275dacc0f7e4ba4e65e4a70cf161,
+    type: 3}
+  m_PrefabInstance: {fileID: 1058562193198003825}
+  m_PrefabAsset: {fileID: 0}
 --- !u!137 &7421210639418860601 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 7515851872550294088, guid: 567a275dacc0f7e4ba4e65e4a70cf161,

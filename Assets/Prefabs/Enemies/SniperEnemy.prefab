@@ -454,9 +454,9 @@ MonoBehaviour:
   sightRange: 80
   lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
+  initialPosition: {x: 0, y: 0, z: 0}
   mesh: {fileID: 1274072756739348845}
   animator: {fileID: 5384380014956159244}
-  initialPosition: {x: 0, y: 0, z: 0}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
@@ -486,7 +486,6 @@ MonoBehaviour:
   shotCooldown: 2
   laser: {fileID: 1148469677913666579}
   gunPos: {fileID: 8119014959397944616}
-  targetPos: {fileID: 0}
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -905,6 +904,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8781144055303266578}
     m_Modifications:
+    - target: {fileID: 2834157779059057038, guid: 6613e9e1e3aff7540ac48e67321e5445,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7148303922545888110, guid: 6613e9e1e3aff7540ac48e67321e5445,
         type: 3}
       propertyPath: m_RootOrder

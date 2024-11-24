@@ -8,6 +8,7 @@ enum LaserState
 {
     none,
     charging,
+    beforeFire,
     firing,
     disappearing
 }
