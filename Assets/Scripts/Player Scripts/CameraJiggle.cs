@@ -10,8 +10,8 @@ public class CameraJiggle : MonoBehaviour
     [SerializeField][Tooltip("How much the camera tilts in degrees once moving at \'Max Momentum Influence\'")]
     public float headTiltAtMax = 3.0f;
 
-    [Range(0, 1)][Tooltip("How quickly the camera tilts to \'Head Tilt At Max\' from 0 (Never) to 1 (Instant)")]
-    public float tiltTime = 0.0f;
+    [Range(0, 1)][Tooltip("How quickly the camera tilts to \'Head Tilt At Max\' (0 - never, 1 - instant)")]
+    public float tiltSpeed = 0.0f;
 
     [SerializeField][Tooltip("The camera won't tilt any further past this speed (Usually same as \'Max Player Input Speed \')")]
     public float maxMomentumInfluence = 1.0f;
@@ -26,9 +26,11 @@ public class CameraJiggle : MonoBehaviour
     [SerializeField][Tooltip("The default camera field of view")]
     private float defaultFOV = 80.0f;
 
-    [SerializeField][Tooltip("How much the FOV increases performing certain actions (I.e. sliding or dashing")]
+    [SerializeField][Tooltip("How much the FOV increases performing certain actions (I.e. sliding or dashing)")]
     public float changeInFOV = 0.0f;
-    public AnimationCurve cameraFOVCurve;
+
+    [Range(0, 1)][Tooltip("How quickly the FOV increases (0 - never, 1 - instant)")]
+    public float changeInFOVSpeed = 0.0f;
 
     //Backend:
     private float lastFrameFOV = 0.0f;
@@ -44,6 +46,8 @@ public class CameraJiggle : MonoBehaviour
     {
         mainCamera = Camera.main;
         mainCamera.fieldOfView = defaultFOV;
+        targetFOV = defaultFOV;
+        lastFrameFOV = defaultFOV;
     }
 
     void Update()
@@ -86,7 +90,7 @@ public class CameraJiggle : MonoBehaviour
             }
         }
 
-        float actualTilt = Mathf.Lerp(tiltLastFrame, targetTilt, tiltTime);
+        float actualTilt = Mathf.Lerp(tiltLastFrame, targetTilt, tiltSpeed);
 
         cameraHolder.transform.localEulerAngles = new Vector3(
                 cameraHolder.transform.localEulerAngles.x,
@@ -99,14 +103,19 @@ public class CameraJiggle : MonoBehaviour
 
     void UpdateFOV()
     {
-        if (Movement.playerMovement.isDashing || Movement.playerMovement.isDashing)
+        if (Movement.playerMovement.isDashing || Movement.playerMovement.isSliding)
         {
-
+            targetFOV = defaultFOV + changeInFOV;
+            targetFOV = Mathf.Lerp(lastFrameFOV, targetFOV, changeInFOVSpeed);
         }
 
         else
         {
-
+            targetFOV = defaultFOV;
+            targetFOV = Mathf.Lerp(lastFrameFOV, targetFOV, changeInFOVSpeed);
         }
+
+        mainCamera.fieldOfView = targetFOV;
+        lastFrameFOV = targetFOV;
     }
 }
