@@ -6,16 +6,16 @@ using UnityEngine.AI;
 
 public class WaveSpawner : MonoBehaviour
 {
-    [SerializeField] public GameObject[] wave1Enemies;
-    [SerializeField] public GameObject[] wave2Enemies;
-    [SerializeField] public GameObject[] wave3Enemies;
-    [SerializeField] public GameObject[] wave4Enemies;
-    [SerializeField] public GameObject[] wave5Enemies;
-    [SerializeField] public GameObject[] wave6Enemies;
-    [SerializeField] public GameObject[] wave7Enemies;
-    [SerializeField] public GameObject[] wave8Enemies;
-    [SerializeField] public GameObject[] wave9Enemies;
-    [SerializeField] public GameObject[] wave10Enemies;
+    public GameObject[] wave1Enemies;
+    public GameObject[] wave2Enemies;
+    public GameObject[] wave3Enemies;
+    public GameObject[] wave4Enemies;
+    public GameObject[] wave5Enemies;
+    public GameObject[] wave6Enemies;
+    public GameObject[] wave7Enemies;
+    public GameObject[] wave8Enemies;
+    public GameObject[] wave9Enemies;
+    public GameObject[] wave10Enemies;
     private GameObject[][] waves;
 
     [SerializeField] private BoxCollider spawnZone;
@@ -36,7 +36,13 @@ public class WaveSpawner : MonoBehaviour
             return;  // Exit the Start method if spawnZone is missing
         }
 
-        // Proceed with setup if spawnZone exists
+        if (landingZone == null)
+        {
+            Debug.LogError("Spawning missing a LANDING ZONE!", this);
+            return;
+        }
+
+        // Proceed with setup if a spawnZone & landingZone exists
         centreSpawn = transform.position;
         sizeSpawn = spawnZone.size;
         centreLanding = landingZone.transform.position;
@@ -50,7 +56,7 @@ public class WaveSpawner : MonoBehaviour
 
     void SpawnWave(int waveNumber)
     {
-        
+        if (waves[waveNumber][0] == null) return;
 
         for (int i = 0; i < waves[waveNumber].Length; i++) 
         {
@@ -74,11 +80,6 @@ public class WaveSpawner : MonoBehaviour
 
         //NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
         //spawnPos = hit.position;
-    }
-
-    Vector3[] FindLandingPoints()
-    {
-        return new Vector3[] { };
     }
 
     void PrepareNextWave()

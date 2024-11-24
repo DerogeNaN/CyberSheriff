@@ -12,6 +12,8 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject optionsMenu;
     [SerializeField] public GameObject winScreen;
     [SerializeField] public GameObject loseScreen;
+  
+
 
     public bool isPaused = false;
 
@@ -28,7 +30,7 @@ public class PauseMenu : MonoBehaviour
             ResumeGame();
         }
     }
-    
+
     public void PauseGame()
     {
         //Pausing gameplay
@@ -82,18 +84,16 @@ public class PauseMenu : MonoBehaviour
         optionsMenu.SetActive(false);
         pauseMenu.SetActive(false);
         SoundManager2.Instance.PlaySound("UIButtonSFX");
-
-
         SceneManager.LoadScene("Alec_Main_Menu");
     }
 
     public void QuitGame()
-    {   
+    {
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
 #endif
         SoundManager2.Instance.PlaySound("UIButtonSFX");
         Application.Quit();
-        
+
     }
 }

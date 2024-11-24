@@ -31,11 +31,9 @@ public class Timer : MonoBehaviour
             if (isTiming && !isTimingBreak)
             {
                 timeLeft -= Time.deltaTime;
-                if (timeLeft <= 0 && WaveManager.waveManagerInstance.enemiesRemaining > 0) WaveManager.waveManagerInstance.LoseCondition();
-
-                else if (WaveManager.waveManagerInstance.enemiesRemaining <= 0) StartBreakTimer();
-                
+                if (WaveManager.waveManagerInstance.enemiesRemaining <= 0 || timeLeft <= 0) StartBreakTimer();
             }
+
             else if (isTimingBreak && !isTiming)
             {
                 timeLeft -= Time.deltaTime;
