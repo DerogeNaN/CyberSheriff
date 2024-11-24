@@ -185,12 +185,12 @@ public class SoundManager2 : MonoBehaviour
     {
         SoundMaster sound = sounds.Find(s => s.name == soundName);
 
-        if (sound != null && targetObject == null)
+        if (sound != null && targetObject == null && sound.source)
         {
             sound.source.Stop();
             Destroy(sound.source);
         }
-        else if (targetObject != null)
+        else if (sound != null && targetObject != null)
         {
             AudioSource localAudioSource = targetObject.GetComponent<AudioSource>();
             if (localAudioSource != null)
@@ -199,6 +199,7 @@ public class SoundManager2 : MonoBehaviour
                 Destroy(localAudioSource);
             }
         }
+
     }
 
     public void PlayMusic(string name, bool fade = false)
