@@ -103,7 +103,7 @@ public class CameraJiggle : MonoBehaviour
 
     void UpdateFOV()
     {
-        if (Movement.playerMovement.isDashing || Movement.playerMovement.isSliding)
+        if (Movement.playerMovement.isDashing || Movement.playerMovement.isSliding || Movement.playerMovement.isWallRunning)
         {
             targetFOV = defaultFOV + changeInFOV;
             targetFOV = Mathf.Lerp(lastFrameFOV, targetFOV, changeInFOVSpeed);
