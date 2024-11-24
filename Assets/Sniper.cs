@@ -35,6 +35,7 @@ public class Sniper : EnemyBase
     protected override void OnUpdate()
     {
         enemy.lookTarget = enemy.playerTransform.position;
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
         if (!reachedTargetPos) // if hasnt moved to sniper pos yet
         {
@@ -88,6 +89,7 @@ public class Sniper : EnemyBase
                         timer = fireDuration;
                         laserIntensity = 1.0f;
                         trackPlayer = false;
+                        Fire();
                         break;
 
                     case LaserState.firing:
@@ -102,6 +104,8 @@ public class Sniper : EnemyBase
         else // no line of sight
         {
             laserIntensity = 0.0f;
+            timer = 0;
+            laserState = LaserState.none;
             
             // update laser intensity
             foreach (LineRenderer line in lineRenderers)
@@ -146,5 +150,19 @@ public class Sniper : EnemyBase
 
         foreach (var l in lineRenderers)
             l.SetPositions(positions);
+    }
+
+    void Fire()
+    {
+        RaycastHit hit;
+
+        // double check that the player is within sight
+        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                enemy.playerTransform.gameObject.GetComponent<PlayerHealth>().TakeDamage(25, 0);
+            }
+        }
     }
 }
