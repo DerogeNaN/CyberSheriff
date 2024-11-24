@@ -15,6 +15,7 @@ public class Sniper : EnemyBase
     public List<LineRenderer> lineRenderers;
     LaserState laserState = LaserState.none;
     float laserIntensity = 0;
+    float targetIntensity = 0;
     public Transform gunPos;
 
     float fireDuration = 0.2f;
@@ -25,6 +26,20 @@ public class Sniper : EnemyBase
     bool trackPlayer = false;
 
     float timer = 0;
+    public GameObject ragdoll;
+
+    public override void OnHit(int damage, int damageType)
+    {
+        SetState(EnemyState.stunned);
+        enemy.CreateHitEffect();
+    }
+
+    public override void OnDestroyed(int damageType)
+    {
+        EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, 100.0f);
+        Destroy(gameObject);
+    }
 
     protected override void OnStart()
     {
@@ -57,13 +72,26 @@ public class Sniper : EnemyBase
         {
             timer -= Time.deltaTime;
 
+            laserIntensity += (targetIntensity - laserIntensity) * 1.5f * Time.deltaTime;
+
             // update laser intensity
             foreach (LineRenderer line in lineRenderers)
             {
                 line.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, laserIntensity);
             }
 
-            if (trackPlayer) UpdateLaserPos();
+            if (trackPlayer)
+            {
+                UpdateLaserPos();
+
+                // look at player
+                transform.LookAt(enemy.playerTransform);
+                Vector3 rot = transform.rotation.eulerAngles;
+                rot.x = 0;
+                transform.rotation = Quaternion.Euler(rot);
+
+                enemy.animator.SetFloat("Aim", enemy.playerTransform.position.y - gunPos.position.y);
+            }
 
             // when timer runs out, switch states
             if (timer <= 0)
@@ -73,21 +101,22 @@ public class Sniper : EnemyBase
                     case LaserState.none:
                         laserState = LaserState.charging;
                         timer = chargeTime;
-                        laserIntensity = 0.2f;
+                        targetIntensity = 0.1f;
                         trackPlayer = true;
                         break;
 
                     case LaserState.charging:
                         laserState = LaserState.beforeFire;
                         timer = timeBeforeDamage;
-                        laserIntensity = 0.2f;
+                        targetIntensity = 0.1f;
                         trackPlayer = false;
                         break;
 
                     case LaserState.beforeFire:
                         laserState = LaserState.firing;
                         timer = fireDuration;
-                        laserIntensity = 1.0f;
+                        targetIntensity = 0.5f;
+                        laserIntensity = 0.5f; // set laser intensity instantly
                         trackPlayer = false;
                         Fire();
                         break;
@@ -95,7 +124,7 @@ public class Sniper : EnemyBase
                     case LaserState.firing:
                         laserState = LaserState.none;
                         timer = cooldown;
-                        laserIntensity = 0.0f;
+                        targetIntensity = 0.0f;
                         trackPlayer = false;
                         break;
                 }
@@ -103,10 +132,12 @@ public class Sniper : EnemyBase
         }
         else // no line of sight
         {
-            laserIntensity = 0.0f;
+            targetIntensity = 0.0f;
             timer = 0;
             laserState = LaserState.none;
-            
+
+            if (laserIntensity > 0) laserIntensity -= 0.5f * Time.deltaTime;
+
             // update laser intensity
             foreach (LineRenderer line in lineRenderers)
             {

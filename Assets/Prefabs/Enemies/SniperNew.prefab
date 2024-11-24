@@ -310,7 +310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 20
   chargeTime: 2
-  timeBeforeDamage: 0.2
+  timeBeforeDamage: 0.3
   cooldown: 1
   lineRenderers:
   - {fileID: 8016684951885539720}
@@ -318,6 +318,7 @@ MonoBehaviour:
   - {fileID: 7228293558365097857}
   gunPos: {fileID: 3401659443762252549}
   targetPos: {fileID: 0}
+  ragdoll: {fileID: 7201130684706207388, guid: 2d7ce84beae9aa04bbe6dac9790c2097, type: 3}
 --- !u!114 &3021615162122810611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,6 +410,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7228652975100701642}
     m_Modifications:
+    - target: {fileID: 7148303921812673041, guid: 5e6d4d9669f16fe4180634df81951db9,
+        type: 3}
+      propertyPath: m_Parameters.textureMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7148303922545888110, guid: 5e6d4d9669f16fe4180634df81951db9,
         type: 3}
       propertyPath: m_RootOrder
@@ -468,6 +474,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sniper_Laser_Line_Renderer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922985170260, guid: 5e6d4d9669f16fe4180634df81951db9,
+        type: 3}
+      propertyPath: m_Parameters.textureMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7503861503535019032, guid: 5e6d4d9669f16fe4180634df81951db9,
+        type: 3}
+      propertyPath: m_Parameters.textureMode
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2834157779059057038, guid: 5e6d4d9669f16fe4180634df81951db9, type: 3}
