@@ -26,7 +26,6 @@ public class EnemyMelee : EnemyBase
     [Tooltip("whether or not line of sight to the player is required to start chasing them")]
     public bool needsLineOfSight;
 
-    TMP_Text debugStunText;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
@@ -37,6 +36,7 @@ public class EnemyMelee : EnemyBase
     float attackRotate = 0;
     bool createdHitbox = false;
     float untilDestroy = 2.0f;
+    [SerializeField] GameObject ragdoll;
 
     protected override void OnStart()
     {
@@ -45,8 +45,6 @@ public class EnemyMelee : EnemyBase
         //initialPosition = transform.position;
         enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
-
-        if (debugStunText) debugStunText.text = "";
     }
 
     protected override void OnUpdate()
@@ -54,28 +52,20 @@ public class EnemyMelee : EnemyBase
         // do this regardless of state 
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
-
-        if (enemy.health.health <= 0)
-        {
-            untilDestroy -= Time.deltaTime;
-            if (untilDestroy <= 0)
-            {
-                Destroy(gameObject);
-            }
-        }
     }
 
     public override void OnHit(int damage, int damageType)
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
-        //enemy.CreateHitEffect();
+        enemy.CreateHitEffect();
     }
 
-    public override void OnDestroyed(int damageType)
+    public override void OnDestroyed(int damage, int damageType)
     {
-        SetState(EnemyState.downed);
-        enemy.animator.SetTrigger("Death");
+        EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        Destroy(gameObject);
     }
 
     #region enter state
@@ -122,6 +112,8 @@ public class EnemyMelee : EnemyBase
     protected override void StunnedEnter()
     {
         enemy.shouldPath = false;
+        enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Stagger", true);
     }
     #endregion
 
@@ -133,9 +125,13 @@ public class EnemyMelee : EnemyBase
         {
             SetState(EnemyState.movingToTarget);
         }
+
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
     }
     protected override void MovingToTargetUpdate()
     {
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if line of sight is lost, change to lost sight state
@@ -145,9 +141,6 @@ public class EnemyMelee : EnemyBase
             else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
         }
 
-        if (enemy.navAgent.velocity.magnitude > 0) enemy.animator.SetBool("Run", true);
-        else enemy.animator.SetBool("Run", false);
-
         // if has line of sight and within attack range, switch to attack state
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0 && Vector3.Distance(transform.position, enemy.playerTransform.position) <= attackRange)
         {
@@ -156,7 +149,7 @@ public class EnemyMelee : EnemyBase
     }
     protected override void LostSightOfTargetUpdate() // UNUSED
     {
-        enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
         remainingChaseTime -= Time.deltaTime;
         // give up chasing
@@ -199,13 +192,10 @@ public class EnemyMelee : EnemyBase
 
     protected override void StunnedUpdate()
     {
-        if (debugStunText) debugStunText.text = "stun";
-
         stun -= Time.deltaTime;
         if (stun <= 0)
         {
             SetState(EnemyState.movingToTarget);
-            if (debugStunText) debugStunText.text = "";
         }
     }
     #endregion
@@ -229,6 +219,11 @@ public class EnemyMelee : EnemyBase
         remainingAttackCooldown = attackCooldown;
         enemy.navAgent.avoidancePriority = 50;
         createdHitbox = false;
+    }
+
+    protected override void StunnedExit()
+    {
+        enemy.animator.SetBool("Stagger", false);
     }
     #endregion
 }
