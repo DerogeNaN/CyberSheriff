@@ -26,7 +26,6 @@ public class EnemyMelee : EnemyBase
     [Tooltip("whether or not line of sight to the player is required to start chasing them")]
     public bool needsLineOfSight;
 
-    TMP_Text debugStunText;
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
@@ -46,8 +45,6 @@ public class EnemyMelee : EnemyBase
         //initialPosition = transform.position;
         enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
-
-        if (debugStunText) debugStunText.text = "";
     }
 
     protected override void OnUpdate()
@@ -64,10 +61,10 @@ public class EnemyMelee : EnemyBase
         enemy.CreateHitEffect();
     }
 
-    public override void OnDestroyed(int damageType)
+    public override void OnDestroyed(int damage, int damageType)
     {
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
-        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, 100.0f);
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
         Destroy(gameObject);
     }
 
@@ -116,6 +113,7 @@ public class EnemyMelee : EnemyBase
     {
         enemy.shouldPath = false;
         enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Stagger", true);
     }
     #endregion
 
@@ -194,13 +192,10 @@ public class EnemyMelee : EnemyBase
 
     protected override void StunnedUpdate()
     {
-        if (debugStunText) debugStunText.text = "stun";
-
         stun -= Time.deltaTime;
         if (stun <= 0)
         {
             SetState(EnemyState.movingToTarget);
-            if (debugStunText) debugStunText.text = "";
         }
     }
     #endregion
@@ -224,6 +219,11 @@ public class EnemyMelee : EnemyBase
         remainingAttackCooldown = attackCooldown;
         enemy.navAgent.avoidancePriority = 50;
         createdHitbox = false;
+    }
+
+    protected override void StunnedExit()
+    {
+        enemy.animator.SetBool("Stagger", false);
     }
     #endregion
 }

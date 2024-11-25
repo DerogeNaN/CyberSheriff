@@ -34,10 +34,10 @@ public class Sniper : EnemyBase
         enemy.CreateHitEffect();
     }
 
-    public override void OnDestroyed(int damageType)
+    public override void OnDestroyed(int damage, int damageType)
     {
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
-        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, 100.0f);
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
         Destroy(gameObject);
     }
 
@@ -52,7 +52,7 @@ public class Sniper : EnemyBase
         enemy.lookTarget = enemy.playerTransform.position;
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
-        if (!reachedTargetPos) // if hasnt moved to sniper pos yet
+        if (targetPos && !reachedTargetPos) // if hasnt moved to sniper pos yet
         {
             if (enemy.hasLineOfSight)
             {

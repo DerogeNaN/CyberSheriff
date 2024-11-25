@@ -33,6 +33,7 @@ public class EnemyRanged : EnemyBase
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
+    float stun = 0;
     float untilDestroy = 2.0f;
     [SerializeField] GameObject ragdoll;
 
@@ -55,11 +56,17 @@ public class EnemyRanged : EnemyBase
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
     }
 
+    public override void OnHit(int damage, int damageType)
+    {
+        stun = 0.5f;
+        SetState(EnemyState.stunned);
+        enemy.CreateHitEffect();
+    }
 
-    public override void OnDestroyed(int damageType)
+    public override void OnDestroyed(int damage, int damageType)
     {
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
-        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, 100.0f);
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
         Destroy(gameObject);
     }
 
@@ -96,6 +103,13 @@ public class EnemyRanged : EnemyBase
     protected override void ChargeAttackEnter()
     {
         remainingSniperAimTime = sniperAimEffectLength;
+    }
+
+    protected override void StunnedEnter()
+    {
+        enemy.shouldPath = false;
+        enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Stagger", true);
     }
     #endregion
 
@@ -145,6 +159,16 @@ public class EnemyRanged : EnemyBase
         remainingSniperAimTime -= Time.deltaTime;
         if (remainingSniperAimTime <= 0) SetState(EnemyState.attacking);
     }
+
+    protected override void StunnedUpdate()
+    {
+
+        stun -= Time.deltaTime;
+        if (stun <= 0)
+        {
+            SetState(EnemyState.movingToTarget);
+        }
+    }
     #endregion
 
     #region exit state
@@ -159,6 +183,11 @@ public class EnemyRanged : EnemyBase
     protected override void AttackingExit()
     {
         remainingAttackCooldown = Random.Range(attackCooldownMin, attackCooldownMax);
+    }
+
+    protected override void StunnedExit()
+    {
+        enemy.animator.SetBool("Stagger", false);
     }
     #endregion
 }
