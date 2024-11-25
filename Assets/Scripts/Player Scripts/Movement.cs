@@ -628,8 +628,8 @@ public class Movement : MonoBehaviour
             isGrappling = true;
             canGrapple = true;
             lastGrappleTime = Time.time;
-            revolverAnimator.SetTrigger("PullTrig");
-            shotgunAnimator.SetTrigger("PullTrig");
+            if (revolverAnimator.isActiveAndEnabled) revolverAnimator.SetTrigger("PullTrig");
+            else shotgunAnimator.SetTrigger("PullTrig");
             SoundManager2.Instance.PlaySound("Grapple");
         }
     }
