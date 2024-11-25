@@ -505,7 +505,6 @@ public class Movement : MonoBehaviour
     private void Dash_Performed(InputAction.CallbackContext context)
     {
         isTryingDashing = true;
-        SoundManager2.Instance.PlaySound("Dash");
         DashStartTransition();
     }
 
@@ -529,6 +528,7 @@ public class Movement : MonoBehaviour
                 0.45f, dashDirection, dashSpeed * Time.deltaTime, ~12))
             {
                 isWallRunning = false;
+                SoundManager2.Instance.PlaySound("Dash");
                 velocity = dashDirection * dashSpeed;
             }
 
