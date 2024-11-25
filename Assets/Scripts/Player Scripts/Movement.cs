@@ -1,9 +1,8 @@
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.ProBuilder;
-using UnityEngine.UIElements;
-
+using static UnityEngine.Rendering.DebugUI;
 
 public class Movement : MonoBehaviour
 {
@@ -12,12 +11,13 @@ public class Movement : MonoBehaviour
 
     [Header("Serialize Fields - PLUG THESE IN!!!")]
     public Transform respawnPos;
-    [SerializeField] Transform cameraSlidePos;
-    [SerializeField] Transform cameraDefaultPos;
-    public Collider slideCollider;
-    public GameObject grappleUI;
-
-    //[HideInInspector][Tooltip("")]
+    private Transform cameraSlidePos;
+    private Transform cameraDefaultPos;
+    private GameObject cameraWallrunHolder;
+    private CapsuleCollider playerCapsule;
+    [SerializeField] Animator revolverAnimator;
+    [SerializeField] Animator shotgunAnimator;
+    
 
     #region Movement
     [Header("Movement Settings")]
@@ -99,14 +99,16 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("Speed the player travels when wallrunning")]
     public float wallrunVelocityBonus = 0.2f;
 
+    [SerializeField][Tooltip("How long in seconds the player can wallrun until gravity kicks in")]
+    public float maxWallrunTime = 2.0f;
 
 
     //Backend Variables:
     [HideInInspector] public float cameraLeaveWallrunTime = 0;
-    private float lastWallrunTime = 0;
-    private float leavingWallrunTime = 0;
     [HideInInspector] public bool isWallRunning = false;
-    private bool canWallrun = false;
+    private float lastWallRunTime = 0;
+    private float leavingWallrunTime = 0;
+    private float wallRunStartTime = 0;
     #endregion
 
     #region Grapple
@@ -120,9 +122,12 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("Max distance the player can enter a grapple")]
     public float maxGrappleDistance = 100f;
 
+    [SerializeField][Tooltip("The amount to offest the grapple UI from the middle of the grapple target")]
+    public Vector3 grappleOffset = Vector3.zero;
+
     //Backend Variables
     private Vector3 grappleTargetDirection = Vector3.zero;
-    private float lastGrappleTime = 0;
+    private float lastGrappleTime = -5;
     private GameObject grappleObject;
     private bool isGrappling = false;
     private bool canGrapple = false;
@@ -144,7 +149,7 @@ public class Movement : MonoBehaviour
 
     //Backend Variables:
     private float currEncouragment;
-    private int slowDownPercentage = 30;
+    public int slowDownPercentage = 30;
     private float speedLimitEnforceAmmount = 1.5f;
     private float momentumRatio;
     #endregion
@@ -159,6 +164,23 @@ public class Movement : MonoBehaviour
 
     [SerializeField][Tooltip("How long the camera takes to lower (0 - never, 1 - instant)")]
     public float cameraSlideTransitionTime = 0.1f;
+
+    //Backend Variables:
+    [SerializeField] private GameObject cameraHolder;
+    #endregion
+
+    #region Sound
+    [Header("Sound Settings")]
+    [SerializeField][Tooltip("Time in seconds between footsteps")]
+    private float footstepInterval = 0.0f;
+
+    [SerializeField][Tooltip("Time in seconds between footsteps while wall running")]
+    private float wallRunFootstepInterval = 0.0f;
+
+    //Backend Variables:
+    private float lastFootstepTime = 0.0f;
+    private float lastWallRunFootstepTime = 0.0f;
+    private float slideDelay = 0.0f;
     #endregion
 
     [Space(20.0f)]
@@ -167,8 +189,14 @@ public class Movement : MonoBehaviour
     [HideInInspector] public Vector3 movementInputWorld = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
+    private GameObject grappleUI;
     private Collider standingCollider;
     private PauseMenu pauseMenu;
+    private float blendAmount = 0.0f;
+
+    Vector3 collisionNormal = Vector3.zero;
+
+    public AnimationCurve walkBlendAmount;
 
     private void Awake()
     {
@@ -177,27 +205,36 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        standingCollider = GetComponent<Collider>();
-        pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (standingCollider == null)       standingCollider = GetComponent<Collider>();
+        if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (grappleUI == null)              grappleUI = GetComponentInChildren<UI_Billboard>().gameObject;
+        if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
+        if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
+        if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
+        if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
+        if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
+        if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
+        if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
+
         InitialiseMovement();
+    }
+
+    private void Update()
+    {
+        CheckForGrappleTarget();
     }
 
     public void UpdateMovement()
     {
-        //TODO: change the currEncourangment check to account for a new "encouragedSlideMomentum"
         if (isSliding && isGrounded) currEncouragment = encouragedSlideMomentum;
         else if (!isGrounded) currEncouragment = encouragedAirMomentum;
         else currEncouragment = encouragedGroundMomentum;
 
-        //currEncouragment = isGrounded ? encouragedGroundMomentum : encouragedAirMomentum;
-
         momentumRatio = 1 / currEncouragment;
 
-        //UpdateCamera();
-        MovePlayer();
+        ComputeDepenetration();
         GroundCheck();
-        //Debug.DrawRay(transform.position, velocity * 5, Color.red);
-        //Debug.DrawRay(transform.position, wallTangent * 2, Color.yellow);
+        MovePlayer();
     }
 
     void MovePlayer()
@@ -214,16 +251,15 @@ public class Movement : MonoBehaviour
 
         if (isSliding)
         {
-            standingCollider.enabled = false;
-            slideCollider.enabled = true;
-            //movementInputWorld = Vector3.zero;
+            //standingCollider.enabled = false;
+            //slideCollider.enabled = true;
 
             if (velocity.magnitude <= 1) isSliding = false;
         }
         else
         {
-            standingCollider.enabled = true;
-            slideCollider.enabled = false;
+            //standingCollider.enabled = true;
+            //slideCollider.enabled = false;
 
             if (!isGrappling)
             {
@@ -243,7 +279,6 @@ public class Movement : MonoBehaviour
 
 
         Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-        float encouragedAmount = Vector3.Dot(movementInputWorld, horizontalVelocity.normalized) * (1 - momentumRatio);
         Vector3 targetVelocity = (movementInputWorld * moveSpeed) * momentumRatio;
         float nextFrameMagnitude = (horizontalVelocity + targetVelocity).magnitude;
         float horizontalMag = horizontalVelocity.magnitude;
@@ -288,13 +323,13 @@ public class Movement : MonoBehaviour
         {
             float speed = velocity.magnitude;
             float moveMag = moveSpeed * momentumRatio * slowDownPercentage / 100;
-            float subtraction = Mathf.Min(speed,moveMag);
+            float subtraction = Mathf.Min(speed, moveMag);
             velocity -= velocity.normalized * subtraction;
 
             if (Mathf.Abs(velocity.x) < 0.0015f && Mathf.Abs(velocity.z) < 0.0015f)
             {
-                velocity.x = 0;
-                velocity.z = 0;
+                //velocity.x = 0;
+                //velocity.z = 0;
             }
         }
 
@@ -306,16 +341,106 @@ public class Movement : MonoBehaviour
 
         Gravity();
 
-        CheckForOncomingCollision();
 
         CheckForWallRun();
 
-        CheckForGrappleTarget();
+        //CheckForGrappleTarget();
         Grappling();
 
-        //rb.velocity = Vector3.zero;
-        //velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        CheckForOncomingCollision();
+        PlayFootstepSound();
+        GrappleAnimation();
+        WalkingAnimation();
+
+        //Actually apply motion to player transform
         transform.position += velocity * Time.deltaTime;
+    }
+
+    void GrappleAnimation()
+    {
+        if (revolverAnimator.isActiveAndEnabled)
+        {
+            revolverAnimator.SetBool("PullBool", isGrappling);
+        }
+
+        if (shotgunAnimator.isActiveAndEnabled)
+        {
+            shotgunAnimator.SetBool("PullBool", isGrappling);
+        }
+    }
+
+    void WalkingAnimation()
+    {
+        if (isGrounded) blendAmount = (((velocity.magnitude - 0) / (15 - 0)) * (1 - 0)) + 0;
+        blendAmount = walkBlendAmount.Evaluate(blendAmount);
+
+        if (revolverAnimator.isActiveAndEnabled)
+        {
+            if (velocity.magnitude > 3 && isGrounded && !isSliding)
+            {
+                revolverAnimator.SetFloat("WalkBlend", blendAmount);
+                revolverAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (isWallRunning)
+            {
+                revolverAnimator.SetFloat("WalkBlend", 1 - blendAmount);
+                revolverAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (!isGrounded)
+            {
+                revolverAnimator.SetFloat("WalkBlend", 1 - blendAmount);
+                revolverAnimator.SetLayerWeight(2, 1 - blendAmount);
+            }
+            else
+            {
+                revolverAnimator.SetFloat("WalkBlend", 0);
+                revolverAnimator.SetLayerWeight(2, 0);
+            }
+        }
+
+        else if(shotgunAnimator.isActiveAndEnabled)
+        {
+            if (velocity.magnitude > 3 && isGrounded && !isSliding)
+            {
+                shotgunAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (isWallRunning)
+            {
+                shotgunAnimator.SetLayerWeight(2, blendAmount);
+            }
+            else if (!isGrounded)
+            {
+                shotgunAnimator.SetLayerWeight(2, 1 - blendAmount);
+            }
+            else
+            {
+                shotgunAnimator.SetLayerWeight(2, 0);
+            }
+        }
+    }
+
+    void PlayWallRunFootstepSound()
+    {
+        if (isWallRunning)
+        {
+            if (lastWallRunFootstepTime + wallRunFootstepInterval < Time.time)
+            {
+                lastWallRunFootstepTime = Time.time;
+                SoundManager2.Instance.PlaySound("Wallrunning");
+            }
+        }
+    }
+
+    void PlayFootstepSound()
+    {
+        if (isGrounded && !isSliding && velocity != Vector3.zero && velocity.magnitude >= 3)
+        {
+            if (lastFootstepTime + footstepInterval < Time.time)
+            {
+                lastFootstepTime = Time.time;
+                SoundManager2.Instance.PlaySound("Footsteps_Concrete");
+            }
+        }
     }
 
     void Gravity()
@@ -343,6 +468,8 @@ public class Movement : MonoBehaviour
     private void Slide_Performed(InputAction.CallbackContext context)
     {
         isTryingSlide = true;
+
+        SoundManager2.Instance.PlaySound("SlideSFX");
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
@@ -361,8 +488,8 @@ public class Movement : MonoBehaviour
 
     private void MoveCameraTowardsTransformHeight(Transform target)
     {
-        float newCameraYPos = Mathf.Lerp(Camera.main.transform.position.y, target.position.y, cameraSlideTransitionTime);
-        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, newCameraYPos, Camera.main.transform.position.z);
+        float newCameraYPos = Mathf.Lerp(cameraHolder.transform.position.y, target.position.y, cameraSlideTransitionTime);
+        cameraHolder.transform.position = new Vector3(cameraHolder.transform.position.x, newCameraYPos, cameraHolder.transform.position.z);
     }
 
     private void Dash_Performed(InputAction.CallbackContext context)
@@ -441,16 +568,19 @@ public class Movement : MonoBehaviour
                 if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
                 {
                     jumpCount++;
+                    SoundManager2.Instance.PlaySound("JumpSFX");
                 }
 
-                else if (lastWallrunTime + wallrunJumpGraceLength > Time.time)
+                else if (lastWallRunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
+                    SoundManager2.Instance.PlaySound("JumpSFX");
                 }
 
                 else
                 {
                     jumpCount += 2;
+                    SoundManager2.Instance.PlaySound("DoubleJumpSFX");
                 }
 
                 velocity.y = jumpStrength;
@@ -461,11 +591,11 @@ public class Movement : MonoBehaviour
 
     private void CheckForGrappleTarget()
     {
-        if ((Physics.Raycast(transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
-            hit.transform.CompareTag("GrappleableObject")))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
+            hit.transform.CompareTag("GrappleableObject"))
         {
             grappleObject = hit.collider.gameObject;
-            grappleUI.transform.position = hit.collider.transform.position;
+            grappleUI.transform.position = hit.collider.transform.position + grappleOffset;
             if (lastGrappleTime + grappleCooldown < Time.time)
             {
                 canGrapple = true;
@@ -492,6 +622,9 @@ public class Movement : MonoBehaviour
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
             lastGrappleTime = Time.time;
+            revolverAnimator.SetTrigger("PullTrig");
+            shotgunAnimator.SetTrigger("PullTrig");
+            //SoundManager2.Instance.PlaySound("Grapple");
         }
     }
 
@@ -506,13 +639,16 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
+        //SoundManager2.Instance.StopSound("Grapple");
     }
+
+
 
     private void UntiltCamera(float tiltAngle, float tiltSpeed)
     {
-        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
+        float newCameraAngle = Mathf.LerpAngle(cameraWallrunHolder.transform.localEulerAngles.z, tiltAngle, tiltSpeed);
 
-        Camera.main.transform.localEulerAngles = new Vector3(
+        cameraWallrunHolder.transform.localEulerAngles = new Vector3(
             Camera.main.transform.localEulerAngles.x,
             Camera.main.transform.localEulerAngles.y,
             newCameraAngle
@@ -521,12 +657,12 @@ public class Movement : MonoBehaviour
 
     private void TiltCameraFromWall(float tiltAngle, float tiltSpeed, Vector3 normal)
     {
-        float tiltCorrectionSign = Mathf.Sign(Vector3.Dot(-Camera.main.transform.right, normal));
+        float tiltCorrection = Vector3.Dot(-Camera.main.transform.right, normal);
 
-        float newCameraAngle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, tiltAngle * tiltCorrectionSign, tiltSpeed);
+        float newCameraAngle = Mathf.LerpAngle(cameraWallrunHolder.transform.localEulerAngles.z, tiltAngle * tiltCorrection, tiltSpeed);
 
 
-        Camera.main.transform.localEulerAngles = new Vector3(
+        cameraWallrunHolder.transform.localEulerAngles = new Vector3(
             Camera.main.transform.localEulerAngles.x,
             Camera.main.transform.localEulerAngles.y,
             newCameraAngle
@@ -541,6 +677,7 @@ public class Movement : MonoBehaviour
             {
                 if (!hitInfo.collider.isTrigger)
                 {
+                    if (!isGrounded) SoundManager2.Instance.PlaySound("LandingSFX");
                     isGrounded = true;
                     isWallRunning = false;
                     lastGroundedTime = Time.time;
@@ -557,88 +694,158 @@ public class Movement : MonoBehaviour
         }
     }
 
+    void ComputeDepenetration()
+    {
+        Vector3 resolveDirection = Vector3.zero;
+        Vector3 totalDepenetration = Vector3.zero;
+        float resolveDistance = 0.0f;
+        Collider[] overlappingColliders = { };
+
+        overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
+                                                        transform.position - new Vector3(0, 0.7f, 0),
+                                                        0.6f, ~12, QueryTriggerInteraction.Ignore);
+
+        for (int i = 0; i < overlappingColliders.Length; i++)
+        {
+            if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
+                                        overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
+                                        out resolveDirection, out resolveDistance))
+            {
+                Vector3 depen = resolveDirection * resolveDistance;
+                if (Vector3.Dot(totalDepenetration, depen) <= 0)
+                {
+                    totalDepenetration += depen;
+                }
+
+                else
+                {
+                    Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
+                    float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
+                    Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
+
+                    if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                    {
+                        totalDepenetration = depen;
+                    }
+                    else totalDepenetration = changeInTotal + depen;
+                }
+            }
+        }
+
+        transform.position += totalDepenetration;
+    }
+
     void CheckForOncomingCollision()
     {
         RaycastHit[] hitArray;
 
+        float overShoot = 0f;
+
         if (!isSliding)
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.65f, 0),
-                                              transform.position - new Vector3(0, 0.65f, 0),
-                                              0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+            Vector3 movementDirection = velocity.normalized;
+            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0, 0.7f, 0) - movementDirection * overShoot,
+                                              transform.position - new Vector3(0, 0.7f, 0) - movementDirection * overShoot,
+                                              0.5f, movementDirection, velocity.magnitude * Time.deltaTime + overShoot, ~12, QueryTriggerInteraction.Ignore);
+
+            //if (Physics.Raycast(transform.position - transform.forward * 0.5f, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore))
 
             for (int i = 0; i < hitArray.Length; i++)
             {
-                Vector3 normal = hitArray[i].normal;
-                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+                collisionNormal = hitArray[i].normal;
+                Vector3 point;
 
-                if (Vector3.Dot(velocity, normal) < 0) continue;
+                if (hitArray[i].point == Vector3.zero)
+                {
+                    Debug.Log("I hate my life");
+                    point = hitArray[i].collider.ClosestPoint(transform.position);
+                }
 
-                float normalInUp = Vector3.Dot(Vector3.up, normal);
-                //Debug.Log(normalInUp);
+                else
+                {
+                    point = hitArray[i].point;
+                }
+
+                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - point, hitArray[i].normal));
+
+                if (Vector3.Dot(velocity, collisionNormal) < 0) continue;
+
+                float normalInUp = Vector3.Dot(Vector3.up, collisionNormal);
+                
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
-                    Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
+                    //If the collision is with something that's not a vertical wall *or* a horizontal floor
+                    Vector3 horiNormal = new Vector3(collisionNormal.x, 0, collisionNormal.z).normalized;
                     float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
                     velocity -= velocityInHoriNormalDirection * horiNormal;
                 }
-                float velocityInNormalDirection = Vector3.Dot(velocity, normal);
-                velocity -= velocityInNormalDirection * normal;
 
-                float clampAmmount = Vector3.Dot(movementInputWorld, normal);
-                if (clampAmmount < 0) continue;
+                float clampAmount = Vector3.Dot(movementInputWorld, collisionNormal);
+                if (clampAmount < 0) continue;
 
-                if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
+                if (normalInUp <= 0.25f)
                 {
-                    clampAmmount = 1 - clampAmmount;
+                    clampAmount = 1 - clampAmount;
 
-                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
                 }
 
-                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
+                float velocityInNormalDirection = Vector3.Dot(velocity, collisionNormal);
+                velocity -= velocityInNormalDirection * collisionNormal;
             }
         }
 
         else
         {
-            hitArray = Physics.CapsuleCastAll(transform.position + new Vector3(0.5f, 0, 0),
-                                              transform.position - new Vector3(0.5f, 0, 0),
-                                              0.35f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+            hitArray = Physics.SphereCastAll(transform.position + new Vector3(0, -0.7f, 0),
+                                              0.5f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hitArray.Length; i++)
             {
-                Vector3 normal = hitArray[i].normal;
-                normal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].collider.transform.position, hitArray[i].normal));
+                collisionNormal = hitArray[i].normal;
+                Vector3 point;
 
-                if (Vector3.Dot(velocity, normal) < 0) continue;
+                if (hitArray[i].point == Vector3.zero)
+                {
+                    Debug.Log("I hate my life");
+                    point = hitArray[i].collider.ClosestPoint(transform.position);
+                }
 
-                float normalInUp = Vector3.Dot(Vector3.up, normal);
-                //Debug.Log(normalInUp);
+                else
+                {
+                    point = hitArray[i].point;
+                }
+
+                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - point, hitArray[i].normal));
+
+                if (Vector3.Dot(velocity, collisionNormal) < 0) continue;
+
+                float normalInUp = Vector3.Dot(Vector3.up, collisionNormal);
+
                 if (normalInUp < 0.95f && normalInUp > 0.05f)
                 {
-                    Vector3 horiNormal = new Vector3(normal.x, 0, normal.z).normalized;
+                    //If the collision is with something that's not a vertical wall *or* a horizontal floor
+                    Vector3 horiNormal = new Vector3(collisionNormal.x, 0, collisionNormal.z).normalized;
                     float velocityInHoriNormalDirection = Vector3.Dot(velocity, horiNormal);
                     velocity -= velocityInHoriNormalDirection * horiNormal;
                 }
-                float velocityInNormalDirection = Vector3.Dot(velocity, normal);
-                velocity -= velocityInNormalDirection * normal;
 
-                float clampAmmount = Vector3.Dot(movementInputWorld, normal);
-                if (clampAmmount < 0) continue;
+                float clampAmount = Vector3.Dot(movementInputWorld, collisionNormal);
+                if (clampAmount < 0) continue;
 
-                if (Vector3.Dot(normal, Vector3.up) <= 0.25f)
+                if (normalInUp <= 0.25f)
                 {
-                    clampAmmount = 1 - clampAmmount;
+                    clampAmount = 1 - clampAmount;
 
-                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
-                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmmount * maxPlayerInputSpeed), clampAmmount * maxPlayerInputSpeed);
+                    velocity.x = Mathf.Clamp(velocity.x, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
+                    velocity.z = Mathf.Clamp(velocity.z, -(clampAmount * maxPlayerInputSpeed), clampAmount * maxPlayerInputSpeed);
                 }
 
-                //Debug.DrawRay(transform.position, normal * 5, Color.magenta);
+                float velocityInNormalDirection = Vector3.Dot(velocity, collisionNormal);
+                velocity -= velocityInNormalDirection * collisionNormal;
             }
         }
-        
     }
 
     private void CheckForWallRun()
@@ -646,12 +853,12 @@ public class Movement : MonoBehaviour
         RaycastHit wallHit;
         Vector3 normal = Vector3.zero;
 
-        if (!isGrounded)
+        if (!isGrounded && !isWallRunning)
         {
             //---check RIGHT for wall----
             if (Physics.CapsuleCast(
-                transform.position + new Vector3(0, 0.5f, 0),
-                transform.position - new Vector3(0, 0.5f, 0), 0.35f, transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+                transform.position + new Vector3(0, 0.7f, 0),
+                transform.position - new Vector3(0, 0.7f, 0), 0.45f, transform.right, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
                 Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
                 normal = wallHit.normal;
@@ -663,8 +870,8 @@ public class Movement : MonoBehaviour
 
             //---check LEFT for wall----
             else if (Physics.CapsuleCast(
-                transform.position + new Vector3(0, 0.5f, 0),
-                transform.position - new Vector3(0, 0.5f, 0), 0.35f, -transform.right, out wallHit, 0.5f, ~12, QueryTriggerInteraction.Ignore) &&
+                transform.position + new Vector3(0, 0.7f, 0),
+                transform.position - new Vector3(0, 0.7f, 0), 0.45f, -transform.right, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
                 Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
             {
                 normal = wallHit.normal;
@@ -673,15 +880,29 @@ public class Movement : MonoBehaviour
                 wallNormal = normal;
                 WallRun();
             }
+        }
 
-            else if (isWallRunning)
+        else if (isWallRunning)
+        {
+            if (Physics.CapsuleCast(
+                transform.position + new Vector3(0, 0.7f, 0),
+                transform.position - new Vector3(0, 0.7f, 0), 0.45f, -wallNormal, out wallHit, 0.5f, LayerMask.GetMask("Wall"), QueryTriggerInteraction.Ignore) &&
+                Mathf.Abs(Vector3.Dot(wallHit.normal, transform.up)) < 0.0001f && leavingWallrunTime + wallrunCooldown < Time.time && !isGrounded)
+            {
+                normal = wallHit.normal;
+                normal *= -Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
+
+                wallNormal = -normal;
+                WallRun();
+            }
+            else
             {
                 isWallRunning = false;
-                leavingWallrunTime = Time.time;
+                wallNormal = Vector3.zero;
             }
         }
 
-        else 
+        else
         {
             isWallRunning = false;
             wallNormal = Vector3.zero;
@@ -693,20 +914,39 @@ public class Movement : MonoBehaviour
         Vector3 tangent = Vector3.Cross(Vector3.up, wallNormal);
         wallTangent = tangent * Mathf.Sign(Vector3.Dot(velocity, tangent));
         float wallSpeed = Vector3.Dot(tangent, velocity);
-        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold)
+
+        if (!isWallRunning) wallRunStartTime = Time.time;
+        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time)
         {
-            lastWallrunTime = Time.time;
-            cameraLeaveWallrunTime = Time.time + 0.2f;
+            lastWallRunTime = Time.time;
             isWallRunning = true;
             velocity = wallSpeed * tangent;
             jumpCount = 0;
 
             if (velocity.magnitude < wallrunVelocityBonus)
             {
-                velocity = velocity.normalized * wallrunVelocityBonus;                
+                velocity = velocity.normalized * wallrunVelocityBonus;
             }
-
+            PlayWallRunFootstepSound();
             return;
         }
+
+        else if (wallRunStartTime + 0.1f < Time.time)
+        {
+            Vector3 velocityHori = new Vector3(velocity.x, 0, velocity.z);
+            velocityHori.Normalize();
+
+            Vector3 targetDirection = Vector3.RotateTowards(velocityHori, wallNormal, wallrunJumpAngle, 0);
+            velocity = targetDirection * velocity.magnitude;
+            isWallRunning = false;
+
+        }
+    }
+
+    private void WallRunReset()
+    {
+        lastWallRunTime = Time.time;
+        isWallRunning = false;
+        wallNormal = Vector3.zero;
     }
 }

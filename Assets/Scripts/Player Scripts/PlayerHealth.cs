@@ -1,16 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth;
     public int health;
 
+    [SerializeField][Tooltip("If true the player can't take damage during a dash")]
+    private bool invincibleDashing = false;
+
     public GameObject healthUI1;
     public GameObject healthUI2;
     public GameObject healthUI3;
+    public Slider healthSlider;
 
     void Start()
     {
@@ -23,28 +25,17 @@ public class PlayerHealth : MonoBehaviour
             TakeDamage(10, 0);
             Debug.Log("I took damage");
         }
+        UpdateHealthUI();
     }
 
-    //void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.tag == "EnemyHitbox")
-    //    {
-    //        EnemyHitbox hitbox = other.GetComponent<EnemyHitbox>();
-
-    //        if (hitbox && hitbox.active)
-    //        {
-    //            TakeDamage(hitbox.damage, 0);
-    //            hitbox.active = false;
-    //        }
-    //    }
-    //}
 
     public void TakeDamage(int damage, int damageType)
     {
+        if (Movement.playerMovement.isDashing && invincibleDashing) return;
         health -= damage;
 
         IsDestroyed();
-        UpdateHealthUI();
+       
     }
 
     public void IsDestroyed()
@@ -61,6 +52,8 @@ public class PlayerHealth : MonoBehaviour
 
     void UpdateHealthUI()
     {
+        healthSlider.value = health;
+
         if (health < 75)
         {
             healthUI1.SetActive(true);

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1584263473145212781}
   - component: {fileID: 2473519260135940296}
   - component: {fileID: 411872522551530498}
-  - component: {fileID: 1127058334860326274}
+  - component: {fileID: 1981483733736037882}
   m_Layer: 0
   m_Name: Lamp
   m_TagString: Untagged
@@ -26,7 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2213448370054378967}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 62.99, y: 0.00053017575, z: -111.24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -85,8 +85,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &1127058334860326274
-MeshCollider:
+--- !u!65 &1981483733736037882
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -95,10 +95,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -9125568660639782343, guid: bed26e7ae02a91c46987694ebc21ff5c, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.3435973, y: 5.3635287, z: 0.38691697}
+  m_Center: {x: 0.0069828182, y: 2.6812341, z: -0.38242647}
 --- !u!1 &6955080486638356971
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,8 +145,8 @@ Light:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 100
   m_Range: 7.226198
-  m_SpotAngle: 52.31077
-  m_InnerSpotAngle: 34.962757
+  m_SpotAngle: 105.60593
+  m_InnerSpotAngle: 88.25792
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0

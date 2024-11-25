@@ -2,70 +2,120 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class CameraJiggle : MonoBehaviour
 {
-    public float maxMomentumInfluence = 1.0f;
+    [Header("Camera Tilt Settings:")]
+    [SerializeField][Tooltip("How much the camera tilts in degrees once moving at \'Max Momentum Influence\'")]
     public float headTiltAtMax = 3.0f;
-    public float tilt;
-    public float maxFOV = 90f;
-    public float maxDashFOV = 110f;
-    public float defaultFOV = 80f;
-    public float currFOV;
 
-    public AnimationCurve dashFOVCurve;
-    public AnimationCurve defaultFOVCurve;
+    [Range(0, 1)][Tooltip("How quickly the camera tilts to \'Head Tilt At Max\' (0 - never, 1 - instant)")]
+    public float tiltSpeed = 0.0f;
+
+    [SerializeField][Tooltip("The camera won't tilt any further past this speed (Usually same as \'Max Player Input Speed \')")]
+    public float maxMomentumInfluence = 1.0f;
+    public AnimationCurve cameraTiltCurve;
+
+    //Backend:
+    private float targetTilt = 0.0f;
+    private float tiltLastFrame = 0.0f;
+
+    [Space(10)]
+    [Header("Camera FOV Settings")]
+    [SerializeField][Tooltip("The default camera field of view")]
+    private float defaultFOV = 80.0f;
+
+    [SerializeField][Tooltip("How much the FOV increases performing certain actions (I.e. sliding or dashing)")]
+    public float changeInFOV = 0.0f;
+
+    [Range(0, 1)][Tooltip("How quickly the FOV increases (0 - never, 1 - instant)")]
+    public float changeInFOVSpeed = 0.0f;
+
+    //Backend:
+    private float lastFrameFOV = 0.0f;
+    private float targetFOV = 0.0f;
+
+    [Space(10)]
+    [Header("Serialize Fields")]
+    public GameObject cameraHolder;
+    private Camera mainCamera;
 
 
-    
+    private void Start()
+    {
+        mainCamera = Camera.main;
+        mainCamera.fieldOfView = defaultFOV;
+        targetFOV = defaultFOV;
+        lastFrameFOV = defaultFOV;
+    }
+
     void Update()
+    {
+        UpdateTilt();
+        UpdateFOV();
+    }
+
+    void UpdateTilt()
     {
         if (!Movement.playerMovement.isWallRunning && !Movement.playerMovement.isSliding && Time.time > Movement.playerMovement.cameraLeaveWallrunTime)
         {
-            tilt = Vector3.Dot(-transform.right, Vector3.ClampMagnitude(Movement.playerMovement.velocity, maxMomentumInfluence));
-            tilt /= maxMomentumInfluence;
-            tilt *= headTiltAtMax;
+            targetTilt = Vector3.Dot(-transform.right, Vector3.ClampMagnitude(Movement.playerMovement.velocity, maxMomentumInfluence));
+            targetTilt /= maxMomentumInfluence;
+            targetTilt *= headTiltAtMax;
 
-            transform.localEulerAngles = new Vector3(
-                transform.localEulerAngles.x,
-                transform.localEulerAngles.y,
-                tilt
-                );
+            if (targetTilt < 0)
+            {
+                targetTilt = cameraTiltCurve.Evaluate(Mathf.Abs(targetTilt));
+                targetTilt = -targetTilt;
+            }
+            else targetTilt = cameraTiltCurve.Evaluate(targetTilt);
         }
 
         else if (Movement.playerMovement.isSliding)
         {
-            tilt = Vector3.Dot(transform.right, Vector3.ClampMagnitude(Movement.playerMovement.velocity, maxMomentumInfluence));
-            tilt /= maxMomentumInfluence;
-            tilt *= headTiltAtMax;
+            targetTilt = Vector3.Dot(transform.right, Vector3.ClampMagnitude(Movement.playerMovement.velocity, maxMomentumInfluence));
+            targetTilt /= maxMomentumInfluence;
+            targetTilt *= headTiltAtMax;
 
-            transform.localEulerAngles = new Vector3(
-                transform.localEulerAngles.x,
-                transform.localEulerAngles.y,
-                tilt
+            if (targetTilt < 0)
+            {
+                targetTilt = cameraTiltCurve.Evaluate(Mathf.Abs(targetTilt));
+                targetTilt = -targetTilt;
+            }
+
+            else
+            {
+                targetTilt = cameraTiltCurve.Evaluate(targetTilt);
+            }
+        }
+
+        float actualTilt = Mathf.Lerp(tiltLastFrame, targetTilt, tiltSpeed);
+
+        cameraHolder.transform.localEulerAngles = new Vector3(
+                cameraHolder.transform.localEulerAngles.x,
+                cameraHolder.transform.localEulerAngles.y,
+                actualTilt
                 );
-        }
 
-        if (Movement.playerMovement.isDashing)
-        {
-            float fOVRatio = Mathf.InverseLerp(0, maxMomentumInfluence, Mathf.Abs(Vector3.Dot(Movement.playerMovement.velocity, Movement.playerMovement.transform.forward)));
-            fOVRatio = defaultFOVCurve.Evaluate(fOVRatio);
-
-            currFOV = Mathf.Lerp(defaultFOV, maxDashFOV, fOVRatio);
-
-        }
-        else
-        {
-            float fOVRatio = Mathf.InverseLerp(0, maxMomentumInfluence, Mathf.Abs(Vector3.Dot(Movement.playerMovement.velocity, Movement.playerMovement.transform.forward)));
-            fOVRatio = defaultFOVCurve.Evaluate(fOVRatio);
-            currFOV = Mathf.Lerp(defaultFOV, maxFOV, fOVRatio);
-        }
-        
-        //Camera.main.fieldOfView = currFOV;
+        tiltLastFrame = actualTilt;
     }
 
-    private float easeInOutCubic(float value)
+    void UpdateFOV()
     {
-        return value < 0.5 ? 4 * value * value * value : 1 - Mathf.Pow(-2 * value + 2, 3) / 2;
+        if (Movement.playerMovement.isDashing || Movement.playerMovement.isSliding || Movement.playerMovement.isWallRunning)
+        {
+            targetFOV = defaultFOV + changeInFOV;
+            targetFOV = Mathf.Lerp(lastFrameFOV, targetFOV, changeInFOVSpeed);
+        }
+
+        else
+        {
+            targetFOV = defaultFOV;
+            targetFOV = Mathf.Lerp(lastFrameFOV, targetFOV, changeInFOVSpeed);
+        }
+
+        mainCamera.fieldOfView = targetFOV;
+        lastFrameFOV = targetFOV;
     }
 }

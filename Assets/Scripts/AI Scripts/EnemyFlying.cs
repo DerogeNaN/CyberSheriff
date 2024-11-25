@@ -97,13 +97,7 @@ public class EnemyFlying : EnemyBase
 
     public override void OnDestroyed(int damageType)
     {
-        SetState(EnemyState.downed);
-        enemy.animator.SetTrigger("Death");
-    }
-
-    private void FixedUpdate()
-    {
-
+        Destroy(gameObject);
     }
 
     protected override void IdleUpdate()
@@ -123,7 +117,7 @@ public class EnemyFlying : EnemyBase
         //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
 
         // look at player
-        dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed);
+        dir = Vector3.Lerp(dir, toPlayer.normalized, turnSpeed * Time.deltaTime);
 
         if (toPlayer.magnitude > closeDistance + closeBuffer)
         {

@@ -11,7 +11,7 @@ public class EnemyRanged : EnemyBase
     public float stopDistance = 7.0f;
 
     [Header("Ranged Attack Settings")]
-    [Tooltip("minimum distance to the player to shoot")]
+    [Tooltip("maximum distance from the player to shoot")]
     public float attackRange = 25.0f;
     [Tooltip("remaining time in the animation after firing")]
     public float attackEndlag = 1.0f;
@@ -25,8 +25,11 @@ public class EnemyRanged : EnemyBase
     bool doSniperAimEffect = false;
     //[Tooltip("if enabled, the amount of time the sniper's aiming effect lasts before the enemy shoots")]
     float sniperAimEffectLength;
+    [Tooltip("if checked, enemies will never stop chasing the player once they see them for the first time")]
+    public bool neverLoseSight;
+    [Tooltip("whether or not line of sight to the player is required to start chasing them")]
+    public bool needsLineOfSight;
 
-    Vector3 initialPosition;
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
@@ -37,7 +40,7 @@ public class EnemyRanged : EnemyBase
         // randomly change stopDistance between -25% and +25% per enemy
         stopDistance += Random.Range(-stopDistance * 0.25f, stopDistance * 0.25f);
 
-        initialPosition = transform.position;
+        enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
         SetState(EnemyState.idle);
     }
@@ -45,6 +48,7 @@ public class EnemyRanged : EnemyBase
     protected override void OnUpdate()
     {
         // do this regardless of state 
+        enemy.playerTransform = Movement.playerMovement.transform;
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
 
@@ -69,7 +73,7 @@ public class EnemyRanged : EnemyBase
     protected override void IdleEnter()
     {
         enemy.shouldPath = true;
-        enemy.moveTarget = initialPosition;
+        enemy.moveTarget = enemy.initialPosition;
     }
     protected override void MovingToTargetEnter()
     {
@@ -84,7 +88,7 @@ public class EnemyRanged : EnemyBase
         // change spawn pos to gun pos
         Projectile projectile = Instantiate(bulletPrefab, transform.position + enemy.lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
         projectile.Shoot(enemy.playerTransform.position);
-        //SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
+        SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
         // snap to point at player when firing
         transform.LookAt(enemy.playerTransform);
 
@@ -105,14 +109,17 @@ public class EnemyRanged : EnemyBase
     protected override void IdleUpdate()
     {
         // if the player gets withing range and line of sight, switch to chasing them
-        if (enemy.hasLineOfSight) SetState(EnemyState.movingToTarget);
+        if (enemy.hasLineOfSight || !needsLineOfSight) SetState(EnemyState.movingToTarget);
     }
     protected override void MovingToTargetUpdate()
     {
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
-        //if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
+        if (!neverLoseSight && needsLineOfSight)
+        {
+            if (!enemy.hasLineOfSight) SetState(EnemyState.idle);
+        }
 
         Vector3 toPlayer = enemy.playerTransform.position - transform.position;
 

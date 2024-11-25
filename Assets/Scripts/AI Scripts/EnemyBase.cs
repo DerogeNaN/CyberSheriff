@@ -16,12 +16,13 @@ public enum EnemyState
     attacking,
     stunned,
     downed,
-    chargeAttack
+    chargeAttack,
+    jumping
 }
 
 public class EnemyBase : MonoBehaviour
 {
-    public EnemyState state;
+    protected EnemyState state;
 
     protected EnemyCommon enemy;
 
