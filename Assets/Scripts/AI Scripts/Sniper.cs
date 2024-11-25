@@ -32,12 +32,14 @@ public class Sniper : EnemyBase
     {
         SetState(EnemyState.stunned);
         enemy.CreateHitEffect();
+        SoundManager2.Instance.PlaySound("RobotHit", transform);
     }
 
     public override void OnDestroyed(int damage, int damageType)
     {
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
         rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        SoundManager2.Instance.PlaySound("RobotDeath", transform);
         Destroy(gameObject);
     }
 
@@ -45,6 +47,7 @@ public class Sniper : EnemyBase
     {
         enemy.shouldPath = false;
         enemy.speed = moveSpeed;
+        SoundManager2.Instance.PlaySound("RobotSpawn", transform);
     }
 
     protected override void OnUpdate()
@@ -108,6 +111,7 @@ public class Sniper : EnemyBase
 
                     case LaserState.charging:
                         laserState = LaserState.beforeFire;
+                        SoundManager2.Instance.PlaySound("SniperLaserCharge", transform);
                         timer = timeBeforeDamage;
                         targetIntensity = 0.1f;
                         trackPlayer = false;
@@ -187,6 +191,8 @@ public class Sniper : EnemyBase
     void Fire()
     {
         RaycastHit hit;
+
+        SoundManager2.Instance.PlaySound("SniperLaserShot", transform);
 
         // double check that the player is within sight
         if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))

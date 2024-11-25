@@ -505,6 +505,7 @@ public class Movement : MonoBehaviour
     private void Dash_Performed(InputAction.CallbackContext context)
     {
         isTryingDashing = true;
+        SoundManager2.Instance.PlaySound("Dash");
         DashStartTransition();
     }
 
@@ -578,19 +579,19 @@ public class Movement : MonoBehaviour
                 if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
                 {
                     jumpCount++;
-                    SoundManager2.Instance.PlaySound("JumpSFX");
+                    SoundManager2.Instance.PlaySound("Jump");
                 }
 
                 else if (lastWallRunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
-                    SoundManager2.Instance.PlaySound("JumpSFX");
+                    SoundManager2.Instance.PlaySound("Jump");
                 }
 
                 else
                 {
                     jumpCount += 2;
-                    SoundManager2.Instance.PlaySound("DoubleJumpSFX");
+                    SoundManager2.Instance.PlaySound("Double Jump");
                 }
 
                 velocity.y = jumpStrength;
