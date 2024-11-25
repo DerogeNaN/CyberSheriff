@@ -7901,6 +7901,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5644071828968299039}
+  - {fileID: 1364794946393187158}
   m_Father: {fileID: 4613755221359916255}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -19647,6 +19648,7 @@ Transform:
   - {fileID: 343712940333300622}
   - {fileID: 1167232207}
   - {fileID: 6450719829264873112}
+  - {fileID: 6190373141154211808}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -19787,6 +19789,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnPos: {fileID: 0}
+  grappleVFXPulse: {fileID: 0}
+  grappleVFXLine: {fileID: 0}
   revolverAnimator: {fileID: 8693868506014203999}
   shotgunAnimator: {fileID: 3641946873573803663}
   moveSpeed: 5
@@ -19806,17 +19810,18 @@ MonoBehaviour:
   dashTime: 0.2
   dashCooldown: 0.5
   isDashing: 0
-  wallrunSpeedThreshold: 12
+  wallrunSpeedThreshold: 5
   wallrunCooldown: 1
   wallrunJumpAngle: 0.5
   wallrunVelocityBonus: 22
   maxWallrunTime: 3
   cameraLeaveWallrunTime: 0
   isWallRunning: 0
-  grappleSpeed: 65
+  grappleSpeed: 10
   grappleCooldown: 3
   maxGrappleDistance: 300
   grappleOffset: {x: 0, y: -2, z: 0}
+  isGrappling: 0
   gravityStrength: 35
   encouragedGroundMomentum: 3
   encouragedAirMomentum: 6
@@ -19827,7 +19832,7 @@ MonoBehaviour:
   cameraSlideTransitionTime: 0.25
   cameraHolder: {fileID: 3140000632606296500}
   footstepInterval: 0.3
-  wallRunFootstepInterval: 0.25
+  wallRunFootstepInterval: 0.5
   velocity: {x: 0, y: 0, z: 0}
   movementInputWorld: {x: 0, y: 0, z: 0}
   walkBlendAmount:
@@ -21752,6 +21757,37 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: -2.6, y: -4.09}
   m_UseGraphicAlpha: 1
+--- !u!1 &5573429259382859598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1364794946393187158}
+  m_Layer: 3
+  m_Name: Player Grapple Hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1364794946393187158
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5573429259382859598}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.14, y: -0.149, z: 0.361}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8536436182461542494}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5787469495279689781
 GameObject:
   m_ObjectHideFlags: 0
@@ -37259,6 +37295,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5213699035369657994, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
     type: 3}
   m_PrefabInstance: {fileID: 3315563204100453492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3952892846393830542
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 4613755221359916255}
+    m_Modifications:
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148303922545888111, guid: 5b295f754f664094bad0ada3e4aa8331,
+        type: 3}
+      propertyPath: m_Name
+      value: Grapple_Laser_Line_Renderer
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5b295f754f664094bad0ada3e4aa8331, type: 3}
+--- !u!4 &6190373141154211808 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+    type: 3}
+  m_PrefabInstance: {fileID: 3952892846393830542}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8372071800696664904
 PrefabInstance:

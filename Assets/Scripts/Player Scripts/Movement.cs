@@ -1,8 +1,7 @@
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.VFX;
+
 
 public class Movement : MonoBehaviour
 {
@@ -11,6 +10,11 @@ public class Movement : MonoBehaviour
 
     [Header("Serialize Fields - PLUG THESE IN!!!")]
     public Transform respawnPos;
+    //public VisualEffect grappleVFXPulse;
+    public LineRenderer grappleVFXLine;
+    public LineRenderer grappleVFXLine1;
+    public LineRenderer grappleVFXLine2;
+    private Transform playerGrappleHand;
     private Transform cameraSlidePos;
     private Transform cameraDefaultPos;
     private GameObject cameraWallrunHolder;
@@ -129,7 +133,7 @@ public class Movement : MonoBehaviour
     private Vector3 grappleTargetDirection = Vector3.zero;
     private float lastGrappleTime = -5;
     private GameObject grappleObject;
-    private bool isGrappling = false;
+    [HideInInspector] public bool isGrappling = false;
     private bool canGrapple = false;
     #endregion
 
@@ -215,6 +219,7 @@ public class Movement : MonoBehaviour
         if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
         if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
         if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
+        if (playerGrappleHand == null)      playerGrappleHand = GameObject.Find("Player Grapple Hand").transform;
 
         InitialiseMovement();
     }
@@ -621,6 +626,7 @@ public class Movement : MonoBehaviour
             Vector3 targetDirection = grappleObject.transform.position - transform.position;
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
+            canGrapple = true;
             lastGrappleTime = Time.time;
             revolverAnimator.SetTrigger("PullTrig");
             shotgunAnimator.SetTrigger("PullTrig");
@@ -628,8 +634,40 @@ public class Movement : MonoBehaviour
         }
     }
 
+    private void GrappleVFX(bool toggle)
+    {
+        //grappleVFXPulse.transform.position = playerGrappleHand.transform.position;
+        //grappleVFXPulse.transform.rotation = playerGrappleHand.transform.rotation;
+
+        if (!toggle)
+        {
+            //grappleVFXPulse.gameObject.SetActive(false);
+            //grappleVFXPulse.Stop();
+            grappleVFXLine.SetPosition(0, Vector3.zero);
+            grappleVFXLine.SetPosition(1, Vector3.zero);
+            grappleVFXLine1.SetPosition(0, Vector3.zero);
+            grappleVFXLine1.SetPosition(1, Vector3.zero);
+            grappleVFXLine2.SetPosition(0, Vector3.zero);
+            grappleVFXLine2.SetPosition(1, Vector3.zero);
+
+        }
+
+        else
+        {
+            //grappleVFXPulse.gameObject.SetActive(true);
+            //grappleVFXPulse.Play();
+            grappleVFXLine.SetPosition(0, playerGrappleHand.transform.position);
+            grappleVFXLine.SetPosition(1, grappleObject.transform.position + grappleOffset);
+            grappleVFXLine1.SetPosition(0, playerGrappleHand.transform.position);
+            grappleVFXLine1.SetPosition(1, grappleObject.transform.position + grappleOffset);
+            grappleVFXLine2.SetPosition(0, playerGrappleHand.transform.position);
+            grappleVFXLine2.SetPosition(1, grappleObject.transform.position + grappleOffset);
+        }
+    }    
+
     private void Grappling()
     {
+        GrappleVFX(isGrappling);
         if (canGrapple && isGrappling)
         {
             velocity = grappleTargetDirection.normalized * grappleSpeed;
