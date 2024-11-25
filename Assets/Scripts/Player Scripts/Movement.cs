@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.Rendering.DebugUI;
@@ -108,7 +109,6 @@ public class Movement : MonoBehaviour
     private float lastWallRunTime = 0;
     private float leavingWallrunTime = 0;
     private float wallRunStartTime = 0;
-    private bool startWallrun = false;
     #endregion
 
     #region Grapple
@@ -402,22 +402,18 @@ public class Movement : MonoBehaviour
         {
             if (velocity.magnitude > 3 && isGrounded && !isSliding)
             {
-                shotgunAnimator.SetFloat("Blend", blendAmount);
                 shotgunAnimator.SetLayerWeight(2, blendAmount);
             }
             else if (isWallRunning)
             {
-                shotgunAnimator.SetFloat("Blend", 1 - blendAmount);
                 shotgunAnimator.SetLayerWeight(2, blendAmount);
             }
             else if (!isGrounded)
             {
-                shotgunAnimator.SetFloat("Blend", 1 - blendAmount);
                 shotgunAnimator.SetLayerWeight(2, 1 - blendAmount);
             }
             else
             {
-                shotgunAnimator.SetFloat("Blend", 0);
                 shotgunAnimator.SetLayerWeight(2, 0);
             }
         }
@@ -628,7 +624,7 @@ public class Movement : MonoBehaviour
             lastGrappleTime = Time.time;
             revolverAnimator.SetTrigger("PullTrig");
             shotgunAnimator.SetTrigger("PullTrig");
-            //SoundManager2.Instance.PlaySound("Grapple");
+            SoundManager2.Instance.PlaySound("Grapple");
         }
     }
 
@@ -643,7 +639,7 @@ public class Movement : MonoBehaviour
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
         isGrappling = false;
-        //SoundManager2.Instance.StopSound("Grapple");
+        SoundManager2.Instance.StopSound("Grapple");
     }
 
 
@@ -701,6 +697,7 @@ public class Movement : MonoBehaviour
     void ComputeDepenetration()
     {
         Vector3 resolveDirection = Vector3.zero;
+        Vector3 totalDepenetration = Vector3.zero;
         float resolveDistance = 0.0f;
         Collider[] overlappingColliders = { };
 
@@ -714,9 +711,28 @@ public class Movement : MonoBehaviour
                                         overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
                                         out resolveDirection, out resolveDistance))
             {
-                transform.position += resolveDirection * resolveDistance;
+                Vector3 depen = resolveDirection * resolveDistance;
+                if (Vector3.Dot(totalDepenetration, depen) <= 0)
+                {
+                    totalDepenetration += depen;
+                }
+
+                else
+                {
+                    Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
+                    float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
+                    Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
+
+                    if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                    {
+                        totalDepenetration = depen;
+                    }
+                    else totalDepenetration = changeInTotal + depen;
+                }
             }
         }
+
+        transform.position += totalDepenetration;
     }
 
     void CheckForOncomingCollision()
@@ -737,12 +753,20 @@ public class Movement : MonoBehaviour
             for (int i = 0; i < hitArray.Length; i++)
             {
                 collisionNormal = hitArray[i].normal;
-                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].point, hitArray[i].normal));
-                Debug.DrawRay(hitArray[i].point, hitArray[i].normal * 2, Color.magenta);
+                Vector3 point;
+
                 if (hitArray[i].point == Vector3.zero)
                 {
-                    Debug.Log("What the eff");
+                    Debug.Log("I hate my life");
+                    point = hitArray[i].collider.ClosestPoint(transform.position);
                 }
+
+                else
+                {
+                    point = hitArray[i].point;
+                }
+
+                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - point, hitArray[i].normal));
 
                 if (Vector3.Dot(velocity, collisionNormal) < 0) continue;
 
@@ -775,17 +799,25 @@ public class Movement : MonoBehaviour
         else
         {
             hitArray = Physics.SphereCastAll(transform.position + new Vector3(0, -0.7f, 0),
-                                              0.45f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
+                                              0.5f, velocity.normalized, velocity.magnitude * Time.deltaTime, ~12, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hitArray.Length; i++)
             {
                 collisionNormal = hitArray[i].normal;
-                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - hitArray[i].point, hitArray[i].normal));
-                Debug.DrawRay(hitArray[i].point, hitArray[i].normal * 2, Color.magenta);
+                Vector3 point;
+
                 if (hitArray[i].point == Vector3.zero)
                 {
-                    Debug.Log("What the eff");
+                    Debug.Log("I hate my life");
+                    point = hitArray[i].collider.ClosestPoint(transform.position);
                 }
+
+                else
+                {
+                    point = hitArray[i].point;
+                }
+
+                collisionNormal *= -Mathf.Sign(Vector3.Dot(transform.position - point, hitArray[i].normal));
 
                 if (Vector3.Dot(velocity, collisionNormal) < 0) continue;
 

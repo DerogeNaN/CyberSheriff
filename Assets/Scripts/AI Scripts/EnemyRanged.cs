@@ -33,7 +33,9 @@ public class EnemyRanged : EnemyBase
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
+    float stun = 0;
     float untilDestroy = 2.0f;
+    [SerializeField] GameObject ragdoll;
 
     protected override void OnStart()
     {
@@ -43,6 +45,7 @@ public class EnemyRanged : EnemyBase
         enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
         SetState(EnemyState.idle);
+        enemy.animator.SetBool("Run", false);
     }
 
     protected override void OnUpdate()
@@ -51,22 +54,20 @@ public class EnemyRanged : EnemyBase
         enemy.playerTransform = Movement.playerMovement.transform;
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
-
-        if (enemy.health.health <= 0)
-        {
-            untilDestroy -= Time.deltaTime;
-            if (untilDestroy <= 0)
-            {
-                Destroy(gameObject);
-            }
-        }
     }
 
-
-    public override void OnDestroyed(int damageType)
+    public override void OnHit(int damage, int damageType)
     {
-        SetState(EnemyState.downed);
-        enemy.animator.SetTrigger("Death");
+        stun = 0.5f;
+        SetState(EnemyState.stunned);
+        enemy.CreateHitEffect();
+    }
+
+    public override void OnDestroyed(int damage, int damageType)
+    {
+        EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        Destroy(gameObject);
     }
 
     #region enter state
@@ -88,7 +89,7 @@ public class EnemyRanged : EnemyBase
         // change spawn pos to gun pos
         Projectile projectile = Instantiate(bulletPrefab, transform.position + enemy.lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
         projectile.Shoot(enemy.playerTransform.position);
-        //SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
+        SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
         // snap to point at player when firing
         transform.LookAt(enemy.playerTransform);
 
@@ -103,16 +104,28 @@ public class EnemyRanged : EnemyBase
     {
         remainingSniperAimTime = sniperAimEffectLength;
     }
+
+    protected override void StunnedEnter()
+    {
+        enemy.shouldPath = false;
+        enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Stagger", true);
+    }
     #endregion
 
     #region update state
     protected override void IdleUpdate()
     {
+        enemy.speed = runSpeed;
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
         // if the player gets withing range and line of sight, switch to chasing them
         if (enemy.hasLineOfSight || !needsLineOfSight) SetState(EnemyState.movingToTarget);
     }
     protected override void MovingToTargetUpdate()
     {
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
@@ -122,17 +135,6 @@ public class EnemyRanged : EnemyBase
         }
 
         Vector3 toPlayer = enemy.playerTransform.position - transform.position;
-
-        if (toPlayer.magnitude > stopDistance || !enemy.hasLineOfSight)
-        {
-            enemy.animator.SetBool("Run", true);
-            enemy.shouldPath = true;
-        }
-        else
-        {
-            enemy.animator.SetBool("Run", false);
-            enemy.shouldPath = false;
-        }
 
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0)
         {
@@ -157,12 +159,22 @@ public class EnemyRanged : EnemyBase
         remainingSniperAimTime -= Time.deltaTime;
         if (remainingSniperAimTime <= 0) SetState(EnemyState.attacking);
     }
+
+    protected override void StunnedUpdate()
+    {
+
+        stun -= Time.deltaTime;
+        if (stun <= 0)
+        {
+            SetState(EnemyState.movingToTarget);
+        }
+    }
     #endregion
 
     #region exit state
     protected override void IdleExit()
     {
-
+        Debug.Log("among us");
     }
     protected override void MovingToTargetExit()
     {
@@ -171,6 +183,11 @@ public class EnemyRanged : EnemyBase
     protected override void AttackingExit()
     {
         remainingAttackCooldown = Random.Range(attackCooldownMin, attackCooldownMax);
+    }
+
+    protected override void StunnedExit()
+    {
+        enemy.animator.SetBool("Stagger", false);
     }
     #endregion
 }

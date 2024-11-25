@@ -7,9 +7,6 @@ public class WeaponManagement : MonoBehaviour
     public List<GameObject> weaponList;
 
     [SerializeField]
-    int weaponIterator = 0;
-
-    [SerializeField]
     Transform WeaponGripTransform;
     [SerializeField]
     Transform BoomstickTransform;
@@ -30,6 +27,8 @@ public class WeaponManagement : MonoBehaviour
     [SerializeField]
     public int CAWReserveAmmoCap;
 
+    public GameObject revolverCrosshair;
+    public GameObject shotgunCrosshair;
 
     [SerializeField]
     public string ammoText;
@@ -80,6 +79,18 @@ public class WeaponManagement : MonoBehaviour
         CAWCurrentReserveAmmo = currentActiveWeapon.GetComponent<RangedWeapon>().CurrentReserveAmmo;
         CAWReserveAmmoCap = currentActiveWeapon.GetComponent<RangedWeapon>().ReserveAmmoCap;
         ammoText = CAWCurrentAmmo + " / " + CAWMaxAmmo + " | " + CAWCurrentReserveAmmo;
+
+        if (currentActiveWeapon.name == "RevolverEquipped")
+        {
+            revolverCrosshair.SetActive(true);
+            shotgunCrosshair.SetActive(false);
+        }
+
+        else if (currentActiveWeapon.name == "ShotGunEquipped")
+        {
+            revolverCrosshair.SetActive(false);
+            shotgunCrosshair.SetActive(true);
+        }
 
         if (start == false)
         {

@@ -10,12 +10,10 @@ public class MouseLook : MonoBehaviour
 {
     [Header("Camera Settings")]
     [SerializeField] float mouseSens;
-    [SerializeField] float defaultFOV = 90.0f;
 
     [Space(10.0f)]
     [Header("Serializeable Fields")]
     [SerializeField] GameObject cameraHolder;
-    private Camera cam;
     [SerializeField] PlayerInputActions playerInputActions;
     [SerializeField] float xClamp = 180.0f;
 
@@ -23,11 +21,6 @@ public class MouseLook : MonoBehaviour
     float camRotationX;
     float currRotationX;
     Vector2 mouseInput;
-
-    private void Awake()
-    {
-        cam = cameraHolder.GetComponentInChildren<Camera>();
-    }
 
     void Start()
     {
@@ -37,8 +30,6 @@ public class MouseLook : MonoBehaviour
     void InitializeMouseLook()
     {
         LockCursor();
-
-        cam.fieldOfView = defaultFOV;
 
         if (playerInputActions == null) playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
