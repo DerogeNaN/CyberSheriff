@@ -23,7 +23,6 @@ public class PlayerHealth : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O))
         {
             TakeDamage(10, 0);
-            Debug.Log("I took damage");
         }
         UpdateHealthUI();
     }
@@ -65,11 +64,15 @@ public class PlayerHealth : MonoBehaviour
             }
         }
 
-        else
+        if (health > 25)
         {
-             healthUI1.SetActive(false);
-             healthUI2.SetActive(false);
-             healthUI3.SetActive(false);
+            healthUI3.SetActive(false);
+            if (health > 50)
+            {
+                healthUI2.SetActive(false);
+
+                if (health > 75) healthUI1.SetActive(false);
+            }
         }
     }
 }

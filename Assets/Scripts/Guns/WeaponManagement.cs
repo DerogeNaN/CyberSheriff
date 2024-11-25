@@ -114,13 +114,13 @@ public class WeaponManagement : MonoBehaviour
 
     void PrimaryFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+        if (currentActiveWeapon.GetComponent<RangedWeapon>()  && !Movement.playerMovement.isGrappling)
             currentActiveWeapon.GetComponent<RangedWeapon>().OnPrimaryFireBegin();
     }
 
     void PrimaryFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+        if (currentActiveWeapon.GetComponent<RangedWeapon>() && !Movement.playerMovement.isGrappling)
             currentActiveWeapon.GetComponent<RangedWeapon>().OnprimaryFireEnd();
     }
 
@@ -128,7 +128,7 @@ public class WeaponManagement : MonoBehaviour
     {
         if (inProgress)
         {
-            if (currentActiveWeapon.GetComponent<RangedWeapon>())
+            if (currentActiveWeapon.GetComponent<RangedWeapon>() && !Movement.playerMovement.isGrappling)
                 currentActiveWeapon.GetComponent<RangedWeapon>().OnPrimaryFireStay();
         }
     }
@@ -137,7 +137,7 @@ public class WeaponManagement : MonoBehaviour
     {
         if (inProgress)
         {
-            if (currentActiveWeapon.GetComponent<RangedWeapon>())
+            if (currentActiveWeapon.GetComponent<RangedWeapon>() && !Movement.playerMovement.isGrappling)
                 currentActiveWeapon.GetComponent<RangedWeapon>().OnAltFireStay();
         }
     }
@@ -145,20 +145,20 @@ public class WeaponManagement : MonoBehaviour
 
     void AltFireWeaponEnd(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+        if (currentActiveWeapon.GetComponent<RangedWeapon>() && !Movement.playerMovement.isGrappling)
             currentActiveWeapon.GetComponent<RangedWeapon>().OnAltFireEnd();
     }
 
 
     void AltFireWeaponBegin(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (currentActiveWeapon.GetComponent<RangedWeapon>())
+        if (currentActiveWeapon.GetComponent<RangedWeapon>() && !Movement.playerMovement.isGrappling)
             currentActiveWeapon.GetComponent<RangedWeapon>().OnAltFireBegin();
     }
 
     void ManualReload(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress && !Movement.playerMovement.isGrappling)
         {
             if (currentActiveWeapon.GetComponent<RangedWeapon>())
                 currentActiveWeapon.GetComponent<RangedWeapon>().ManualReload();
@@ -172,7 +172,7 @@ public class WeaponManagement : MonoBehaviour
 
     void ScrollSetWeapon(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress && !Movement.playerMovement.isGrappling)
         {
             float CurrentWeapon = obj.ReadValue<Vector2>().y;
 
@@ -249,7 +249,7 @@ public class WeaponManagement : MonoBehaviour
 
     void keySetWeapon1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress && !Movement.playerMovement.isGrappling)
         {
             //if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading || currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
             //{
@@ -286,7 +286,7 @@ public class WeaponManagement : MonoBehaviour
 
     void keySetWeapon2(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress)
+        if (!Movement.playerMovement.playerInputActions.Player.PrimaryFire.inProgress && !Movement.playerMovement.playerInputActions.Player.AltFire.inProgress && !Movement.playerMovement.isGrappling )
         {
             //if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading || currentActiveWeapon.GetComponent<RangedWeapon>().waiting)
             //{

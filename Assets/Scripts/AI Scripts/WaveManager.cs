@@ -12,6 +12,7 @@ public class WaveManager : MonoBehaviour
     public bool tutorialLevel;
     public float waveTime;
     public float timeBetweenWaves;
+    public float maxWave;
 
     [Header("Global Wave Stats")]
     public int waveNumber = 0;
@@ -76,9 +77,14 @@ public class WaveManager : MonoBehaviour
     public void StartWave()
     {
         Debug.Log("Wave Manager starting new wave");
-        SoundManager2.Instance.PlaySound("Alarm_sound");
+        if (waveNumber == 0)
+        {
+            SoundManager2.Instance.PlaySound("FirstWave");
+        }
+        else SoundManager2.Instance.PlaySound("OtherWaves");
+       
 
-        if (waveNumber > 2)
+        if (waveNumber > maxWave)
         {
             WinCondition();
         }
