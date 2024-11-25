@@ -257,7 +257,7 @@ public class RangedWeapon : MonoBehaviour
 
     public virtual void ManualReload()
     {
-        if (reloading == false && canPressAltFire == true && currentBullets != BulletsPerClip)//verifies that im not already altfiring for situations like fanFire 
+        if (reloading == false && canPressAltFire == true && currentBullets != BulletsPerClip && CurrentReserveAmmo > 0)//verifies that im not already altfiring for situations like fanFire 
         {
             canFire = false;
             StartCoroutine(Reload());
