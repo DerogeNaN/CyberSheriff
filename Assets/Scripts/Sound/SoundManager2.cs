@@ -5,10 +5,13 @@ using System;
 public class SoundManager2 : MonoBehaviour
 {
     public static SoundManager2 Instance;
+   
+    [Range(0f, 1f)] public float masterVolume = 1;
 
-    [Range(0f, 1f)] public float mastermusicVolume = 1;
+    [Range(0f, 1f)] public float masterMusicVolume = 1;
 
     [Range(0f, 1f)] public float masterSfxVolume = 1;
+
 
 
     public enum SoundCategory { Master, SFX, Music, UI }
@@ -67,16 +70,6 @@ public class SoundManager2 : MonoBehaviour
 
         DontDestroyOnLoad(this);
 
-        foreach (SoundMaster source in sounds)
-        {
-            source.volume = masterSfxVolume;
-        }
-
-
-        foreach (MusicMaster source in musicTracks)
-        {
-            source.volume = mastermusicVolume;
-        }
     }
 
     private void Update()
@@ -117,21 +110,7 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
-        foreach (SoundMaster source in sounds)
-        {
-            source.volume = masterSfxVolume;
-            if (source.source)
-                source.source.volume = masterSfxVolume;
-        }
-
-
-        foreach (MusicMaster source in musicTracks)
-        {
-            source.volume = mastermusicVolume;
-            if (source.source)
-                source.source.volume = mastermusicVolume;
-        }
-
+        SourceVolumeUpdate();
 
     }
 
@@ -164,9 +143,11 @@ public class SoundManager2 : MonoBehaviour
                 newSource = newSource.gameObject.AddComponent<AudioSource>();
 
             newSource.clip = clipToPlay;
-            newSource.volume = sound.volume;
+            newSource.volume = sound.volume * masterSfxVolume * masterVolume;
             newSource.pitch = sound.pitch;
 
+
+            Debug.Log("Source volume is :"+newSource.volume);
             // Set 3D sound properties if Local3D
             newSource.spatialBlend = (sound.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
 
@@ -179,6 +160,26 @@ public class SoundManager2 : MonoBehaviour
                 Destroy(sound.source, clipToPlay.length);
         }
     }
+
+    public void SourceVolumeUpdate()
+    {
+        foreach (MusicMaster music in musicTracks)
+        {
+            if (music.source) 
+            {
+                music.source.volume = music.volume * masterMusicVolume * masterVolume;
+            }
+        }
+
+        foreach(SoundMaster sound in sounds) 
+        {
+            if (sound.source) 
+            {
+                sound.source.volume = sound.volume * masterSfxVolume * masterVolume;
+            }
+        }
+    }
+
 
 
     public void StopSound(string soundName, Transform targetObject = null)
@@ -214,7 +215,7 @@ public class SoundManager2 : MonoBehaviour
 
             music.source = gameObject.AddComponent<AudioSource>();
             music.source.clip = music.track;
-            music.source.volume = music.volume;
+            music.source.volume = music.volume * masterMusicVolume * masterVolume;
             music.source.loop = music.loop; // Preserve looping option
         }
 
@@ -228,7 +229,7 @@ public class SoundManager2 : MonoBehaviour
         {
             if (currentMusic != null) currentMusic.source.Stop();
             currentMusic = music;
-            currentMusic.source.volume = currentMusic.volume;
+            currentMusic.source.volume = music.volume * masterMusicVolume * masterVolume;
             currentMusic.source.Play();
         }
 
@@ -261,7 +262,7 @@ public class SoundManager2 : MonoBehaviour
 
     public void AdjustMusicVolume(float volume)
     {
-        mastermusicVolume = volume;
+        masterMusicVolume = volume;
     }
 
 

@@ -15,7 +15,7 @@ public class SettingsMenuUi : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        musicSlider.value = SoundManager2.Instance.mastermusicVolume;
+        musicSlider.value = SoundManager2.Instance.masterMusicVolume;
         SFXSlider.value = SoundManager2.Instance.masterSfxVolume;
     }
 
