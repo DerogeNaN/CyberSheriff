@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.WSA;
+using Unity.Mathematics;
 
 public class SettingsMenuUi : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class SettingsMenuUi : MonoBehaviour
     [Header("Required scripts")]
     public PauseMenu PauseMenuScript;
     public MouseLook lookingscript;
+    public CameraJiggle jiggleScript;
 
     [Header("Main Menu UI Elements(Needs to be set)")]
 
@@ -61,13 +63,14 @@ public class SettingsMenuUi : MonoBehaviour
         SFXSlider.value = SoundManager2.Instance.masterSfxVolume;
         masterText.text = (Mathf.Floor(SoundManager2.Instance.masterVolume * 100)).ToString();
         musicText.text = (Mathf.Floor(SoundManager2.Instance.masterMusicVolume * 100)).ToString();
-        SFXText.text = (Mathf.Floor( SoundManager2.Instance.masterSfxVolume * 100)).ToString();
+        SFXText.text = (Mathf.Floor(SoundManager2.Instance.masterSfxVolume * 100)).ToString();
+        //FOVSlider.value = jiggleScript.;
         sensitivitySlider.value = lookingscript.GetMouseSense();
-        sensitivityText.text = lookingscript.GetMouseSense().ToString();
-        controlsButton.onClick.AddListener(delegate { SetState(OptionsMenuState.controls);});
-        soundButton.onClick.AddListener(delegate { SetState(OptionsMenuState.sound);});
-        returnToMenu.onClick.AddListener(delegate { SetState(OptionsMenuState.main);});
-        screenButton.onClick.AddListener(delegate { SetState(OptionsMenuState.Screen);});
+        sensitivityText.text = math.remap(0, 20, 0, 2, lookingscript.GetMouseSense()).ToString("F2");
+        controlsButton.onClick.AddListener(delegate { SetState(OptionsMenuState.controls); });
+        soundButton.onClick.AddListener(delegate { SetState(OptionsMenuState.sound); });
+        returnToMenu.onClick.AddListener(delegate { SetState(OptionsMenuState.main); });
+        screenButton.onClick.AddListener(delegate { SetState(OptionsMenuState.Screen); });
 
     }
 
@@ -107,10 +110,11 @@ public class SettingsMenuUi : MonoBehaviour
 
             case OptionsMenuState.controls:
                 ActivateMenu(3);
-
+                
                 break;
         }
     }
+
 
     public void ActivateMenu(int i)
     {
@@ -173,5 +177,13 @@ public class SettingsMenuUi : MonoBehaviour
     {
         SoundManager2.Instance.AdjustSFXVolume(SFXSlider.value);
         SFXText.text = (Mathf.Floor(SoundManager2.Instance.masterSfxVolume * 100)).ToString();
+    }
+
+    public void SenseSlider()
+    {
+
+       
+        lookingscript.SetMouseSense(sensitivitySlider.value * 20);
+        sensitivityText.text = math.remap(0, 20, 0, 2, lookingscript.GetMouseSense()).ToString("F2");
     }
 }
