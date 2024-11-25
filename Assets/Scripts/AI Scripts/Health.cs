@@ -37,7 +37,7 @@ public class Health : MonoBehaviour
             if (health <= 0)
             {
                 health = 0;
-                enemy.OnDestroyed(damageType);
+                enemy.OnDestroyed(damage, damageType);
 
                 Transform objectTransform = transform;
                 SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);

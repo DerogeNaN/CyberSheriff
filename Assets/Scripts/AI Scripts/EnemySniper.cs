@@ -192,7 +192,7 @@ public class EnemySniper : EnemyBase
         }
     }
 
-    public override void OnDestroyed(int damageType)
+    public override void OnDestroyed(int damage, int damageType)
     {
         SetState(EnemyState.downed);
         enemy.animator.SetTrigger("Death");
