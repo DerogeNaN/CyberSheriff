@@ -51,7 +51,7 @@ public class MouseLook : MonoBehaviour
 
     }
 
-    float GetMouseSense()
+    public float GetMouseSense()
     {
         return mouseSens;
     }

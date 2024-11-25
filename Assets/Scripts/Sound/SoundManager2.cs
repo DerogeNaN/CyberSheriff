@@ -5,7 +5,7 @@ using System;
 public class SoundManager2 : MonoBehaviour
 {
     public static SoundManager2 Instance;
-   
+
     [Range(0f, 1f)] public float masterVolume = 1;
 
     [Range(0f, 1f)] public float masterMusicVolume = 1;
@@ -147,7 +147,7 @@ public class SoundManager2 : MonoBehaviour
             newSource.pitch = sound.pitch;
 
 
-            Debug.Log("Source volume is :"+newSource.volume);
+            //Debug.Log("Source volume is :" + newSource.volume);
             // Set 3D sound properties if Local3D
             newSource.spatialBlend = (sound.soundType == SoundType.Local3D) ? 1.0f : 0.0f;
 
@@ -165,15 +165,15 @@ public class SoundManager2 : MonoBehaviour
     {
         foreach (MusicMaster music in musicTracks)
         {
-            if (music.source) 
+            if (music.source)
             {
                 music.source.volume = music.volume * masterMusicVolume * masterVolume;
             }
         }
 
-        foreach(SoundMaster sound in sounds) 
+        foreach (SoundMaster sound in sounds)
         {
-            if (sound.source) 
+            if (sound.source)
             {
                 sound.source.volume = sound.volume * masterSfxVolume * masterVolume;
             }
@@ -258,6 +258,11 @@ public class SoundManager2 : MonoBehaviour
             // Clean up after the clip has finished playing
             Destroy(ambience.source, trackToPlay.length);
         }
+    }
+
+    public void AdjustMasterVolume(float volume)
+    {
+        masterVolume = volume;
     }
 
     public void AdjustMusicVolume(float volume)
