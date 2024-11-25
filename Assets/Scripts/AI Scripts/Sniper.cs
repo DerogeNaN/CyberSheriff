@@ -58,7 +58,8 @@ public class Sniper : EnemyBase
             {
                 // start heading to target pos
                 enemy.shouldPath = true;
-                enemy.moveTarget = targetPos.position;
+                if (targetPos) enemy.moveTarget = targetPos.position;
+                else enemy.moveTarget = transform.position;
             }
             
             if ((targetPos.position - transform.position).magnitude < 1.0f)
