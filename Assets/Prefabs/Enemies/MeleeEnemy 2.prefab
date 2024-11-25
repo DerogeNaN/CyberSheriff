@@ -563,6 +563,7 @@ MonoBehaviour:
   attackCooldown: 0.5
   neverLoseSight: 1
   needsLineOfSight: 1
+  ragdoll: {fileID: 7201130684706207388, guid: 2d7ce84beae9aa04bbe6dac9790c2097, type: 3}
 --- !u!114 &6835624540115931486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -579,19 +580,18 @@ MonoBehaviour:
   sightRange: 100
   lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
-  mesh: {fileID: 3629064875361786265}
-  meshRenderer: {fileID: 6861895844492810661}
-  animator: {fileID: 5467560562846941114}
   initialPosition: {x: -3.7556553, y: 145.32156, z: -123.858376}
+  mesh: {fileID: 3629064875361786265}
+  animator: {fileID: 5467560562846941114}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
+  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
+    type: 3}
   shouldPath: 0
   navAgent: {fileID: 0}
   health: {fileID: 0}
-  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
-    type: 3}
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1010,6 +1010,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8781144055303266578}
     m_Modifications:
+    - target: {fileID: 493209966654533052, guid: 5c06b63126318f044b3d2c4ddd042808,
+        type: 3}
+      propertyPath: m_Name
+      value: Mesh
+      objectReference: {fileID: 0}
     - target: {fileID: 978384433500419846, guid: 5c06b63126318f044b3d2c4ddd042808,
         type: 3}
       propertyPath: m_RootOrder
@@ -1122,12 +1127,6 @@ Transform:
 --- !u!95 &5467560562846941114 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9179903678486956959, guid: 5c06b63126318f044b3d2c4ddd042808,
-    type: 3}
-  m_PrefabInstance: {fileID: 3784497716359951397}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &6861895844492810661 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 7764035836270636416, guid: 5c06b63126318f044b3d2c4ddd042808,
     type: 3}
   m_PrefabInstance: {fileID: 3784497716359951397}
   m_PrefabAsset: {fileID: 0}

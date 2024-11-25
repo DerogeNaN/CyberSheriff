@@ -41,6 +41,7 @@ public class SettingsMenuUi : MonoBehaviour
     [Header("Screen Menu UI  Elements(Needs To Be Set)")]
 
     public Slider FOVSlider;
+    public TMP_Text FOVText;
     public TMP_Dropdown ScreenModeDropDown;
 
     [Header("Controls Ui Elements(Needs To Be Set)")]
@@ -64,7 +65,9 @@ public class SettingsMenuUi : MonoBehaviour
         masterText.text = (Mathf.Floor(SoundManager2.Instance.masterVolume * 100)).ToString();
         musicText.text = (Mathf.Floor(SoundManager2.Instance.masterMusicVolume * 100)).ToString();
         SFXText.text = (Mathf.Floor(SoundManager2.Instance.masterSfxVolume * 100)).ToString();
-        //FOVSlider.value = jiggleScript.;
+        FOVSlider.value = jiggleScript.GetDefaultFov();
+        FOVText.text = jiggleScript.GetDefaultFov().ToString("F2");
+
         sensitivitySlider.value = lookingscript.GetMouseSense();
         sensitivityText.text = math.remap(0, 20, 0, 2, lookingscript.GetMouseSense()).ToString("F2");
         controlsButton.onClick.AddListener(delegate { SetState(OptionsMenuState.controls); });
@@ -181,9 +184,13 @@ public class SettingsMenuUi : MonoBehaviour
 
     public void SenseSlider()
     {
-
-       
         lookingscript.SetMouseSense(sensitivitySlider.value * 20);
         sensitivityText.text = math.remap(0, 20, 0, 2, lookingscript.GetMouseSense()).ToString("F2");
+    }
+
+    public void FOVSliderFunc() 
+    {
+        jiggleScript.SetDefaultFov(math.clamp(60,110, FOVSlider.value * 110));
+        FOVText.text = jiggleScript.GetDefaultFov().ToString("F2");
     }
 }

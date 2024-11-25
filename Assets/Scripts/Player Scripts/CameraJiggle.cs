@@ -7,13 +7,16 @@ using UnityEngine.Tilemaps;
 public class CameraJiggle : MonoBehaviour
 {
     [Header("Camera Tilt Settings:")]
-    [SerializeField][Tooltip("How much the camera tilts in degrees once moving at \'Max Momentum Influence\'")]
+    [SerializeField]
+    [Tooltip("How much the camera tilts in degrees once moving at \'Max Momentum Influence\'")]
     public float headTiltAtMax = 3.0f;
 
-    [Range(0, 1)][Tooltip("How quickly the camera tilts to \'Head Tilt At Max\' (0 - never, 1 - instant)")]
+    [Range(0, 1)]
+    [Tooltip("How quickly the camera tilts to \'Head Tilt At Max\' (0 - never, 1 - instant)")]
     public float tiltSpeed = 0.0f;
 
-    [SerializeField][Tooltip("The camera won't tilt any further past this speed (Usually same as \'Max Player Input Speed \')")]
+    [SerializeField]
+    [Tooltip("The camera won't tilt any further past this speed (Usually same as \'Max Player Input Speed \')")]
     public float maxMomentumInfluence = 1.0f;
     public AnimationCurve cameraTiltCurve;
 
@@ -23,13 +26,16 @@ public class CameraJiggle : MonoBehaviour
 
     [Space(10)]
     [Header("Camera FOV Settings")]
-    [SerializeField][Tooltip("The default camera field of view")]
+    [SerializeField]
+    [Tooltip("The default camera field of view")]
     private float defaultFOV = 80.0f;
 
-    [SerializeField][Tooltip("How much the FOV increases performing certain actions (I.e. sliding or dashing)")]
+    [SerializeField]
+    [Tooltip("How much the FOV increases performing certain actions (I.e. sliding or dashing)")]
     public float changeInFOV = 0.0f;
 
-    [Range(0, 1)][Tooltip("How quickly the FOV increases (0 - never, 1 - instant)")]
+    [Range(0, 1)]
+    [Tooltip("How quickly the FOV increases (0 - never, 1 - instant)")]
     public float changeInFOVSpeed = 0.0f;
 
     //Backend:
@@ -57,6 +63,17 @@ public class CameraJiggle : MonoBehaviour
         UpdateTilt();
         UpdateFOV();
     }
+
+    public float GetDefaultFov()
+    {
+        return defaultFOV;
+    }
+
+    public void SetDefaultFov(float fov)
+    {
+        defaultFOV = fov;
+    }
+
 
     void UpdateTilt()
     {
