@@ -7317,7 +7317,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 130, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3471569211674456628
 CanvasRenderer:
@@ -18533,7 +18533,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8302519629551954154
 CanvasRenderer:
@@ -18976,6 +18976,8 @@ MonoBehaviour:
   changeInFOV: 10
   changeInFOVSpeed: 0.05
   cameraHolder: {fileID: 3140000632606296500}
+  cameraUI: {fileID: 3208835295180530159}
+  mainCamera: {fileID: 4613755220240394540}
 --- !u!1 &4613755221126713083
 GameObject:
   m_ObjectHideFlags: 0
@@ -19252,8 +19254,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnPos: {fileID: 0}
-  grappleVFXPulse: {fileID: 0}
-  grappleVFXLine: {fileID: 0}
+  grappleVFXLine: {fileID: 6190373139890945695}
+  grappleVFXLine1: {fileID: 6190373140799117786}
+  grappleVFXLine2: {fileID: 6843339886323456150}
   revolverAnimator: {fileID: 8693868506014203999}
   shotgunAnimator: {fileID: 3641946873573803663}
   moveSpeed: 5
@@ -19280,12 +19283,12 @@ MonoBehaviour:
   maxWallrunTime: 3
   cameraLeaveWallrunTime: 0
   isWallRunning: 0
-  grappleSpeed: 10
+  grappleSpeed: 65
   grappleCooldown: 3
   maxGrappleDistance: 300
   grappleOffset: {x: 0, y: -2, z: 0}
   isGrappling: 0
-  gravityStrength: 35
+  gravityStrength: 50
   encouragedGroundMomentum: 3
   encouragedAirMomentum: 6
   encouragedSlideMomentum: 9
@@ -19343,7 +19346,7 @@ MonoBehaviour:
   CAWMaxAmmo: 6
   CAWCurrentAmmo: 0
   CAWCurrentReserveAmmo: 40
-  CAWReserveAmmoCap: 40
+  CAWReserveAmmoCap: 46
   revolverCrosshair: {fileID: 4413151603992623437}
   shotgunCrosshair: {fileID: 2528975735866842729}
   ammoText: 0 / 6 | 40
@@ -35831,13 +35834,28 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
+      propertyPath: reloadTime
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
       propertyPath: DamageValue
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
+      propertyPath: shotGapTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
       propertyPath: AltshotGapTime
       value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
+      propertyPath: ReserveAmmoCap
+      value: 46
       objectReference: {fileID: 0}
     - target: {fileID: 5321275692299030188, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
@@ -36345,6 +36363,36 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
+      propertyPath: reloadTime
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: DamageValue
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: shotGapTime
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: AltshotGapTime
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: ReserveAmmoCap
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: bulletsPerShot
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
       propertyPath: enemyHitEffect
       value: 
       objectReference: {fileID: 6663271428544070333, guid: 34727982ca16f9e46ba3ac54f6e3f1c1,
@@ -36352,12 +36400,17 @@ PrefabInstance:
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
       propertyPath: spreadMultiplier
-      value: 0.05
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
       propertyPath: RequiredKillsToRecharge
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: grenadeLaucherForceMultiplier
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 4403129372197544400, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
@@ -36826,9 +36879,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b295f754f664094bad0ada3e4aa8331, type: 3}
+--- !u!120 &6190373139890945695 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 7148303921812673041, guid: 5b295f754f664094bad0ada3e4aa8331,
+    type: 3}
+  m_PrefabInstance: {fileID: 3952892846393830542}
+  m_PrefabAsset: {fileID: 0}
+--- !u!120 &6190373140799117786 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 7148303922985170260, guid: 5b295f754f664094bad0ada3e4aa8331,
+    type: 3}
+  m_PrefabInstance: {fileID: 3952892846393830542}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6190373141154211808 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
+    type: 3}
+  m_PrefabInstance: {fileID: 3952892846393830542}
+  m_PrefabAsset: {fileID: 0}
+--- !u!120 &6843339886323456150 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 7503861503535019032, guid: 5b295f754f664094bad0ada3e4aa8331,
     type: 3}
   m_PrefabInstance: {fileID: 3952892846393830542}
   m_PrefabAsset: {fileID: 0}
