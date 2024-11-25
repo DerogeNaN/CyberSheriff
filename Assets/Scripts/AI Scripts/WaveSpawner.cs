@@ -56,8 +56,6 @@ public class WaveSpawner : MonoBehaviour
 
     void SpawnWave(int waveNumber)
     {
-        //if (waves[waveNumber][0] == null) return;
-
         for (int i = 0; i < waves[waveNumber].Length; i++) 
         {
             Vector3 destination = Vector3.zero;

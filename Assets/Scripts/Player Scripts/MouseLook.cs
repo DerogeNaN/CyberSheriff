@@ -51,12 +51,12 @@ public class MouseLook : MonoBehaviour
 
     }
 
-    float GetMouseSense()
+    public float GetMouseSense()
     {
         return mouseSens;
     }
 
-    void SetMouseSense(float sense)
+    public void SetMouseSense(float sense)
     {
         mouseSens = sense;
     }

@@ -33,19 +33,21 @@ public class CameraJiggle : MonoBehaviour
     public float changeInFOVSpeed = 0.0f;
 
     //Backend:
+    private float defaultUIFOV = 60.0f;
     private float lastFrameFOV = 0.0f;
     private float targetFOV = 0.0f;
 
     [Space(10)]
     [Header("Serialize Fields")]
     public GameObject cameraHolder;
-    private Camera mainCamera;
+    public Camera cameraUI;
+    public Camera mainCamera;
 
 
     private void Start()
     {
-        mainCamera = Camera.main;
         mainCamera.fieldOfView = defaultFOV;
+        cameraUI.fieldOfView = defaultUIFOV;
         targetFOV = defaultFOV;
         lastFrameFOV = defaultFOV;
     }
@@ -103,7 +105,7 @@ public class CameraJiggle : MonoBehaviour
 
     void UpdateFOV()
     {
-        if (Movement.playerMovement.isDashing || Movement.playerMovement.isSliding || Movement.playerMovement.isWallRunning)
+        if (Movement.playerMovement.isDashing || Movement.playerMovement.isSliding || Movement.playerMovement.isWallRunning || Movement.playerMovement.isGrappling)
         {
             targetFOV = defaultFOV + changeInFOV;
             targetFOV = Mathf.Lerp(lastFrameFOV, targetFOV, changeInFOVSpeed);
