@@ -41,6 +41,7 @@ public class Revolver : RangedWeapon
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
+        SoundManager2.Instance.PlaySound("RevolverReload");
         yield return base.Reload();
     }
 
