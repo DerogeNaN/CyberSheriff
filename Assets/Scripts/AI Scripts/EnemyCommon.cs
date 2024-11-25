@@ -36,7 +36,7 @@ public class EnemyCommon : MonoBehaviour
     {
         // initialise pathing values
         TryGetComponent<NavMeshAgent>(out navAgent);
-        if (navAgent) navAgent.autoTraverseOffMeshLink = false;
+        //if (navAgent) navAgent.autoTraverseOffMeshLink = false;
 
         health = GetComponent<Health>();
         mesh = transform.Find("Mesh").gameObject;
