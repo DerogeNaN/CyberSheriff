@@ -37,6 +37,7 @@ public class EnemyMelee : EnemyBase
     float attackRotate = 0;
     bool createdHitbox = false;
     float untilDestroy = 2.0f;
+    [SerializeField] GameObject ragdoll;
 
     protected override void OnStart()
     {
@@ -54,28 +55,20 @@ public class EnemyMelee : EnemyBase
         // do this regardless of state 
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
-
-        if (enemy.health.health <= 0)
-        {
-            untilDestroy -= Time.deltaTime;
-            if (untilDestroy <= 0)
-            {
-                Destroy(gameObject);
-            }
-        }
     }
 
     public override void OnHit(int damage, int damageType)
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
-        //enemy.CreateHitEffect();
+        enemy.CreateHitEffect();
     }
 
     public override void OnDestroyed(int damageType)
     {
-        SetState(EnemyState.downed);
-        enemy.animator.SetTrigger("Death");
+        EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, 100.0f);
+        Destroy(gameObject);
     }
 
     #region enter state
@@ -122,6 +115,7 @@ public class EnemyMelee : EnemyBase
     protected override void StunnedEnter()
     {
         enemy.shouldPath = false;
+        enemy.animator.SetBool("Run", false);
     }
     #endregion
 
@@ -133,9 +127,13 @@ public class EnemyMelee : EnemyBase
         {
             SetState(EnemyState.movingToTarget);
         }
+
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
     }
     protected override void MovingToTargetUpdate()
     {
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if line of sight is lost, change to lost sight state
@@ -145,9 +143,6 @@ public class EnemyMelee : EnemyBase
             else lastSeenPosition = enemy.playerTransform.position; // only update last seen pos if we didnt lose sight this frame
         }
 
-        if (enemy.navAgent.velocity.magnitude > 0) enemy.animator.SetBool("Run", true);
-        else enemy.animator.SetBool("Run", false);
-
         // if has line of sight and within attack range, switch to attack state
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0 && Vector3.Distance(transform.position, enemy.playerTransform.position) <= attackRange)
         {
@@ -156,7 +151,7 @@ public class EnemyMelee : EnemyBase
     }
     protected override void LostSightOfTargetUpdate() // UNUSED
     {
-        enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
         remainingChaseTime -= Time.deltaTime;
         // give up chasing

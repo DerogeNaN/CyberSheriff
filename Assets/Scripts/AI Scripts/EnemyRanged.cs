@@ -34,6 +34,7 @@ public class EnemyRanged : EnemyBase
     float remainingAttackCooldown;
     float remainingSniperAimTime;
     float untilDestroy = 2.0f;
+    [SerializeField] GameObject ragdoll;
 
     protected override void OnStart()
     {
@@ -43,6 +44,7 @@ public class EnemyRanged : EnemyBase
         enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
         SetState(EnemyState.idle);
+        enemy.animator.SetBool("Run", false);
     }
 
     protected override void OnUpdate()
@@ -51,22 +53,14 @@ public class EnemyRanged : EnemyBase
         enemy.playerTransform = Movement.playerMovement.transform;
         enemy.lookTarget = enemy.playerTransform.position;
         if (remainingAttackCooldown > 0) remainingAttackCooldown -= Time.deltaTime;
-
-        if (enemy.health.health <= 0)
-        {
-            untilDestroy -= Time.deltaTime;
-            if (untilDestroy <= 0)
-            {
-                Destroy(gameObject);
-            }
-        }
     }
 
 
     public override void OnDestroyed(int damageType)
     {
-        SetState(EnemyState.downed);
-        enemy.animator.SetTrigger("Death");
+        EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
+        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, 100.0f);
+        Destroy(gameObject);
     }
 
     #region enter state
@@ -108,11 +102,16 @@ public class EnemyRanged : EnemyBase
     #region update state
     protected override void IdleUpdate()
     {
+        enemy.speed = runSpeed;
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
         // if the player gets withing range and line of sight, switch to chasing them
         if (enemy.hasLineOfSight || !needsLineOfSight) SetState(EnemyState.movingToTarget);
     }
     protected override void MovingToTargetUpdate()
     {
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
         enemy.moveTarget = enemy.playerTransform.position;
 
         // if lost sight of the player, go back to idle
@@ -122,17 +121,6 @@ public class EnemyRanged : EnemyBase
         }
 
         Vector3 toPlayer = enemy.playerTransform.position - transform.position;
-
-        if (toPlayer.magnitude > stopDistance || !enemy.hasLineOfSight)
-        {
-            enemy.animator.SetBool("Run", true);
-            enemy.shouldPath = true;
-        }
-        else
-        {
-            enemy.animator.SetBool("Run", false);
-            enemy.shouldPath = false;
-        }
 
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0)
         {
@@ -162,7 +150,7 @@ public class EnemyRanged : EnemyBase
     #region exit state
     protected override void IdleExit()
     {
-
+        Debug.Log("among us");
     }
     protected override void MovingToTargetExit()
     {
