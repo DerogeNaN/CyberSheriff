@@ -64,7 +64,7 @@ public class SettingsMenuUi : MonoBehaviour
         masterText.text = (Mathf.Floor(SoundManager2.Instance.masterVolume * 100)).ToString();
         musicText.text = (Mathf.Floor(SoundManager2.Instance.masterMusicVolume * 100)).ToString();
         SFXText.text = (Mathf.Floor(SoundManager2.Instance.masterSfxVolume * 100)).ToString();
-        FOVSlider.value = jiggleScript.default();
+        //FOVSlider.value = jiggleScript.;
         sensitivitySlider.value = lookingscript.GetMouseSense();
         sensitivityText.text = math.remap(0, 20, 0, 2, lookingscript.GetMouseSense()).ToString("F2");
         controlsButton.onClick.AddListener(delegate { SetState(OptionsMenuState.controls); });
