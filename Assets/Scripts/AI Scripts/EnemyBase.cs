@@ -41,7 +41,7 @@ public class EnemyBase : MonoBehaviour
     virtual protected void OnStart() { }
     virtual protected void OnUpdate() { }
     virtual public void OnHit(int damage, int damageType) { }
-    virtual public void OnDestroyed(int damageType) { }
+    virtual public void OnDestroyed(int damage, int damageType) { }
 
     public void SetState(EnemyState state)
     {

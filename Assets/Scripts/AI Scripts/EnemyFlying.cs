@@ -95,7 +95,7 @@ public class EnemyFlying : EnemyBase
         //transform.position += transform.right * 1.0f * Time.deltaTime;
     }
 
-    public override void OnDestroyed(int damageType)
+    public override void OnDestroyed(int damage, int damageType)
     {
         Destroy(gameObject);
     }

@@ -6,6 +6,28 @@ public class Revolver : RangedWeapon
 {
     [Header("Other Values")]
     [SerializeField] float spreadMultiplier = 0.5f;
+    [SerializeField] bool altShouldHeadShot = true;
+
+    // Update is called once per frame
+    public override void Update()
+    {
+        if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false && shouldShootAlt == false)
+        {
+            canFire = false;
+            StartCoroutine(Reload());
+        }
+
+        if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
+        {
+            EngagePrimaryFire();
+        }
+
+        if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
+        {
+            EngageAltFire();
+        }
+    }
+
     public override void EngagePrimaryFire()
     {
         if (currentBullets > 0)
@@ -19,7 +41,8 @@ public class Revolver : RangedWeapon
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
-        yield return base.Reload() ;
+        SoundManager2.Instance.PlaySound("RevolverReload");
+        yield return base.Reload();
     }
 
     public override void EngageAltFire()
@@ -37,7 +60,7 @@ public class Revolver : RangedWeapon
             SoundManager2.Instance.PlaySound("Revolver");
             if (hit != false)
             {
-            
+
                 if (rayData.hit.transform.gameObject.layer != 3)
                 {
 
@@ -76,8 +99,18 @@ public class Revolver : RangedWeapon
 
                             GameObject hitFX2 = Instantiate(HitEffect);
                             hitFX2.transform.position = rayData.hit.point;
-
                             int damage = DamageValue;
+
+                            if (altShouldHeadShot)
+                                if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                                {
+                                    if (eh.isHeadshot == true)
+                                    {
+                                        damage *= headShotMultiplier;
+                                    }
+
+                                }
+
                             Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
                             EnemyHealth.TakeDamage(damage, 0, gameObject);
                         }

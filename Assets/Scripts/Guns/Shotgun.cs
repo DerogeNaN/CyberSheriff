@@ -58,6 +58,7 @@ public class Shotgun : RangedWeapon
 
     public override void Update()
     {
+
         animator.SetBool("ChargedBool", charged);
         if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false)
         {
@@ -115,6 +116,7 @@ public class Shotgun : RangedWeapon
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
+        SoundManager2.Instance.PlaySound("ShotgunReload");
         yield return base.Reload();
     }
 
