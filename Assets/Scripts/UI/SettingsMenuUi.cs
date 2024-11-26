@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.WSA;
 using Unity.Mathematics;
 
 public class SettingsMenuUi : MonoBehaviour
@@ -190,7 +186,7 @@ public class SettingsMenuUi : MonoBehaviour
 
     public void FOVSliderFunc() 
     {
-        jiggleScript.SetDefaultFov(math.clamp(60,110, FOVSlider.value * 110));
-        FOVText.text = jiggleScript.GetDefaultFov().ToString("F2");
+        //jiggleScript.SetDefaultFov(math.clamp(60,110, FOVSlider.value * 110));
+        //FOVText.text = jiggleScript.GetDefaultFov().ToString("F2");
     }
 }

@@ -14,7 +14,8 @@ public class Movement : MonoBehaviour
     public LineRenderer grappleVFXLine;
     public LineRenderer grappleVFXLine1;
     public LineRenderer grappleVFXLine2;
-    private Transform playerGrappleHand;
+    public Transform playerGrappleHandRevolver;
+    public Transform playerGrappleHandShotgun;
     private Transform cameraSlidePos;
     private Transform cameraDefaultPos;
     private GameObject cameraWallrunHolder;
@@ -219,7 +220,7 @@ public class Movement : MonoBehaviour
         if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
         if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
         if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
-        if (playerGrappleHand == null)      playerGrappleHand = GameObject.Find("Player Grapple Hand").transform;
+        if (playerGrappleHandRevolver == null)      playerGrappleHandRevolver = GameObject.Find("Player Grapple Hand").transform;
 
         InitialiseMovement();
     }
@@ -248,8 +249,11 @@ public class Movement : MonoBehaviour
         movementInputWorld = transform.forward * movementInputLocal.y + transform.right * movementInputLocal.x;
 
         if (isTryingSlide) SlideCheck();
-        else isSliding = false;
-
+        else
+        {
+            isSliding = false;
+            SoundManager2.Instance.StopSound("Slide");
+        }
 
         MoveCameraTowardsTransformHeight(isSliding ? cameraSlidePos : cameraDefaultPos);
 
@@ -443,7 +447,7 @@ public class Movement : MonoBehaviour
             if (lastFootstepTime + footstepInterval < Time.time)
             {
                 lastFootstepTime = Time.time;
-                SoundManager2.Instance.PlaySound("Footsteps_Concrete");
+                SoundManager2.Instance.PlaySound("Footsteps");
             }
         }
     }
@@ -474,7 +478,7 @@ public class Movement : MonoBehaviour
     {
         isTryingSlide = true;
 
-        SoundManager2.Instance.PlaySound("SlideSFX");
+        
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
@@ -488,6 +492,7 @@ public class Movement : MonoBehaviour
         {
             isSliding = true;
             slideStartTime = Time.time;
+            SoundManager2.Instance.PlaySound("Slide");
         }
     }
 
@@ -523,6 +528,7 @@ public class Movement : MonoBehaviour
                 0.45f, dashDirection, dashSpeed * Time.deltaTime, ~12))
             {
                 isWallRunning = false;
+                SoundManager2.Instance.PlaySound("Dash");
                 velocity = dashDirection * dashSpeed;
             }
 
@@ -573,19 +579,19 @@ public class Movement : MonoBehaviour
                 if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
                 {
                     jumpCount++;
-                    SoundManager2.Instance.PlaySound("JumpSFX");
+                    SoundManager2.Instance.PlaySound("Jump");
                 }
 
                 else if (lastWallRunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
-                    SoundManager2.Instance.PlaySound("JumpSFX");
+                    SoundManager2.Instance.PlaySound("Jump");
                 }
 
                 else
                 {
                     jumpCount += 2;
-                    SoundManager2.Instance.PlaySound("DoubleJumpSFX");
+                    SoundManager2.Instance.PlaySound("Double Jump");
                 }
 
                 velocity.y = jumpStrength;
@@ -628,13 +634,13 @@ public class Movement : MonoBehaviour
             isGrappling = true;
             canGrapple = true;
             lastGrappleTime = Time.time;
-            revolverAnimator.SetTrigger("PullTrig");
-            shotgunAnimator.SetTrigger("PullTrig");
+            if (revolverAnimator.isActiveAndEnabled) revolverAnimator.SetTrigger("PullTrig");
+            else shotgunAnimator.SetTrigger("PullTrig");
             SoundManager2.Instance.PlaySound("Grapple");
         }
     }
 
-    private void GrappleVFX(bool toggle)
+    private void GrappleVFX(bool toggle, Transform hand)
     {
         //grappleVFXPulse.transform.position = playerGrappleHand.transform.position;
         //grappleVFXPulse.transform.rotation = playerGrappleHand.transform.rotation;
@@ -649,25 +655,26 @@ public class Movement : MonoBehaviour
             grappleVFXLine1.SetPosition(1, Vector3.zero);
             grappleVFXLine2.SetPosition(0, Vector3.zero);
             grappleVFXLine2.SetPosition(1, Vector3.zero);
-
         }
 
         else
         {
             //grappleVFXPulse.gameObject.SetActive(true);
             //grappleVFXPulse.Play();
-            grappleVFXLine.SetPosition(0, playerGrappleHand.transform.position);
+            grappleVFXLine.SetPosition(0, hand.position);
             grappleVFXLine.SetPosition(1, grappleObject.transform.position + grappleOffset);
-            grappleVFXLine1.SetPosition(0, playerGrappleHand.transform.position);
+            grappleVFXLine1.SetPosition(0, hand.position);
             grappleVFXLine1.SetPosition(1, grappleObject.transform.position + grappleOffset);
-            grappleVFXLine2.SetPosition(0, playerGrappleHand.transform.position);
+            grappleVFXLine2.SetPosition(0, hand.position);
             grappleVFXLine2.SetPosition(1, grappleObject.transform.position + grappleOffset);
         }
     }    
 
     private void Grappling()
     {
-        GrappleVFX(isGrappling);
+        if (revolverAnimator.isActiveAndEnabled) GrappleVFX(isGrappling, playerGrappleHandRevolver);
+        else GrappleVFX(isGrappling, playerGrappleHandShotgun);
+
         if (canGrapple && isGrappling)
         {
             velocity = grappleTargetDirection.normalized * grappleSpeed;
