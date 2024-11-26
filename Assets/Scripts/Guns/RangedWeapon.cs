@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 using UnityEngine.VFX;
 using static RangedWeapon;
 
@@ -186,63 +187,65 @@ public class RangedWeapon : MonoBehaviour
             ps.Play();
 
             currentBullets--;
-            if (hit != false)
-            {
-                if (rayData.hits[0].transform.gameObject.layer != 3)
+
+            for (int i = 0; i < rayData.hits.Count; i++)
+                if (hit != false)
                 {
+                    if (rayData.hits[i].transform.gameObject.layer != 3)
+                    {
 
-                    if (rayData.hits[0].rigidbody)
-                    {
-                        rayData.hits[0].rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
-                    }
-                    else
-                    {
-                        //  Debug.Log("Does Not have rigidbody");
-                    }
+                        if (rayData.hits[i].rigidbody)
+                        {
+                            rayData.hits[i].rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
+                        }
+                        else
+                        {
+                            //  Debug.Log("Does Not have rigidbody");
+                        }
 
-                    if (rayData.hits[0].transform.parent)
-                    {
-                        if (!(rayData.hits[0].transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
+                        if (rayData.hits[i].transform.parent)
+                        {
+                            if (!(rayData.hits[i].transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
+                            {
+                                SpawnBulletHoleDecal(rayData);
+                                GameObject hitFX = Instantiate(HitEffect);
+                                hitFX.transform.position = rayData.hits[0].point;
+                            }
+                        }
+                        else
                         {
                             SpawnBulletHoleDecal(rayData);
                             GameObject hitFX = Instantiate(HitEffect);
                             hitFX.transform.position = rayData.hits[0].point;
                         }
-                    }
-                    else
-                    {
-                        SpawnBulletHoleDecal(rayData);
-                        GameObject hitFX = Instantiate(HitEffect);
-                        hitFX.transform.position = rayData.hits[0].point;
-                    }
 
-                    if (rayData.hits[0].transform.parent)
-                    {
-                        if (rayData.hits[0].transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                        if (rayData.hits[i].transform.parent)
                         {
-                            GameObject hitFX = Instantiate(HitEffect);
-                            hitFX.transform.position = rayData.hits[0].point;
-
-                            GameObject hitFX2 = Instantiate(enemyHitEffect);
-                            hitFX2.transform.position = rayData.hits[0].point;
-
-                            Health EnemyHealth = rayData.hits[0].transform.parent.GetComponent<Health>();
-                            int damage = DamageValue;
-
-
-                            if (rayData.hits[0].collider.TryGetComponent(out EnemyHurtbox eh))
+                            if (rayData.hits[i].transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                             {
-                                if (eh.isHeadshot == true)
-                                {
-                                    damage *= headShotMultiplier;
-                                }
+                                GameObject hitFX = Instantiate(HitEffect);
+                                hitFX.transform.position = rayData.hits[i].point;
 
+                                GameObject hitFX2 = Instantiate(enemyHitEffect);
+                                hitFX2.transform.position = rayData.hits[i].point;
+
+                                Health EnemyHealth = rayData.hits[i].transform.parent.GetComponent<Health>();
+                                int damage = DamageValue;
+
+
+                                if (rayData.hits[i].collider.TryGetComponent(out EnemyHurtbox eh))
+                                {
+                                    if (eh.isHeadshot == true)
+                                    {
+                                        damage *= headShotMultiplier;
+                                    }
+
+                                }
+                                EnemyHealth.TakeDamage(damage, 0, gameObject);
                             }
-                            EnemyHealth.TakeDamage(damage, 0, gameObject);
                         }
                     }
                 }
-            }
             canFire = false;
             StartCoroutine(Wait(shotGapTime));
         }
