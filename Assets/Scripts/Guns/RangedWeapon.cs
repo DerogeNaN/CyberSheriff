@@ -1,8 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.VFX;
 using static RangedWeapon;
 
@@ -81,6 +84,10 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public bool reloading;
 
+    [SerializeField]
+    [Tooltip("Primary fire Only")]
+    public bool shouldPunchThrough = false;
+
     [Header("Visual Effects")]
     [SerializeField]
     public VisualEffect BulletFlash;
@@ -102,10 +109,11 @@ public class RangedWeapon : MonoBehaviour
     public Camera camRef;
 
 
+
     public struct RayData
     {
         public Ray ray;
-        public RaycastHit hit;
+        public List<RaycastHit> hits;
     }
 
 
@@ -141,27 +149,27 @@ public class RangedWeapon : MonoBehaviour
 
 
 
-    private void OnDrawGizmos()
-    {
-        RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
-        RaycastHit[] rayhits = Physics.RaycastAll(rayData.ray.origin, rayData.ray.direction,camRef.farClipPlane);
+    //private void OnDrawGizmos()
+    //{
+    //    RayData rayData = RayCastAndGenGunRayData(muzzlePoint, true);
+    //    RaycastHit[] rayhits = Physics.RaycastAll(rayData.ray.origin, rayData.ray.direction, camRef.farClipPlane);
 
-        if (rayhits.Length > 1)
-            for (int i = 0; i < rayhits.Length; i++)
-            {
-                if (i != rayhits.Length-1)
-                {
-                    Vector3 HitToHitDir = rayhits[i].point - rayhits[i + 1].point;
-                    HitToHitDir = math.normalize(HitToHitDir);
+    //    if (rayhits.Length > 1)
+    //        for (int i = 0; i < rayhits.Length; i++)
+    //        {
+    //            if (i != rayhits.Length - 1)
+    //            {
+    //                Vector3 HitToHitDir = rayhits[i].point - rayhits[i + 1].point;
+    //                HitToHitDir = math.normalize(HitToHitDir);
 
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawRay(rayhits[i].point, HitToHitDir);
-                }
+    //                Gizmos.color = Color.red;
+    //                Gizmos.DrawRay(rayhits[i].point, HitToHitDir);
+    //            }
 
-                Debug.Log("Hit Object:" + rayhits[i].collider.name);
-            }
-        else Debug.Log("Empty List");
-    }
+    //            Debug.Log("Hit Object:" + rayhits[i].collider.name);
+    //        }
+    //    else Debug.Log("Empty List");
+    //}
 
 
 
@@ -170,8 +178,9 @@ public class RangedWeapon : MonoBehaviour
         //Primary Fire Logic
         if (currentBullets > 0)
         {
+            if (shouldPunchThrough) { }
             bool hit;
-            RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hit);
+            RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hit, shouldPunchThrough);
             BulletFlash.Play();
             ParticleSystem ps = BulletFlash.gameObject.GetComponentInChildren<ParticleSystem>();
             ps.Play();
@@ -179,49 +188,49 @@ public class RangedWeapon : MonoBehaviour
             currentBullets--;
             if (hit != false)
             {
-                if (rayData.hit.transform.gameObject.layer != 3)
+                if (rayData.hits[0].transform.gameObject.layer != 3)
                 {
 
-                    if (rayData.hit.rigidbody)
+                    if (rayData.hits[0].rigidbody)
                     {
-                        rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
+                        rayData.hits[0].rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
                     }
                     else
                     {
                         //  Debug.Log("Does Not have rigidbody");
                     }
 
-                    if (rayData.hit.transform.parent)
+                    if (rayData.hits[0].transform.parent)
                     {
-                        if (!(rayData.hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
+                        if (!(rayData.hits[0].transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
                         {
                             SpawnBulletHoleDecal(rayData);
                             GameObject hitFX = Instantiate(HitEffect);
-                            hitFX.transform.position = rayData.hit.point;
+                            hitFX.transform.position = rayData.hits[0].point;
                         }
                     }
                     else
                     {
                         SpawnBulletHoleDecal(rayData);
                         GameObject hitFX = Instantiate(HitEffect);
-                        hitFX.transform.position = rayData.hit.point;
+                        hitFX.transform.position = rayData.hits[0].point;
                     }
 
-                    if (rayData.hit.transform.parent)
+                    if (rayData.hits[0].transform.parent)
                     {
-                        if (rayData.hit.transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
+                        if (rayData.hits[0].transform.parent.TryGetComponent<EnemyBase>(out EnemyBase eb2))
                         {
                             GameObject hitFX = Instantiate(HitEffect);
-                            hitFX.transform.position = rayData.hit.point;
+                            hitFX.transform.position = rayData.hits[0].point;
 
                             GameObject hitFX2 = Instantiate(enemyHitEffect);
-                            hitFX2.transform.position = rayData.hit.point;
+                            hitFX2.transform.position = rayData.hits[0].point;
 
-                            Health EnemyHealth = rayData.hit.transform.parent.GetComponent<Health>();
+                            Health EnemyHealth = rayData.hits[0].transform.parent.GetComponent<Health>();
                             int damage = DamageValue;
 
 
-                            if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                            if (rayData.hits[0].collider.TryGetComponent(out EnemyHurtbox eh))
                             {
                                 if (eh.isHeadshot == true)
                                 {
@@ -273,10 +282,10 @@ public class RangedWeapon : MonoBehaviour
     public void SpawnBulletHoleDecal(RayData rayData)
     {
         GameObject Decal = Instantiate(BulletHitDecal);
-        Decal.transform.position = rayData.hit.point;
+        Decal.transform.position = rayData.hits[0].point;
         Vector3 pos = Decal.transform.position;
-        Decal.transform.LookAt(pos + rayData.hit.normal, Vector3.up);
-        Decal.transform.position += -rayData.hit.normal;
+        Decal.transform.LookAt(pos + rayData.hits[0].normal, Vector3.up);
+        Decal.transform.position += -rayData.hits[0].normal;
         //  Debug.Log("ray hit normal: " + rayData.hit.normal);
     }
 
@@ -299,39 +308,87 @@ public class RangedWeapon : MonoBehaviour
     }
 
 
-    virtual public RayData RayCastAndGenCameraRayData()
+    virtual public RayData RayCastAndGenCameraRayData(bool PunchThrough)
     {
 
         Ray cameraRay = new Ray();
+        cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
+        cameraRay.direction = camRef.transform.forward;
 
         RaycastHit cameraHit;
 
-        cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
+        RayData newData = new RayData { ray = cameraRay, hits = new List<RaycastHit>() };
 
-        cameraRay.direction = camRef.transform.forward;
+        if (!PunchThrough)
+        {
+            Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
+            newData.hits.Add(cameraHit);
+        }
+        else
+        {
+            newData.hits = Physics.RaycastAll(cameraRay, camRef.farClipPlane).ToList();
+        }
 
-        Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
-
-        return new RayData { ray = cameraRay, hit = cameraHit };
+        return newData;
     }
 
-    virtual public RayData RayCastAndGenCameraRayData(out bool hitDetected)
+    virtual public RayData RayCastAndGenCameraRayData(out bool hitDetected, bool PunchThrough)
     {
         Ray cameraRay = new Ray();
+        cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
+        cameraRay.direction = camRef.transform.forward;
 
         RaycastHit cameraHit;
 
-        cameraRay.origin = camRef.ScreenToWorldPoint(Vector3.zero);
+        RayData newData = new RayData { ray = cameraRay, hits = new List<RaycastHit>() };
 
-        cameraRay.direction = camRef.transform.forward;
+        if (!PunchThrough)
+        {
+            hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
+            newData.hits.Add(cameraHit);
+        }
+        else
+        {
+            hitDetected = Physics.RaycastAll(cameraRay, camRef.farClipPlane)[0].collider == null ? false : true;
+            newData.hits = Physics.RaycastAll(cameraRay, camRef.farClipPlane).ToList();
+        }
 
-        hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
-
-        return new RayData { ray = cameraRay, hit = cameraHit };
-
+        return newData;
     }
 
-    virtual public RayData RayCastAndGenGunRayData(Transform muzzle)
+    virtual public RayData RayCastAndGenGunRayData(Transform muzzle, bool punchThrough)
+    {
+        Ray gunRay = new Ray();
+        Vector3 barrelToLookPointDir;
+
+        //we get the start and direction for our "Bullet" from our Gun Here
+        gunRay.direction = muzzlePoint.transform.forward;
+        gunRay.origin = muzzlePoint.position;
+
+        RaycastHit gunHit;
+        RayData camRayData = RayCastAndGenCameraRayData(punchThrough);
+        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
+        barrelToLookPointDir = camRayData.hits[0].point - muzzle.transform.position;
+        //set ray direction to the barrel to look point direction 
+        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
+        gunRay.direction = barrelToLookPointDir;
+
+        RayData newData = new RayData { ray = gunRay, hits = new List<RaycastHit>() };
+
+        if (!punchThrough)
+        {
+            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+            newData.hits.Add(gunHit);
+        }
+        else
+        {
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+        }
+
+        return newData;
+    }
+
+    virtual public RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected, bool punchThrough)
     {
         Ray gunRay = new Ray();
 
@@ -340,43 +397,30 @@ public class RangedWeapon : MonoBehaviour
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData();
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected, punchThrough);
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
-        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+        Vector3 barrelToLookPointDir = camRayData.hits[0].point - muzzle.transform.position;
 
         barrelToLookPointDir = math.normalize(barrelToLookPointDir);
 
         //set ray direction to the barrel to look point direction 
         gunRay.direction = barrelToLookPointDir;
 
-        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        RayData newData = new RayData { ray = gunRay, hits = new List<RaycastHit>() };
 
-        return new RayData { ray = gunRay, hit = gunHit };
-    }
+        if (!punchThrough)
+        {
+            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+            newData.hits.Add(gunHit);
+        }
+        else
+        {
+            hitDetected = Physics.RaycastAll(gunRay, camRef.farClipPlane)[0].collider == null ? false : true;
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+        }
 
-    virtual public RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected)
-    {
-        Ray gunRay = new Ray();
-
-        //we get the start and direction for our "Bullet" from our Gun Here
-        gunRay.direction = muzzlePoint.transform.forward;
-        gunRay.origin = muzzlePoint.position;
-
-        RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
-        //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
-
-        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
-
-        barrelToLookPointDir = math.normalize(barrelToLookPointDir);
-
-        //set ray direction to the barrel to look point direction 
-        gunRay.direction = barrelToLookPointDir;
-
-        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
-
-        return new RayData { ray = gunRay, hit = gunHit };
+        return newData;
     }
 
     //This coroutine  was made so the gun would wait for the shot gap time to pass before being able to fire again
