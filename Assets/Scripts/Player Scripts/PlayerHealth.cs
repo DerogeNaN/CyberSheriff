@@ -6,12 +6,20 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth;
     public int health;
 
+    public float hitFlashTime = 0.0f;
+
+    public float iFrameTime = 0.0f;
+    private float lastHurtTime = 0.0f;
+
+    public int fallDamage = 0;
+
     [SerializeField][Tooltip("If true the player can't take damage during a dash")]
     private bool invincibleDashing = false;
 
     public GameObject healthUI1;
     public GameObject healthUI2;
     public GameObject healthUI3;
+    public GameObject hitFlash;
     public Slider healthSlider;
 
     void Start()
@@ -30,11 +38,25 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage, int damageType)
     {
-        if (Movement.playerMovement.isDashing && invincibleDashing) return;
-        health -= damage;
+        if (lastHurtTime + iFrameTime < Time.time)
+        {
+            if (Movement.playerMovement.isDashing && invincibleDashing) return;
+            health -= damage;
+            lastHurtTime = Time.time;
+            DamageFlashEffect();
+            IsDestroyed();
+        }
+    }
 
-        IsDestroyed();
-       
+    public void DamageFlashEffect()
+    {
+        hitFlash.SetActive(true);
+        Invoke(nameof(ClearDamageFlashEffect), hitFlashTime);
+    }
+
+    public void ClearDamageFlashEffect()
+    {
+        hitFlash.SetActive(false);
     }
 
     public void IsDestroyed()

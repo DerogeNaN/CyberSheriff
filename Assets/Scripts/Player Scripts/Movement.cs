@@ -192,6 +192,7 @@ public class Movement : MonoBehaviour
     [Header("Backend Variables")]    //Local Variables
     [HideInInspector] public Vector3 velocity = Vector3.zero;
     [HideInInspector] public Vector3 movementInputWorld = Vector3.zero;
+    [HideInInspector] public Vector2 movementInputLocal = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
     private GameObject grappleUI;
@@ -245,7 +246,7 @@ public class Movement : MonoBehaviour
 
     void MovePlayer()
     {
-        Vector2 movementInputLocal = playerInputActions.Player.Move.ReadValue<Vector2>();
+        movementInputLocal = playerInputActions.Player.Move.ReadValue<Vector2>();
         movementInputWorld = transform.forward * movementInputLocal.y + transform.right * movementInputLocal.x;
 
         if (isTryingSlide) SlideCheck();
@@ -909,8 +910,11 @@ public class Movement : MonoBehaviour
                 normal = wallHit.normal;
                 normal *= -Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
 
-                wallNormal = -normal;
-                WallRun();
+                if (Vector3.Dot(movementInputWorld, -normal) < 0)
+                {
+                    wallNormal = -normal;
+                    WallRun();
+                }
             }
 
             //---check LEFT for wall----
@@ -922,8 +926,11 @@ public class Movement : MonoBehaviour
                 normal = wallHit.normal;
                 normal *= Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
 
-                wallNormal = normal;
-                WallRun();
+                if (Vector3.Dot(movementInputWorld, -normal) > 0)
+                {
+                    wallNormal = normal;
+                    WallRun();
+                }
             }
         }
 
@@ -961,7 +968,7 @@ public class Movement : MonoBehaviour
         float wallSpeed = Vector3.Dot(tangent, velocity);
 
         if (!isWallRunning) wallRunStartTime = Time.time;
-        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time)
+        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time && movementInputLocal != Vector2.zero)
         {
             lastWallRunTime = Time.time;
             isWallRunning = true;
@@ -976,7 +983,7 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        else if (wallRunStartTime + 0.1f < Time.time)
+        else if (wallRunStartTime + 0.1f < Time.time || movementInputLocal == Vector2.zero)
         {
             Vector3 velocityHori = new Vector3(velocity.x, 0, velocity.z);
             velocityHori.Normalize();
