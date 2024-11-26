@@ -378,7 +378,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8781144055303266582}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -428,6 +428,7 @@ MonoBehaviour:
     type: 3}
   neverLoseSight: 1
   needsLineOfSight: 1
+  ragdoll: {fileID: 0}
 --- !u!114 &1847348131357109332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -444,19 +445,18 @@ MonoBehaviour:
   sightRange: 100
   lineOfSightOffset: {x: 0, y: 2, z: 0}
   speed: 5
-  mesh: {fileID: 3269796786195802483}
-  meshRenderer: {fileID: 5521701151549734013}
-  animator: {fileID: 6115057894293393234}
   initialPosition: {x: -5.1186614, y: 145.32156, z: -129.03764}
+  mesh: {fileID: 3269796786195802483}
+  animator: {fileID: 6115057894293393234}
   playerTransform: {fileID: 0}
   moveTarget: {x: 0, y: 0, z: 0}
   lookTarget: {x: 0, y: 0, z: 0}
   hasLineOfSight: 0
+  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
+    type: 3}
   shouldPath: 0
   navAgent: {fileID: 0}
   health: {fileID: 0}
-  hitEffectVFX: {fileID: 4253158056739826801, guid: bef211b4c08b3074bafa774e6de4cb24,
-    type: 3}
 --- !u!195 &9017003524051536654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -950,6 +950,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3366411084223442311, guid: 65dac86b45c0ba345b7e1efeac4cc62d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1e3e6a7017937104f9c70fd5afa65a73, type: 2}
+    - target: {fileID: 4377710743621462717, guid: 65dac86b45c0ba345b7e1efeac4cc62d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1e3e6a7017937104f9c70fd5afa65a73, type: 2}
     - target: {fileID: 4917251897887662643, guid: 65dac86b45c0ba345b7e1efeac4cc62d,
         type: 3}
       propertyPath: m_RootOrder
@@ -981,12 +991,6 @@ Transform:
 --- !u!1 &3269796786195802483 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5725841083762866313, guid: 65dac86b45c0ba345b7e1efeac4cc62d,
-    type: 3}
-  m_PrefabInstance: {fileID: 7068084032351752698}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &5521701151549734013 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3366411084223442311, guid: 65dac86b45c0ba345b7e1efeac4cc62d,
     type: 3}
   m_PrefabInstance: {fileID: 7068084032351752698}
   m_PrefabAsset: {fileID: 0}
