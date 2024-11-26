@@ -139,6 +139,32 @@ public class RangedWeapon : MonoBehaviour
         }
     }
 
+
+
+    private void OnDrawGizmos()
+    {
+        RayData rayData = RayCastAndGenGunRayData(muzzlePoint);
+        RaycastHit[] rayhits = Physics.RaycastAll(rayData.ray.origin, rayData.ray.direction,camRef.farClipPlane);
+
+        if (rayhits.Length > 1)
+            for (int i = 0; i < rayhits.Length; i++)
+            {
+                if (i != rayhits.Length-1)
+                {
+                    Vector3 HitToHitDir = rayhits[i].point - rayhits[i + 1].point;
+                    HitToHitDir = math.normalize(HitToHitDir);
+
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawRay(rayhits[i].point, HitToHitDir);
+                }
+
+                Debug.Log("Hit Object:" + rayhits[i].collider.name);
+            }
+        else Debug.Log("Empty List");
+    }
+
+
+
     public virtual void EngagePrimaryFire()
     {
         //Primary Fire Logic
