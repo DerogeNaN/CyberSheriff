@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour
     [Header("Serialize Fields - PLUG THESE IN!!!")]
     public Transform respawnPos;
     //public VisualEffect grappleVFXPulse;
+    public GameObject grappleUI;
     public LineRenderer grappleVFXLine;
     public LineRenderer grappleVFXLine1;
     public LineRenderer grappleVFXLine2;
@@ -195,7 +196,6 @@ public class Movement : MonoBehaviour
     [HideInInspector] public Vector2 movementInputLocal = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
-    private GameObject grappleUI;
     private Collider standingCollider;
     private PauseMenu pauseMenu;
     private float blendAmount = 0.0f;
@@ -213,7 +213,6 @@ public class Movement : MonoBehaviour
     {
         if (standingCollider == null)       standingCollider = GetComponent<Collider>();
         if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
-        if (grappleUI == null)              grappleUI = GetComponentInChildren<UI_Billboard>().gameObject;
         if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
         if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
         if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
@@ -606,14 +605,21 @@ public class Movement : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
             hit.transform.CompareTag("GrappleableObject"))
         {
+            float grappleUIScale = 0.0f;
+            if (hit.distance > 25)
+            {
+                grappleUIScale = hit.distance / 10.0f;
+            }
+            else grappleUIScale = 2.5f;
+
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position + grappleOffset;
             if (lastGrappleTime + grappleCooldown < Time.time)
             {
                 canGrapple = true;
+                grappleUI.transform.localScale = new Vector3(grappleUIScale, grappleUIScale, grappleUIScale);
                 grappleUI.gameObject.SetActive(true);
             }
-            
         }
 
         else
@@ -944,7 +950,6 @@ public class Movement : MonoBehaviour
                 normal = wallHit.normal;
                 normal *= -Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
 
-                wallNormal = -normal;
                 WallRun();
             }
             else
@@ -998,6 +1003,7 @@ public class Movement : MonoBehaviour
     private void WallRunReset()
     {
         lastWallRunTime = Time.time;
+        leavingWallrunTime = Time.time;
         isWallRunning = false;
         wallNormal = Vector3.zero;
     }
