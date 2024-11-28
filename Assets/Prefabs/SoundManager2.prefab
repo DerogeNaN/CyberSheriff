@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3728928701843013164
 Transform:
@@ -206,7 +206,7 @@ MonoBehaviour:
   - name: Health Pickup
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 3b2089158f005344d8aa3c9fb4eaf6e6, type: 3}
+    - {fileID: 8300000, guid: 748f4ef875d0c644081f01ce231f239b, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -214,7 +214,7 @@ MonoBehaviour:
   - name: Ammo Pickup
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 8d519b0cfa29477488efec329135fff1, type: 3}
+    - {fileID: 8300000, guid: 2b9e60957dd847045be08dac140f0246, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -419,7 +419,7 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 3415e9e86d4420547bff2734e625e0d1, type: 3}
-    volume: 1
+    volume: 0.75
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -429,7 +429,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 0931b3b58df76f54382733ca80da5569, type: 3}
     - {fileID: 8300000, guid: d64d8ad129982fb4d99c394b928a8cc4, type: 3}
     - {fileID: 8300000, guid: 23cc9946be2d3d94384533069806f3ba, type: 3}
-    volume: 1
+    volume: 0.8
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -445,6 +445,14 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 38a68d12a5f857340817c4529351ff38, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: GrappleCancel
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: c14e66e90995d9f46a0b947b27f503aa, type: 3}
     volume: 1
     pitch: 1
     loop: 0
