@@ -136,7 +136,7 @@ public class Movement : MonoBehaviour
     private float lastGrappleTime = -5;
     private GameObject grappleObject;
     [HideInInspector] public bool isGrappling = false;
-    private bool canGrapple = false;
+    [HideInInspector] public bool canGrapple = false;
     #endregion
 
     #region Physics
@@ -153,9 +153,11 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("How hard it is to change direction while sliding")]
     public int encouragedSlideMomentum = 30;
 
+    [SerializeField][Tooltip("What percentage of \"Move Speed\" the player slows down by each frame (0 - never slows down, 100 - slows down as fast as they speed up)")]
+    [Range(0, 100)] public int slowDownPercentage = 100;
+
     //Backend Variables:
     private float currEncouragment;
-    public int slowDownPercentage = 30;
     private float speedLimitEnforceAmmount = 1.5f;
     private float momentumRatio;
     #endregion
@@ -186,7 +188,6 @@ public class Movement : MonoBehaviour
     //Backend Variables:
     private float lastFootstepTime = 0.0f;
     private float lastWallRunFootstepTime = 0.0f;
-    private float slideDelay = 0.0f;
     #endregion
 
     [Space(20.0f)]
@@ -267,6 +268,7 @@ public class Movement : MonoBehaviour
         }
         else
         {
+            SoundManager2.Instance.StopSound("Slide");
             //standingCollider.enabled = true;
             //slideCollider.enabled = false;
 
@@ -494,6 +496,11 @@ public class Movement : MonoBehaviour
             slideStartTime = Time.time;
             SoundManager2.Instance.PlaySound("Slide");
         }
+        else if (!isGrounded)
+        {
+            isSliding = false;
+            SoundManager2.Instance.StopSound("Slide");
+        }
     }
 
     private void MoveCameraTowardsTransformHeight(Transform target)
@@ -593,7 +600,7 @@ public class Movement : MonoBehaviour
                     jumpCount += 2;
                     SoundManager2.Instance.PlaySound("Double Jump");
                 }
-
+                SoundManager2.Instance.StopSound("Slide");
                 velocity.y = jumpStrength;
                 lastJumpTime = Time.time;
             }
@@ -624,6 +631,7 @@ public class Movement : MonoBehaviour
 
         else
         {
+            if (isGrappling) SoundManager2.Instance.PlaySound("GrappleCancel");
             isGrappling = false;
             canGrapple = false;
             grappleObject = null;
@@ -634,7 +642,7 @@ public class Movement : MonoBehaviour
 
     private void Grapple_Performed(InputAction.CallbackContext context)
     {
-        if (canGrapple)
+        if (canGrapple || isGrappling)
         {
             Vector3 targetDirection = grappleObject.transform.position - transform.position;
             grappleTargetDirection = targetDirection.normalized;
@@ -679,17 +687,22 @@ public class Movement : MonoBehaviour
 
     private void Grappling()
     {
-        if (revolverAnimator.isActiveAndEnabled) GrappleVFX(isGrappling, playerGrappleHandRevolver);
-        else GrappleVFX(isGrappling, playerGrappleHandShotgun);
-
         if (canGrapple && isGrappling)
         {
+            if (revolverAnimator.isActiveAndEnabled) GrappleVFX(isGrappling, playerGrappleHandRevolver);
+            else GrappleVFX(isGrappling, playerGrappleHandShotgun);
             velocity = grappleTargetDirection.normalized * grappleSpeed;
+        }
+        else
+        {
+            GrappleVFX(false, playerGrappleHandRevolver);
+            GrappleVFX(false, playerGrappleHandShotgun);
         }
     }
 
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
+        if (isGrappling) SoundManager2.Instance.PlaySound("GrappleCancel");
         isGrappling = false;
         SoundManager2.Instance.StopSound("Grapple");
     }

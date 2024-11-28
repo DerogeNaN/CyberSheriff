@@ -92,7 +92,7 @@ public class AmmoBox : MonoBehaviour
 
                 if (ammoType == AmmoType.Health)
                 {
-                    health.health += ammoGiven;
+                    health.Heal(ammoGiven);
                     active = false;
                 }
             }
