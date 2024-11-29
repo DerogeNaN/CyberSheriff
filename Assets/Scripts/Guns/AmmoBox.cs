@@ -99,9 +99,10 @@ public class AmmoBox : MonoBehaviour
 
                 if (ammoType == AmmoType.Health)
                 {
-                    if(!(health.health >=100))
+                    
+                   if(!(health.health == 100))
                     {
-                        health.health += ammoGiven;
+                        health.Heal(ammoGiven);
                         active = false;
                     }
                     
