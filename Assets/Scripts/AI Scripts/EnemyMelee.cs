@@ -141,10 +141,37 @@ public class EnemyMelee : EnemyBase
         }
 
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
+
+        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        {
+            enemy.animator.SetBool("Jump", false);
+            enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
+        }
+        else
+        {
+            enemy.animator.SetBool("Jump", true);
+            enemy.animator.SetBool("Run", false);
+        }*/
+
     }
     protected override void MovingToTargetUpdate()
     {
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
+
+        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        {
+            enemy.animator.SetBool("Jump", false);
+            enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
+        }
+        else
+        {
+            enemy.animator.SetBool("Jump", true);
+            enemy.animator.SetBool("Run", false);
+        }*/
 
         enemy.moveTarget = enemy.playerTransform.position;
 
@@ -164,7 +191,7 @@ public class EnemyMelee : EnemyBase
         // if has line of sight and within attack range, switch to attack state
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0 && Vector3.Distance(transform.position, enemy.playerTransform.position) <= attackRange)
         {
-            SetState(EnemyState.attacking);
+            if (Physics.Raycast(transform.position, -Vector3.up, 1.0f)) SetState(EnemyState.attacking);
         }
     }
     protected override void LostSightOfTargetUpdate() // UNUSED

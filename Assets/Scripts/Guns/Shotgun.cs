@@ -119,6 +119,7 @@ public class Shotgun : RangedWeapon
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
+        SoundManager2.Instance.PlaySound("ShotgunReload");
         yield return base.Reload();
     }
 
