@@ -85,6 +85,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(false);
         SoundManager2.Instance.PlaySound("UIButtonSFX");
         SceneManager.LoadScene(0);
+        SoundManager2.Instance.PlayMusic("Main Menu");
     }
 
     public void QuitGame()
