@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.SceneManagement;
 
 public class SoundManager2 : MonoBehaviour
 {
@@ -68,7 +69,8 @@ public class SoundManager2 : MonoBehaviour
         else
             Destroy(gameObject);
 
-        PlayMusic("2");
+        if (SceneManager.GetActiveScene().buildIndex == 0) PlayMusic("Main Menu");
+        else PlayMusic("Gameplay Track 1");
     }
 
     private void Update()
@@ -95,6 +97,13 @@ public class SoundManager2 : MonoBehaviour
             {
                 return;
             }
+        }
+
+        if (!currentMusic.source.isPlaying)
+        {
+            if (currentMusic.name == "Gameplay Track 1") PlayMusic("Gameplay Track 2");
+            else if (currentMusic.name == "Gameplay Track 2") PlayMusic("Gameplay Track 3");
+            else PlayMusic("Gameplay Track 1");
         }
 
         //enSured deletion 

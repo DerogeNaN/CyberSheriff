@@ -47,8 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterVolume: 1
-  masterMusicVolume: 1
-  masterSfxVolume: 0.507
+  masterMusicVolume: 0.5
+  masterSfxVolume: 0.5
   sounds:
   - name: Footsteps
     soundType: 0
@@ -466,13 +466,23 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   musicTracks:
-  - name: 1
-    track: {fileID: 8300000, guid: dc4f67ad153dfe4458e4e4519865dd85, type: 3}
+  - name: Main Menu
+    track: {fileID: 8300000, guid: d1d46fbddd54fe64790215e7bfda7144, type: 3}
+    volume: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Gameplay Track 1
+    track: {fileID: 8300000, guid: d67a5e17ab62a9f4c90ab28054ca6e2a, type: 3}
     volume: 1
     loop: 0
     source: {fileID: 0}
-  - name: 2
+  - name: Gameplay Track 2
     track: {fileID: 8300000, guid: 9dfd6443886508c47bae8bfe04adc207, type: 3}
+    volume: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Gameplay Track 3
+    track: {fileID: 8300000, guid: 4ff2f4bc3f4929048acf29c47f5efbc1, type: 3}
     volume: 1
     loop: 0
     source: {fileID: 0}
