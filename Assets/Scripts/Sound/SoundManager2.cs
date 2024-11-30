@@ -68,8 +68,7 @@ public class SoundManager2 : MonoBehaviour
         else
             Destroy(gameObject);
 
-        DontDestroyOnLoad(this);
-
+        PlayMusic("2");
     }
 
     private void Update()
