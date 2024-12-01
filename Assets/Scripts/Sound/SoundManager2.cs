@@ -99,11 +99,27 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
-        if (!currentMusic.source.isPlaying)
+        if (SceneManager.GetActiveScene().buildIndex != 0)
         {
-            if (currentMusic.name == "Gameplay Track 1") PlayMusic("Gameplay Track 2");
-            else if (currentMusic.name == "Gameplay Track 2") PlayMusic("Gameplay Track 3");
-            else PlayMusic("Gameplay Track 1");
+            if (currentMusic.source.time >= currentMusic.source.clip.length)
+            {
+                if (currentMusic.name == "Gameplay Track 1")
+                {
+                    Destroy(currentMusic.source);
+                    PlayMusic("Gameplay Track 2");
+                }
+                else if (currentMusic.name == "Gameplay Track 2")
+                {
+                    Destroy(currentMusic.source);
+                    PlayMusic("Gameplay Track 3");
+                }
+
+                else
+                {
+                    Destroy(currentMusic.source);
+                    PlayMusic("Gameplay Track 1");
+                }
+            }
         }
 
         //enSured deletion 
@@ -111,7 +127,7 @@ public class SoundManager2 : MonoBehaviour
         {
             if (aus.GetComponent<AudioSource>())
             {
-                if (!aus.GetComponent<AudioSource>().isPlaying)
+                if (aus.GetComponent<AudioSource>().time >= aus.GetComponent<AudioSource>().clip.length)
                 {
                     Destroy(GetComponent<AudioSource>());
                 }
