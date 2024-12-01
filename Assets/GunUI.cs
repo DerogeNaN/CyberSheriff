@@ -111,7 +111,7 @@ public class GunUI : MonoBehaviour
 
             if (!weaponManagement.currentActiveWeapon.GetComponent<Shotgun>())
             {
-                if (weaponManagement.weaponList[1].GetComponent<Shotgun>().CurrentReserveAmmo <= 0 && weaponManagement.weaponList[0].GetComponent<Shotgun>().currentBullets <= 0)
+                if (weaponManagement.weaponList[1].GetComponent<Shotgun>().CurrentReserveAmmo <= 0 && weaponManagement.weaponList[1].GetComponent<Shotgun>().currentBullets <= 0)
                 {
                     Debug.Log("Why");
                     if (currentDisabledImage)
