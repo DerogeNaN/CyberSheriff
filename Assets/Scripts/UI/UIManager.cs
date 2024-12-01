@@ -46,6 +46,7 @@ public class UIManager : MonoBehaviour
         creditsMenu.SetActive(false);
 
         SceneManager.LoadScene(1);
+        SoundManager2.Instance.PlayMusic("Gameplay Track 1");
     }
 
     public void LeaderboardButton()
