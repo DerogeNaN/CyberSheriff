@@ -2,6 +2,9 @@ using UnityEngine;
 using Unity.Mathematics;
 using System.Collections;
 using static RangedWeapon;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Rendering;
 
 
 
@@ -158,54 +161,54 @@ public class Shotgun : RangedWeapon
             for (int i = 0; i < pellets; i++)
             {
                 bool hitDetected;
-                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hitDetected);
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hitDetected,shouldPunchThrough);
                 if (hitDetected != false)
                 {
                     //CurrentlyHitting = rayData.hit.transform.gameObject;
                     //if (rayData.hit)
                     {
 
-                        if (rayData.hit.transform.gameObject.layer != 3)
+                        if (rayData.hits[0].transform.gameObject.layer != 3)
                         {
-                            if (rayData.hit.rigidbody)
+                            if (rayData.hits[0].rigidbody)
                             {
-                                rayData.hit.rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
+                                rayData.hits[0].rigidbody.AddForce(rayData.ray.direction * bulletForceMultiplier, ForceMode.Impulse);
                             }
                             else
                             {
                                 Debug.Log("Does Not have rigidbody");
                             }
 
-                            if (rayData.hit.transform.parent)
+                            if (rayData.hits[0].transform.parent)
                             {
-                                if (!(rayData.hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
+                                if (!(rayData.hits[0].transform.parent.gameObject.layer == LayerMask.NameToLayer("Enemy")))
                                 {
                                     SpawnBulletHoleDecal(rayData);
                                     GameObject hitFX = Instantiate(HitEffect);
-                                    hitFX.transform.position = rayData.hit.point;
+                                    hitFX.transform.position = rayData.hits[0].point;
                                 }
                             }
                             else
                             {
                                 SpawnBulletHoleDecal(rayData);
                                 GameObject hitFX = Instantiate(HitEffect);
-                                hitFX.transform.position = rayData.hit.point;
+                                hitFX.transform.position = rayData.hits[0].point;
                             }
 
-                            if (rayData.hit.transform.parent)
+                            if (rayData.hits[0].transform.parent)
                             {
-                                if (rayData.hit.transform.parent.TryGetComponent(out EnemyBase eb2))
+                                if (rayData.hits[0].transform.parent.TryGetComponent(out EnemyBase eb2))
                                 {
 
                                     GameObject hitFX = Instantiate(enemyHitEffect);
-                                    hitFX.transform.position = rayData.hit.point;
+                                    hitFX.transform.position = rayData.hits[0].point;
 
                                     GameObject hitFX2 = Instantiate(HitEffect);
-                                    hitFX2.transform.position = rayData.hit.point;
+                                    hitFX2.transform.position = rayData.hits[0].point;
 
-                                    Health EnemyHealth = rayData.hit.collider.transform.parent.GetComponentInChildren<Health>();
+                                    Health EnemyHealth = rayData.hits[0].collider.transform.parent.GetComponentInChildren<Health>();
                                     int damage = DamageValue;
-                                    if (rayData.hit.collider.TryGetComponent(out EnemyHurtbox eh))
+                                    if (rayData.hits[0].collider.TryGetComponent(out EnemyHurtbox eh))
                                     {
                                         if (eh.isHeadshot == true)
                                         {
@@ -233,7 +236,7 @@ public class Shotgun : RangedWeapon
 
 
 
-    public override RayData RayCastAndGenGunRayData(Transform muzzle)
+    public override RayData RayCastAndGenGunRayData(Transform muzzle, bool punchthrough)
     {
         Ray gunRay = new Ray();
 
@@ -242,10 +245,11 @@ public class Shotgun : RangedWeapon
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData();
+        RayData camRayData = RayCastAndGenCameraRayData(punchthrough);
+        RayData newData = new RayData { ray = gunRay, hits = new List<RaycastHit>() };
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
-        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+        Vector3 barrelToLookPointDir = camRayData.hits[0].point - muzzle.transform.position;
 
         barrelToLookPointDir = math.normalize(barrelToLookPointDir);
 
@@ -253,12 +257,22 @@ public class Shotgun : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
-        return new RayData { ray = gunRay, hit = gunHit };
+        if (!punchthrough)
+        {
+            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+            newData.hits.Add(gunHit);
+        }
+        else
+        {
+           newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+        }
+
+
+        return newData;
     }
 
-    public override RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected)
+    public override RayData RayCastAndGenGunRayData(Transform muzzle, out bool hitDetected, bool punchthrough)
     {
         Ray gunRay = new Ray();
 
@@ -267,11 +281,13 @@ public class Shotgun : RangedWeapon
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected);
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected,punchthrough);
+        RayData newData = new RayData { ray = gunRay, hits = new List<RaycastHit>() };
+
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
 
 
-        Vector3 barrelToLookPointDir = camRayData.hit.point - muzzle.transform.position;
+        Vector3 barrelToLookPointDir = camRayData.hits[0].point - muzzle.transform.position;
 
         barrelToLookPointDir = math.normalize(barrelToLookPointDir);
 
@@ -279,9 +295,20 @@ public class Shotgun : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
+        if (!punchthrough)
+        {
+            hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+            newData.hits.Add(gunHit);
+        }
+        else
+        {
+            hitDetected = Physics.RaycastAll(gunRay, camRef.farClipPlane)[0].collider == null ? false : true;
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+        }
+
         hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
 
-        return new RayData { ray = gunRay, hit = gunHit };
+        return newData;
     }
 
     public override void EngageAltFire()
@@ -292,11 +319,11 @@ public class Shotgun : RangedWeapon
             animator.SetTrigger("ShootAltTrig");
             SoundManager2.Instance.PlaySound("ShotgunLauncherThunk");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
-            RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit);
+            RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit,false);
 
             if (hit == false)
             {
-                Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData().ray.direction * camRef.farClipPlane);
+                Gunray.ray.direction = Gunray.ray.origin + (RayCastAndGenCameraRayData(false).ray.direction * camRef.farClipPlane);
             }
             else
             {
@@ -347,7 +374,7 @@ public class Shotgun : RangedWeapon
     //active on primary fire End
     public override void OnprimaryFireEnd()
     {
-        if (reloading == false && currentBullets > 0 && waiting == false )
+        if (reloading == false && currentBullets > 0 && waiting == false)
         {
             shouldShootPrimary = false;
             chargeExited = true;
