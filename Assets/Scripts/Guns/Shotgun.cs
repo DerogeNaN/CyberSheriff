@@ -15,20 +15,7 @@ public class Shotgun : RangedWeapon
     int bulletsPerShot = 5;
 
     [SerializeField]
-    bool chargeExited = false;
-
-    [SerializeField]
     float spreadMultiplier = 1;
-
-    [SerializeField]
-    float chargeTime = 2.0f;
-
-    [SerializeField]
-    float inputTime = 0;
-
-
-    [SerializeField]
-    bool charged = false;
 
     [Header("Grenade Settings")]
     [SerializeField]
@@ -42,7 +29,6 @@ public class Shotgun : RangedWeapon
 
     [SerializeField]
     float grenadeYEffectMult = 0.2f;
-
 
     [SerializeField]
     public bool grenadeReady = false;
@@ -62,32 +48,11 @@ public class Shotgun : RangedWeapon
     public override void Update()
     {
 
-        animator.SetBool("ChargedBool", charged);
+        //animator.SetBool("ChargedBool", charged);
         if (currentBullets <= 0 && CurrentReserveAmmo > 0 && reloading == false)
         {
             canFire = false;
             StartCoroutine(Reload());
-        }
-
-        if (currentBullets == BulletsPerClip)
-        {
-
-            if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
-            {
-                if (inputTime < chargeTime && charged == false)
-                {
-                    inputTime += Time.deltaTime;
-
-                }
-
-                if (inputTime >= chargeTime)
-                {
-
-                    charged = true;
-                    inputTime = 0;
-
-                }
-            }
         }
 
         if (grenadeAmmo > 0)
@@ -96,9 +61,9 @@ public class Shotgun : RangedWeapon
 
         }
 
-        if (shouldShootPrimary == false && chargeExited == true && waiting == false && reloading == false && canPressAltFire == true)
+        if (shouldShootPrimary == true && waiting == false && reloading == false && canPressAltFire == true)
         {
-            EngagePrimaryFire(charged);
+            EngagePrimaryFire();
         }
 
         if (shouldShootAlt == true && canPressAltFire == true && waiting == false && reloading == false)
@@ -114,53 +79,31 @@ public class Shotgun : RangedWeapon
     }
 
 
-
-
     public override IEnumerator Reload()
     {
         animator.SetTrigger("ReloadTrigger");
         yield return base.Reload();
     }
 
-    public void EngagePrimaryFire(bool charged)
+    public void EngagePrimaryFire()
     {
         if (currentBullets > 0)
         {
-            chargeExited = false;
-            inputTime = 0;
             int pellets;
             //Primary Fire Logic
-            if (charged && currentBullets > 1)
-            {
-                animator.SetTrigger("ShootCTrig");
-                pellets = bulletsPerShot * 2;
-            }
-            else
-            {
-                animator.SetTrigger("ShootTrig");
-                pellets = bulletsPerShot;
-            }
 
-            if (charged && currentBullets > 1)
-            {
-                currentBullets -= 2;
-                BulletFlash.Play();
-                BulletFlash.Play();
-                SoundManager2.Instance.PlaySound("ShotgunFire");
-                SoundManager2.Instance.PlaySound("ShotgunFire");
-                this.charged = false;
-            }
-            else
-            {
-                currentBullets--;
-                SoundManager2.Instance.PlaySound("ShotgunFire");
-                BulletFlash.Play();
-            }
+            animator.SetTrigger("ShootTrig");
+            pellets = bulletsPerShot;
+
+            currentBullets--;
+            SoundManager2.Instance.PlaySound("ShotgunFire");
+            BulletFlash.Play();
+
 
             for (int i = 0; i < pellets; i++)
             {
                 bool hitDetected;
-                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hitDetected,shouldPunchThrough);
+                RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hitDetected, shouldPunchThrough);
                 if (hitDetected != false)
                 {
                     //CurrentlyHitting = rayData.hit.transform.gameObject;
@@ -264,7 +207,7 @@ public class Shotgun : RangedWeapon
         }
         else
         {
-           newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
         }
 
 
@@ -280,7 +223,7 @@ public class Shotgun : RangedWeapon
         gunRay.origin = muzzlePoint.position;
 
         RaycastHit gunHit;
-        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected,punchthrough);
+        RayData camRayData = RayCastAndGenCameraRayData(out hitDetected, punchthrough);
         RayData newData = new RayData { ray = gunRay, hits = new List<RaycastHit>() };
 
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
@@ -318,7 +261,7 @@ public class Shotgun : RangedWeapon
             animator.SetTrigger("ShootAltTrig");
             SoundManager2.Instance.PlaySound("ShotgunLauncherThunk");
             Rigidbody grenadeRB = Instantiate(Grenade).GetComponent<Rigidbody>();
-            RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit,false);
+            RayData Gunray = base.RayCastAndGenGunRayData(muzzlePoint, out hit, false);
 
             if (hit == false)
             {
@@ -360,7 +303,6 @@ public class Shotgun : RangedWeapon
     {
         if (reloading == false && currentBullets > 0)
             shouldShootPrimary = true;
-
     }
 
     //Active every interval  of altfire set in this script
@@ -373,20 +315,12 @@ public class Shotgun : RangedWeapon
     //active on primary fire End
     public override void OnprimaryFireEnd()
     {
-        if (reloading == false && currentBullets > 0 && waiting == false)
-        {
             shouldShootPrimary = false;
-            chargeExited = true;
-        }
-
-
-        //  Debug.Log("end Primary Fire");
     }
 
     //active on Alt-fire End
     public override void OnAltFireEnd()
     {
         shouldShootAlt = false;
-        //  Debug.Log("end alt fire");
     }
 }
