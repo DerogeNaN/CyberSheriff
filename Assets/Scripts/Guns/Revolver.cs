@@ -101,31 +101,24 @@ public class Revolver : RangedWeapon
                             GameObject hitFX2 = Instantiate(HitEffect);
                             hitFX2.transform.position = rayData.hits[0].point;
                             int damage = DamageValue;
+                            Health EnemyHealth = rayData.hits[0].collider.transform.parent.GetComponentInChildren<Health>();
 
                             if (altShouldHeadShot)
                                 if (rayData.hits[0].collider.TryGetComponent(out EnemyHurtbox eh))
                                 {
                                     if (eh.isHeadshot == true)
                                     {
-                                        if (currentMarker)
-                                            currentMarker.gameObject.SetActive(false);
-                                        currentMarker = HitMarker;
-                                        currentMarker.SetActive(true);
-                                        StartCoroutine(TurnItOff());
                                         damage *= headShotMultiplier;
                                     }
-                                    else 
-                                    {
-                                        if (currentMarker)
-                                            currentMarker.gameObject.SetActive(false);
-                                        currentMarker = HitMarker;
-                                        currentMarker.SetActive(true);
-                                        StartCoroutine(TurnItOff());
-                                    }
 
+                                    GameObject marker = EnemyHealth.health - damage <= 0 ? KillHitMarker : HitMarker;
+                                    if (currentMarker)
+                                        currentMarker.gameObject.SetActive(false);
+                                    currentMarker = marker;
+                                    currentMarker.SetActive(true);
+                                    StartCoroutine(TurnItOff());
                                 }
 
-                            Health EnemyHealth = rayData.hits[0].collider.transform.parent.GetComponentInChildren<Health>();
                             EnemyHealth.TakeDamage(damage, 0, gameObject);
                         }
                     }

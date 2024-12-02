@@ -157,21 +157,16 @@ public class Shotgun : RangedWeapon
                                     {
                                         if (eh.isHeadshot == true)
                                         {
-                                            if (currentMarker)
-                                                currentMarker.gameObject.SetActive(false);
-                                            currentMarker = HitMarker;
-                                            currentMarker.SetActive(true);
+                                           
                                             damage *= headShotMultiplier;
                                         }
-                                        else
-                                        {
-                                            if (currentMarker)
-                                                currentMarker.gameObject.SetActive(false);
-                                            currentMarker = HitMarker;
-                                            currentMarker.SetActive(true);
-                                            StartCoroutine(TurnItOff());
-                                        }
 
+                                        GameObject marker = EnemyHealth.health - damage <= 0 ? KillHitMarker : HitMarker;
+                                        if (currentMarker)
+                                            currentMarker.gameObject.SetActive(false);
+                                        currentMarker = marker;
+                                        currentMarker.SetActive(true);
+                                        StartCoroutine(TurnItOff());
                                     }
                                     EnemyHealth.TakeDamage(damage, 0, gameObject);
                                 }
