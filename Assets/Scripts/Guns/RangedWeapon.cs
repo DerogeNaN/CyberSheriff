@@ -241,7 +241,9 @@ public class RangedWeapon : MonoBehaviour
                                     }
 
                                 }
-                                EnemyHealth.TakeDamage(damage, 0, gameObject);
+                                if (this is Revolver)
+                                    EnemyHealth.TakeDamage(damage, 1, gameObject);
+                                else EnemyHealth.TakeDamage(damage, 2, gameObject);
                             }
                         }
                     }
