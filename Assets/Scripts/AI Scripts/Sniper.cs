@@ -27,9 +27,18 @@ public class Sniper : EnemyBase
 
     public override void OnHit(int damage, int damageType)
     {
-        SetState(EnemyState.stunned);
-        enemy.CreateHitEffect();
-        SoundManager2.Instance.PlaySound("RobotHit", transform);
+        //create ragdoll
+        EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
+        if (damageType == 3) // if the damage was from explosion
+        {
+            Vector3 normal = (transform.position - enemy.playerTransform.position).normalized;
+            rd.ApplyForce(new Vector3(normal.x, 0, normal.y).normalized, 300.0f);
+        } // else do knockback based on damage
+        else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+
+
+        SoundManager2.Instance.PlaySound("RobotDeath", transform);
+        Destroy(gameObject);
     }
 
     public override void OnDestroyed(int damage, int damageType)

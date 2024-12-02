@@ -23,9 +23,9 @@ public class EnemyCommon : MonoBehaviour
     public Animator animator;
     public Transform playerTransform;
 
-    [HideInInspector] public Vector3 moveTarget; // the object it follows
-    [HideInInspector] public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
-    [HideInInspector] public bool hasLineOfSight;
+    public Vector3 moveTarget; // the object it follows
+    public Vector3 lookTarget; // the object to check line of sight with (usually will be the same as moveTarget, but doesn't have to be)
+    public bool hasLineOfSight;
     [SerializeField] GameObject hitEffectVFX;
     public bool shouldPath;
 
@@ -79,6 +79,7 @@ public class EnemyCommon : MonoBehaviour
                 hasLineOfSight = hit.transform.gameObject.CompareTag("Player");
             }
             else hasLineOfSight = true;
+            Debug.Log(hit.collider.gameObject.name);
         }
         else hasLineOfSight = false;
 
@@ -127,14 +128,6 @@ public class EnemyCommon : MonoBehaviour
     public void CreateHitEffect()
     {
         Instantiate(hitEffectVFX, transform);
-
-        //GameObject vfx = Instantiate(hitEffectVFX, transform);
-        //ParticleSystem[] particles = vfx.GetComponentsInChildren<ParticleSystem>();
-
-        //foreach (ParticleSystem p in particles)
-        //{
-
-        //}
     }
 }
 
