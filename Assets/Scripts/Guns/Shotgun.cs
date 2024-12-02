@@ -48,6 +48,7 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     public int grenadeAmmoMax = 3;
 
+   
 
     public override void Update()
     {
@@ -130,14 +131,14 @@ public class Shotgun : RangedWeapon
                                 {
                                     SpawnBulletHoleDecal(rayData);
                                     GameObject hitFX = Instantiate(HitEffect);
-                                    hitFX.transform.position = rayData.hits[0].point;
+                                    hitFX.transform.position = rayData.hits[hit].point;
                                 }
                             }
                             else
                             {
                                 SpawnBulletHoleDecal(rayData);
                                 GameObject hitFX = Instantiate(HitEffect);
-                                hitFX.transform.position = rayData.hits[0].point;
+                                hitFX.transform.position = rayData.hits[hit].point;
                             }
 
                             if (rayData.hits[hit].transform.parent)
