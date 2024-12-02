@@ -48,6 +48,7 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     public int grenadeAmmoMax = 3;
 
+   
 
     public override void Update()
     {
@@ -130,21 +131,20 @@ public class Shotgun : RangedWeapon
                                 {
                                     SpawnBulletHoleDecal(rayData);
                                     GameObject hitFX = Instantiate(HitEffect);
-                                    hitFX.transform.position = rayData.hits[0].point;
+                                    hitFX.transform.position = rayData.hits[hit].point;
                                 }
                             }
                             else
                             {
                                 SpawnBulletHoleDecal(rayData);
                                 GameObject hitFX = Instantiate(HitEffect);
-                                hitFX.transform.position = rayData.hits[0].point;
+                                hitFX.transform.position = rayData.hits[hit].point;
                             }
 
                             if (rayData.hits[hit].transform.parent)
                             {
                                 if (rayData.hits[hit].transform.parent.TryGetComponent(out EnemyBase eb2))
                                 {
-
                                     GameObject hitFX = Instantiate(enemyHitEffect);
                                     hitFX.transform.position = rayData.hits[hit].point;
 
@@ -157,9 +157,16 @@ public class Shotgun : RangedWeapon
                                     {
                                         if (eh.isHeadshot == true)
                                         {
+                                           
                                             damage *= headShotMultiplier;
                                         }
 
+                                        GameObject marker = EnemyHealth.health - damage <= 0 ? KillHitMarker : HitMarker;
+                                        if (currentMarker)
+                                            currentMarker.gameObject.SetActive(false);
+                                        currentMarker = marker;
+                                        currentMarker.SetActive(true);
+                                        StartCoroutine(TurnItOff());
                                     }
                                     EnemyHealth.TakeDamage(damage, 0, gameObject);
                                 }

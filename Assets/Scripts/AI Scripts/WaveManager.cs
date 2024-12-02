@@ -16,12 +16,17 @@ public class WaveManager : MonoBehaviour
 
     [Header("Global Wave Stats")]
     public int waveNumber = 0;
+    public int waveNumberUI = 0;
+    public int enemiesKilled = 0;
     public float timeLeftInWave;
     public int enemiesRemaining;
     [SerializeField] private TextMeshProUGUI enemiesRemainingText;
     [SerializeField] private TextMeshProUGUI enemiesRemainingShadow;
     [SerializeField] private TextMeshProUGUI waveCountText;
     [SerializeField] private TextMeshProUGUI waveCountShadow;
+
+    [SerializeField] public TextMeshProUGUI killsResult;
+    [SerializeField] public TextMeshProUGUI waveResult;
 
     [SerializeField] PauseMenu pauseMenuScript;
     [SerializeField] public Timer timerScript;
@@ -86,7 +91,9 @@ public class WaveManager : MonoBehaviour
 
         if (waveNumber > maxWave)
         {
-            WinCondition();
+            StartNewWave();
+            timerScript.StartTimer();
+
         }
         else
         {
@@ -94,6 +101,7 @@ public class WaveManager : MonoBehaviour
             timerScript.StartTimer();
             waveNumber++;
         }
+        waveNumberUI = waveNumber;
     }
 
     public void WinCondition()

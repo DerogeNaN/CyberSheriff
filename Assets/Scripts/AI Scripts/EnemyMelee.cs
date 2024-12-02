@@ -67,8 +67,16 @@ public class EnemyMelee : EnemyBase
 
     public override void OnDestroyed(int damage, int damageType)
     {
+        //create ragdoll
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
-        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        if (damageType == 3) // if the damage was from explosion
+        {
+            Vector3 normal = (transform.position - enemy.playerTransform.position).normalized;
+            rd.ApplyForce(new Vector3(normal.x, 0, normal.y).normalized, 300.0f);
+        } // else do knockback based on damage
+        else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+
+
         SoundManager2.Instance.PlaySound("RobotDeath", transform);
         Destroy(gameObject);
     }
@@ -158,14 +166,14 @@ public class EnemyMelee : EnemyBase
     }
     protected override void MovingToTargetUpdate()
     {
-        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+        enemy.moveTarget = enemy.playerTransform.position;
 
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
         /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
         {
             enemy.animator.SetBool("Jump", false);
             enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
-
         }
         else
         {
@@ -173,7 +181,6 @@ public class EnemyMelee : EnemyBase
             enemy.animator.SetBool("Run", false);
         }*/
 
-        enemy.moveTarget = enemy.playerTransform.position;
 
         if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
         {
