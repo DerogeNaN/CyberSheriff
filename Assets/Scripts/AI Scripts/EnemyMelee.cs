@@ -72,7 +72,7 @@ public class EnemyMelee : EnemyBase
         if (damageType == 3) // if the damage was from explosion
         {
             Vector3 normal = (transform.position - enemy.playerTransform.position).normalized;
-            rd.ApplyForce(new Vector3(normal.x, 0, normal.y).normalized, 300.0f);
+            rd.ApplyForce(new Vector3(normal.x, Mathf.Abs(normal.y), normal.y).normalized, 300.0f);
         } // else do knockback based on damage
         else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
 
@@ -163,6 +163,11 @@ public class EnemyMelee : EnemyBase
             enemy.animator.SetBool("Run", false);
         }*/
 
+        // force target
+        if (WaveManager.waveManagerInstance.timerScript.timeLeft < WaveManager.waveManagerInstance.forceTargetTime)
+        {
+            SetState(EnemyState.movingToTarget);
+        }
     }
     protected override void MovingToTargetUpdate()
     {

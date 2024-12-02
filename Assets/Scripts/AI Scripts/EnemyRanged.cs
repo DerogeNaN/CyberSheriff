@@ -142,6 +142,12 @@ public class EnemyRanged : EnemyBase
 
         // if the player gets withing range and line of sight, switch to chasing them
         if (enemy.hasLineOfSight || !needsLineOfSight) SetState(EnemyState.movingToTarget);
+
+        // force target
+        if (WaveManager.waveManagerInstance.timerScript.timeLeft < WaveManager.waveManagerInstance.forceTargetTime)
+        {
+            SetState(EnemyState.movingToTarget);
+        }
     }
     protected override void MovingToTargetUpdate()
     {

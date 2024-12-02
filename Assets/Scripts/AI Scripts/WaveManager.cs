@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,27 +15,26 @@ public class WaveManager : MonoBehaviour
     public float waveTime;
     public float timeBetweenWaves;
     public float maxWave;
+    [HideInInspector] public float forceTargetTime;
+    [Tooltip("minimum wave time passed before all enemies automatically lock on to the player")]
+    public float minTimeUntilForceTarget;
+    [Tooltip("maximum wave time passed before all enemies automatically lock on to the player")]
+    public float maxTimeUntilForceTarget;
 
     [Header("Global Wave Stats")]
     public int waveNumber = 0;
-    public int waveNumberUI = 0;
-    public int enemiesKilled = 0;
-    public float timeLeftInWave;
+    public float timeLeftInWave; // use timerScript.timeLeft for time left in wave
     public int enemiesRemaining;
     [SerializeField] private TextMeshProUGUI enemiesRemainingText;
     [SerializeField] private TextMeshProUGUI enemiesRemainingShadow;
     [SerializeField] private TextMeshProUGUI waveCountText;
     [SerializeField] private TextMeshProUGUI waveCountShadow;
 
-    [SerializeField] public TextMeshProUGUI killsResult;
-    [SerializeField] public TextMeshProUGUI waveResult;
-
     [SerializeField] PauseMenu pauseMenuScript;
     [SerializeField] public Timer timerScript;
 
     public delegate void NewWaveEvent();
     public static event NewWaveEvent StartNewWave;
-
 
     void Awake()
     {
@@ -47,6 +48,8 @@ public class WaveManager : MonoBehaviour
         }
 
         SetupWaveManager();
+
+        forceTargetTime = waveTime - UnityEngine.Random.Range(minTimeUntilForceTarget, maxTimeUntilForceTarget);
     }
 
     
@@ -91,9 +94,7 @@ public class WaveManager : MonoBehaviour
 
         if (waveNumber > maxWave)
         {
-            StartNewWave();
-            timerScript.StartTimer();
-
+            WinCondition();
         }
         else
         {
@@ -101,7 +102,6 @@ public class WaveManager : MonoBehaviour
             timerScript.StartTimer();
             waveNumber++;
         }
-        waveNumberUI = waveNumber;
     }
 
     public void WinCondition()
