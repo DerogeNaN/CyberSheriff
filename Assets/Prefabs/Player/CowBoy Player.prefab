@@ -18905,6 +18905,7 @@ GameObject:
   - component: {fileID: 187740034541792969}
   - component: {fileID: 8956065550447804033}
   - component: {fileID: 552541204}
+  - component: {fileID: 3877486363335847266}
   m_Layer: 3
   m_Name: CowBoy Player
   m_TagString: Player
@@ -19215,6 +19216,22 @@ MonoBehaviour:
   weaponManagmentScript: {fileID: 187740034541792969}
   ammoText: {fileID: 3729057870615471924}
   shadowAmmoText: {fileID: 3729057871177856625}
+--- !u!208 &3877486363335847266
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4613755221359916243}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.75, y: 1.25, z: 0.75}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &4989593571826610778
 GameObject:
   m_ObjectHideFlags: 0
