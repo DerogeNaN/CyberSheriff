@@ -9354,7 +9354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.84400004, g: 0.16795601, b: 0.17184113, a: 1}
+  m_Color: {r: 0.22239745, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19044,6 +19044,7 @@ MonoBehaviour:
   grappleSpeed: 65
   grappleCooldown: 3
   maxGrappleDistance: 300
+  grappleScaleFactor: 15
   grappleOffset: {x: 0, y: -2, z: 0}
   isGrappling: 0
   canGrapple: 0
@@ -35496,7 +35497,7 @@ PrefabInstance:
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
       propertyPath: DamageValue
-      value: 35
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
@@ -35511,12 +35512,12 @@ PrefabInstance:
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
       propertyPath: ReserveAmmoCap
-      value: 16
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
       propertyPath: bulletsPerShot
-      value: 12
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
@@ -35527,7 +35528,17 @@ PrefabInstance:
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
       propertyPath: spreadMultiplier
-      value: 0.06
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: punchThroughAmount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: shouldPunchThrough
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4089436949897685263, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
@@ -35958,7 +35969,7 @@ PrefabInstance:
     - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 130
+      value: 81.8
       objectReference: {fileID: 0}
     - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
         type: 3}
@@ -35968,7 +35979,7 @@ PrefabInstance:
     - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -30
+      value: 309.7
       objectReference: {fileID: 0}
     - target: {fileID: 7148303922545888110, guid: 5b295f754f664094bad0ada3e4aa8331,
         type: 3}
