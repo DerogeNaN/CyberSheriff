@@ -38,6 +38,10 @@ public class AmmoBox : MonoBehaviour
     [SerializeField]
     PlayerHealth health;
 
+    //public string 
+    [SerializeField]
+    Transform childOfChild;
+
 
     void Start()
     {
@@ -59,6 +63,9 @@ public class AmmoBox : MonoBehaviour
                 }
             }
         mesh.enabled = active;
+
+        if (childOfChild != null) childOfChild.gameObject.SetActive(active);
+
     }
 
 
@@ -92,8 +99,13 @@ public class AmmoBox : MonoBehaviour
 
                 if (ammoType == AmmoType.Health)
                 {
-                    health.Heal(ammoGiven);
-                    active = false;
+                    
+                   if(!(health.health == 100))
+                    {
+                        health.Heal(ammoGiven);
+                        active = false;
+                    }
+                    
                 }
             }
         }

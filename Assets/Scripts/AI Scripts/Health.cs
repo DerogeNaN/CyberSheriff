@@ -9,7 +9,7 @@ public class Health : MonoBehaviour
     [Tooltip("calls OnHit on this. can be null.")]
     [HideInInspector] public EnemyBase enemy;
 
-    
+
 
     public delegate void EnemyKillEvent();
     public static event EnemyKillEvent enemyKill;
@@ -29,7 +29,7 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int damage, int damageType, GameObject attacker)
     {
-        if (health > 0) 
+        if (health > 0)
         {
             health -= damage;
 
@@ -42,6 +42,8 @@ public class Health : MonoBehaviour
                 Transform objectTransform = transform;
                 SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
                 if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
+                lastHitBy = attacker;
+
             }
             else
             {
@@ -55,6 +57,8 @@ public class Health : MonoBehaviour
     {
         if (lastHitBy)
         {
+
+            Debug.Log("Looks like  you died");
             if (lastHitBy.TryGetComponent<RangedWeapon>(out RangedWeapon rw))
                 enemyKill();
             else
