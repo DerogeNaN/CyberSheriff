@@ -79,7 +79,7 @@ public class EnemyCommon : MonoBehaviour
                 hasLineOfSight = hit.transform.gameObject.CompareTag("Player");
             }
             else hasLineOfSight = true;
-            Debug.Log(hit.collider.gameObject.name);
+            //Debug.Log(hit.collider.gameObject.name);
         }
         else hasLineOfSight = false;
 

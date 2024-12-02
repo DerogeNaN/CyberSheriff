@@ -13,10 +13,15 @@ public class WaveManager : MonoBehaviour
     public float waveTime;
     public float timeBetweenWaves;
     public float maxWave;
+    public float forceTargetTime;
+    [Tooltip("minimum remaining wave time before all enemies automatically lock on to the player")]
+    public float forceTargetTimeMin;
+    [Tooltip("maximum remaining wave time before all enemies automatically lock on to the player")]
+    public float forceTargetTimeMax;
 
     [Header("Global Wave Stats")]
     public int waveNumber = 0;
-    public float timeLeftInWave;
+    public float timeLeftInWave; // use timerScript.timeLeft for time left in wave
     public int enemiesRemaining;
     [SerializeField] private TextMeshProUGUI enemiesRemainingText;
     [SerializeField] private TextMeshProUGUI enemiesRemainingShadow;
