@@ -133,7 +133,7 @@ public class Movement : MonoBehaviour
 
     //Backend Variables
     private Vector3 grappleTargetDirection = Vector3.zero;
-    private float lastGrappleTime = -5;
+    public float lastGrappleTime = -5;
     private GameObject grappleObject;
     [HideInInspector] public bool isGrappling = false;
     [HideInInspector] public bool canGrapple = false;

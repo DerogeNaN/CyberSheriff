@@ -145,7 +145,6 @@ public class Shotgun : RangedWeapon
                             {
                                 if (rayData.hits[hit].transform.parent.TryGetComponent(out EnemyBase eb2))
                                 {
-
                                     GameObject hitFX = Instantiate(enemyHitEffect);
                                     hitFX.transform.position = rayData.hits[hit].point;
 
@@ -158,9 +157,16 @@ public class Shotgun : RangedWeapon
                                     {
                                         if (eh.isHeadshot == true)
                                         {
+                                           
                                             damage *= headShotMultiplier;
                                         }
 
+                                        GameObject marker = EnemyHealth.health - damage <= 0 ? KillHitMarker : HitMarker;
+                                        if (currentMarker)
+                                            currentMarker.gameObject.SetActive(false);
+                                        currentMarker = marker;
+                                        currentMarker.SetActive(true);
+                                        StartCoroutine(TurnItOff());
                                     }
                                     EnemyHealth.TakeDamage(damage, 0, gameObject);
                                 }
