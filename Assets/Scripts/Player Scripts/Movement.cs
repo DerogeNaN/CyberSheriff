@@ -656,6 +656,7 @@ public class Movement : MonoBehaviour
             else shotgunAnimator.SetTrigger("PullTrig");
             SoundManager2.Instance.PlaySound("Grapple");
         }
+        else SoundManager2.Instance.PlaySound("GrappleUnavailable");
     }
 
     private void GrappleVFX(bool toggle, Transform hand)
