@@ -9,11 +9,24 @@ public class Cooldown : MonoBehaviour
     [SerializeField]
     public Slider radialSlider;
     [SerializeField]
-    float grappleTime;
+    float grappleSliderValue;
+    [SerializeField]
+    float time;
+
+    [SerializeField]
+    float grappleCooldown;
+
+    [SerializeField]
+    float LastGrappleTime;
+
     // Update is called once per frame
     void Update()
     {
-        grappleTime =Movement.playerMovement.grappleCooldown + Movement.playerMovement.lastGrappleTime/Time.time;
-        radialSlider.value = grappleTime;
+
+        time = Time.time;
+        grappleCooldown = Movement.playerMovement.grappleCooldown;
+        LastGrappleTime = Movement.playerMovement.lastGrappleTime;
+        grappleSliderValue = -(LastGrappleTime - Time.time)/grappleCooldown;
+        radialSlider.value = grappleSliderValue;
     }
 }
