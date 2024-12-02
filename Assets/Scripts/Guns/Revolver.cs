@@ -107,7 +107,20 @@ public class Revolver : RangedWeapon
                                 {
                                     if (eh.isHeadshot == true)
                                     {
+                                        if (currentMarker)
+                                            currentMarker.gameObject.SetActive(false);
+                                        currentMarker = HitMarker;
+                                        currentMarker.SetActive(true);
+                                        StartCoroutine(TurnItOff());
                                         damage *= headShotMultiplier;
+                                    }
+                                    else 
+                                    {
+                                        if (currentMarker)
+                                            currentMarker.gameObject.SetActive(false);
+                                        currentMarker = HitMarker;
+                                        currentMarker.SetActive(true);
+                                        StartCoroutine(TurnItOff());
                                     }
 
                                 }
