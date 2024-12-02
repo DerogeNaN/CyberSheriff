@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,11 +15,11 @@ public class WaveManager : MonoBehaviour
     public float waveTime;
     public float timeBetweenWaves;
     public float maxWave;
-    public float forceTargetTime;
-    [Tooltip("minimum remaining wave time before all enemies automatically lock on to the player")]
-    public float forceTargetTimeMin;
-    [Tooltip("maximum remaining wave time before all enemies automatically lock on to the player")]
-    public float forceTargetTimeMax;
+    [HideInInspector] public float forceTargetTime;
+    [Tooltip("minimum wave time passed before all enemies automatically lock on to the player")]
+    public float minTimeUntilForceTarget;
+    [Tooltip("maximum wave time passed before all enemies automatically lock on to the player")]
+    public float maxTimeUntilForceTarget;
 
     [Header("Global Wave Stats")]
     public int waveNumber = 0;
@@ -34,7 +36,6 @@ public class WaveManager : MonoBehaviour
     public delegate void NewWaveEvent();
     public static event NewWaveEvent StartNewWave;
 
-
     void Awake()
     {
         if (waveManagerInstance == null)
@@ -47,6 +48,8 @@ public class WaveManager : MonoBehaviour
         }
 
         SetupWaveManager();
+
+        forceTargetTime = waveTime - UnityEngine.Random.Range(minTimeUntilForceTarget, maxTimeUntilForceTarget);
     }
 
     
