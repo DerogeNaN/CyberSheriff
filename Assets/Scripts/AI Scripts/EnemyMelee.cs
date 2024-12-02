@@ -158,14 +158,14 @@ public class EnemyMelee : EnemyBase
     }
     protected override void MovingToTargetUpdate()
     {
-        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+        enemy.moveTarget = enemy.playerTransform.position;
 
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
         /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
         {
             enemy.animator.SetBool("Jump", false);
             enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
-
         }
         else
         {
@@ -173,7 +173,6 @@ public class EnemyMelee : EnemyBase
             enemy.animator.SetBool("Run", false);
         }*/
 
-        enemy.moveTarget = enemy.playerTransform.position;
 
         if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
         {
