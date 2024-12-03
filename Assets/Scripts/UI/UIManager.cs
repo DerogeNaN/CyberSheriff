@@ -11,10 +11,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject leaderboardMenu;
     [SerializeField] GameObject optionsMenu;
     [SerializeField] GameObject creditsMenu;
-    //[SerializeField] GameObject iutMenu;
-    //[SerializeField] GameObject gameMenu;
-    //[SerializeField] GameObject graphicsMenu;
-    //[SerializeField] GameObject MiscMenu;
 
     
 
@@ -80,6 +76,16 @@ public class UIManager : MonoBehaviour
 
         previousMenu = currentMenu;
         currentMenu = creditsMenu;
+    }
+
+    public void OnHoverSound()
+    {
+        SoundManager2.Instance.PlaySound("UIButtonHover");
+    }
+
+    public void OnPressSound()
+    {
+        SoundManager2.Instance.PlaySound("UIButtonPress");
     }
 
     public void QuitButton()

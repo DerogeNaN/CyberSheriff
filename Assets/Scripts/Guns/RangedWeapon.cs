@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Unity.Mathematics;
+using Unity.PlasticSCM.Editor.WebApi;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -105,11 +106,18 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public Animator animator;
 
+    [SerializeField]
+    public GameObject HitMarker;
+
+    [SerializeField]
+    public GameObject KillHitMarker;
+
+    [SerializeField]
+    public GameObject currentMarker;
+
     [Header("Scene Refrences")]
     [SerializeField]
     public Camera camRef;
-
-
 
     public struct RayData
     {
@@ -147,31 +155,6 @@ public class RangedWeapon : MonoBehaviour
             EngageAltFire();
         }
     }
-
-
-
-    //private void OnDrawGizmos()
-    //{
-    //    RayData rayData = RayCastAndGenGunRayData(muzzlePoint, true);
-    //    RaycastHit[] rayhits = Physics.RaycastAll(rayData.ray.origin, rayData.ray.direction, camRef.farClipPlane);
-
-    //    if (rayhits.Length > 1)
-    //        for (int i = 0; i < rayhits.Length; i++)
-    //        {
-    //            if (i != rayhits.Length - 1)
-    //            {
-    //                Vector3 HitToHitDir = rayhits[i].point - rayhits[i + 1].point;
-    //                HitToHitDir = math.normalize(HitToHitDir);
-
-    //                Gizmos.color = Color.red;
-    //                Gizmos.DrawRay(rayhits[i].point, HitToHitDir);
-    //            }
-
-    //            Debug.Log("Hit Object:" + rayhits[i].collider.name);
-    //        }
-    //    else Debug.Log("Empty List");
-    //}
-
 
 
     public virtual void EngagePrimaryFire()
@@ -232,16 +215,24 @@ public class RangedWeapon : MonoBehaviour
                                 Health EnemyHealth = rayData.hits[i].transform.parent.GetComponent<Health>();
                                 int damage = DamageValue;
 
-
                                 if (rayData.hits[i].collider.TryGetComponent(out EnemyHurtbox eh))
                                 {
                                     if (eh.isHeadshot == true)
                                     {
                                         damage *= headShotMultiplier;
                                     }
+                                    
+                                    GameObject marker = EnemyHealth.health - damage <= 0 ? KillHitMarker : HitMarker;    
+                                    if (currentMarker)
+                                        currentMarker.gameObject.SetActive(false);
+                                    currentMarker = marker;
+                                    currentMarker.SetActive(true);
+                                    StartCoroutine(TurnItOff());
 
                                 }
-                                EnemyHealth.TakeDamage(damage, 0, gameObject);
+                                if (this is Revolver)
+                                    EnemyHealth.TakeDamage(damage, 1, gameObject);
+                                else EnemyHealth.TakeDamage(damage, 2, gameObject);
                             }
                         }
                     }
@@ -254,6 +245,14 @@ public class RangedWeapon : MonoBehaviour
             canFire = false;
             StartCoroutine(Reload());
         }
+    }
+
+
+    public IEnumerator TurnItOff()
+    {
+
+        yield return new WaitForSeconds(1f);
+        currentMarker.SetActive(false);
     }
 
 
