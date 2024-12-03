@@ -41,9 +41,12 @@ public class Health : MonoBehaviour
 
                 Transform objectTransform = transform;
                 SoundManager2.Instance.PlaySound("RobotDeathSFX", objectTransform.transform);
-                if (WaveManager.waveManagerInstance != null) WaveManager.waveManagerInstance.enemiesRemaining--;
+                if (WaveManager.waveManagerInstance != null)
+                {
+                    WaveManager.waveManagerInstance.enemiesRemaining--;
+                    WaveManager.waveManagerInstance.enemiesKilled++;
+                }
                 lastHitBy = attacker;
-
             }
             else
             {

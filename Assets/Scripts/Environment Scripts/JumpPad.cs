@@ -13,7 +13,7 @@ public class JumpPad : MonoBehaviour
         Movement.playerMovement.isSliding = false;
         Movement.playerMovement.isGrounded = false;
         Movement.playerMovement.velocity.y = jumpPadStrength;
-        SoundManager2.Instance.PlaySound("JumpSFX");
+        SoundManager2.Instance.PlaySound("JumpPad");
     }
 
     private void OnTriggerEnter(Collider other)
