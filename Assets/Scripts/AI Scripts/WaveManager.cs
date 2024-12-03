@@ -126,8 +126,8 @@ public class WaveManager : MonoBehaviour
     {
         waveNumber = 0;
         enemiesRemaining = 0;
-        //waveCountResult.text 
-
+        waveCountResult.text = waveNumberUI.ToString();
+        enemyKillsResult.text = enemiesKilled.ToString();
         StartNewWave = null;  // Unsubscribe from event ADDED THIS MAYBE THIS DID IT?
         Time.timeScale = 0;
         Cursor.visible = true;
