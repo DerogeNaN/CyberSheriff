@@ -30,6 +30,9 @@ public class EnemyRanged : EnemyBase
     [Tooltip("whether or not line of sight to the player is required to start chasing them")]
     public bool needsLineOfSight;
 
+    public float walkingSoundInterval = 2.0f;
+    private float lastWalkingSoundTime = 0.0f;
+
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
@@ -67,6 +70,7 @@ public class EnemyRanged : EnemyBase
     {
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
         rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        SoundManager2.Instance.PlaySound("RobotDeath", transform);
         Destroy(gameObject);
     }
 
@@ -79,6 +83,7 @@ public class EnemyRanged : EnemyBase
     protected override void MovingToTargetEnter()
     {
         enemy.shouldPath = true;
+
     }
     protected override void AttackingEnter()
     {
@@ -89,7 +94,7 @@ public class EnemyRanged : EnemyBase
         // change spawn pos to gun pos
         Projectile projectile = Instantiate(bulletPrefab, transform.position + enemy.lineOfSightOffset, transform.rotation).GetComponent<Projectile>();
         projectile.Shoot(enemy.playerTransform.position);
-        SoundManager2.Instance.PlaySound("RobotLazerSFX", enemy.transform);
+        SoundManager2.Instance.PlaySound("RobotRangedAttack", transform);
         // snap to point at player when firing
         transform.LookAt(enemy.playerTransform);
 
@@ -110,6 +115,8 @@ public class EnemyRanged : EnemyBase
         enemy.shouldPath = false;
         enemy.animator.SetBool("Run", false);
         enemy.animator.SetBool("Stagger", true);
+
+        SoundManager2.Instance.PlaySound("RobotStun", transform);
     }
     #endregion
 
@@ -119,6 +126,12 @@ public class EnemyRanged : EnemyBase
         enemy.speed = runSpeed;
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
+        if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
+        {
+            SoundManager2.Instance.PlaySound("RobotWalking", enemy.transform);
+            lastWalkingSoundTime = Time.time;
+        }
+
         // if the player gets withing range and line of sight, switch to chasing them
         if (enemy.hasLineOfSight || !needsLineOfSight) SetState(EnemyState.movingToTarget);
     }
@@ -127,6 +140,12 @@ public class EnemyRanged : EnemyBase
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
         enemy.moveTarget = enemy.playerTransform.position;
+
+        if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
+        {
+            SoundManager2.Instance.PlaySound("RobotWalking", enemy.transform);
+            lastWalkingSoundTime = Time.time;
+        }
 
         // if lost sight of the player, go back to idle
         if (!neverLoseSight && needsLineOfSight)

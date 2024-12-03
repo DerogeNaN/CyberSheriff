@@ -932,7 +932,9 @@ MonoBehaviour:
   soundMenu: {fileID: 419711610050637094}
   controlsMenu: {fileID: 419711610605186950}
   optionsPrefab: {fileID: 107807484704845180}
-  PauseMenu: {fileID: 0}
+  PauseMenuScript: {fileID: 0}
+  lookingscript: {fileID: 0}
+  jiggleScript: {fileID: 0}
   soundButton: {fileID: 143639960978365832}
   screenButton: {fileID: 143639961412089373}
   controlsButton: {fileID: 143639960972941126}
@@ -944,6 +946,7 @@ MonoBehaviour:
   musicText: {fileID: 419711610456621571}
   SFXText: {fileID: 419711609953567996}
   FOVSlider: {fileID: 419711610410752657}
+  FOVText: {fileID: 5333159536129668005}
   ScreenModeDropDown: {fileID: 9042394903172568811}
   sensitivitySlider: {fileID: 419711610410752657}
   sensitivityText: {fileID: 419711608842285709}
@@ -2215,7 +2218,7 @@ PrefabInstance:
     - target: {fileID: 1995201991351693902, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6491308594888594022, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
@@ -2322,6 +2325,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7654590521148181331, guid: 748be32730179f94a96694e2003d2548,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.0011539459
+      objectReference: {fileID: 0}
     - target: {fileID: 8190172942818053540, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
       propertyPath: m_Name
@@ -2342,6 +2350,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8393408881925635354, guid: 748be32730179f94a96694e2003d2548,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8432227032925583945, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
@@ -2356,7 +2369,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 143639961361296838}
+      objectReference: {fileID: 8951033084697490883}
     - target: {fileID: 8432227032925583945, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2364,8 +2377,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8432227032925583945, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SenseSlider
+      objectReference: {fileID: 0}
+    - target: {fileID: 8432227032925583945, guid: 748be32730179f94a96694e2003d2548,
+        type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
+      value: SettingsMenuUi, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8432227032925583945, guid: 748be32730179f94a96694e2003d2548,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8432227032986646422, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
@@ -2456,7 +2479,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 143639961361296838}
+      objectReference: {fileID: 8951033084697490883}
     - target: {fileID: 8432227033215654580, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2464,8 +2487,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8432227033215654580, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: FOVSliderFunc
+      objectReference: {fileID: 0}
+    - target: {fileID: 8432227033215654580, guid: 748be32730179f94a96694e2003d2548,
+        type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
+      value: SettingsMenuUi, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8432227033215654580, guid: 748be32730179f94a96694e2003d2548,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8432227033216597655, guid: 748be32730179f94a96694e2003d2548,
         type: 3}
@@ -3005,6 +3038,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 8130779308871016664}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5333159536129668005 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4239405556351406973, guid: 748be32730179f94a96694e2003d2548,
+    type: 3}
+  m_PrefabInstance: {fileID: 8130779308871016664}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9042394903172568811 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 984985339640493619, guid: 748be32730179f94a96694e2003d2548,

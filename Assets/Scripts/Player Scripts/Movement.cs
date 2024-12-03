@@ -1,8 +1,7 @@
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.VFX;
+
 
 public class Movement : MonoBehaviour
 {
@@ -11,6 +10,13 @@ public class Movement : MonoBehaviour
 
     [Header("Serialize Fields - PLUG THESE IN!!!")]
     public Transform respawnPos;
+    //public VisualEffect grappleVFXPulse;
+    public GameObject grappleUI;
+    public LineRenderer grappleVFXLine;
+    public LineRenderer grappleVFXLine1;
+    public LineRenderer grappleVFXLine2;
+    public Transform playerGrappleHandRevolver;
+    public Transform playerGrappleHandShotgun;
     private Transform cameraSlidePos;
     private Transform cameraDefaultPos;
     private GameObject cameraWallrunHolder;
@@ -122,6 +128,9 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("Max distance the player can enter a grapple")]
     public float maxGrappleDistance = 100f;
 
+    [SerializeField][Tooltip("Controls the size of the grapple UI based on distance (1 - large, 50 - small")]
+    [Range(1, 25)] float grappleScaleFactor = 10.0f;
+
     [SerializeField][Tooltip("The amount to offest the grapple UI from the middle of the grapple target")]
     public Vector3 grappleOffset = Vector3.zero;
 
@@ -129,8 +138,8 @@ public class Movement : MonoBehaviour
     private Vector3 grappleTargetDirection = Vector3.zero;
     private float lastGrappleTime = -5;
     private GameObject grappleObject;
-    private bool isGrappling = false;
-    private bool canGrapple = false;
+    [HideInInspector] public bool isGrappling = false;
+    [HideInInspector] public bool canGrapple = false;
     #endregion
 
     #region Physics
@@ -147,9 +156,11 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("How hard it is to change direction while sliding")]
     public int encouragedSlideMomentum = 30;
 
+    [SerializeField][Tooltip("What percentage of \"Move Speed\" the player slows down by each frame (0 - never slows down, 100 - slows down as fast as they speed up)")]
+    [Range(0, 100)] public int slowDownPercentage = 100;
+
     //Backend Variables:
     private float currEncouragment;
-    public int slowDownPercentage = 30;
     private float speedLimitEnforceAmmount = 1.5f;
     private float momentumRatio;
     #endregion
@@ -180,16 +191,15 @@ public class Movement : MonoBehaviour
     //Backend Variables:
     private float lastFootstepTime = 0.0f;
     private float lastWallRunFootstepTime = 0.0f;
-    private float slideDelay = 0.0f;
     #endregion
 
     [Space(20.0f)]
     [Header("Backend Variables")]    //Local Variables
     [HideInInspector] public Vector3 velocity = Vector3.zero;
     [HideInInspector] public Vector3 movementInputWorld = Vector3.zero;
+    [HideInInspector] public Vector2 movementInputLocal = Vector3.zero;
     private Vector3 wallTangent = Vector3.zero;
     private Vector3 wallNormal = Vector3.zero;
-    private GameObject grappleUI;
     private Collider standingCollider;
     private PauseMenu pauseMenu;
     private float blendAmount = 0.0f;
@@ -207,7 +217,6 @@ public class Movement : MonoBehaviour
     {
         if (standingCollider == null)       standingCollider = GetComponent<Collider>();
         if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
-        if (grappleUI == null)              grappleUI = GetComponentInChildren<UI_Billboard>().gameObject;
         if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
         if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
         if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
@@ -215,6 +224,7 @@ public class Movement : MonoBehaviour
         if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
         if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
         if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
+        if (playerGrappleHandRevolver == null)      playerGrappleHandRevolver = GameObject.Find("Player Grapple Hand").transform;
 
         InitialiseMovement();
     }
@@ -239,12 +249,15 @@ public class Movement : MonoBehaviour
 
     void MovePlayer()
     {
-        Vector2 movementInputLocal = playerInputActions.Player.Move.ReadValue<Vector2>();
+        movementInputLocal = playerInputActions.Player.Move.ReadValue<Vector2>();
         movementInputWorld = transform.forward * movementInputLocal.y + transform.right * movementInputLocal.x;
 
         if (isTryingSlide) SlideCheck();
-        else isSliding = false;
-
+        else
+        {
+            isSliding = false;
+            SoundManager2.Instance.StopSound("Slide");
+        }
 
         MoveCameraTowardsTransformHeight(isSliding ? cameraSlidePos : cameraDefaultPos);
 
@@ -258,6 +271,7 @@ public class Movement : MonoBehaviour
         }
         else
         {
+            SoundManager2.Instance.StopSound("Slide");
             //standingCollider.enabled = true;
             //slideCollider.enabled = false;
 
@@ -438,7 +452,7 @@ public class Movement : MonoBehaviour
             if (lastFootstepTime + footstepInterval < Time.time)
             {
                 lastFootstepTime = Time.time;
-                SoundManager2.Instance.PlaySound("Footsteps_Concrete");
+                SoundManager2.Instance.PlaySound("Footsteps");
             }
         }
     }
@@ -469,7 +483,7 @@ public class Movement : MonoBehaviour
     {
         isTryingSlide = true;
 
-        SoundManager2.Instance.PlaySound("SlideSFX");
+        
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
@@ -483,6 +497,12 @@ public class Movement : MonoBehaviour
         {
             isSliding = true;
             slideStartTime = Time.time;
+            SoundManager2.Instance.PlaySound("Slide");
+        }
+        else if (!isGrounded)
+        {
+            isSliding = false;
+            SoundManager2.Instance.StopSound("Slide");
         }
     }
 
@@ -518,6 +538,7 @@ public class Movement : MonoBehaviour
                 0.45f, dashDirection, dashSpeed * Time.deltaTime, ~12))
             {
                 isWallRunning = false;
+                SoundManager2.Instance.PlaySound("Dash");
                 velocity = dashDirection * dashSpeed;
             }
 
@@ -568,21 +589,21 @@ public class Movement : MonoBehaviour
                 if (lastGroundedTime + jumpGraceLength > Time.time && jumpCount == 0)
                 {
                     jumpCount++;
-                    SoundManager2.Instance.PlaySound("JumpSFX");
+                    SoundManager2.Instance.PlaySound("Jump");
                 }
 
                 else if (lastWallRunTime + wallrunJumpGraceLength > Time.time)
                 {
                     jumpCount++;
-                    SoundManager2.Instance.PlaySound("JumpSFX");
+                    SoundManager2.Instance.PlaySound("Jump");
                 }
 
                 else
                 {
                     jumpCount += 2;
-                    SoundManager2.Instance.PlaySound("DoubleJumpSFX");
+                    SoundManager2.Instance.PlaySound("Double Jump");
                 }
-
+                SoundManager2.Instance.StopSound("Slide");
                 velocity.y = jumpStrength;
                 lastJumpTime = Time.time;
             }
@@ -594,18 +615,26 @@ public class Movement : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, maxGrappleDistance, ~8) &&
             hit.transform.CompareTag("GrappleableObject"))
         {
+            float grappleUIScale = 0.0f;
+            if (hit.distance > 25)
+            {
+                grappleUIScale = hit.distance / grappleScaleFactor;
+            }
+            else grappleUIScale = 2.5f;
+
             grappleObject = hit.collider.gameObject;
             grappleUI.transform.position = hit.collider.transform.position + grappleOffset;
             if (lastGrappleTime + grappleCooldown < Time.time)
             {
                 canGrapple = true;
+                grappleUI.transform.localScale = new Vector3(grappleUIScale, grappleUIScale, grappleUIScale);
                 grappleUI.gameObject.SetActive(true);
             }
-            
         }
 
         else
         {
+            if (isGrappling) SoundManager2.Instance.PlaySound("GrappleCancel");
             isGrappling = false;
             canGrapple = false;
             grappleObject = null;
@@ -616,28 +645,67 @@ public class Movement : MonoBehaviour
 
     private void Grapple_Performed(InputAction.CallbackContext context)
     {
-        if (canGrapple)
+        if (canGrapple || isGrappling)
         {
             Vector3 targetDirection = grappleObject.transform.position - transform.position;
             grappleTargetDirection = targetDirection.normalized;
             isGrappling = true;
+            canGrapple = true;
             lastGrappleTime = Time.time;
-            revolverAnimator.SetTrigger("PullTrig");
-            shotgunAnimator.SetTrigger("PullTrig");
+            if (revolverAnimator.isActiveAndEnabled) revolverAnimator.SetTrigger("PullTrig");
+            else shotgunAnimator.SetTrigger("PullTrig");
             SoundManager2.Instance.PlaySound("Grapple");
         }
     }
+
+    private void GrappleVFX(bool toggle, Transform hand)
+    {
+        //grappleVFXPulse.transform.position = playerGrappleHand.transform.position;
+        //grappleVFXPulse.transform.rotation = playerGrappleHand.transform.rotation;
+
+        if (!toggle)
+        {
+            //grappleVFXPulse.gameObject.SetActive(false);
+            //grappleVFXPulse.Stop();
+            grappleVFXLine.SetPosition(0, Vector3.zero);
+            grappleVFXLine.SetPosition(1, Vector3.zero);
+            grappleVFXLine1.SetPosition(0, Vector3.zero);
+            grappleVFXLine1.SetPosition(1, Vector3.zero);
+            grappleVFXLine2.SetPosition(0, Vector3.zero);
+            grappleVFXLine2.SetPosition(1, Vector3.zero);
+        }
+
+        else
+        {
+            //grappleVFXPulse.gameObject.SetActive(true);
+            //grappleVFXPulse.Play();
+            grappleVFXLine.SetPosition(0, hand.position);
+            grappleVFXLine.SetPosition(1, grappleObject.transform.position + grappleOffset);
+            grappleVFXLine1.SetPosition(0, hand.position);
+            grappleVFXLine1.SetPosition(1, grappleObject.transform.position + grappleOffset);
+            grappleVFXLine2.SetPosition(0, hand.position);
+            grappleVFXLine2.SetPosition(1, grappleObject.transform.position + grappleOffset);
+        }
+    }    
 
     private void Grappling()
     {
         if (canGrapple && isGrappling)
         {
+            if (revolverAnimator.isActiveAndEnabled) GrappleVFX(isGrappling, playerGrappleHandRevolver);
+            else GrappleVFX(isGrappling, playerGrappleHandShotgun);
             velocity = grappleTargetDirection.normalized * grappleSpeed;
+        }
+        else
+        {
+            GrappleVFX(false, playerGrappleHandRevolver);
+            GrappleVFX(false, playerGrappleHandShotgun);
         }
     }
 
     private void Grapple_Canceled(InputAction.CallbackContext context)
     {
+        if (isGrappling) SoundManager2.Instance.PlaySound("GrappleCancel");
         isGrappling = false;
         SoundManager2.Instance.StopSound("Grapple");
     }
@@ -864,8 +932,11 @@ public class Movement : MonoBehaviour
                 normal = wallHit.normal;
                 normal *= -Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
 
-                wallNormal = -normal;
-                WallRun();
+                if (Vector3.Dot(movementInputWorld, -normal) < 0)
+                {
+                    wallNormal = -normal;
+                    WallRun();
+                }
             }
 
             //---check LEFT for wall----
@@ -877,8 +948,11 @@ public class Movement : MonoBehaviour
                 normal = wallHit.normal;
                 normal *= Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
 
-                wallNormal = normal;
-                WallRun();
+                if (Vector3.Dot(movementInputWorld, -normal) > 0)
+                {
+                    wallNormal = normal;
+                    WallRun();
+                }
             }
         }
 
@@ -892,7 +966,6 @@ public class Movement : MonoBehaviour
                 normal = wallHit.normal;
                 normal *= -Mathf.Sign(Vector3.Dot(transform.position - wallHit.point, normal));
 
-                wallNormal = -normal;
                 WallRun();
             }
             else
@@ -916,7 +989,7 @@ public class Movement : MonoBehaviour
         float wallSpeed = Vector3.Dot(tangent, velocity);
 
         if (!isWallRunning) wallRunStartTime = Time.time;
-        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time)
+        if (Mathf.Abs(wallSpeed) > wallrunSpeedThreshold && wallRunStartTime + maxWallrunTime >= Time.time && movementInputLocal != Vector2.zero)
         {
             lastWallRunTime = Time.time;
             isWallRunning = true;
@@ -931,7 +1004,7 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        else if (wallRunStartTime + 0.1f < Time.time)
+        else if (wallRunStartTime + 0.1f < Time.time || movementInputLocal == Vector2.zero)
         {
             Vector3 velocityHori = new Vector3(velocity.x, 0, velocity.z);
             velocityHori.Normalize();
@@ -946,6 +1019,7 @@ public class Movement : MonoBehaviour
     private void WallRunReset()
     {
         lastWallRunTime = Time.time;
+        leavingWallrunTime = Time.time;
         isWallRunning = false;
         wallNormal = Vector3.zero;
     }

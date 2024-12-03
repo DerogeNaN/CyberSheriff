@@ -26,6 +26,9 @@ public class EnemyMelee : EnemyBase
     [Tooltip("whether or not line of sight to the player is required to start chasing them")]
     public bool needsLineOfSight;
 
+    public float walkingSoundInterval = 2.0f;
+    private float lastWalkingSoundTime = 0.0f;
+
     Vector3 lastSeenPosition;
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
@@ -41,7 +44,7 @@ public class EnemyMelee : EnemyBase
     protected override void OnStart()
     {
         SetState(EnemyState.idle);
-        SoundManager2.Instance.PlaySound("RobotSpawnSFX", enemy.transform);
+        SoundManager2.Instance.PlaySound("RobotSpawn", transform);
         //initialPosition = transform.position;
         enemy.moveTarget = enemy.initialPosition;
         enemy.speed = runSpeed;
@@ -58,6 +61,7 @@ public class EnemyMelee : EnemyBase
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
+        SoundManager2.Instance.PlaySound("RobotHit", transform);
         enemy.CreateHitEffect();
     }
 
@@ -65,6 +69,7 @@ public class EnemyMelee : EnemyBase
     {
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
         rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        SoundManager2.Instance.PlaySound("RobotDeath", transform);
         Destroy(gameObject);
     }
 
@@ -80,7 +85,6 @@ public class EnemyMelee : EnemyBase
         enemy.speed = runSpeed;
         enemy.shouldPath = true;
         enemy.moveTarget = enemy.playerTransform.position;
-        SoundManager2.Instance.PlaySound("RobotSoundSFX", enemy.transform);
     }
     protected override void LostSightOfTargetEnter()
     {
@@ -101,6 +105,8 @@ public class EnemyMelee : EnemyBase
         enemy.animator.SetBool("Attack", true);
         enemy.animator.SetBool("Run", false);
 
+        SoundManager2.Instance.PlaySound("RobotMelee", transform);
+
         // set directions to lerp to quickly when attacking
         //attackStartRotation = transform.rotation.eulerAngles;
         //attackRotate = 0;
@@ -114,6 +120,8 @@ public class EnemyMelee : EnemyBase
         enemy.shouldPath = false;
         enemy.animator.SetBool("Run", false);
         enemy.animator.SetBool("Stagger", true);
+
+        SoundManager2.Instance.PlaySound("RobotStun", transform);
     }
     #endregion
 
@@ -126,13 +134,52 @@ public class EnemyMelee : EnemyBase
             SetState(EnemyState.movingToTarget);
         }
 
+        if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
+        {
+            SoundManager2.Instance.PlaySound("RobotWalking", enemy.transform);
+            lastWalkingSoundTime = Time.time;
+        }
+
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
+
+        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        {
+            enemy.animator.SetBool("Jump", false);
+            enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
+        }
+        else
+        {
+            enemy.animator.SetBool("Jump", true);
+            enemy.animator.SetBool("Run", false);
+        }*/
+
     }
     protected override void MovingToTargetUpdate()
     {
         enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
+
+        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        {
+            enemy.animator.SetBool("Jump", false);
+            enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+
+        }
+        else
+        {
+            enemy.animator.SetBool("Jump", true);
+            enemy.animator.SetBool("Run", false);
+        }*/
+
         enemy.moveTarget = enemy.playerTransform.position;
+
+        if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
+        {
+            SoundManager2.Instance.PlaySound("RobotWalking", enemy.transform);
+            lastWalkingSoundTime = Time.time;
+        }
 
         // if line of sight is lost, change to lost sight state
         if (!neverLoseSight && needsLineOfSight)
@@ -144,7 +191,7 @@ public class EnemyMelee : EnemyBase
         // if has line of sight and within attack range, switch to attack state
         if (enemy.hasLineOfSight && remainingAttackCooldown <= 0 && Vector3.Distance(transform.position, enemy.playerTransform.position) <= attackRange)
         {
-            SetState(EnemyState.attacking);
+            if (Physics.Raycast(transform.position, -Vector3.up, 1.0f)) SetState(EnemyState.attacking);
         }
     }
     protected override void LostSightOfTargetUpdate() // UNUSED

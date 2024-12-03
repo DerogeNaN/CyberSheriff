@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.SceneManagement;
 
 public class SoundManager2 : MonoBehaviour
 {
@@ -68,8 +69,8 @@ public class SoundManager2 : MonoBehaviour
         else
             Destroy(gameObject);
 
-        DontDestroyOnLoad(this);
-
+        if (SceneManager.GetActiveScene().buildIndex == 0) PlayMusic("Main Menu");
+        else PlayMusic("Gameplay Track 1");
     }
 
     private void Update()
@@ -98,12 +99,35 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
+        if (SceneManager.GetActiveScene().buildIndex != 0)
+        {
+            if (currentMusic.source.time >= currentMusic.source.clip.length)
+            {
+                if (currentMusic.name == "Gameplay Track 1")
+                {
+                    Destroy(currentMusic.source);
+                    PlayMusic("Gameplay Track 2");
+                }
+                else if (currentMusic.name == "Gameplay Track 2")
+                {
+                    Destroy(currentMusic.source);
+                    PlayMusic("Gameplay Track 3");
+                }
+
+                else
+                {
+                    Destroy(currentMusic.source);
+                    PlayMusic("Gameplay Track 1");
+                }
+            }
+        }
+
         //enSured deletion 
         foreach (AudioSource aus in gameObject.GetComponentsInChildren<AudioSource>())
         {
             if (aus.GetComponent<AudioSource>())
             {
-                if (!aus.GetComponent<AudioSource>().isPlaying)
+                if (aus.GetComponent<AudioSource>().time >= aus.GetComponent<AudioSource>().clip.length)
                 {
                     Destroy(GetComponent<AudioSource>());
                 }
@@ -153,7 +177,7 @@ public class SoundManager2 : MonoBehaviour
 
             sound.source = newSource;
             sound.source.Play();
-            Debug.Log($"Now adding sound:\"{sound.source.clip.name}\" to \" {sound.source.name}\"");
+            //Debug.Log($"Now adding sound:\"{sound.source.clip.name}\" to \" {sound.source.name}\"");
             // Clean up after the clip has finished playing
 
             if (targetObject == null)

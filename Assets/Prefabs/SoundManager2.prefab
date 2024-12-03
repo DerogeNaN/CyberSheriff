@@ -11,12 +11,13 @@ GameObject:
   - component: {fileID: 3728928701843013164}
   - component: {fileID: 3728928701843013165}
   - component: {fileID: 3728928701843013162}
+  - component: {fileID: 4293619866810941351}
   m_Layer: 0
   m_Name: SoundManager2
-  m_TagString: Untagged
+  m_TagString: SoundManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3728928701843013164
 Transform:
@@ -45,8 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679ee3600fb998b468b63dcca05099bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mastermusicVolume: 1
-  masterSfxVolume: 0.507
+  masterVolume: 1
+  masterMusicVolume: 1
+  masterSfxVolume: 1
   sounds:
   - name: Footsteps
     soundType: 0
@@ -61,14 +63,15 @@ MonoBehaviour:
   - name: Dash
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 700a12dccfdef02438302beeee5c1e1a, type: 3}
+    - {fileID: 8300000, guid: 7b8f2a0a4ebd8444aade22f3a7ba7337, type: 3}
     volume: 1
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Slide
     soundType: 0
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: e85aec13d091459479318cf45e530b53, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -77,7 +80,7 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 4c8e530d8be9ae740a5e0ad424b3030a, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -85,22 +88,17 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 38d57a5809eccb24f8845df21dfa2117, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Wallrunning
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 7df7ef50721140848a1f0ab4cbd3771b, type: 3}
-    - {fileID: 8300000, guid: 4bac49a72fff37a47a8c022711529c12, type: 3}
-    - {fileID: 8300000, guid: 7557c9e7bfbf0c24d911b94be824b837, type: 3}
-    - {fileID: 8300000, guid: 064ed50c1fec6bd4dba712f0cde937f4, type: 3}
-    - {fileID: 8300000, guid: 7373f499c1a53b54aafce221d0aff434, type: 3}
-    - {fileID: 8300000, guid: 74d42315dfd5fd842a69257579be21d1, type: 3}
-    - {fileID: 8300000, guid: 80152f48611c3744aacfdda84a172e59, type: 3}
-    - {fileID: 8300000, guid: c902ea586e65451498b5968ccb62f49b, type: 3}
-    - {fileID: 8300000, guid: 5d7de7e1863a9e640b73cbd0f2fbc941, type: 3}
+    - {fileID: 8300000, guid: f8598e25f2ca15f499ade608a6a5a312, type: 3}
+    - {fileID: 8300000, guid: 8b4da3c03e743864ab30f3a2b2743c3a, type: 3}
+    - {fileID: 8300000, guid: 2e62b4bee854a1a428800ffbeedfc787, type: 3}
+    - {fileID: 8300000, guid: fb0ede0ca76486047aa217dd1036e83f, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -127,7 +125,7 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: c2d76a1973d2eaa458262425163b4ad9, type: 3}
-    volume: 1
+    volume: 0.3
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -137,7 +135,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 9174f8171d080984a86e12edc7de7c3e, type: 3}
     - {fileID: 8300000, guid: df8e04a08485dc74ebd20d30d70dd26a, type: 3}
     - {fileID: 8300000, guid: 1ff4318affc7bd04e8518e3de49682f8, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -145,15 +143,15 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 528abb8b90e16f745be764a2ad1cca43, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: ShotgunLauncherThunk
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 02fdfe99f7bae804fb64b7f87e19538c, type: 3}
-    volume: 1
+    - {fileID: 8300000, guid: a58694af340bca14c89944caa23be3a2, type: 3}
+    volume: 0.3
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -161,7 +159,7 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 82a795264fe1df042848e31f52761e94, type: 3}
-    volume: 1
+    volume: 0.3
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -209,7 +207,7 @@ MonoBehaviour:
   - name: Health Pickup
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 3b2089158f005344d8aa3c9fb4eaf6e6, type: 3}
+    - {fileID: 8300000, guid: 748f4ef875d0c644081f01ce231f239b, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -217,7 +215,7 @@ MonoBehaviour:
   - name: Ammo Pickup
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 8d519b0cfa29477488efec329135fff1, type: 3}
+    - {fileID: 8300000, guid: 2b9e60957dd847045be08dac140f0246, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -229,7 +227,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 68c24f7e00ca061459c656d31f7b4587, type: 3}
     - {fileID: 8300000, guid: 3dd87c30fcc783745a52eaf094905599, type: 3}
     - {fileID: 8300000, guid: 826316072f04d21429cbe545670de0fd, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -248,7 +246,7 @@ MonoBehaviour:
   - name: RobotWeakPointHit
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 6b4ab1ed59da6e6449c159e20b56589a, type: 3}
+    - {fileID: 8300000, guid: 3fdcca1284c2fb346995e61eb293db9c, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -256,7 +254,8 @@ MonoBehaviour:
   - name: RobotDeath
     soundType: 1
     clips:
-    - {fileID: 8300000, guid: 9bf8cadd727b23144a4d5e587fbad3df, type: 3}
+    - {fileID: 8300000, guid: 918a5e689673de9489b3cc742a9a92de, type: 3}
+    - {fileID: 8300000, guid: 2a0d38a82caf90f4498c63031dfac8fa, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -300,7 +299,7 @@ MonoBehaviour:
   - name: RobotSpawn
     soundType: 1
     clips:
-    - {fileID: 8300000, guid: 1a59afe786584f545b73e60c514cded9, type: 3}
+    - {fileID: 8300000, guid: 10f614f4746596d40a14b81501d9fc75, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -330,7 +329,7 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   - name: SniperLaserCharge
-    soundType: 0
+    soundType: 1
     clips:
     - {fileID: 8300000, guid: 6b4ab1ed59da6e6449c159e20b56589a, type: 3}
     volume: 1
@@ -341,12 +340,12 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 3bdf579b12456bf459776300df9ea495, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: SniperLaserCollision (pending feedback)
-    soundType: 0
+    soundType: 1
     clips:
     - {fileID: 8300000, guid: 6b4ab1ed59da6e6449c159e20b56589a, type: 3}
     volume: 1
@@ -386,19 +385,11 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: Alarm_sound
-    soundType: 0
-    clips:
-    - {fileID: 8300000, guid: 7199626b2844c6d44b3fa92f6a8d5025, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
   - name: WoundedHealth
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 627bbff5326b2984b9e90005b11d1224, type: 3}
-    volume: 1
+    volume: 0.1
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -406,7 +397,7 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 627bbff5326b2984b9e90005b11d1224, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -422,7 +413,7 @@ MonoBehaviour:
     soundType: 0
     clips:
     - {fileID: 8300000, guid: 3415e9e86d4420547bff2734e625e0d1, type: 3}
-    volume: 1
+    volume: 0.75
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -432,14 +423,14 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 0931b3b58df76f54382733ca80da5569, type: 3}
     - {fileID: 8300000, guid: d64d8ad129982fb4d99c394b928a8cc4, type: 3}
     - {fileID: 8300000, guid: 23cc9946be2d3d94384533069806f3ba, type: 3}
-    volume: 1
+    volume: 0.8
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: FirstWave
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 6b4ab1ed59da6e6449c159e20b56589a, type: 3}
+    - {fileID: 8300000, guid: 5a8ff7bb63450b64b84f4225feeb41ab, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -447,12 +438,20 @@ MonoBehaviour:
   - name: OtherWaves
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 7199626b2844c6d44b3fa92f6a8d5025, type: 3}
+    - {fileID: 8300000, guid: 38a68d12a5f857340817c4529351ff38, type: 3}
     volume: 1
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: Other waves
+  - name: GrappleCancel
+    soundType: 0
+    clips:
+    - {fileID: 8300000, guid: c14e66e90995d9f46a0b947b27f503aa, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: 1
     soundType: 0
     clips: []
     volume: 1
@@ -460,14 +459,24 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   musicTracks:
-  - name: 1
-    track: {fileID: 8300000, guid: dc4f67ad153dfe4458e4e4519865dd85, type: 3}
+  - name: Main Menu
+    track: {fileID: 8300000, guid: d1d46fbddd54fe64790215e7bfda7144, type: 3}
     volume: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Gameplay Track 1
+    track: {fileID: 8300000, guid: d67a5e17ab62a9f4c90ab28054ca6e2a, type: 3}
+    volume: 0.25
     loop: 0
     source: {fileID: 0}
-  - name: 2
+  - name: Gameplay Track 2
     track: {fileID: 8300000, guid: 9dfd6443886508c47bae8bfe04adc207, type: 3}
-    volume: 1
+    volume: 0.3
+    loop: 0
+    source: {fileID: 0}
+  - name: Gameplay Track 3
+    track: {fileID: 8300000, guid: 4ff2f4bc3f4929048acf29c47f5efbc1, type: 3}
+    volume: 0.45
     loop: 0
     source: {fileID: 0}
   ambienceClips:
@@ -488,5 +497,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d2459045e942424b9764cc71ff8b7a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4293619866810941351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3728928701843013163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84a5d9cfc2ba5a841a925e7d67c444f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
