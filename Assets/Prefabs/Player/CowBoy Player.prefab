@@ -19352,6 +19352,7 @@ MonoBehaviour:
   grappleVFXLine2: {fileID: 6843339886323456150}
   playerGrappleHandRevolver: {fileID: 3264846140337378562}
   playerGrappleHandShotgun: {fileID: 7449807549815428050}
+  playerCapsule: {fileID: 4613755221359916242}
   revolverAnimator: {fileID: 8693868506014203999}
   shotgunAnimator: {fileID: 3641946873573803663}
   moveSpeed: 5
@@ -19498,7 +19499,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 0.75, y: 1.25, z: 0.75}
+  m_Extents: {x: 0.45, y: 1, z: 0.45}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1
@@ -37252,10 +37253,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6946850199542295957}
     m_Modifications:
+    - target: {fileID: 1553275743752984649, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -53.000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 3034565559268729726, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -104.00001
+      objectReference: {fileID: 0}
     - target: {fileID: 3085792600746302584, guid: 9331ed8457db2c145b3b7051324b564f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 5.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 3144431444732590843, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -102.89997
       objectReference: {fileID: 0}
     - target: {fileID: 3233998423768230223, guid: 9331ed8457db2c145b3b7051324b564f,
         type: 3}
@@ -37367,10 +37383,40 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -10.300133
       objectReference: {fileID: 0}
+    - target: {fileID: 5186031106364249690, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -49.699997
+      objectReference: {fileID: 0}
+    - target: {fileID: 5200878636671894356, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -53.449997
+      objectReference: {fileID: 0}
+    - target: {fileID: 5753288925782341808, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -53.449966
+      objectReference: {fileID: 0}
+    - target: {fileID: 6678476651775361813, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6833300698895763646, guid: 9331ed8457db2c145b3b7051324b564f,
         type: 3}
       propertyPath: m_Name
       value: Gun_UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 7011928618642564017, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -49.800003
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508444853732902676, guid: 9331ed8457db2c145b3b7051324b564f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -49.699997
       objectReference: {fileID: 0}
     - target: {fileID: 8623479415609985083, guid: 9331ed8457db2c145b3b7051324b564f,
         type: 3}

@@ -20,7 +20,7 @@ public class Movement : MonoBehaviour
     private Transform cameraSlidePos;
     private Transform cameraDefaultPos;
     private GameObject cameraWallrunHolder;
-    private CapsuleCollider playerCapsule;
+    public CapsuleCollider playerCapsule;
     [SerializeField] Animator revolverAnimator;
     [SerializeField] Animator shotgunAnimator;
     
@@ -219,7 +219,6 @@ public class Movement : MonoBehaviour
         if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
         if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
         if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
-        if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
         if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
         if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
         if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
