@@ -668,6 +668,7 @@ public class Movement : MonoBehaviour
         {
             //grappleVFXPulse.gameObject.SetActive(false);
             //grappleVFXPulse.Stop();
+            grappleVFXLine.gameObject.SetActive(false);
             grappleVFXLine.SetPosition(0, Vector3.zero);
             grappleVFXLine.SetPosition(1, Vector3.zero);
             grappleVFXLine1.SetPosition(0, Vector3.zero);
@@ -680,6 +681,7 @@ public class Movement : MonoBehaviour
         {
             //grappleVFXPulse.gameObject.SetActive(true);
             //grappleVFXPulse.Play();
+            grappleVFXLine.gameObject.SetActive(true);
             grappleVFXLine.SetPosition(0, hand.position);
             grappleVFXLine.SetPosition(1, grappleObject.transform.position + grappleOffset);
             grappleVFXLine1.SetPosition(0, hand.position);
