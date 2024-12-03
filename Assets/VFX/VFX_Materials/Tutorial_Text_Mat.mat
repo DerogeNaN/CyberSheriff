@@ -20,26 +20,44 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Jump_Pad_Air_Inner_Mat
-  m_Shader: {fileID: -6465566751694194690, guid: 1e2009ed1ca1ee5419fe3b206fb2e633,
+  m_Name: Tutorial_Text_Mat
+  m_Shader: {fileID: -6465566751694194690, guid: 72f2e3d8ba8570d409c71a230a7996e8,
     type: 3}
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _ALPHATEST_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseColour_Tex:
+        m_Texture: {fileID: 2800000, guid: 34db029e1a3f70d43bb836a6ec0a8819, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Emissive_Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Gradient:
         m_Texture: {fileID: 2800000, guid: 29b25bcb44bacf54c9b9b0a7598812ac, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Lines:
-        m_Texture: {fileID: 2800000, guid: 73c8ac24b3fac0e409dac2b8462b12d1, type: 3}
+        m_Texture: {fileID: 2800000, guid: a10bd25754372954482959a0cb6b7d28, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Smoothness_Tex:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -56,15 +74,33 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClip: 1
     - _Alpha_Clip: 0
-    - _Float: 32
-    - _Power: 4.32
+    - _Blend: 0
+    - _CastShadows: 1
+    - _Cull: 0
+    - _DstBlend: 0
+    - _Float: 13.5
+    - _Power: 5
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
     - _Rotation: 180
-    - _opacity: 0.38
+    - _Smoothness: 0
+    - _Speed_X: -0.2
+    - _Speed_Y: 0
+    - _SrcBlend: 1
+    - _Surface: 0
+    - _Textures: 0
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
+    - _opacity: 1
     m_Colors:
-    - _Color: {r: 0, g: 2.9413366, b: 2.9960785, a: 1}
-    - _ScrollSpeed: {r: -1.5, g: -0.3, b: 0, a: 0}
-    - _Tiling: {r: 4, g: -0.5, b: 0, a: 0}
+    - _Color: {r: 0, g: 0, b: 0, a: 1}
+    - _Colour: {r: 0, g: 0, b: 0, a: 0}
+    - _Emissive_Colour: {r: 0, g: 0.23267317, b: 2, a: 0}
+    - _ScrollSpeed: {r: 0, g: 0, b: 0, a: 0}
+    - _Tiling: {r: 2, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
