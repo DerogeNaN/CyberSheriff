@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 public class MouseLook : MonoBehaviour
 {
     [Header("Camera Settings")]
-    [SerializeField] float mouseSens;
+    [SerializeField] public float mouseSens;
 
     [Space(10.0f)]
     [Header("Serializeable Fields")]
@@ -25,6 +25,7 @@ public class MouseLook : MonoBehaviour
     void Start()
     {
         InitializeMouseLook();
+      // mouseSens = (PlayerPrefs.GetFloat("Sensitivity", 0.1f));
     }
 
     void InitializeMouseLook()
@@ -56,10 +57,10 @@ public class MouseLook : MonoBehaviour
         return mouseSens;
     }
 
-    public void SetMouseSense(float sense)
-    {
-        mouseSens = sense;
-    }
+    //public void SetMouseSense(float sense)
+    //{
+    //    mouseSens = sense;
+    //}
 
     void LockCursor()
     {

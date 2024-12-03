@@ -20,7 +20,8 @@ public class Movement : MonoBehaviour
     private Transform cameraSlidePos;
     private Transform cameraDefaultPos;
     private GameObject cameraWallrunHolder;
-    private CapsuleCollider playerCapsule;
+    public CapsuleCollider playerCapsule;
+    public SphereCollider playerSphere;
     [SerializeField] Animator revolverAnimator;
     [SerializeField] Animator shotgunAnimator;
     
@@ -219,7 +220,6 @@ public class Movement : MonoBehaviour
         if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
         if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
         if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
-        if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
         if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
         if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
         if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
@@ -772,36 +772,78 @@ public class Movement : MonoBehaviour
         float resolveDistance = 0.0f;
         Collider[] overlappingColliders = { };
 
-        overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
-                                                        transform.position - new Vector3(0, 0.7f, 0),
-                                                        0.6f, ~12, QueryTriggerInteraction.Ignore);
+        if (isSliding)
+        {
+            overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
+                                                            transform.position - new Vector3(0, 0.7f, 0),
+                                                            0.6f, ~12, QueryTriggerInteraction.Ignore);
+        }
+
+        else
+        {
+            overlappingColliders = Physics.OverlapSphere(transform.position + new Vector3(0, -0.7f, 0),
+                                              0.6f, ~12, QueryTriggerInteraction.Ignore);
+        }
 
         for (int i = 0; i < overlappingColliders.Length; i++)
         {
-            if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
+            if (!isSliding)
+            {
+                if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
                                         overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
                                         out resolveDirection, out resolveDistance))
-            {
-                Vector3 depen = resolveDirection * resolveDistance;
-                if (Vector3.Dot(totalDepenetration, depen) <= 0)
                 {
-                    totalDepenetration += depen;
-                }
-
-                else
-                {
-                    Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
-                    float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
-                    Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
-
-                    if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                    Vector3 depen = resolveDirection * (resolveDistance + 0.01f);
+                    if (Vector3.Dot(totalDepenetration, depen) <= 0)
                     {
-                        totalDepenetration = depen;
+                        totalDepenetration += depen;
                     }
-                    else totalDepenetration = changeInTotal + depen;
+
+                    else
+                    {
+                        Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
+                        float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
+                        Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
+
+                        if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                        {
+                            totalDepenetration = depen;
+                        }
+                        else totalDepenetration = changeInTotal + depen;
+                    }
+                }
+            }
+            else
+            {
+                playerSphere.radius = 0.5f;
+                playerSphere.transform.position += new Vector3(0, -0.7f, 0);
+
+                if (Physics.ComputePenetration(playerSphere, playerSphere.transform.position, playerSphere.transform.rotation,
+                                        overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
+                                        out resolveDirection, out resolveDistance))
+                {
+                    Vector3 depen = resolveDirection * (resolveDistance + 0.01f);
+                    if (Vector3.Dot(totalDepenetration, depen) <= 0)
+                    {
+                        totalDepenetration += depen;
+                    }
+
+                    else
+                    {
+                        Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
+                        float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
+                        Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
+
+                        if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                        {
+                            totalDepenetration = depen;
+                        }
+                        else totalDepenetration = changeInTotal + depen;
+                    }
                 }
             }
         }
+            
 
         transform.position += totalDepenetration;
     }
