@@ -61,8 +61,11 @@ public class EnemyMelee : EnemyBase
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
-        SoundManager2.Instance.PlaySound("RobotHit", transform);
         enemy.CreateHitEffect();
+
+        SoundManager2.Instance.PlaySound("RobotHit", transform);
+
+        if (damage > 50 && damageType == 1) SoundManager2.Instance.PlaySound("RobotWeakPointHit", transform);
     }
 
     public override void OnDestroyed(int damage, int damageType)
