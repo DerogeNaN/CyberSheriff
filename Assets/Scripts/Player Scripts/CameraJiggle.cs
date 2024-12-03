@@ -52,7 +52,7 @@ public class CameraJiggle : MonoBehaviour
 
     private void Start()
     {
-        mainCamera.fieldOfView = defaultFOV;
+        mainCamera.fieldOfView = defaultFOV = PlayerPrefs.GetFloat("FOV",80f);
         cameraUI.fieldOfView = defaultUIFOV;
         targetFOV = defaultFOV;
         lastFrameFOV = defaultFOV;
