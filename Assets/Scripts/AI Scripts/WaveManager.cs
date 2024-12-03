@@ -23,12 +23,16 @@ public class WaveManager : MonoBehaviour
 
     [Header("Global Wave Stats")]
     public int waveNumber = 0;
-    public float timeLeftInWave; // use timerScript.timeLeft for time left in wave
-    public int enemiesRemaining;
+    public int waveNumberUI = 0;
+    public int enemiesKilled = 0;
+    public int enemiesRemaining = 0;
     [SerializeField] private TextMeshProUGUI enemiesRemainingText;
     [SerializeField] private TextMeshProUGUI enemiesRemainingShadow;
     [SerializeField] private TextMeshProUGUI waveCountText;
     [SerializeField] private TextMeshProUGUI waveCountShadow;
+
+    [SerializeField] private TextMeshProUGUI enemyKillsResult;
+    [SerializeField] private TextMeshProUGUI waveCountResult;
 
     [SerializeField] PauseMenu pauseMenuScript;
     [SerializeField] public Timer timerScript;
@@ -65,7 +69,7 @@ public class WaveManager : MonoBehaviour
                 enemiesRemainingText.text = enemiesRemaining.ToString();
             }
 
-            if (waveCountText != null) waveCountText.text = waveNumber.ToString();
+            if (waveCountText != null) waveCountText.text = waveNumberUI.ToString();
         }
 
         if (Input.GetKeyDown(KeyCode.N)) StartWave();
@@ -92,9 +96,10 @@ public class WaveManager : MonoBehaviour
         else SoundManager2.Instance.PlaySound("OtherWaves");
        
 
-        if (waveNumber > maxWave)
+        if (waveNumber >= maxWave - 1)
         {
-            WinCondition();
+            StartNewWave();
+            timerScript.StartTimer();
         }
         else
         {
@@ -102,6 +107,7 @@ public class WaveManager : MonoBehaviour
             timerScript.StartTimer();
             waveNumber++;
         }
+        waveNumberUI++;
     }
 
     public void WinCondition()
@@ -120,6 +126,8 @@ public class WaveManager : MonoBehaviour
     {
         waveNumber = 0;
         enemiesRemaining = 0;
+        waveCountResult.text = waveNumberUI.ToString();
+        enemyKillsResult.text = enemiesKilled.ToString();
         StartNewWave = null;  // Unsubscribe from event ADDED THIS MAYBE THIS DID IT?
         Time.timeScale = 0;
         Cursor.visible = true;

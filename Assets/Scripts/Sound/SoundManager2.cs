@@ -177,7 +177,7 @@ public class SoundManager2 : MonoBehaviour
 
             sound.source = newSource;
             sound.source.Play();
-            Debug.Log($"Now adding sound:\"{sound.source.clip.name}\" to \" {sound.source.name}\"");
+            //Debug.Log($"Now adding sound:\"{sound.source.clip.name}\" to \" {sound.source.name}\"");
             // Clean up after the clip has finished playing
 
             if (targetObject == null)

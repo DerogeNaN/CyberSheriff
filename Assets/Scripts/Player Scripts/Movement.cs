@@ -128,6 +128,9 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("Max distance the player can enter a grapple")]
     public float maxGrappleDistance = 100f;
 
+    [SerializeField][Tooltip("Controls the size of the grapple UI based on distance (1 - large, 50 - small")]
+    [Range(1, 25)] float grappleScaleFactor = 10.0f;
+
     [SerializeField][Tooltip("The amount to offest the grapple UI from the middle of the grapple target")]
     public Vector3 grappleOffset = Vector3.zero;
 
@@ -615,7 +618,7 @@ public class Movement : MonoBehaviour
             float grappleUIScale = 0.0f;
             if (hit.distance > 25)
             {
-                grappleUIScale = hit.distance / 10.0f;
+                grappleUIScale = hit.distance / grappleScaleFactor;
             }
             else grappleUIScale = 2.5f;
 
@@ -653,6 +656,7 @@ public class Movement : MonoBehaviour
             else shotgunAnimator.SetTrigger("PullTrig");
             SoundManager2.Instance.PlaySound("Grapple");
         }
+        else SoundManager2.Instance.PlaySound("GrappleUnavailable");
     }
 
     private void GrappleVFX(bool toggle, Transform hand)
@@ -664,6 +668,7 @@ public class Movement : MonoBehaviour
         {
             //grappleVFXPulse.gameObject.SetActive(false);
             //grappleVFXPulse.Stop();
+            grappleVFXLine.gameObject.SetActive(false);
             grappleVFXLine.SetPosition(0, Vector3.zero);
             grappleVFXLine.SetPosition(1, Vector3.zero);
             grappleVFXLine1.SetPosition(0, Vector3.zero);
@@ -676,6 +681,7 @@ public class Movement : MonoBehaviour
         {
             //grappleVFXPulse.gameObject.SetActive(true);
             //grappleVFXPulse.Play();
+            grappleVFXLine.gameObject.SetActive(true);
             grappleVFXLine.SetPosition(0, hand.position);
             grappleVFXLine.SetPosition(1, grappleObject.transform.position + grappleOffset);
             grappleVFXLine1.SetPosition(0, hand.position);
