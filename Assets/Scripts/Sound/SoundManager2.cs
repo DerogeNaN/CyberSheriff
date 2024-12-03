@@ -221,7 +221,6 @@ public class SoundManager2 : MonoBehaviour
             if (localAudioSource != null)
             {
                 localAudioSource.Stop();
-                Destroy(localAudioSource);
             }
         }
 
