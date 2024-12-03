@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2969367515411259621}
   - component: {fileID: 1452714446530837715}
   - component: {fileID: 7597055876241565907}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4881,7 +4881,7 @@ GameObject:
   - component: {fileID: 8432325760018212555}
   - component: {fileID: 8432325760018212554}
   - component: {fileID: 8432325760018212405}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Muzzle_Grenade_Flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4897,7 +4897,7 @@ Transform:
   m_GameObject: {fileID: 8432325760018212404}
   m_LocalRotation: {x: 0, y: -0.7236902, z: 0, w: 0.690125}
   m_LocalPosition: {x: 19.87, y: -0, z: 0.94}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 30, y: 30, z: 30}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2969367515411259621}
@@ -4912,7 +4912,7 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8432325760018212404}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: f4c4cc7f033b68943894e81bed692a1f, type: 3}
+  m_Asset: {fileID: 8926484042661614526, guid: 2306600e5f21c974e916673dfc7cf283, type: 3}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -4921,28 +4921,28 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 0.7
+      - m_Value: 0.6
         m_Name: Size_Crosses
         m_Overridden: 1
     m_Vector2f:
       m_Array:
-      - m_Value: {x: 0.09, y: 0.09}
+      - m_Value: {x: 0.15, y: 0.15}
         m_Name: Lifetime_Flash
         m_Overridden: 1
-      - m_Value: {x: 0.11, y: 0.11}
+      - m_Value: {x: 0.3, y: 0.3}
         m_Name: Lifetime_Cone
         m_Overridden: 1
-      - m_Value: {x: 0.5, y: 0.5}
+      - m_Value: {x: 0, y: 0}
         m_Name: Size
         m_Overridden: 1
     m_Vector3f:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 1.7744919, y: 1.7166177, z: 1.6824193, w: 0}
+      - m_Value: {x: 0.49280965, y: 0.47605667, z: 0.46723935, w: 0}
         m_Name: Flash_Colour
         m_Overridden: 1
-      - m_Value: {x: 4.2823267, y: 4.1841927, z: 4.140929, w: 0}
+      - m_Value: {x: 1.5162677, y: 1.4349178, z: 1.3946801, w: 0}
         m_Name: Inner_Flash
         m_Overridden: 1
       - m_Value: {x: 2.9960785, y: 1.3647059, z: 0.29803923, w: 0}
@@ -4957,7 +4957,69 @@ VisualEffect:
     m_AnimationCurve:
       m_Array: []
     m_Gradient:
-      m_Array: []
+      m_Array:
+      - m_Value:
+          serializedVersion: 2
+          key0: {r: 1, g: 1, b: 1, a: 0}
+          key1: {r: 1, g: 1, b: 1, a: 0.47058824}
+          key2: {r: 0, g: 0, b: 0, a: 0.19607843}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 0
+          ctime1: 65535
+          ctime2: 0
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 0
+          atime1: 5783
+          atime2: 31804
+          atime3: 65535
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_NumColorKeys: 2
+          m_NumAlphaKeys: 4
+        m_Name: outer cross
+        m_Overridden: 1
+      - m_Value:
+          serializedVersion: 2
+          key0: {r: 1, g: 1, b: 1, a: 0}
+          key1: {r: 1, g: 1, b: 1, a: 0.78431374}
+          key2: {r: 0, g: 0, b: 0, a: 0.19607843}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 0
+          ctime1: 65535
+          ctime2: 0
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 0
+          atime1: 3855
+          atime2: 41056
+          atime3: 65535
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_NumColorKeys: 2
+          m_NumAlphaKeys: 4
+        m_Name: Inner cross
+        m_Overridden: 1
     m_NamedObject:
       m_Array: []
     m_Bool:
