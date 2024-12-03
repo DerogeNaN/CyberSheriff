@@ -31,7 +31,7 @@ public class Sniper : EnemyBase
     {
         SetState(EnemyState.stunned);
         SoundManager2.Instance.PlaySound("RobotHit", transform);
-        enemy.CreateHitEffect();
+        //enemy.CreateHitEffect();
     }
 
     public override void OnDestroyed(int damage, int damageType)

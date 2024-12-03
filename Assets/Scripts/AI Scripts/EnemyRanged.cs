@@ -63,7 +63,7 @@ public class EnemyRanged : EnemyBase
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
-        enemy.CreateHitEffect();
+        //enemy.CreateHitEffect();
     }
 
     public override void OnDestroyed(int damage, int damageType)

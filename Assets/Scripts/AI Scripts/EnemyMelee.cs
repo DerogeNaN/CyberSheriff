@@ -128,6 +128,7 @@ public class EnemyMelee : EnemyBase
     {
         enemy.shouldPath = false;
         enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Attack", false);
         enemy.animator.SetBool("Stagger", true);
 
         SoundManager2.Instance.PlaySound("RobotStun", transform);
