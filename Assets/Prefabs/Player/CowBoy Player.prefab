@@ -19243,7 +19243,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4613755221359916243}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -19482,8 +19482,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d381752c5b6814eb9df79ac1f1143c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  health: 100
+  maxHealth: 10000
+  health: 10000
   vFXFlashTime: 0.1
   iFrameTime: 0.42
   fallDamage: 20
@@ -35039,6 +35039,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2523235005589361090, guid: 6ad589f46d3c9ea4bb9309860f901424,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2610006896946374725, guid: 6ad589f46d3c9ea4bb9309860f901424,
         type: 3}
       propertyPath: m_Layer
@@ -36899,6 +36904,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266452372948151387, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8402455913663336103, guid: 0bfcf5b1aeca2e54abfb933f267ab7f6,
         type: 3}
