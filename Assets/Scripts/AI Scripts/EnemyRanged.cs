@@ -36,7 +36,7 @@ public class EnemyRanged : EnemyBase
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
-    float stun = 0;
+    public  float stun = 0;
     float untilDestroy = 2.0f;
     [SerializeField] GameObject ragdoll;
 
