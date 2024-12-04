@@ -41,6 +41,7 @@ public class EnemyCommon : MonoBehaviour
         health = GetComponent<Health>();
         mesh = transform.Find("Mesh").gameObject;
         animator = transform.GetComponentInChildren<Animator>();
+        navAgent.autoTraverseOffMeshLink = false;
 
         // start spawned or despawned
         if (active) Spawn();
@@ -51,6 +52,8 @@ public class EnemyCommon : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(navAgent.autoTraverseOffMeshLink);
+
         if (!active) return;
 
         UpdateRaycast();
@@ -74,7 +77,7 @@ public class EnemyCommon : MonoBehaviour
         if ((lookTarget - raycastPos).magnitude <= sightRange)
         {
             // check for line of sight with target
-            if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange, ~LayerMask.GetMask(new[] { "Enemy" })))
+            if (Physics.Raycast(raycastPos, (lookTarget - raycastPos).normalized, out RaycastHit hit, sightRange, ~LayerMask.GetMask(new[] { "Enemy", "Ignore Raycast" })))
             {
                 hasLineOfSight = hit.transform.gameObject.CompareTag("Player");
             }

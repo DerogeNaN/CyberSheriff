@@ -26,6 +26,10 @@ public class Sniper : EnemyBase
 
     float timer = 0;
     public GameObject ragdoll;
+    [Tooltip("offset for where the end of the laser appears on the player")]
+    public Vector3 laserEndpointOffset;
+    [Tooltip("how far to extend the laser past the player")]
+    public float laserEndpointExtend;
 
     public override void OnHit(int damage, int damageType)
     {
@@ -174,7 +178,7 @@ public class Sniper : EnemyBase
         Vector3[] positions = new Vector3[2];
         laserDirection = (enemy.playerTransform.position - gunPos.position).normalized;
 
-        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))
+        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy", "Ignore Raycast" })))
         {
             if (hit.collider.CompareTag("Player"))
             {
@@ -200,7 +204,8 @@ public class Sniper : EnemyBase
         }
 
         // get the direction of the beam, then extend it in that direction
-        positions[1] += (positions[1] - positions[0]).normalized * 100.0f;
+        positions[1] += (positions[1] - positions[0]).normalized * laserEndpointExtend;
+        positions[1] += laserEndpointOffset;
 
         foreach (var l in lineRenderers)
             l.SetPositions(positions);
