@@ -1,12 +1,15 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GroundCheck : MonoBehaviour
 {
     PlayerHealth playerHealth;
+    bool tutorialLevel = false;
 
     private void Start()
     {
         playerHealth = GetComponentInParent<PlayerHealth>();
+        if (SceneManager.GetActiveScene().buildIndex == 2) tutorialLevel = true;
     }
 
     private void OnTriggerStay(Collider other)
@@ -27,7 +30,7 @@ public class GroundCheck : MonoBehaviour
         {
             Movement.playerMovement.transform.position = Movement.playerMovement.respawnPos.position;
             Movement.playerMovement.transform.rotation = Movement.playerMovement.respawnPos.rotation;
-            playerHealth.TakeDamage(playerHealth.fallDamage, 0);
+            if (!tutorialLevel)playerHealth.TakeDamage(playerHealth.fallDamage, 0);
             Movement.playerMovement.velocity = new Vector3(0, 0, 0);
         }
         //TODO: ADD GROUND LAYER SO THAT THE PLAYER CANT JUMP OFF ENEMIES
