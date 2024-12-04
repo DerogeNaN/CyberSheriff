@@ -119,6 +119,7 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public Camera camRef;
 
+    bool turnitoffbool;
     public struct RayData
     {
         public Ray ray;
@@ -156,6 +157,14 @@ public class RangedWeapon : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (turnitoffbool) 
+        {
+            StopAllCoroutines();
+            currentMarker.SetActive(false);
+        }
+    }
 
     public virtual void EngagePrimaryFire()
     {
@@ -250,8 +259,9 @@ public class RangedWeapon : MonoBehaviour
 
     public IEnumerator TurnItOff()
     {
-
+        turnitoffbool = true;
         yield return new WaitForSeconds(1f);
+        turnitoffbool = false;
         currentMarker.SetActive(false);
     }
 
