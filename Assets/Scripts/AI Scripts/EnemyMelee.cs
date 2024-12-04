@@ -33,7 +33,7 @@ public class EnemyMelee : EnemyBase
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
     float remainingAttackCooldown = 0;
-    float stun = 0;
+    public float stun = 0;
     Vector3 attackStartRotation;
     Vector3 attackTargetRotation;
     float attackRotate = 0;
