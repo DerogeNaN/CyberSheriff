@@ -41,7 +41,6 @@ public class EnemyCommon : MonoBehaviour
         health = GetComponent<Health>();
         mesh = transform.Find("Mesh").gameObject;
         animator = transform.GetComponentInChildren<Animator>();
-        navAgent.autoTraverseOffMeshLink = false;
 
         // start spawned or despawned
         if (active) Spawn();
@@ -52,8 +51,6 @@ public class EnemyCommon : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(navAgent.autoTraverseOffMeshLink);
-
         if (!active) return;
 
         UpdateRaycast();
