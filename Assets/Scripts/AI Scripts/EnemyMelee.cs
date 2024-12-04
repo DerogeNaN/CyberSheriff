@@ -155,10 +155,10 @@ public class EnemyMelee : EnemyBase
             lastWalkingSoundTime = Time.time;
         }
 
-        //enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
 
-        if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
         {
             enemy.animator.SetBool("Jump", false);
             enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
@@ -168,7 +168,7 @@ public class EnemyMelee : EnemyBase
         {
             enemy.animator.SetBool("Jump", true);
             enemy.animator.SetBool("Run", false);
-        }
+        }*/
 
         // force target
         if (WaveManager.waveManagerInstance.timerScript.timeLeft < WaveManager.waveManagerInstance.forceTargetTime)
@@ -180,9 +180,9 @@ public class EnemyMelee : EnemyBase
     {
         enemy.moveTarget = enemy.playerTransform.position;
 
-        //enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
-        if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
         {
             enemy.animator.SetBool("Jump", false);
             enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
@@ -191,7 +191,7 @@ public class EnemyMelee : EnemyBase
         {
             enemy.animator.SetBool("Jump", true);
             enemy.animator.SetBool("Run", false);
-        }
+        }*/
 
 
         if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
