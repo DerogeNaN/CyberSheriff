@@ -5,13 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class EndLevelTrigger : MonoBehaviour
 {
-    BoxCollider trigger;
-
-    private void Awake()
-    {
-        trigger = GetComponent<BoxCollider>();
-    }
-
     public void EndLevel()
     {
         Cursor.visible = true;

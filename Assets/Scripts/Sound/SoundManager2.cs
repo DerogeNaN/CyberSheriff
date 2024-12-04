@@ -74,6 +74,7 @@ public class SoundManager2 : MonoBehaviour
             Destroy(gameObject);
 
         if (SceneManager.GetActiveScene().buildIndex == 0) PlayMusic("Main Menu");
+        else if (SceneManager.GetActiveScene().buildIndex == 2) PlayMusic("Tutorial");
         else PlayMusic("Gameplay Track 1");
     }
 
@@ -103,7 +104,7 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
-        if (SceneManager.GetActiveScene().buildIndex != 0)
+        if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             if (currentMusic.source.time >= currentMusic.source.clip.length)
             {

@@ -73,7 +73,7 @@ public class WaveManager : MonoBehaviour
             if (waveCountText != null) waveCountText.text = waveNumberUI.ToString();
         }
 
-        if (Input.GetKeyDown(KeyCode.N)) StartWave();
+        //if (Input.GetKeyDown(KeyCode.N)) StartWave();
     }
 
     private void SetupWaveManager()

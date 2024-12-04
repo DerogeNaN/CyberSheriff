@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679ee3600fb998b468b63dcca05099bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterVolume: 1
+  masterVolume: 0.5
   masterMusicVolume: 1
   masterSfxVolume: 1
   sounds:
@@ -412,7 +412,7 @@ MonoBehaviour:
   - name: PlayerDeath
     soundType: 0
     clips:
-    - {fileID: 8300000, guid: 3415e9e86d4420547bff2734e625e0d1, type: 3}
+    - {fileID: 8300000, guid: da4a642387ecc794db8667bc4c554902, type: 3}
     volume: 0.75
     pitch: 1
     loop: 0
@@ -478,6 +478,11 @@ MonoBehaviour:
     track: {fileID: 8300000, guid: 4ff2f4bc3f4929048acf29c47f5efbc1, type: 3}
     volume: 0.45
     loop: 0
+    source: {fileID: 0}
+  - name: Tutorial
+    track: {fileID: 8300000, guid: d35cca2a454b4224ca6f131936a7bcbe, type: 3}
+    volume: 0.2
+    loop: 1
     source: {fileID: 0}
   ambienceClips:
   - name: 

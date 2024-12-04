@@ -29,10 +29,6 @@ public class PlayerHealth : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            TakeDamage(10, 0);
-        }
         UpdateHealthUI();
     }
 
@@ -84,7 +80,6 @@ public class PlayerHealth : MonoBehaviour
     {
         if (health <= 0)
         {
-            Debug.Log("you died");
             SoundManager2.Instance.PlaySound("PlayerDeath");
             WaveManager.waveManagerInstance.LoseCondition();
 
