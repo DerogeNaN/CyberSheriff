@@ -77,7 +77,12 @@ public class EnemyMelee : EnemyBase
             Vector3 normal = (transform.position - enemy.playerTransform.position).normalized;
             rd.ApplyForce(new Vector3(normal.x, Mathf.Abs(normal.y), normal.y).normalized, 300.0f);
         } // else do knockback based on damage
-        else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        else
+        {
+            rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+            rd.wasHeadshot = damage > 50;
+        }
+
 
         Destroy(gameObject);
     }
@@ -150,10 +155,10 @@ public class EnemyMelee : EnemyBase
             lastWalkingSoundTime = Time.time;
         }
 
-        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+        //enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
 
-        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
         {
             enemy.animator.SetBool("Jump", false);
             enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
@@ -163,7 +168,7 @@ public class EnemyMelee : EnemyBase
         {
             enemy.animator.SetBool("Jump", true);
             enemy.animator.SetBool("Run", false);
-        }*/
+        }
 
         // force target
         if (WaveManager.waveManagerInstance.timerScript.timeLeft < WaveManager.waveManagerInstance.forceTargetTime)
@@ -175,9 +180,9 @@ public class EnemyMelee : EnemyBase
     {
         enemy.moveTarget = enemy.playerTransform.position;
 
-        enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
+        //enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
 
-        /*if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
+        if (Physics.Raycast(transform.position, -Vector3.up, 1.0f))
         {
             enemy.animator.SetBool("Jump", false);
             enemy.animator.SetBool("Run", enemy.navAgent.velocity.magnitude > 0.1f);
@@ -186,7 +191,7 @@ public class EnemyMelee : EnemyBase
         {
             enemy.animator.SetBool("Jump", true);
             enemy.animator.SetBool("Run", false);
-        }*/
+        }
 
 
         if (lastWalkingSoundTime + walkingSoundInterval + Random.Range(0.0f, 2.0f) < Time.time)
