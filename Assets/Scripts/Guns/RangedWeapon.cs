@@ -1,15 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using Unity.Mathematics;
-using Unity.PlasticSCM.Editor.WebApi;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 using UnityEngine.VFX;
-using static RangedWeapon;
 
 public class RangedWeapon : MonoBehaviour
 {
