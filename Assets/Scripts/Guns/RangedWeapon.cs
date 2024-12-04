@@ -119,6 +119,7 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public Camera camRef;
 
+    bool turnitoffbool;
     public struct RayData
     {
         public Ray ray;
@@ -156,6 +157,14 @@ public class RangedWeapon : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (turnitoffbool) 
+        {
+            StopAllCoroutines();
+            currentMarker.SetActive(false);
+        }
+    }
 
     public virtual void EngagePrimaryFire()
     {
@@ -250,8 +259,9 @@ public class RangedWeapon : MonoBehaviour
 
     public IEnumerator TurnItOff()
     {
-
+        turnitoffbool = true;
         yield return new WaitForSeconds(1f);
+        turnitoffbool = false;
         currentMarker.SetActive(false);
     }
 
@@ -346,12 +356,12 @@ public class RangedWeapon : MonoBehaviour
 
         if (!PunchThrough)
         {
-            hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
+            hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane,~LayerMask.NameToLayer("Ignore Raycast"));
             newData.hits.Add(cameraHit);
         }
         else
         {
-            hitDetected = Physics.RaycastAll(cameraRay, camRef.farClipPlane)[0].collider == null ? false : true;
+            hitDetected = Physics.RaycastAll(cameraRay, camRef.farClipPlane, ~LayerMask.NameToLayer("Ignore Raycast"))[0].collider == null ? false : true;
             newData.hits = Physics.RaycastAll(cameraRay, camRef.farClipPlane).ToList();
         }
 
@@ -379,12 +389,12 @@ public class RangedWeapon : MonoBehaviour
 
         if (!punchThrough)
         {
-            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane,~LayerMask.NameToLayer("Ignore Raycast"));
             newData.hits.Add(gunHit);
         }
         else
         {
-            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane,~LayerMask.NameToLayer("Ignore Raycast")).ToList();
         }
 
         return newData;
