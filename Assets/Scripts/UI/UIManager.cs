@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour
         creditsMenu.SetActive(false);
 
         SceneManager.LoadScene(2);
+        SoundManager2.Instance.PlayMusic("Tutorial");
     }
 
 
