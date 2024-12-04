@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
@@ -216,14 +217,14 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        if (standingCollider == null)       standingCollider = GetComponent<Collider>();
-        if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
-        if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
-        if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
-        if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
-        if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
-        if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
-        if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
+        if (standingCollider == null)               standingCollider = GetComponent<Collider>();
+        if (pauseMenu == null)                      pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (revolverAnimator == null)               Debug.LogError("Missing the revolver animator component", this);
+        if (shotgunAnimator == null)                Debug.LogError("Missing the shotgun animator component", this);
+        if (cameraWallrunHolder == null)            cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
+        if (cameraDefaultPos == null)               cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
+        if (cameraSlidePos == null)                 cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
+        if (cameraHolder == null)                   cameraHolder = GameObject.Find("CameraHolder");
         if (playerGrappleHandRevolver == null)      playerGrappleHandRevolver = GameObject.Find("Player Grapple Hand").transform;
 
         InitialiseMovement();
@@ -482,8 +483,6 @@ public class Movement : MonoBehaviour
     private void Slide_Performed(InputAction.CallbackContext context)
     {
         isTryingSlide = true;
-
-        
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
@@ -772,7 +771,7 @@ public class Movement : MonoBehaviour
         float resolveDistance = 0.0f;
         Collider[] overlappingColliders = { };
 
-        if (isSliding)
+        if (!isSliding)
         {
             overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
                                                             transform.position - new Vector3(0, 0.7f, 0),
@@ -782,7 +781,7 @@ public class Movement : MonoBehaviour
         else
         {
             overlappingColliders = Physics.OverlapSphere(transform.position + new Vector3(0, -0.7f, 0),
-                                              0.6f, ~12, QueryTriggerInteraction.Ignore);
+                                              0.5f, ~12, QueryTriggerInteraction.Ignore);
         }
 
         for (int i = 0; i < overlappingColliders.Length; i++)
@@ -793,18 +792,25 @@ public class Movement : MonoBehaviour
                                         overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
                                         out resolveDirection, out resolveDistance))
                 {
+                    //float amountAlreadyDepened = Vector3.Dot(resolveDirection, totalDepenetration);
+                    //float changeInNet = resolveDistance - amountAlreadyDepened;
+                    //if(changeInNet > 0)
+                    //{
+                    //    totalDepenetration += resolveDirection * changeInNet;
+                    //}
+
                     Vector3 depen = resolveDirection * (resolveDistance + 0.01f);
                     if (Vector3.Dot(totalDepenetration, depen) <= 0)
                     {
                         totalDepenetration += depen;
                     }
-
+                    
                     else
                     {
                         Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
                         float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
                         Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
-
+                    
                         if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
                         {
                             totalDepenetration = depen;
