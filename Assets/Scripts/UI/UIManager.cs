@@ -45,6 +45,17 @@ public class UIManager : MonoBehaviour
         SoundManager2.Instance.PlayMusic("Gameplay Track 1");
     }
 
+    public void TutorialButton()
+    {
+        mainMenu.SetActive(false);
+        leaderboardMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        creditsMenu.SetActive(false);
+
+        SceneManager.LoadScene(2);
+    }
+
+
     public void LeaderboardButton()
     {
         mainMenu.SetActive(false);
