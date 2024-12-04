@@ -267,7 +267,7 @@ public class WeaponManagement : MonoBehaviour
 
             //set next to true 
             currentActiveWeapon.gameObject.SetActive(true);
-
+            SoundManager2.Instance.PlaySound("WeaponSwap");
 
             if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
             {
@@ -304,6 +304,7 @@ public class WeaponManagement : MonoBehaviour
 
             //set next to true 
             currentActiveWeapon.gameObject.SetActive(true);
+            SoundManager2.Instance.PlaySound("WeaponSwap");
 
             if (currentActiveWeapon.GetComponent<RangedWeapon>().reloading)
             {

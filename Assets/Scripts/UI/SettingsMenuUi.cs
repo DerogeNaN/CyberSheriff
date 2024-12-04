@@ -57,19 +57,20 @@ public class SettingsMenuUi : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        masterSlider.value = SoundManager2.Instance.masterVolume;
-        musicSlider.value = SoundManager2.Instance.masterMusicVolume;
-        SFXSlider.value = SoundManager2.Instance.masterSfxVolume;
+        masterSlider.value = PlayerPrefs.GetFloat("MasterValue");
+        musicSlider.value = PlayerPrefs.GetFloat("MasterMusicValue");
+        SFXSlider.value = PlayerPrefs.GetFloat("MasterSfxValue");
 
-        masterText.text = (Mathf.Floor(SoundManager2.Instance.masterVolume * 100)).ToString();
-        musicText.text = (Mathf.Floor(SoundManager2.Instance.masterMusicVolume * 100)).ToString();
-        SFXText.text = (Mathf.Floor(SoundManager2.Instance.masterSfxVolume * 100)).ToString();
-        FOVSlider.value = jiggleScript.GetDefaultFov();
-        FOVText.text = jiggleScript.GetDefaultFov().ToString("F2");
-        Debug.Log("Lets get it started in here");
+        masterText.text = (Mathf.Floor(PlayerPrefs.GetFloat("MasterValue") * 100)).ToString();
+        musicText.text = (Mathf.Floor(PlayerPrefs.GetFloat("MasterMusicValue") * 100)).ToString();
+        SFXText.text = (Mathf.Floor(PlayerPrefs.GetFloat("MasterSfxValue") * 100)).ToString();
 
-        sensitivitySlider.value = lookingscript.GetMouseSense();
-        sensitivityText.text = math.remap(0, 20, 0, 2, lookingscript.GetMouseSense()).ToString("F2");
+        FOVSlider.value = PlayerPrefs.GetFloat("FOV");
+        FOVText.text = PlayerPrefs.GetFloat("FOV").ToString("F2");
+
+        sensitivitySlider.value = PlayerPrefs.GetFloat("Sensitivity");
+        sensitivityText.text = math.remap(0, 20, 0, 2, PlayerPrefs.GetFloat("Sensitivity")).ToString("F2");
+
         controlsButton.onClick.AddListener(delegate { SetState(OptionsMenuState.controls); });
         soundButton.onClick.AddListener(delegate { SetState(OptionsMenuState.sound); });
         returnToMenu.onClick.AddListener(delegate { SetState(OptionsMenuState.exit); });
@@ -78,12 +79,7 @@ public class SettingsMenuUi : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        Debug.Log(PlayerPrefs.GetFloat("Sensitivity"));
-
-        UpdateState(menuState);
-    }
+    void Update() { UpdateState(menuState); }
 
     public void SetState(OptionsMenuState state)
     {
@@ -138,7 +134,7 @@ public class SettingsMenuUi : MonoBehaviour
                 optionsPrefab.SetActive(false);
                 UIObj.SetActive(true);
                 if (mainMenu)
-                    mainMenu.SetActive(true);
+                    mainMenu.SetActive(false);
 
                 screenMenu.SetActive(false);
                 soundMenu.SetActive(false);
@@ -154,7 +150,7 @@ public class SettingsMenuUi : MonoBehaviour
                 optionsPrefab.SetActive(true);
                 UIObj.SetActive(false);
                 if (mainMenu)
-                    mainMenu.SetActive(true);
+                    mainMenu.SetActive(false);
 
 
 
@@ -173,7 +169,7 @@ public class SettingsMenuUi : MonoBehaviour
                 optionsPrefab.SetActive(true);
                 UIObj.SetActive(false);
                 if (mainMenu)
-                    mainMenu.SetActive(true);
+                    mainMenu.SetActive(false);
 
 
                 screenMenu.SetActive(false);
@@ -191,7 +187,7 @@ public class SettingsMenuUi : MonoBehaviour
                 optionsPrefab.SetActive(true);
                 UIObj.SetActive(false);
                 if (mainMenu)
-                    mainMenu.SetActive(true);
+                    mainMenu.SetActive(false);
 
                 screenMenu.SetActive(false);
                 soundMenu.SetActive(false);
@@ -220,37 +216,41 @@ public class SettingsMenuUi : MonoBehaviour
 
     public void MasterVolumeSlider()
     {
-        SoundManager2.Instance.AdjustMasterVolume(masterSlider.value);
+        if (SoundManager2.Instance)
+            SoundManager2.Instance.AdjustMasterVolume(masterSlider.value);
         PlayerPrefs.SetFloat("MasterValue", SoundManager2.Instance.masterVolume);
         masterText.text = (Mathf.Floor(SoundManager2.Instance.masterVolume * 100)).ToString();
     }
 
     public void MusicVolumeSlider()
     {
-        SoundManager2.Instance.AdjustMusicVolume(musicSlider.value);
+        if (SoundManager2.Instance)
+            SoundManager2.Instance.AdjustMusicVolume(musicSlider.value);
         PlayerPrefs.SetFloat("MasterMusicValue", SoundManager2.Instance.masterMusicVolume);
         musicText.text = (Mathf.Floor(SoundManager2.Instance.masterMusicVolume * 100)).ToString();
     }
 
     public void SFXVolumeSlider()
     {
-        SoundManager2.Instance.AdjustSFXVolume(SFXSlider.value);
+        if (SoundManager2.Instance)
+            SoundManager2.Instance.AdjustSFXVolume(SFXSlider.value);
         PlayerPrefs.SetFloat("MasterSfxValue", SoundManager2.Instance.masterSfxVolume);
         SFXText.text = (Mathf.Floor(SoundManager2.Instance.masterSfxVolume * 100)).ToString();
     }
 
     public void SenseSlider()
     {
-        lookingscript.mouseSens = math.remap(0,1, 0, 20, sensitivitySlider.value);
-        PlayerPrefs.SetFloat("Sensitivity", lookingscript.GetMouseSense());
-        Debug.Log(PlayerPrefs.GetFloat("Sensitivity"));
-        sensitivityText.text = math.remap(0, 20, 0, 2, lookingscript.GetMouseSense()).ToString("F2");
+        PlayerPrefs.SetFloat("Sensitivity", math.remap(0, 1, 0, 20, sensitivitySlider.value));
+        if (lookingscript)
+            lookingscript.mouseSens = PlayerPrefs.GetFloat("Sensitivity");
+        sensitivityText.text = math.remap(0, 20, 0, 2, PlayerPrefs.GetFloat("Sensitivity")).ToString("F2");
     }
 
     public void FOVSliderFunc()
     {
-        jiggleScript.SetDefaultFov(math.remap(0,1,60,110,FOVSlider.value));
-        PlayerPrefs.SetFloat("FOV", jiggleScript.GetDefaultFov());
-        FOVText.text = jiggleScript.GetDefaultFov().ToString("F2");
+        PlayerPrefs.SetFloat("FOV", math.remap(0, 1, 60, 110, FOVSlider.value));
+        if (jiggleScript)
+            jiggleScript.SetDefaultFov(PlayerPrefs.GetFloat("FOV"));
+        FOVText.text = PlayerPrefs.GetFloat("FOV").ToString("F2");
     }
 }

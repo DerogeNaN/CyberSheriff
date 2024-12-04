@@ -33,7 +33,7 @@ public class EnemyMelee : EnemyBase
     float remainingChaseTime = 0;
     float remainingAttackTime = 0;
     float remainingAttackCooldown = 0;
-    float stun = 0;
+    public float stun = 0;
     Vector3 attackStartRotation;
     Vector3 attackTargetRotation;
     float attackRotate = 0;
@@ -77,7 +77,12 @@ public class EnemyMelee : EnemyBase
             Vector3 normal = (transform.position - enemy.playerTransform.position).normalized;
             rd.ApplyForce(new Vector3(normal.x, Mathf.Abs(normal.y), normal.y).normalized, 300.0f);
         } // else do knockback based on damage
-        else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        else
+        {
+            rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+            rd.wasHeadshot = damage > 50;
+        }
+
 
         Destroy(gameObject);
     }

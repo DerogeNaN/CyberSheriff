@@ -159,7 +159,7 @@ public class Revolver : RangedWeapon
         gunRay.direction = barrelToLookPointDir;
         gunRay.direction = gunRay.direction += (Vector3)UnityEngine.Random.insideUnitSphere * spreadMultiplier;
 
-        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane, ~LayerMask.NameToLayer("Ignore Raycast"));
 
         newData.hits.Add(gunHit);
         return newData;
