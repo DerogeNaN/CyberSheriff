@@ -61,8 +61,11 @@ public class EnemyMelee : EnemyBase
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
-        SoundManager2.Instance.PlaySound("RobotHit", transform);
         enemy.CreateHitEffect();
+
+        SoundManager2.Instance.PlaySound("RobotHit", transform);
+
+        if (damage > 50 && damageType == 1) SoundManager2.Instance.PlaySound("RobotWeakPointHit", transform);
     }
 
     public override void OnDestroyed(int damage, int damageType)
@@ -76,8 +79,6 @@ public class EnemyMelee : EnemyBase
         } // else do knockback based on damage
         else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
 
-
-        SoundManager2.Instance.PlaySound("RobotDeath", transform);
         Destroy(gameObject);
     }
 
@@ -127,6 +128,7 @@ public class EnemyMelee : EnemyBase
     {
         enemy.shouldPath = false;
         enemy.animator.SetBool("Run", false);
+        enemy.animator.SetBool("Attack", false);
         enemy.animator.SetBool("Stagger", true);
 
         SoundManager2.Instance.PlaySound("RobotStun", transform);

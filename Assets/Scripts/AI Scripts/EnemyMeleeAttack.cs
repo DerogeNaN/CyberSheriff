@@ -23,7 +23,9 @@ public class EnemyMeleeAttack : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage, 0);
+            other.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth hp);
+            if (hp) hp.TakeDamage(damage, 0);
+
             Destroy(gameObject);
         }
     }

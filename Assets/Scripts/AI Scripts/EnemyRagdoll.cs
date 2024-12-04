@@ -22,6 +22,9 @@ public class EnemyRagdoll : MonoBehaviour
             m.material = new Material(mat);
         }
 
+        SoundManager2.Instance.PlaySound("RobotDeath", transform);
+        SoundManager2.Instance.PlaySound("RobotDesolving", transform);
+
         Destroy(gameObject, despawnTime);
     }
 
