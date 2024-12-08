@@ -64,12 +64,17 @@ public class SoundManager2 : MonoBehaviour
 
     private void Awake()
     {
+        masterVolume = PlayerPrefs.GetFloat("MasterValue",1);
+        masterMusicVolume = PlayerPrefs.GetFloat("MasterMusicValue", 1);
+        masterSfxVolume = PlayerPrefs.GetFloat("MasterSfxValue", 1);
+
         if (Instance == null)
             Instance = this;
         else
             Destroy(gameObject);
 
         if (SceneManager.GetActiveScene().buildIndex == 0) PlayMusic("Main Menu");
+        else if (SceneManager.GetActiveScene().buildIndex == 2) PlayMusic("Tutorial");
         else PlayMusic("Gameplay Track 1");
     }
 
@@ -99,7 +104,7 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
-        if (SceneManager.GetActiveScene().buildIndex != 0)
+        if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             if (currentMusic.source.time >= currentMusic.source.clip.length)
             {
@@ -177,7 +182,7 @@ public class SoundManager2 : MonoBehaviour
 
             sound.source = newSource;
             sound.source.Play();
-            Debug.Log($"Now adding sound:\"{sound.source.clip.name}\" to \" {sound.source.name}\"");
+            //Debug.Log($"Now adding sound:\"{sound.source.clip.name}\" to \" {sound.source.name}\"");
             // Clean up after the clip has finished playing
 
             if (targetObject == null)
@@ -221,7 +226,6 @@ public class SoundManager2 : MonoBehaviour
             if (localAudioSource != null)
             {
                 localAudioSource.Stop();
-                Destroy(localAudioSource);
             }
         }
 

@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
@@ -20,7 +21,8 @@ public class Movement : MonoBehaviour
     private Transform cameraSlidePos;
     private Transform cameraDefaultPos;
     private GameObject cameraWallrunHolder;
-    private CapsuleCollider playerCapsule;
+    public CapsuleCollider playerCapsule;
+    public SphereCollider playerSphere;
     [SerializeField] Animator revolverAnimator;
     [SerializeField] Animator shotgunAnimator;
     
@@ -128,12 +130,15 @@ public class Movement : MonoBehaviour
     [SerializeField][Tooltip("Max distance the player can enter a grapple")]
     public float maxGrappleDistance = 100f;
 
+    [SerializeField][Tooltip("Controls the size of the grapple UI based on distance (1 - large, 50 - small")]
+    [Range(1, 25)] float grappleScaleFactor = 10.0f;
+
     [SerializeField][Tooltip("The amount to offest the grapple UI from the middle of the grapple target")]
     public Vector3 grappleOffset = Vector3.zero;
 
     //Backend Variables
     private Vector3 grappleTargetDirection = Vector3.zero;
-    private float lastGrappleTime = -5;
+    public float lastGrappleTime = -5;
     private GameObject grappleObject;
     [HideInInspector] public bool isGrappling = false;
     [HideInInspector] public bool canGrapple = false;
@@ -212,15 +217,14 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        if (standingCollider == null)       standingCollider = GetComponent<Collider>();
-        if (pauseMenu == null)              pauseMenu = GetComponentInChildren<PauseMenu>();
-        if (revolverAnimator == null)       Debug.LogError("Missing the revolver animator component", this);
-        if (shotgunAnimator == null)        Debug.LogError("Missing the shotgun animator component", this);
-        if (playerCapsule == null)          playerCapsule = GetComponent<CapsuleCollider>();
-        if (cameraWallrunHolder == null)    cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
-        if (cameraDefaultPos == null)       cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
-        if (cameraSlidePos == null)         cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
-        if (cameraHolder == null)           cameraHolder = GameObject.Find("CameraHolder");
+        if (standingCollider == null)               standingCollider = GetComponent<Collider>();
+        if (pauseMenu == null)                      pauseMenu = GetComponentInChildren<PauseMenu>();
+        if (revolverAnimator == null)               Debug.LogError("Missing the revolver animator component", this);
+        if (shotgunAnimator == null)                Debug.LogError("Missing the shotgun animator component", this);
+        if (cameraWallrunHolder == null)            cameraWallrunHolder = GameObject.Find("CameraWallRunHolder");
+        if (cameraDefaultPos == null)               cameraDefaultPos = GameObject.Find("Camera Default Pos").transform;
+        if (cameraSlidePos == null)                 cameraSlidePos = GameObject.Find("Camera Slide Pos").transform;
+        if (cameraHolder == null)                   cameraHolder = GameObject.Find("CameraHolder");
         if (playerGrappleHandRevolver == null)      playerGrappleHandRevolver = GameObject.Find("Player Grapple Hand").transform;
 
         InitialiseMovement();
@@ -479,8 +483,6 @@ public class Movement : MonoBehaviour
     private void Slide_Performed(InputAction.CallbackContext context)
     {
         isTryingSlide = true;
-
-        
     }
 
     private void Slide_Cancelled(InputAction.CallbackContext context)
@@ -615,7 +617,7 @@ public class Movement : MonoBehaviour
             float grappleUIScale = 0.0f;
             if (hit.distance > 25)
             {
-                grappleUIScale = hit.distance / 10.0f;
+                grappleUIScale = hit.distance / grappleScaleFactor;
             }
             else grappleUIScale = 2.5f;
 
@@ -653,6 +655,7 @@ public class Movement : MonoBehaviour
             else shotgunAnimator.SetTrigger("PullTrig");
             SoundManager2.Instance.PlaySound("Grapple");
         }
+        else SoundManager2.Instance.PlaySound("GrappleUnavailable");
     }
 
     private void GrappleVFX(bool toggle, Transform hand)
@@ -664,6 +667,7 @@ public class Movement : MonoBehaviour
         {
             //grappleVFXPulse.gameObject.SetActive(false);
             //grappleVFXPulse.Stop();
+            grappleVFXLine.gameObject.SetActive(false);
             grappleVFXLine.SetPosition(0, Vector3.zero);
             grappleVFXLine.SetPosition(1, Vector3.zero);
             grappleVFXLine1.SetPosition(0, Vector3.zero);
@@ -676,6 +680,7 @@ public class Movement : MonoBehaviour
         {
             //grappleVFXPulse.gameObject.SetActive(true);
             //grappleVFXPulse.Play();
+            grappleVFXLine.gameObject.SetActive(true);
             grappleVFXLine.SetPosition(0, hand.position);
             grappleVFXLine.SetPosition(1, grappleObject.transform.position + grappleOffset);
             grappleVFXLine1.SetPosition(0, hand.position);
@@ -766,36 +771,85 @@ public class Movement : MonoBehaviour
         float resolveDistance = 0.0f;
         Collider[] overlappingColliders = { };
 
-        overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
-                                                        transform.position - new Vector3(0, 0.7f, 0),
-                                                        0.6f, ~12, QueryTriggerInteraction.Ignore);
+        if (!isSliding)
+        {
+            overlappingColliders = Physics.OverlapCapsule(transform.position + new Vector3(0, 0.7f, 0),
+                                                            transform.position - new Vector3(0, 0.7f, 0),
+                                                            0.6f, ~12, QueryTriggerInteraction.Ignore);
+        }
+
+        else
+        {
+            overlappingColliders = Physics.OverlapSphere(transform.position + new Vector3(0, -0.7f, 0),
+                                              0.5f, ~12, QueryTriggerInteraction.Ignore);
+        }
 
         for (int i = 0; i < overlappingColliders.Length; i++)
         {
-            if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
+            if (!isSliding)
+            {
+                if (Physics.ComputePenetration(playerCapsule, transform.position, transform.rotation,
                                         overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
                                         out resolveDirection, out resolveDistance))
-            {
-                Vector3 depen = resolveDirection * resolveDistance;
-                if (Vector3.Dot(totalDepenetration, depen) <= 0)
                 {
-                    totalDepenetration += depen;
-                }
+                    //float amountAlreadyDepened = Vector3.Dot(resolveDirection, totalDepenetration);
+                    //float changeInNet = resolveDistance - amountAlreadyDepened;
+                    //if(changeInNet > 0)
+                    //{
+                    //    totalDepenetration += resolveDirection * changeInNet;
+                    //}
 
-                else
-                {
-                    Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
-                    float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
-                    Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
-
-                    if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                    Vector3 depen = resolveDirection * (resolveDistance + 0.01f);
+                    if (Vector3.Dot(totalDepenetration, depen) <= 0)
                     {
-                        totalDepenetration = depen;
+                        totalDepenetration += depen;
                     }
-                    else totalDepenetration = changeInTotal + depen;
+                    
+                    else
+                    {
+                        Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
+                        float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
+                        Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
+                    
+                        if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                        {
+                            totalDepenetration = depen;
+                        }
+                        else totalDepenetration = changeInTotal + depen;
+                    }
+                }
+            }
+            else
+            {
+                playerSphere.radius = 0.5f;
+                playerSphere.transform.position += new Vector3(0, -0.7f, 0);
+
+                if (Physics.ComputePenetration(playerSphere, playerSphere.transform.position, playerSphere.transform.rotation,
+                                        overlappingColliders[i], overlappingColliders[i].transform.position, overlappingColliders[i].transform.rotation,
+                                        out resolveDirection, out resolveDistance))
+                {
+                    Vector3 depen = resolveDirection * (resolveDistance + 0.01f);
+                    if (Vector3.Dot(totalDepenetration, depen) <= 0)
+                    {
+                        totalDepenetration += depen;
+                    }
+
+                    else
+                    {
+                        Vector3 normalInTotal = Vector3.Normalize(totalDepenetration);
+                        float amountAlreadyDepened = Vector3.Dot(normalInTotal, totalDepenetration);
+                        Vector3 changeInTotal = totalDepenetration - amountAlreadyDepened * normalInTotal;
+
+                        if (Vector3.Dot(changeInTotal, totalDepenetration) < 0)
+                        {
+                            totalDepenetration = depen;
+                        }
+                        else totalDepenetration = changeInTotal + depen;
+                    }
                 }
             }
         }
+            
 
         transform.position += totalDepenetration;
     }

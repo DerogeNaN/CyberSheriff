@@ -36,7 +36,7 @@ public class EnemyRanged : EnemyBase
     float remainingAttackTime;
     float remainingAttackCooldown;
     float remainingSniperAimTime;
-    float stun = 0;
+    public  float stun = 0;
     float untilDestroy = 2.0f;
     [SerializeField] GameObject ragdoll;
 
@@ -63,13 +63,21 @@ public class EnemyRanged : EnemyBase
     {
         stun = 0.5f;
         SetState(EnemyState.stunned);
-        enemy.CreateHitEffect();
+        //enemy.CreateHitEffect();
     }
 
     public override void OnDestroyed(int damage, int damageType)
     {
+        //create ragdoll
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
-        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+        if (damageType == 3) // if the damage was from explosion
+        {
+            Vector3 normal = (transform.position - enemy.playerTransform.position).normalized;
+            rd.ApplyForce(new Vector3(normal.x, 0, normal.y).normalized, 300.0f);
+        } // else do knockback based on damage
+        else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+
+
         SoundManager2.Instance.PlaySound("RobotDeath", transform);
         Destroy(gameObject);
     }
@@ -134,6 +142,12 @@ public class EnemyRanged : EnemyBase
 
         // if the player gets withing range and line of sight, switch to chasing them
         if (enemy.hasLineOfSight || !needsLineOfSight) SetState(EnemyState.movingToTarget);
+
+        // force target
+        if (WaveManager.waveManagerInstance.timerScript.timeLeft < WaveManager.waveManagerInstance.forceTargetTime)
+        {
+            SetState(EnemyState.movingToTarget);
+        }
     }
     protected override void MovingToTargetUpdate()
     {

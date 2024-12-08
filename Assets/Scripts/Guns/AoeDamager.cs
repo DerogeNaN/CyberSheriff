@@ -12,9 +12,13 @@ public class AoeDamager : MonoBehaviour
     [SerializeField]
     Collider collider;
 
-    [Tooltip("area of effect range")]
+    [Tooltip("area of effect  for damage")]
     [SerializeField]
-    float blastRadius;
+    float damageRadius;
+
+    [Tooltip("area of effect  for damage")]
+    [SerializeField]
+    float stunRadius;
 
     [SerializeField]
     GameObject explosionVFX;
@@ -41,7 +45,11 @@ public class AoeDamager : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, blastRadius);
+        Gizmos.DrawWireSphere(transform.position, damageRadius);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, stunRadius);
+
 
     }
 
@@ -74,12 +82,33 @@ public class AoeDamager : MonoBehaviour
 
     void Explosion(Collision collision)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, blastRadius);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, damageRadius);
+        Collider[] stunHitColliders = Physics.OverlapSphere(transform.position, stunRadius);
         GameObject vfx = Instantiate(explosionVFX);
-        SoundManager2.Instance.PlaySound("ShotgunGranadeExplosion",vfx.gameObject.transform);
+        SoundManager2.Instance.PlaySound("ShotgunGranadeExplosion", vfx.gameObject.transform);
         vfx.transform.position = transform.position;
         vfx.transform.LookAt(vfx.transform.position + collision.contacts[0].normal, Vector3.up);
         vfx.transform.position += -collision.contacts[0].normal;
+
+
+        foreach (var stunHitCollider in stunHitColliders)
+        {
+            if (stunHitCollider.GetComponentInParent<EnemyBase>())
+            {
+                if (stunHitCollider.GetComponentInParent<EnemyMelee>())
+                {
+                    stunHitCollider.GetComponentInParent<EnemyMelee>().stun = 0.5f;
+                    stunHitCollider.GetComponentInParent<EnemyMelee>().SetState(EnemyState.stunned);
+                }
+
+                if (stunHitCollider.GetComponentInParent<EnemyRanged>()) 
+                {
+                    stunHitCollider.GetComponentInParent<EnemyRanged>().stun = 0.5f;
+                    stunHitCollider.GetComponentInParent<EnemyRanged>().SetState(EnemyState.stunned);
+                }
+            }
+        }
+
 
         foreach (var hitCollider in hitColliders)
         {
@@ -93,7 +122,7 @@ public class AoeDamager : MonoBehaviour
                     Debug.Log(hpscript);
                     //make sure on  Kill isnt all ready an event;
                     Debug.Log(hitCollider.name + "Was Caught in Blast");
-                    hpscript.TakeDamage(damage, 0, gameObject);
+                    hpscript.TakeDamage(damage, 3, gameObject);
                     continue;
                 }
                 else if (hitCollider.transform.parent.TryGetComponent(out hpscript))
@@ -104,7 +133,7 @@ public class AoeDamager : MonoBehaviour
                     //make sure on  Kill isnt all ready an event;
 
 
-                    hpscript.TakeDamage(damage, 0, gameObject);
+                    hpscript.TakeDamage(damage, 3, gameObject);
                     continue;
                 }
                 else
@@ -114,7 +143,7 @@ public class AoeDamager : MonoBehaviour
             {
                 Debug.Log(hpscript);
                 Debug.Log(hitCollider.name + "Was Caught in Blast");
-                hpscript.TakeDamage(damage, 0, gameObject);
+                hpscript.TakeDamage(damage, 3, gameObject);
             }
         }
         Destroy(gameObject);

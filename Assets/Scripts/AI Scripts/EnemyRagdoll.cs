@@ -14,6 +14,7 @@ public class EnemyRagdoll : MonoBehaviour
 
     Material dissolve;
     float dissolveAmount = 0.19f;
+    public bool wasHeadshot = false;
 
     void Start()
     {
@@ -21,6 +22,12 @@ public class EnemyRagdoll : MonoBehaviour
         {
             m.material = new Material(mat);
         }
+
+        if (wasHeadshot) SoundManager2.Instance.PlaySound("RobotWeakPointHit");
+        else SoundManager2.Instance.PlaySound("RobotHit");
+
+        SoundManager2.Instance.PlaySound("RobotDeath", transform);
+        SoundManager2.Instance.PlaySound("RobotDesolving", transform);
 
         Destroy(gameObject, despawnTime);
     }

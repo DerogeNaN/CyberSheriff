@@ -31,13 +31,22 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    public void OnHoverSound()
+    {
+        SoundManager2.Instance.PlaySound("UIButtonHover");
+    }
+
+    public void OnPressSound()
+    {
+        SoundManager2.Instance.PlaySound("UIButtonPress");
+    }
+
     public void PauseGame()
     {
         //Pausing gameplay
         Time.timeScale = 0;
         isPaused = true;
 
-        SoundManager2.Instance.PlaySound("UIButtonSFX");
         //Activating player menu input
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
@@ -54,7 +63,6 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1;
         isPaused = false;
 
-        SoundManager2.Instance.PlaySound("UIButtonSFX");
         //Activating player menu input
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -65,16 +73,21 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(false);
     }
 
+    public void RestartButton()
+    {
+        Time.timeScale = 1;
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+    }
+
     public void OptionsButton()
     {
-        SoundManager2.Instance.PlaySound("UIButtonSFX");
         pauseMenu.SetActive(false);
         optionsMenu.SetActive(true);
     }
 
     public void ReturnToMenuButton()
     {
-        SoundManager2.Instance.PlaySound("UIButtonSFX");
         pauseMenu.SetActive(true);
         optionsMenu.SetActive(false);
     }
@@ -83,7 +96,6 @@ public class PauseMenu : MonoBehaviour
     {
         optionsMenu.SetActive(false);
         pauseMenu.SetActive(false);
-        SoundManager2.Instance.PlaySound("UIButtonSFX");
         SceneManager.LoadScene(0);
         SoundManager2.Instance.PlayMusic("Main Menu");
     }
@@ -93,7 +105,6 @@ public class PauseMenu : MonoBehaviour
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
 #endif
-        SoundManager2.Instance.PlaySound("UIButtonSFX");
         Application.Quit();
 
     }

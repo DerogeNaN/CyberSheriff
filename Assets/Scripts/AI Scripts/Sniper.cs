@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Sniper : EnemyBase
 {
@@ -14,6 +15,8 @@ public class Sniper : EnemyBase
     float laserIntensity = 0;
     float targetIntensity = 0;
     public Transform gunPos;
+    Vector3 laserDirection;
+    bool stopChargeSound = false;
 
     float fireDuration = 0.2f;
     float endDuration;
@@ -24,19 +27,28 @@ public class Sniper : EnemyBase
 
     float timer = 0;
     public GameObject ragdoll;
+    [Tooltip("offset for where the end of the laser appears on the player")]
+    public Vector3 laserEndpointOffset;
+    [Tooltip("how far to extend the laser past the player")]
 
     public override void OnHit(int damage, int damageType)
     {
         SetState(EnemyState.stunned);
-        enemy.CreateHitEffect();
         SoundManager2.Instance.PlaySound("RobotHit", transform);
+        //enemy.CreateHitEffect();
     }
 
     public override void OnDestroyed(int damage, int damageType)
     {
+        //create ragdoll
         EnemyRagdoll rd = Instantiate(ragdoll, transform.position, transform.rotation).GetComponent<EnemyRagdoll>();
-        rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
-        SoundManager2.Instance.PlaySound("RobotDeath", transform);
+        if (damageType == 3) // if the damage was from explosion
+        {
+            Vector3 normal = (transform.position - enemy.playerTransform.position).normalized;
+            rd.ApplyForce(new Vector3(normal.x, Mathf.Abs(normal.y), normal.y).normalized, 300.0f);
+        } // else do knockback based on damage
+        else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
+
         Destroy(gameObject);
     }
 
@@ -101,17 +113,21 @@ public class Sniper : EnemyBase
                 {
                     case LaserState.none:
                         laserState = LaserState.charging;
+                        //SoundManager2.Instance.PlaySound("SniperLaserCharge", transform);
+                        SoundManager2.Instance.PlaySound("SniperLaserShot", transform);
                         timer = chargeTime;
                         targetIntensity = 0.1f;
                         trackPlayer = true;
+                        stopChargeSound = true;
                         break;
 
                     case LaserState.charging:
                         laserState = LaserState.beforeFire;
-                        SoundManager2.Instance.PlaySound("SniperLaserCharge", transform);
                         timer = timeBeforeDamage;
                         targetIntensity = 0.1f;
                         trackPlayer = false;
+                        stopChargeSound = false;
+                        ExtendLaser();
                         break;
 
                     case LaserState.beforeFire:
@@ -125,6 +141,7 @@ public class Sniper : EnemyBase
 
                     case LaserState.firing:
                         laserState = LaserState.none;
+                        //SoundManager2.Instance.PlaySound("SniperLaserShot", transform);
                         timer = cooldown;
                         targetIntensity = 0.0f;
                         trackPlayer = false;
@@ -134,6 +151,12 @@ public class Sniper : EnemyBase
         }
         else // no line of sight
         {
+            if (stopChargeSound)
+            {
+                SoundManager2.Instance.StopSound("SniperLaserShot",this.gameObject.transform);
+                stopChargeSound = false;
+            }
+
             targetIntensity = 0.0f;
             timer = 0;
             laserState = LaserState.none;
@@ -146,14 +169,17 @@ public class Sniper : EnemyBase
                 line.widthCurve = AnimationCurve.Constant(0.0f, 1.0f, laserIntensity);
             }
         }
+
+        enemy.animator.SetFloat("Aim", enemy.playerTransform.position.y - gunPos.position.y);
     }
 
     void UpdateLaserPos()
     {
         RaycastHit hit;
         Vector3[] positions = new Vector3[2];
+        laserDirection = (enemy.playerTransform.position - gunPos.position).normalized;
 
-        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))
+        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy", "Ignore Raycast" })))
         {
             if (hit.collider.CompareTag("Player"))
             {
@@ -179,7 +205,7 @@ public class Sniper : EnemyBase
         }
 
         // get the direction of the beam, then extend it in that direction
-        positions[1] += (positions[1] - positions[0]).normalized * 100.0f;
+        positions[1] += laserEndpointOffset;
 
         foreach (var l in lineRenderers)
             l.SetPositions(positions);
@@ -189,15 +215,24 @@ public class Sniper : EnemyBase
     {
         RaycastHit hit;
 
-        SoundManager2.Instance.PlaySound("SniperLaserShot", transform);
-
         // double check that the player is within sight
-        if (Physics.Raycast(gunPos.position, (enemy.lookTarget - gunPos.position).normalized, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))
+        if (Physics.Raycast(gunPos.position, laserDirection, out hit, 1000.0f, ~LayerMask.GetMask(new[] { "Enemy" })))
         {
             if (hit.collider.CompareTag("Player"))
             {
                 enemy.playerTransform.gameObject.GetComponent<PlayerHealth>().TakeDamage(25, 0);
             }
         }
+    }
+
+    void ExtendLaser()
+    {
+        Vector3[] positions = new Vector3[2];
+        lineRenderers[0].GetPositions(positions);
+
+        positions[1] += (positions[1] - positions[0]).normalized * 100.0f;
+
+        foreach (var l in lineRenderers)
+            l.SetPositions(positions);
     }
 }

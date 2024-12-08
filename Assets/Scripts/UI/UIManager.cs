@@ -11,10 +11,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject leaderboardMenu;
     [SerializeField] GameObject optionsMenu;
     [SerializeField] GameObject creditsMenu;
-    //[SerializeField] GameObject iutMenu;
-    //[SerializeField] GameObject gameMenu;
-    //[SerializeField] GameObject graphicsMenu;
-    //[SerializeField] GameObject MiscMenu;
 
     
 
@@ -49,6 +45,18 @@ public class UIManager : MonoBehaviour
         SoundManager2.Instance.PlayMusic("Gameplay Track 1");
     }
 
+    public void TutorialButton()
+    {
+        mainMenu.SetActive(false);
+        leaderboardMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        creditsMenu.SetActive(false);
+
+        SceneManager.LoadScene(2);
+        SoundManager2.Instance.PlayMusic("Tutorial");
+    }
+
+
     public void LeaderboardButton()
     {
         mainMenu.SetActive(false);
@@ -80,6 +88,16 @@ public class UIManager : MonoBehaviour
 
         previousMenu = currentMenu;
         currentMenu = creditsMenu;
+    }
+
+    public void OnHoverSound()
+    {
+        SoundManager2.Instance.PlaySound("UIButtonHover");
+    }
+
+    public void OnPressSound()
+    {
+        SoundManager2.Instance.PlaySound("UIButtonPress");
     }
 
     public void QuitButton()
