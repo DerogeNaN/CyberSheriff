@@ -30,6 +30,7 @@ public class PlayerHealth : MonoBehaviour
     void Update()
     {
         UpdateHealthUI();
+        if (Input.GetKeyDown(KeyCode.O)) { TakeDamage(10, 0); }
     }
 
     public void Heal(int amount)
@@ -46,6 +47,7 @@ public class PlayerHealth : MonoBehaviour
             if (Movement.playerMovement.isDashing && invincibleDashing) return;
             if (health - damage > 0) SoundManager2.Instance.PlaySound("PlayerGettingHit");
             health -= damage;
+            PlayHurtSound();
             lastHurtTime = Time.time;
             DamageFlashEffect();
             IsDestroyed();
@@ -81,9 +83,51 @@ public class PlayerHealth : MonoBehaviour
         if (health <= 0)
         {
             SoundManager2.Instance.PlaySound("PlayerDeath");
+            SoundManager2.Instance.StopMusic("Gameplay Track 1");
+            SoundManager2.Instance.StopMusic("Gameplay Track 2");
+            SoundManager2.Instance.StopMusic("Gameplay Track 3");
             WaveManager.waveManagerInstance.LoseCondition();
+        }
+    }
 
-            //Movement.playerMovement.playerInputActions.Disable();
+    void PlayHurtSound()
+    {
+        if (health >= 75)
+        {
+            SoundManager2.Instance.StopSound("WoundedHealth");
+            SoundManager2.Instance.StopSound("InjuredHealth");
+            SoundManager2.Instance.StopSound("CriticalHealth");
+        }
+
+        else if (health >= 50 && health < 75) 
+        {
+            SoundManager2.Instance.StopSound("WoundedHealth");
+            SoundManager2.Instance.PlaySound("WoundedHealth");
+            SoundManager2.Instance.StopSound("InjuredHealth");
+            SoundManager2.Instance.StopSound("CriticalHealth");
+        }
+
+        else if (health >= 25 && health < 50)
+        {
+            SoundManager2.Instance.StopSound("InjuredHealth");
+            SoundManager2.Instance.PlaySound("InjuredHealth");
+            SoundManager2.Instance.StopSound("WoundedHealth");
+            SoundManager2.Instance.StopSound("CriticalHealth");
+        }
+
+        else if (health < 25 && health > 0)
+        {
+            SoundManager2.Instance.StopSound("CriticalHealth");
+            SoundManager2.Instance.PlaySound("CriticalHealth");
+            SoundManager2.Instance.StopSound("WoundedHealth");
+            SoundManager2.Instance.StopSound("InjuredHealth");
+        }
+
+        else
+        {
+            SoundManager2.Instance.StopSound("WoundedHealth");
+            SoundManager2.Instance.StopSound("InjuredHealth");
+            SoundManager2.Instance.StopSound("CriticalHealth");
         }
     }
 

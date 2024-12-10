@@ -106,22 +106,21 @@ public class SoundManager2 : MonoBehaviour
 
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
+            if (Movement.playerMovement.GetComponent<PlayerHealth>().health <= 0) return;
+
             if (currentMusic.source.time >= currentMusic.source.clip.length)
             {
                 if (currentMusic.name == "Gameplay Track 1")
                 {
-                    Destroy(currentMusic.source);
                     PlayMusic("Gameplay Track 2");
                 }
                 else if (currentMusic.name == "Gameplay Track 2")
                 {
-                    Destroy(currentMusic.source);
                     PlayMusic("Gameplay Track 3");
                 }
 
                 else
                 {
-                    Destroy(currentMusic.source);
                     PlayMusic("Gameplay Track 1");
                 }
             }
@@ -143,7 +142,7 @@ public class SoundManager2 : MonoBehaviour
 
     }
 
-    public void PlaySound(string name, Transform targetObject = null, bool Overlap = true)
+    public void PlaySound(string name, Transform targetObject = null, bool Overlap = true, bool shouldLoop = false)
     {
         SoundMaster sound = sounds.Find(s => s.name == name);
         if (sound != null && sound.clips.Length > 0)
@@ -174,6 +173,7 @@ public class SoundManager2 : MonoBehaviour
             newSource.clip = clipToPlay;
             newSource.volume = sound.volume * masterSfxVolume * masterVolume;
             newSource.pitch = sound.pitch;
+            newSource.loop = sound.loop;
 
 
             //Debug.Log("Source volume is :" + newSource.volume);
@@ -231,7 +231,27 @@ public class SoundManager2 : MonoBehaviour
 
     }
 
-    public void PlayMusic(string name, bool fade = false)
+    public void StopMusic(string musicName, Transform targetObject = null)
+    {
+        MusicMaster music = musicTracks.Find(s => s.name == musicName);
+
+        if (music != null && targetObject == null && music.source)
+        {
+            music.source.Stop();
+            Destroy(music.source);
+        }
+        else if (music != null && targetObject != null)
+        {
+            AudioSource localAudioSource = targetObject.GetComponent<AudioSource>();
+            if (localAudioSource != null)
+            {
+                localAudioSource.Stop();
+            }
+        }
+
+    }
+
+    public void PlayMusic(string name, bool fade = false, bool shouldLoop = false)
     {
 
         MusicMaster music = musicTracks.Find(m => m.name == name);
