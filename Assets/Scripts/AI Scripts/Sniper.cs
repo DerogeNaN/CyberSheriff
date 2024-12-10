@@ -49,6 +49,7 @@ public class Sniper : EnemyBase
         } // else do knockback based on damage
         else rd.ApplyForce((transform.position - enemy.playerTransform.position).normalized, damage > 50 ? 300.0f : 50.0f);
 
+        
         Destroy(gameObject);
     }
 
