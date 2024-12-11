@@ -34,6 +34,7 @@ public class EnemyCommon : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log(hitEffectVFX);
         // initialise pathing values
         TryGetComponent<NavMeshAgent>(out navAgent);
         //if (navAgent) navAgent.autoTraverseOffMeshLink = false;
@@ -127,7 +128,8 @@ public class EnemyCommon : MonoBehaviour
 
     public void CreateHitEffect()
     {
-        Instantiate(hitEffectVFX, transform);
+        if (hitEffectVFX)
+            Instantiate(hitEffectVFX, transform);
     }
 }
 
