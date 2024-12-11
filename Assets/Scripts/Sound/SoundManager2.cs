@@ -64,6 +64,7 @@ public class SoundManager2 : MonoBehaviour
 
     private void Awake()
     {
+        PlayerPrefs.DeleteAll();
         masterVolume = PlayerPrefs.GetFloat("MasterValue",1);
         masterMusicVolume = PlayerPrefs.GetFloat("MasterMusicValue", 1);
         masterSfxVolume = PlayerPrefs.GetFloat("MasterSfxValue", 1);

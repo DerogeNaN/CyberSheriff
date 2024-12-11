@@ -48,7 +48,7 @@ public class Shotgun : RangedWeapon
     [SerializeField]
     public int grenadeAmmoMax = 3;
 
-   
+
 
     public override void Update()
     {
@@ -157,7 +157,7 @@ public class Shotgun : RangedWeapon
                                     {
                                         if (eh.isHeadshot == true)
                                         {
-                                           
+
                                             damage *= headShotMultiplier;
                                         }
 
@@ -168,7 +168,8 @@ public class Shotgun : RangedWeapon
                                         currentMarker.SetActive(true);
                                         StartCoroutine(TurnItOff());
                                     }
-                                    EnemyHealth.TakeDamage(damage, 0, gameObject);
+                                    if (EnemyHealth)
+                                        EnemyHealth.TakeDamage(damage, 0, gameObject);
                                 }
                             }
                         }

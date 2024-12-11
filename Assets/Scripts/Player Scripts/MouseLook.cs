@@ -25,7 +25,7 @@ public class MouseLook : MonoBehaviour
     void Start()
     {
         InitializeMouseLook();
-      // mouseSens = (PlayerPrefs.GetFloat("Sensitivity", 0.1f));
+        mouseSens = (PlayerPrefs.GetFloat("Sensitivity", 09.52f));
     }
 
     void InitializeMouseLook()

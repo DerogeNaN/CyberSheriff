@@ -57,19 +57,47 @@ public class SettingsMenuUi : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        masterSlider.value = PlayerPrefs.GetFloat("MasterValue");
-        musicSlider.value = PlayerPrefs.GetFloat("MasterMusicValue");
-        SFXSlider.value = PlayerPrefs.GetFloat("MasterSfxValue");
+        PlayerPrefs.DeleteAll();
+
+        if (PlayerPrefs.GetFloat("MasterValue") != 0)
+        {
+            masterSlider.value = PlayerPrefs.GetFloat("MasterValue");
+        }
+        else masterSlider.value = SoundManager2.Instance.masterVolume;
+
+        if (PlayerPrefs.GetFloat("MasterMusicValue") != 0)
+        {
+            musicSlider.value = PlayerPrefs.GetFloat("MasterMusicValue");
+        }
+        else musicSlider.value = SoundManager2.Instance.masterMusicVolume;
+
+        if (PlayerPrefs.GetFloat("MasterSfxValue") != 0)
+        {
+            SFXSlider.value = PlayerPrefs.GetFloat("MasterSfxValue");
+        }
+        else SFXSlider.value = SoundManager2.Instance.masterSfxVolume;
 
         masterText.text = (Mathf.Floor(PlayerPrefs.GetFloat("MasterValue") * 100)).ToString();
         musicText.text = (Mathf.Floor(PlayerPrefs.GetFloat("MasterMusicValue") * 100)).ToString();
         SFXText.text = (Mathf.Floor(PlayerPrefs.GetFloat("MasterSfxValue") * 100)).ToString();
 
-        FOVSlider.value = PlayerPrefs.GetFloat("FOV");
-        FOVText.text = PlayerPrefs.GetFloat("FOV").ToString("F2");
+        if (PlayerPrefs.GetFloat("FOV") != 0)
+        {
+            FOVSlider.value = PlayerPrefs.GetFloat("FOV");
+            FOVText.text = PlayerPrefs.GetFloat("FOV").ToString("F2");
+        }
+        else FOVSlider.value = math.remap(60, 110, 0, 1, 80);
 
-        sensitivitySlider.value = PlayerPrefs.GetFloat("Sensitivity");
-        sensitivityText.text = math.remap(0, 20, 0, 2, PlayerPrefs.GetFloat("Sensitivity")).ToString("F2");
+        if (PlayerPrefs.GetFloat("Sensitivity") != 0)
+        {
+            sensitivitySlider.value = PlayerPrefs.GetFloat("Sensitivity");
+            sensitivityText.text = math.remap(0, 20, 0, 2, PlayerPrefs.GetFloat("Sensitivity")).ToString("F2");
+        }
+        else
+        {
+            sensitivitySlider.value = math.remap(0, 20, 0, 1, 9.52f);
+            sensitivityText.text = math.remap(0, 20, 0, 2, 9.52f).ToString("F2");
+        }
 
         controlsButton.onClick.AddListener(delegate { SetState(OptionsMenuState.controls); });
         soundButton.onClick.AddListener(delegate { SetState(OptionsMenuState.sound); });
