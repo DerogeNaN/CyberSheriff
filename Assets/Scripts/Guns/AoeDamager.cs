@@ -80,16 +80,52 @@ public class AoeDamager : MonoBehaviour
         }
     }
 
-    void Explosion(Collision collision)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.transform.parent)
+        {
+            if (other.gameObject.transform.parent.gameObject.layer != 3)
+            {
+                if (other.GetComponent<EnemyHurtbox>())
+                {
+                    Debug.Log("exploding");
+                    Explosion(other);
+                }
+            }
+        }
+        else if (other.gameObject.transform.gameObject.layer != 3)
+        {
+            if (other.GetComponent<EnemyHurtbox>())
+            {
+                Debug.Log("exploding");
+                Explosion(other);
+            }
+        }
+    }
+
+    void Explosion(Collision collision) { Explosion(collision, null); }
+    void Explosion(Collider collider) { Explosion(null, collider); }
+
+    public virtual void Explosion(Collision collision = null, Collider other = null)
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, damageRadius);
         Collider[] stunHitColliders = Physics.OverlapSphere(transform.position, stunRadius);
         GameObject vfx = Instantiate(explosionVFX);
         SoundManager2.Instance.PlaySound("ShotgunGranadeExplosion", vfx.gameObject.transform);
         vfx.transform.position = transform.position;
-        vfx.transform.LookAt(vfx.transform.position + collision.contacts[0].normal, Vector3.up);
-        vfx.transform.position += -collision.contacts[0].normal;
 
+        if (collision != null)
+        {
+            vfx.transform.LookAt(vfx.transform.position + collision.contacts[0].normal, Vector3.up);
+            vfx.transform.position += -collision.contacts[0].normal;
+        }
+        else
+        {
+            Vector3 closestPoint = other.ClosestPoint(transform.position);
+            Vector3 CLPNormal = (other.transform.position - closestPoint).normalized;
+            vfx.transform.LookAt(vfx.transform.position + CLPNormal, Vector3.up);
+            vfx.transform.position += -CLPNormal;
+        }
 
         foreach (var stunHitCollider in stunHitColliders)
         {
@@ -101,7 +137,7 @@ public class AoeDamager : MonoBehaviour
                     stunHitCollider.GetComponentInParent<EnemyMelee>().SetState(EnemyState.stunned);
                 }
 
-                if (stunHitCollider.GetComponentInParent<EnemyRanged>()) 
+                if (stunHitCollider.GetComponentInParent<EnemyRanged>())
                 {
                     stunHitCollider.GetComponentInParent<EnemyRanged>().stun = 0.5f;
                     stunHitCollider.GetComponentInParent<EnemyRanged>().SetState(EnemyState.stunned);
