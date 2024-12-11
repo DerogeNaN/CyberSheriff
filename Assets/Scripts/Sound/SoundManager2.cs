@@ -56,7 +56,7 @@ public class SoundManager2 : MonoBehaviour
     public List<MusicMaster> musicTracks = new List<MusicMaster>();
     public List<AmbienceMaster> ambienceClips = new List<AmbienceMaster>();
 
-    private MusicMaster currentMusic;
+    public MusicMaster currentMusic;
     private MusicMaster nextMusic;
     private bool isMusicFading;
     private float fadeDuration = 2f;
@@ -104,11 +104,14 @@ public class SoundManager2 : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.M)) currentMusic.source.time = currentMusic.track.length - 5;
+
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             if (Movement.playerMovement.GetComponent<PlayerHealth>().health <= 0) return;
+            if (currentMusic.source == null) PlayCurrentSceneMusic();
 
-            if (currentMusic.source.time >= currentMusic.source.clip.length)
+            if (currentMusic.source.time >= currentMusic.source.clip.length - 1)
             {
                 if (currentMusic.name == "Gameplay Track 1")
                 {
@@ -140,6 +143,25 @@ public class SoundManager2 : MonoBehaviour
 
         SourceVolumeUpdate();
 
+    }
+
+    public void PlayCurrentSceneMusic()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 0) PlayMusic("Main Menu");
+        else if (SceneManager.GetActiveScene().buildIndex == 1) PlayMusic("Gameplay Track 1");
+        else if (SceneManager.GetActiveScene().buildIndex == 2) PlayMusic("Tutorial");
+    }
+
+    public void StopCurrentSceneMusic()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 0) StopMusic("Main Menu");
+        else if (SceneManager.GetActiveScene().buildIndex == 1)
+        { 
+            StopMusic("Gameplay Track 1");
+            StopMusic("Gameplay Track 2");
+            StopMusic("Gameplay Track 3");
+        }
+        else if (SceneManager.GetActiveScene().buildIndex == 2) StopMusic("Tutorial");
     }
 
     public void PlaySound(string name, Transform targetObject = null, bool Overlap = true, bool shouldLoop = false)
@@ -251,7 +273,7 @@ public class SoundManager2 : MonoBehaviour
 
     }
 
-    public void PlayMusic(string name, bool fade = false, bool shouldLoop = false)
+    public void PlayMusic(string name, bool fade = false)
     {
 
         MusicMaster music = musicTracks.Find(m => m.name == name);
@@ -259,7 +281,7 @@ public class SoundManager2 : MonoBehaviour
         else
         {
             if (currentMusic != null)
-                if (music.track == currentMusic.track) return;
+                if (music.track == currentMusic.track && currentMusic.source != null) return;
 
             music.source = gameObject.AddComponent<AudioSource>();
             music.source.clip = music.track;
@@ -275,7 +297,7 @@ public class SoundManager2 : MonoBehaviour
         }
         else
         {
-            if (currentMusic != null) currentMusic.source.Stop();
+            if (currentMusic.source != null) currentMusic.source.Stop();
             currentMusic = music;
             currentMusic.source.volume = music.volume * masterMusicVolume * masterVolume;
             currentMusic.source.Play();

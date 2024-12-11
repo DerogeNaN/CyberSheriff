@@ -78,6 +78,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1;
         Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
+        SoundManager2.Instance.StopCurrentSceneMusic();
+        SoundManager2.Instance.PlayCurrentSceneMusic();
     }
 
     public void OptionsButton()
