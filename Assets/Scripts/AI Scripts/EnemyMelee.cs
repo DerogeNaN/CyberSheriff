@@ -84,7 +84,9 @@ public class EnemyMelee : EnemyBase
         }
 
 
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        transform.position = new Vector3(1000, 0, 1000);
+        WaveManager.waveManagerInstance.AddToDeletionList(gameObject);
     }
 
     #region enter state

@@ -1,6 +1,7 @@
 using System; 
 using System.Collections; 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -38,6 +39,9 @@ public class WaveManager : MonoBehaviour
     [SerializeField] PauseMenu pauseMenuScript;
     [SerializeField] public Timer timerScript;
 
+    private Task enemyDeleteThread;
+    private List<GameObject> deletionList = new ();
+
     public delegate void NewWaveEvent();
     public static event NewWaveEvent StartNewWave;
 
@@ -55,6 +59,9 @@ public class WaveManager : MonoBehaviour
         SetupWaveManager();
 
         forceTargetTime = waveTime - UnityEngine.Random.Range(minTimeUntilForceTarget, maxTimeUntilForceTarget);
+
+        enemyDeleteThread = EnemyDeleteThread();
+
     }
 
     
@@ -136,5 +143,22 @@ public class WaveManager : MonoBehaviour
         pauseMenuScript.loseScreen.SetActive(true);
         Movement.playerMovement.playerInputActions.Player.Disable();
         Movement.playerMovement.playerInputActions.UI.Enable();
+    }
+
+    public void AddToDeletionList(GameObject obj)
+    {
+        deletionList.Add(obj);
+    }
+
+    private async Task EnemyDeleteThread()
+    {
+        while (Movement.playerMovement.GetComponent<PlayerHealth>().health > 0)
+        {
+            for(int i = 0; i < deletionList.Count; i++)
+            {
+                Destroy(deletionList[i]);
+            }
+            await Task.Yield();
+        }
     }
 }
