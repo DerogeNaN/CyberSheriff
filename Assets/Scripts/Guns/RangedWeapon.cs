@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -97,6 +98,13 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public GameObject BulletHitDecal;
 
+    /// <POOling_variable >
+    public int poolSize = 30;
+    private Queue<GameObject> activePool;
+    private Queue<GameObject> deactivePool;
+    private GameObject decalTemp;
+    /// </summary>
+
     [SerializeField]
     public Animator animator;
 
@@ -127,7 +135,17 @@ public class RangedWeapon : MonoBehaviour
         camRef = FindAnyObjectByType<Camera>();
         currentBullets = BulletsPerClip;
         CurrentReserveAmmo = ReserveAmmoCap;
+        /// <POOling_Code >
+        deactivePool = new Queue<GameObject>();
+        activePool = new Queue<GameObject>();
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject decal = Instantiate(BulletHitDecal); 
+            decal.SetActive(false); 
+            deactivePool.Enqueue(decal);
 
+        }
+        /// 
     }
 
     // Update is called once per frame
@@ -284,14 +302,53 @@ public class RangedWeapon : MonoBehaviour
         //altFire Logic
 
     }
+    public GameObject GetDecal()
+    {
+        GameObject decal;
+        if(deactivePool.Count > 0)
+        {
+            decal = deactivePool.Dequeue();
+            if (decal == null)
+            {
+                decal = new GameObject();
+                decal = Instantiate(BulletHitDecal);
+            }
+            decal.SetActive(true);
+            activePool.Enqueue(decal);
+        }
+        else
+        {
+            decal = activePool.Dequeue();
+            if (decal == null)
+            {
+                decal = new GameObject();
+                decal = Instantiate(BulletHitDecal);
+            }
+            activePool.Enqueue(decal);
+        }
+    
+        return decal;
+        //foreach (GameObject decal in pool) 
+        //{ 
+        //    if (!decal.activeInHierarchy) 
+        //    { 
+        //        decal.SetActive(true); 
+        //        return decal; 
+        //    } 
+        //} 
+        //decalTemp = Instantiate(BulletHitDecal); 
+        //pool.Add(decalTemp);
+        //return decalTemp;
+    }
 
     public void SpawnBulletHoleDecal(RayData rayData)
     {
-        GameObject Decal = Instantiate(BulletHitDecal);
-        Decal.transform.position = rayData.hits[0].point;
-        Vector3 pos = Decal.transform.position;
-        Decal.transform.LookAt(pos + rayData.hits[0].normal, Vector3.up);
-        Decal.transform.position += -rayData.hits[0].normal;
+        // Decal = Instantiate(BulletHitDecal);
+        GameObject tempDecal = GetDecal();
+        tempDecal.transform.position = rayData.hits[0].point;
+        Vector3 pos = tempDecal.transform.position;
+        tempDecal.transform.LookAt(pos + rayData.hits[0].normal, Vector3.up);
+        tempDecal.transform.position += -rayData.hits[0].normal;
         //  Debug.Log("ray hit normal: " + rayData.hit.normal);
     }
 
