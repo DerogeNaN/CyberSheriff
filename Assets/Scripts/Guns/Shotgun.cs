@@ -110,6 +110,8 @@ public class Shotgun : RangedWeapon
             {
                 bool hitDetected;
                 RayData rayData = RayCastAndGenGunRayData(muzzlePoint, out hitDetected, shouldPunchThrough);
+
+
                 if (hitDetected != false)
                 {
                     for (int hit = 0; hit < rayData.hits.Count; hit++)
@@ -214,12 +216,12 @@ public class Shotgun : RangedWeapon
 
         if (!punchthrough)
         {
-            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane, ~LayerExclusion);
             newData.hits.Add(gunHit);
         }
         else
         {
-            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane, ~LayerExclusion).ToList();
         }
 
 
@@ -239,9 +241,13 @@ public class Shotgun : RangedWeapon
         RayData newData = new RayData { ray = gunRay, hits = new List<RaycastHit>() };
 
         //Here im getting the direction of a vector from the gun muzzle to reticle hit point 
-
-
-        Vector3 barrelToLookPointDir = camRayData.hits[0].point - muzzle.transform.position;
+        Vector3 barrelToLookPointDir;
+        if (camRayData.hits.Count() != 0)
+        {
+            barrelToLookPointDir = camRayData.hits[0].point - muzzle.transform.position;
+        }
+        else
+            barrelToLookPointDir = muzzle.forward;
 
         barrelToLookPointDir = math.normalize(barrelToLookPointDir);
 
@@ -256,11 +262,15 @@ public class Shotgun : RangedWeapon
         }
         else
         {
-            hitDetected = Physics.RaycastAll(gunRay, camRef.farClipPlane)[0].collider == null ? false : true;
-            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+            if (Physics.RaycastAll(gunRay, camRef.farClipPlane, ~LayerExclusion).Length != 0)
+                hitDetected = Physics.RaycastAll(gunRay, camRef.farClipPlane, ~LayerExclusion)[0].collider == null ? false : true;
+            else
+                hitDetected = false;
+
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane, ~LayerExclusion).ToList();
         }
 
-        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+        hitDetected = Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane, ~LayerExclusion);
 
         return newData;
     }

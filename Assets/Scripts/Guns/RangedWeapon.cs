@@ -109,6 +109,9 @@ public class RangedWeapon : MonoBehaviour
     [SerializeField]
     public GameObject currentMarker;
 
+    [SerializeField]
+    public LayerMask LayerExclusion;
+
     [Header("Scene Refrences")]
     [SerializeField]
     public Camera camRef;
@@ -153,7 +156,7 @@ public class RangedWeapon : MonoBehaviour
 
     private void OnDisable()
     {
-        if (turnitoffbool) 
+        if (turnitoffbool)
         {
             StopAllCoroutines();
             currentMarker.SetActive(false);
@@ -224,8 +227,8 @@ public class RangedWeapon : MonoBehaviour
                                     {
                                         damage *= headShotMultiplier;
                                     }
-                                    
-                                    GameObject marker = EnemyHealth.health - damage <= 0 ? KillHitMarker : HitMarker;    
+
+                                    GameObject marker = EnemyHealth.health - damage <= 0 ? KillHitMarker : HitMarker;
                                     if (currentMarker)
                                         currentMarker.gameObject.SetActive(false);
                                     currentMarker = marker;
@@ -327,7 +330,7 @@ public class RangedWeapon : MonoBehaviour
 
         if (!PunchThrough)
         {
-            Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane);
+            Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane, ~LayerExclusion);
             newData.hits.Add(cameraHit);
         }
         else
@@ -350,12 +353,16 @@ public class RangedWeapon : MonoBehaviour
 
         if (!PunchThrough)
         {
-            hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane,~LayerMask.NameToLayer("Ignore Raycast"));
+            hitDetected = Physics.Raycast(cameraRay, out cameraHit, camRef.farClipPlane, ~LayerExclusion);
             newData.hits.Add(cameraHit);
         }
         else
         {
-            hitDetected = Physics.RaycastAll(cameraRay, camRef.farClipPlane, ~LayerMask.NameToLayer("Ignore Raycast"))[0].collider == null ? false : true;
+            if (Physics.RaycastAll(cameraRay, camRef.farClipPlane, ~LayerExclusion).Length != 0)
+                hitDetected = Physics.RaycastAll(cameraRay, camRef.farClipPlane, ~LayerExclusion)[0].collider == null ? false : true;
+            else
+                hitDetected = false;
+
             newData.hits = Physics.RaycastAll(cameraRay, camRef.farClipPlane).ToList();
         }
 
@@ -383,12 +390,12 @@ public class RangedWeapon : MonoBehaviour
 
         if (!punchThrough)
         {
-            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane,~LayerMask.NameToLayer("Ignore Raycast"));
+            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane, ~LayerExclusion);
             newData.hits.Add(gunHit);
         }
         else
         {
-            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane,~LayerMask.NameToLayer("Ignore Raycast")).ToList();
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane, ~LayerExclusion).ToList();
         }
 
         return newData;
@@ -417,13 +424,13 @@ public class RangedWeapon : MonoBehaviour
 
         if (!punchThrough)
         {
-            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane);
+            Physics.Raycast(gunRay, out gunHit, camRef.farClipPlane, ~LayerExclusion);
             newData.hits.Add(gunHit);
         }
         else
         {
-            hitDetected = Physics.RaycastAll(gunRay, camRef.farClipPlane)[0].collider == null ? false : true;
-            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane).ToList();
+            hitDetected = Physics.RaycastAll(gunRay, camRef.farClipPlane, ~LayerExclusion)[0].collider == null ? false : true;
+            newData.hits = Physics.RaycastAll(gunRay, camRef.farClipPlane, ~LayerExclusion).ToList();
         }
 
         return newData;
