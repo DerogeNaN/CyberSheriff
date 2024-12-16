@@ -64,6 +64,7 @@ MonoBehaviour:
   canPressAltFire: 1
   waiting: 0
   reloading: 0
+  shouldPunchThrough: 0
   BulletFlash: {fileID: 6153099358845820002}
   HitEffect: {fileID: 1198571276748615873, guid: 26dfd83321a38a34aa5137ac12cccf6f,
     type: 3}
@@ -71,15 +72,18 @@ MonoBehaviour:
     type: 3}
   BulletHitDecal: {fileID: 1200606425068812548, guid: 5b263b1b0e8f39141b9fc3541f53b638,
     type: 3}
+  poolSize: 30
   animator: {fileID: 2056443296438645499}
+  HitMarker: {fileID: 0}
+  KillHitMarker: {fileID: 0}
+  currentMarker: {fileID: 0}
+  LayerExclusion:
+    serializedVersion: 2
+    m_Bits: 4
   camRef: {fileID: 0}
-  CurrentlyHitting: {fileID: 0}
   bulletsPerShot: 5
-  chargeExited: 0
+  punchThroughAmount: 0
   spreadMultiplier: 0.28
-  chargeTime: 1
-  inputTime: 0
-  charged: 0
   Grenade: {fileID: 911812781045158418, guid: 9fb5ac429395f914a98b1146e2ebab00, type: 3}
   grenadeLaucherForceMultiplier: 20
   grenadeYEffectMult: 0.2
